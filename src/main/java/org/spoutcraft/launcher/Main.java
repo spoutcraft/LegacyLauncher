@@ -6,6 +6,11 @@ import org.spoutcraft.launcher.GUI.LoginForm;
 
 
 public class Main {
+	
+	@SuppressWarnings("static-access")
+	public Main() throws Exception {
+		this.main(null);
+	}
 
 	@SuppressWarnings({ })
 	public static void main(String[] args) throws Exception {
