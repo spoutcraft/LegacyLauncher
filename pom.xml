@@ -87,6 +87,7 @@
                         <index>true</index>
                         <manifest>
                             <addClasspath>true</addClasspath>
+                            <mainClass>org.spoutcraft.launcher.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
