@@ -207,7 +207,7 @@ public class LoginForm extends JFrame implements ActionListener {
 				
 				LauncherFrame launcher = new LauncherFrame();
 				
-				launcher.runGame(values[2].trim(), values[1].trim(), values[1].trim());	
+				launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(this.txtPassword.getPassword()));	
 				this.setVisible(false);
 				
 			} catch (BadLoginException e) {

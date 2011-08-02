@@ -27,22 +27,23 @@ public class LauncherFrame extends Frame implements WindowListener{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 	}
 	
-	public void runGame(String user, String session, String downloadTicket) {
+	public void runGame(String user, String session, String downloadTicket, String mcpass) {
 		
 		this.setVisible(true);
 		
 		Applet applet = Launcher.getMinecraftApplet();
 
-        minecraft = new MinecraftAppletEnglober(applet);
-//        minecraft.addParameter("userName", user);
-//        minecraft.addParameter("sessionId", session);
-//        minecraft.addParameter("downloadTicket", downloadTicket);
-//        minecraft.addParameter("stand-alone", "true");
+       minecraft = new MinecraftAppletEnglober(applet);
+        /*minecraft.addParameter("userName", user);
+        minecraft.addParameter("sessionId", session);
+        minecraft.addParameter("downloadTicket", downloadTicket);
+        minecraft.addParameter("stand-alone", "true");*/
         
         minecraft.addParameter("username", user);
         minecraft.addParameter("sessionid", session);
         minecraft.addParameter("downloadticket", downloadTicket);
-        minecraft.addParameter("stand-alone", "true");
+        //minecraft.addParameter("stand-alone", "true");
+        minecraft.addParameter("mppass", mcpass);
         
         /*
          this.launcher.customParameters.put("userName", values[2].trim());
