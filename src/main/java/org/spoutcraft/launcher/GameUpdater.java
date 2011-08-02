@@ -312,6 +312,7 @@ public class GameUpdater {
 
 			String path = file.getPath();
 			path = path.replace(PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator, "");
+			path = path.replaceAll("\\\\","/");
 			out.putNextEntry(new ZipEntry(path));
 
 			int len;
