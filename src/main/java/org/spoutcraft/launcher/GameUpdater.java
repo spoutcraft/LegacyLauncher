@@ -42,7 +42,7 @@ public class GameUpdater {
 	public final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
 	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
-	public final File bcDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bukkitcontrib");
+	public final File bcDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String bcDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	
@@ -363,18 +363,15 @@ public class GameUpdater {
 		}
 		
 		String latest = this.getBCVersion();
-		
+
+		if (version == null) return true;
 		if (latest == null) throw new MCNetworkException();
-		
-		if (latest.contains(".")) return true;
-		
-		int c = Integer.parseInt(version);
-		int l = Integer.parseInt(latest);
-		
-		if (c < l) {
-			return true;
+		String[] ver1 = version.split("\\.");
+		String[] ver2 = latest.split("\\."); 
+		if (ver1.length != ver2.length) return true;
+		for (int i = 0; i <= ver1.length - 1; i ++) {
+			if (Integer.parseInt(ver1[i]) < Integer.parseInt(ver2[i])) return true;
 		}
-		
 		return false;
 	}
 	
