@@ -387,14 +387,16 @@ public class GameUpdater {
 		
 		String latest = this.getBCVersion();
 
-		if (version == null) return true;
 		if (latest == null) throw new MCNetworkException();
-		String[] ver1 = version.split("\\.");
-		String[] ver2 = latest.split("\\."); 
-		if (ver1.length != ver2.length) return true;
-		for (int i = 0; i <= ver1.length - 1; i ++) {
-			if (Integer.parseInt(ver1[i]) < Integer.parseInt(ver2[i])) return true;
+		if (version.contains(".")) return true;
+		
+		int c = Integer.parseInt(version);
+		int l = Integer.parseInt(latest);
+		
+		if (c < l) {
+			return true;
 		}
+		
 		return false;
 	}
 	
