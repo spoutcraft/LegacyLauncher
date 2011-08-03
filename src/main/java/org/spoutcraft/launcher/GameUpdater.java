@@ -47,6 +47,8 @@ public class GameUpdater {
 	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String bcDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String bcDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	
 	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
 		this.user = user;
@@ -120,7 +122,11 @@ public class GameUpdater {
 		
 		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
 		
-		downloadFile(bcDownloadURL, spout.getPath());
+		if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+			downloadFile(bcDownloadDevURL, spout.getPath());
+		} else {
+			downloadFile(bcDownloadURL, spout.getPath());
+		}
 		
 		this.unzipBC();
 		
@@ -162,7 +168,9 @@ public class GameUpdater {
 		
 		ArrayList<File> exclude = new ArrayList<File>();
 		exclude.add(this.backupDir);
-		exclude.add(this.savesDir);
+		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
+			exclude.add(this.savesDir);
+		}
 		exclude.add(this.updateDir);
 		
 		zip.createNewFile();
@@ -393,7 +401,13 @@ public class GameUpdater {
 	// BukkitContrib Stuff \\
 	public String getBCVersion() throws Exception {
 		 String version = "-1";
-		 URL url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
+		 URL url;
+		 if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+			 url = new URL("http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/buildNumber");
+		 } else {
+			 url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
+		 }
+		 
 		 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		 String str;
 		 while ((str = in.readLine()) != null) {
