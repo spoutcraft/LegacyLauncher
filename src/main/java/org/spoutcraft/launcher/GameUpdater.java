@@ -278,7 +278,7 @@ public class GameUpdater {
 	}
 	
 	public void addFilesToExistingZip(File zipFile, ArrayList<File> files) throws IOException {
-        File tempFile = File.createTempFile(zipFile.getName(), null);
+        File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
 		boolean renameOk=zipFile.renameTo(tempFile);
