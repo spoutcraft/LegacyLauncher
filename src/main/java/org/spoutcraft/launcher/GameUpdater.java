@@ -134,7 +134,7 @@ public class GameUpdater {
 		//Move file
 		updateMC.renameTo(mcJar);
 		
-		File bcVersion = new File(this.bcDir.getPath() + File.separator + "version");
+		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
 		if (bcVersion.exists()) bcVersion.delete();
 		
 		this.writeFile(bcVersion.getPath(), this.getBCVersion());
@@ -374,10 +374,8 @@ public class GameUpdater {
 	private boolean checkBCUpdate() throws Exception {
 		if (!PlatformUtils.getWorkingDirectory().exists()) return true;
 		if (!this.bcDir.exists()) return true;
-		
-		File bcVersion = new File(this.bcDir.getPath() + File.separator + "version");
+		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return true;
-		
 		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
 		String line = null;
 		String version = null;
@@ -386,8 +384,8 @@ public class GameUpdater {
 		}
 		
 		String latest = this.getBCVersion();
-
-		if (latest == null) throw new MCNetworkException();
+		
+		if (latest == null) return false;
 		if (version.contains(".")) return true;
 		
 		int c = Integer.parseInt(version);
