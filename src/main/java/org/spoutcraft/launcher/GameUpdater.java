@@ -3,12 +3,14 @@ package org.spoutcraft.launcher;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -132,7 +134,28 @@ public class GameUpdater {
 		//Move file
 		updateMC.renameTo(mcJar);
 		
+		File bcVersion = new File(this.bcDir.getPath() + File.separator + "version");
+		if (bcVersion.exists()) bcVersion.delete();
+		
+		this.writeFile(bcVersion.getPath(), this.getBCVersion());
+		
 		return true;
+	}
+	
+	public void writeFile(String out, String contents) {
+		FileWriter fWriter = null;
+		BufferedWriter writer = null; 
+		try {
+		  fWriter = new FileWriter(out);
+		  writer = new BufferedWriter(fWriter);
+		  System.out.print(contents);
+		  writer.write(contents);
+
+
+		   writer.close();
+		} catch (Exception e) {
+
+		}
 	}
 	
 	private void purgeDir(File file) {
