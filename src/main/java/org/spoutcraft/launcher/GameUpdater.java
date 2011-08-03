@@ -28,7 +28,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
 
 
@@ -45,8 +44,11 @@ public class GameUpdater {
 	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
 	public final File bcDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
+	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String bcDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String bcDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	
 	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
 		this.user = user;
@@ -111,6 +113,8 @@ public class GameUpdater {
 			return false;
 		}
 		
+		performBackup();
+		
 		if (this.updateDir.exists()) this.purgeDir(updateDir);
 		this.updateDir.mkdirs();
 		
@@ -118,7 +122,11 @@ public class GameUpdater {
 		
 		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
 		
-		downloadFile(bcDownloadURL, spout.getPath());
+		if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+			downloadFile(bcDownloadDevURL, spout.getPath());
+		} else {
+			downloadFile(bcDownloadURL, spout.getPath());
+		}
 		
 		this.unzipBC();
 		
@@ -126,7 +134,7 @@ public class GameUpdater {
 		
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
 		
-		this.addFilesToExistingZip(updateMC, spoutMod);
+		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator);
 		
 		File mcJar = new File(binDir, "minecraft.jar");
 		mcJar.delete();
@@ -142,6 +150,33 @@ public class GameUpdater {
 		return true;
 	}
 	
+	public void performBackup() throws Exception {
+		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!bcVersion.exists()) return;
+		
+		BufferedReader br;
+		br = new BufferedReader(new FileReader(bcVersion));
+		String line = null;
+		String version = null;
+		if((line = br.readLine()) != null) {
+			version = line;
+		}
+		
+		File zip = new File(this.backupDir, version + "-backup.zip");
+		
+		if (zip.exists()) return;
+		
+		ArrayList<File> exclude = new ArrayList<File>();
+		exclude.add(this.backupDir);
+		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
+			exclude.add(this.savesDir);
+		}
+		exclude.add(this.updateDir);
+		
+		zip.createNewFile();
+		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
+	}
+	
 	public void writeFile(String out, String contents) {
 		FileWriter fWriter = null;
 		BufferedWriter writer = null; 
@@ -154,7 +189,7 @@ public class GameUpdater {
 
 		   writer.close();
 		} catch (Exception e) {
-
+			
 		}
 	}
 	
@@ -284,13 +319,19 @@ public class GameUpdater {
 	}
 	
 	public ArrayList<File> getFiles(File dir) {
+		return getFiles(dir, new ArrayList<File>());
+	}
+	
+	public ArrayList<File> getFiles(File dir, ArrayList<File> exclude) {
 		ArrayList<File> result = new ArrayList<File>();
 		for (File file : dir.listFiles()) {
-			if (file.isDirectory()) {
-				result.addAll(this.getFiles(file));
-				continue;
+			if (!exclude.contains(dir)) {
+				if (file.isDirectory()) {
+					result.addAll(this.getFiles(file, exclude));
+					continue;
+				}
+				result.add(file);
 			}
-			result.add(file);
 		}
 		return result;
 	}
@@ -300,7 +341,7 @@ public class GameUpdater {
 		if (delFile.exists()) delFile.delete();
 	}
 	
-	public void addFilesToExistingZip(File zipFile, ArrayList<File> files) throws IOException {
+	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir) throws IOException {
         File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
@@ -319,7 +360,7 @@ public class GameUpdater {
 			boolean notInFiles = true;
 			for (File f : files) {
 				String path = f.getPath();
-				path = path.replace(PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator, "");
+				path = path.replace(rootDir, "");
 				path = path.replaceAll("\\\\","/");
 				if (path.equals(name) || name.contains("META-INF")) {
 					notInFiles = false;
@@ -340,7 +381,7 @@ public class GameUpdater {
 			InputStream in = new FileInputStream(file);
 
 			String path = file.getPath();
-			path = path.replace(PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator, "");
+			path = path.replace(rootDir, "");
 			path = path.replaceAll("\\\\","/");
 			out.putNextEntry(new ZipEntry(path));
 
@@ -360,7 +401,13 @@ public class GameUpdater {
 	// BukkitContrib Stuff \\
 	public String getBCVersion() throws Exception {
 		 String version = "-1";
-		 URL url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
+		 URL url;
+		 if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+			 url = new URL("http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/buildNumber");
+		 } else {
+			 url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
+		 }
+		 
 		 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		 String str;
 		 while ((str = in.readLine()) != null) {
@@ -384,7 +431,7 @@ public class GameUpdater {
 		}
 		
 		String latest = this.getBCVersion();
-		
+
 		if (latest == null) return false;
 		if (version.contains(".")) return true;
 		
