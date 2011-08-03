@@ -22,7 +22,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	public LauncherFrame() {
 		super("Spoutcraft Custom Launcher");
 		super.setVisible(true);
-		this.setSize(new Dimension(854, 500));
+		this.setSize(new Dimension(870, 518));
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 	}
