@@ -145,7 +145,6 @@ public class GameUpdater {
 	}
 	
 	public void performBackup() throws Exception {
-		try {
 		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return;
 		
@@ -167,14 +166,7 @@ public class GameUpdater {
 		exclude.add(this.updateDir);
 		
 		zip.createNewFile();
-		for (File f : getFiles(PlatformUtils.getWorkingDirectory(), exclude)) {
-			System.out.println(f.getPath());
-		}
 		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
-		
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void writeFile(String out, String contents) {
