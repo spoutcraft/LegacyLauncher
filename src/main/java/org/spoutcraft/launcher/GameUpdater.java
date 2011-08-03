@@ -8,6 +8,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -25,6 +26,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
 
 
@@ -42,7 +44,7 @@ public class GameUpdater {
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
 	public final File bcDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bukkitcontrib");
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String bcDownloadURL = "http://www.minedev.net/BukkitContrib/spoutcraft.zip";
+	public final String bcDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	
 	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
 		this.user = user;
@@ -331,7 +333,7 @@ public class GameUpdater {
 	// BukkitContrib Stuff \\
 	public String getBCVersion() throws Exception {
 		 String version = "-1";
-		 URL url = new URL("http://dl.dropbox.com/u/49805/SpoutCraftVersion.txt");
+		 URL url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
 		 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		 String str;
 		 while ((str = in.readLine()) != null) {
@@ -347,12 +349,25 @@ public class GameUpdater {
 		if (!this.bcDir.exists()) return true;
 		
 		File bcVersion = new File(this.bcDir.getPath() + File.separator + "version");
-		
 		if (!bcVersion.exists()) return true;
 		
-		Version ver = new Version(bcVersion);
-		ver.read();
-		if (!ver.compare(this.getBCVersion())) return true;
+		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
+		String line = null;
+		String version = null;
+		if((line = br.readLine()) != null) {
+			version = line;
+		}
+		
+		String latest = this.getBCVersion();
+		
+		if (latest == null) throw new MCNetworkException();
+		
+		int c = Integer.parseInt(version);
+		int l = Integer.parseInt(latest);
+		
+		if (c < l) {
+			return true;
+		}
 		
 		return false;
 	}
