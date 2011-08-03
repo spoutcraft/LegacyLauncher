@@ -109,7 +109,8 @@ public class GameUpdater {
 			return false;
 		}
 		
-		if (!this.updateDir.exists()) this.updateDir.mkdir();
+		if (this.updateDir.exists()) this.purgeDir(updateDir);
+		this.updateDir.mkdirs();
 		
 		if (!new File(this.updateDir.getPath() + File.separator + "minecraft.jar").exists()) downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
 		
@@ -125,8 +126,11 @@ public class GameUpdater {
 		
 		this.addFilesToExistingZip(updateMC, spoutMod);
 		
+		File mcJar = new File(binDir, "minecraft.jar");
+		mcJar.delete();
+		
 		//Move file
-		updateMC.renameTo(new File(binDir, updateMC.getName()));
+		updateMC.renameTo(mcJar);
 		
 		return true;
 	}
@@ -361,6 +365,8 @@ public class GameUpdater {
 		String latest = this.getBCVersion();
 		
 		if (latest == null) throw new MCNetworkException();
+		
+		if (latest.contains(".")) return true;
 		
 		int c = Integer.parseInt(version);
 		int l = Integer.parseInt(latest);
