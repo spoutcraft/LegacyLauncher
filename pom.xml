@@ -39,7 +39,7 @@
     <!-- Continuous integration -->
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.spoutcraft.org</url>
+        <url>http://ci.getspout.org</url>
     </ciManagement>
 
     <!-- Repository locations -->
