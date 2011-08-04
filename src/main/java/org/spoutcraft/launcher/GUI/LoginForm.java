@@ -1,7 +1,10 @@
 package org.spoutcraft.launcher.GUI;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
 import java.awt.EventQueue;
+import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -17,6 +20,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
+import java.util.Vector;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -72,17 +76,17 @@ public class LoginForm extends JFrame implements ActionListener {
 		});
 	}
 
-	  private Cipher getCipher(int mode, String password) throws Exception {
-	    Random random = new Random(43287234L);
-	    byte[] salt = new byte[8];
-	    random.nextBytes(salt);
-	    PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
+	private Cipher getCipher(int mode, String password) throws Exception {
+		Random random = new Random(43287234L);
+		byte[] salt = new byte[8];
+		random.nextBytes(salt);
+		PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
 
-	    SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
-	    Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-	    cipher.init(mode, pbeKey, pbeParamSpec);
-	    return cipher;
-	  }
+		SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
+		Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
+		cipher.init(mode, pbeKey, pbeParamSpec);
+		return cipher;
+	}
 	
 	/**
 	 * Create the frame.
@@ -185,8 +189,49 @@ public class LoginForm extends JFrame implements ActionListener {
 		contentPane.add(btnOptions);
 		contentPane.add(lblNewLabel);
 		contentPane.add(scrollPane);
+		
+		Vector<Component> order = new Vector<Component>(5);
+		order.add(cmbUsername.getEditor().getEditorComponent());
+		order.add(txtPassword);
+		order.add(cbRemember);
+		order.add(btnLogin);
+		order.add(btnOptions);
+		
+		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 	}
 	
+	public static class SpoutFocusTraversalPolicy extends FocusTraversalPolicy {
+		Vector<Component> order;
+
+		public SpoutFocusTraversalPolicy(Vector<Component> order) {
+			this.order = new Vector<Component>(order.size());
+			this.order.addAll(order);
+		}
+		public Component getComponentAfter(Container focusCycleRoot, Component aComponent) {
+			int idx = (order.indexOf(aComponent) + 1) % order.size();
+			return order.get(idx);
+		}
+
+		public Component getComponentBefore(Container focusCycleRoot, Component aComponent) {
+			int idx = order.indexOf(aComponent) - 1;
+			if (idx < 0) {
+				idx = order.size() - 1;
+			}
+			return order.get(idx);
+		}
+
+		public Component getDefaultComponent(Container focusCycleRoot) {
+			return order.get(0);
+		}
+
+		public Component getLastComponent(Container focusCycleRoot) {
+			return order.lastElement();
+		}
+
+		public Component getFirstComponent(Container focusCycleRoot) {
+			return order.get(0);
+		}
+	}
 	
 	HashMap<String, String> usernames = new HashMap<String, String>();
 	private void readUsedUsernames() {
