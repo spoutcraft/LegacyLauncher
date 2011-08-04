@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
@@ -87,13 +88,14 @@ public class LoginForm extends JFrame implements ActionListener {
 	 * Create the frame.
 	 */
 	JEditorPane jedHTML = new JEditorPane();
+	JScrollPane scrollPane = new JScrollPane(jedHTML);
 	@SuppressWarnings("rawtypes")
 	private Stack urlStack = new Stack();
 	private JPasswordField txtPassword;
 	private JComboBox cmbUsername = new JComboBox();
 	private JButton btnLogin = new JButton("Login");		
 	private JCheckBox cbRemember = new JCheckBox("Remember");
-	private JButton btnOptions = new JButton("Options");;
+	private JButton btnOptions = new JButton("Options");
 	
 	public LoginForm() {
 		
@@ -105,16 +107,14 @@ public class LoginForm extends JFrame implements ActionListener {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
 		
+		jedHTML.setEditable(false);
 		try {
-			jedHTML = new JEditorPane("http://updates.getspout.org/");
-			jedHTML.setEditable(false);
+			jedHTML.setPage("http://updates.getspout.org/");
 		} catch (IOException e1) {
-			jedHTML = new JEditorPane();
-			jedHTML.setEditable(false);
 			jedHTML.setText("Could not connect to the Spoutcraft Updates Page. Don't worry about it though :P");
 		}
 		
-		jedHTML.setBounds(0, 0, 855, 381);
+		scrollPane.setBounds(0, 0, 855, 381);
 		jedHTML.setForeground(new Color(255, 255, 255));
 		
 		jedHTML.addHyperlinkListener(new HyperlinkListener()
@@ -184,7 +184,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		btnOptions.setBounds(761, 418, 86, 23);
 		contentPane.add(btnOptions);
 		contentPane.add(lblNewLabel);
-		contentPane.add(jedHTML);
+		contentPane.add(scrollPane);
 	}
 	
 	
