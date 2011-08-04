@@ -63,6 +63,17 @@
    
     <build>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+        <!-- Resources -->
+        <resources>
+            <resource>
+                <targetPath>.</targetPath>
+                <filtering>true</filtering>
+                <directory>${basedir}/src/</directory>
+                <includes>
+                    <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+        </resources>
         <!-- Plugins -->
         <plugins>
             <!-- Compile plugin -->
