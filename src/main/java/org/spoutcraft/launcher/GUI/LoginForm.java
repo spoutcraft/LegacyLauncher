@@ -6,18 +6,15 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.Stack;
 
@@ -103,13 +100,22 @@ public class LoginForm extends JFrame implements ActionListener {
 		btnLogin.setBounds(761, 390, 86, 23);
 		btnLogin.addActionListener(this);
 		btnOptions.addActionListener(this);
+		cmbUsername.addActionListener(this);
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
+		
+		try {
+			jedHTML = new JEditorPane("http://updates.getspout.org/");
+			jedHTML.setEditable(false);
+		} catch (IOException e1) {
+			jedHTML = new JEditorPane();
+			jedHTML.setEditable(false);
+			jedHTML.setText("Could not connect to the Spoutcraft Updates Page. Don't worry about it though :P");
+		}
+		
 		jedHTML.setBounds(0, 0, 855, 381);
-		jedHTML.setEditable(false);
 		jedHTML.setForeground(new Color(255, 255, 255));
-		jedHTML.setText("This will later show the HTML page for Spoutcraft launcher, and it will not show this ugly background. The grey is solely so I can see the boundaries of the JEditPane");
 		
 		jedHTML.addHyperlinkListener(new HyperlinkListener()
         {
@@ -154,7 +160,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(633, 419, 119, 20);
 		
-		readUsername();
+		readUsedUsernames();
 		
 		JLabel lblNewLabel = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		lblNewLabel.setBounds(757, 447, 86, 14);
@@ -182,66 +188,53 @@ public class LoginForm extends JFrame implements ActionListener {
 	}
 	
 	
-	ArrayList<String> usernames = new ArrayList<String>();
-	private void readUsername() {
-		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
-		if (!recentsU.exists()) return;
-		try{
-			FileInputStream fstream = new FileInputStream(recentsU);
-			DataInputStream in = new DataInputStream(fstream);
-			BufferedReader br = new BufferedReader(new InputStreamReader(in));
-			String strLine;
-			while ((strLine = br.readLine()) != null)   {
-				this.cmbUsername.addItem(strLine);
-				usernames.add(strLine);
-			}
-			in.close();
-		}catch (Exception e){
-		}
+	HashMap<String, String> usernames = new HashMap<String, String>();
+	private void readUsedUsernames() {
 		try {
 			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
-
+			if (!lastLogin.exists()) return;
 			Cipher cipher = getCipher(2, "passwordfile");
+			
 			DataInputStream dis;
 			if (cipher != null)
 				dis = new DataInputStream(new CipherInputStream(new FileInputStream(lastLogin), cipher));
 			else {
 				dis = new DataInputStream(new FileInputStream(lastLogin));
 			}
-			String username = dis.readUTF();
-			this.cmbUsername.addItem(username);
-			usernames.add(username);
-			this.txtPassword.setText(dis.readUTF());
-			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
+			
+			try {
+				while (true) {
+					String user = dis.readUTF();
+					String pass = dis.readUTF();
+					usernames.put(user, pass);
+					this.cmbUsername.addItem(user);
+				}
+			} catch (EOFException e) { }
 			dis.close();
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
+		this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
 	}
 	
 
-	private void writeUsername(String user) {
-		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
-		try{
-			FileWriter fstream = new FileWriter(recentsU,true);
-			BufferedWriter out = new BufferedWriter(fstream);
-			out.write(user);
-			out.write("\n");
-			out.close();
-		}catch (Exception e){
-		}
+	private void writeUsernameList() {
 		try {
 			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
 
 			Cipher cipher = getCipher(1, "passwordfile");
 			DataOutputStream dos;
 			if (cipher != null)
-				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin, true), cipher));
+				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin), cipher));
 			else {
 				dos = new DataOutputStream(new FileOutputStream(lastLogin, true));
 			}
-			dos.writeUTF(user);
-			dos.writeUTF(this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+			for (String user : usernames.keySet()) {
+				dos.writeUTF(user);
+				dos.writeUTF(usernames.get(user));
+			}
 			dos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -249,11 +242,12 @@ public class LoginForm extends JFrame implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent evt) {
-		String btnID = evt.getActionCommand(); 
+		String btnID = evt.getActionCommand();
 		if (btnID.equals("Login")) {
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
-				if (!usernames.contains(this.cmbUsername.getSelectedItem().toString())) this.writeUsername(this.cmbUsername.getSelectedItem().toString());
+				usernames.put(this.cmbUsername.getSelectedItem().toString(), this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+				writeUsernameList();
 				GameUpdater gu = new GameUpdater(values[2].trim(), values[1].trim(), values[0].trim());
 				gu.updateMC();
 				gu.updateSpout(false);
@@ -279,6 +273,9 @@ public class LoginForm extends JFrame implements ActionListener {
 		} else if (btnID.equals("Options")) {
 			OptionDialog options = new OptionDialog();
 			options.setVisible(true);
+		} else if (btnID.equals("comboBoxChanged")) {
+			this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
+			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
 		}
 	}
 }
