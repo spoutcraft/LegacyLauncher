@@ -39,34 +39,38 @@
     <!-- Continuous integration -->
     <ciManagement>
         <system>jenkins</system>
-        <url>http://ci.spoutcraft.org</url>
+        <url>http://ci.getspout.org</url>
     </ciManagement>
 
     <!-- Repository locations -->
     <repositories>
-        <!-- <repository>
-            <id>craftfire-repo</id>
-            <url>http://repo.craftfire.com</url>
-        </repository> -->
         <repository>
-            <id>craftfire-dbrepo</id>
-            <url>http://db.craftfire.com/repo</url>
+            <id>spout-repo</id>
+            <url>http://repo.getspout.org</url>
         </repository>
     </repositories>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- Testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
    
     <build>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-
         <!-- Plugins -->
         <plugins>
-
             <!-- Compile plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
             </plugin>
-
             <!-- JAR creation plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -80,9 +84,7 @@
                     </archive>
                 </configuration>
             </plugin>
-
         </plugins>
-
     </build>
 
 </project>

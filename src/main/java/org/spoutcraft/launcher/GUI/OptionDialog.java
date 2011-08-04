@@ -4,8 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 
 import javax.swing.JButton;
@@ -15,7 +13,6 @@ import javax.swing.border.EmptyBorder;
 
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SettingsHandler;
-import javax.swing.JLabel;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
@@ -45,6 +42,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JCheckBox cbxDev = new JCheckBox("Use latest dev build. Remember to only use this if you know what you are doing!");
 	
 	JCheckBox cbxClip = new JCheckBox("Allow access to your clipboard");
+	
+	JCheckBox cbxBack = new JCheckBox("Include worlds when doing automated backup");
 
 
 	/**
@@ -55,31 +54,42 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 		settings.load();
 		
+		System.out.println(settings.getLineCount());
+		
+		if (settings.checkProperty("devupdate")) {
+			cbxDev.setSelected(settings.getPropertyBoolean("devupdate"));
+		}
+		if (settings.checkProperty("clipboardaccess")) {
+			cbxClip.setSelected(settings.getPropertyBoolean("clipboardaccess"));
+		}
+		if (settings.checkProperty("worldbackup")) {
+			cbxBack.setSelected(settings.getPropertyBoolean("worldbackup"));
+		}
+		
 		setResizable(false);
-		setBounds(100, 100, 457, 121);
+		setBounds(100, 100, 500, 150);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
-		JCheckBox chckbxNewCheckBox = new JCheckBox("Use latest dev build. Remember to only use this if you know what you are doing!");
-		
-		JCheckBox chckbxAllowAccessTo = new JCheckBox("Allow access to your clipboard");
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(chckbxNewCheckBox)
-						.addComponent(chckbxAllowAccessTo))
+						.addComponent(cbxDev)
+						.addComponent(cbxClip)
+						.addComponent(cbxBack))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addComponent(chckbxNewCheckBox)
+					.addComponent(cbxDev)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(chckbxAllowAccessTo)
+					.addComponent(cbxClip)
+					.addComponent(cbxBack)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
@@ -105,16 +115,21 @@ public class OptionDialog extends JDialog implements ActionListener {
 
 	public void actionPerformed(ActionEvent evt) {
 		String btnID = evt.getActionCommand(); 
-		if (btnID.equals("Ok")) {
+		if (btnID.equals("OK")) {
 			if (settings.checkProperty("devupdate")) {
 				settings.changeProperty("devupdate", cbxDev.isSelected());
 			} else {
 				settings.put("devupdate", cbxDev.isSelected());
 			}
-			if (settings.checkProperty("clipboardAccess")) {
-				settings.changeProperty("clipboardAccess", cbxClip.isSelected());
+			if (settings.checkProperty("clipboardaccess")) {
+				settings.changeProperty("clipboardaccess", cbxClip.isSelected());
 			} else {
-				settings.put("clipboardAccess", cbxClip.isSelected());
+				settings.put("clipboardaccess", cbxClip.isSelected());
+			}
+			if (settings.checkProperty("worldbackup")) {
+				settings.changeProperty("worldbackup", cbxBack.isSelected());
+			} else {
+				settings.put("worldbackup", cbxBack.isSelected());
 			}
 			this.setVisible(false);
 			this.dispose();
