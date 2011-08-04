@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
@@ -16,8 +18,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -28,7 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
@@ -39,10 +39,6 @@ import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
-
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.SwingConstants;
 
 public class LoginForm extends JFrame implements ActionListener {
 
@@ -71,7 +67,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	JEditorPane dtrpnThisWillLater = new JEditorPane();
+	JEditorPane jedHTML = new JEditorPane();
 	@SuppressWarnings("rawtypes")
 	private Stack urlStack = new Stack();
 	private JPasswordField txtPassword;
@@ -89,11 +85,11 @@ public class LoginForm extends JFrame implements ActionListener {
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
-		dtrpnThisWillLater.setBounds(0, 0, 855, 381);
-		dtrpnThisWillLater.setForeground(new Color(255, 255, 255));
-		dtrpnThisWillLater.setText("This will later show the HTML page for Spoutcraft launcher, and it will not show this ugly background. The grey is solely so I can see the boundaries of the JEditPane");
+		jedHTML.setBounds(0, 0, 855, 381);
+		jedHTML.setForeground(new Color(255, 255, 255));
+		jedHTML.setText("This will later show the HTML page for Spoutcraft launcher, and it will not show this ugly background. The grey is solely so I can see the boundaries of the JEditPane");
 		
-		dtrpnThisWillLater.addHyperlinkListener(new HyperlinkListener()
+		jedHTML.addHyperlinkListener(new HyperlinkListener()
         {
              @SuppressWarnings("unchecked")
 			public void hyperlinkUpdate(HyperlinkEvent event)
@@ -103,9 +99,9 @@ public class LoginForm extends JFrame implements ActionListener {
                        try {
                             urlStack.push(event.getURL().toString());
 
-                            dtrpnThisWillLater.setPage(event.getURL());
+                            jedHTML.setPage(event.getURL());
                        } catch(IOException e) {
-                            dtrpnThisWillLater.setText("Error: " + e);
+                            jedHTML.setText("Error: " + e);
                        }
                   }
              }
@@ -123,7 +119,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		lblLogo.setIcon(new ImageIcon(LoginForm.class.getResource("/org/spoutcraft/launcher/spoutcraft.png")));
 		
 		
-		dtrpnThisWillLater.setBackground(Color.DARK_GRAY);
+		jedHTML.setBackground(Color.DARK_GRAY);
 		
 		JLabel lblMinecraftUsername = new JLabel("Minecraft Username: ");
 		lblMinecraftUsername.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -160,7 +156,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		btnOptions.setBounds(761, 418, 86, 23);
 		contentPane.add(btnOptions);
 		contentPane.add(lblNewLabel);
-		contentPane.add(dtrpnThisWillLater);
+		contentPane.add(jedHTML);
 	}
 	
 	
@@ -203,7 +199,7 @@ public class LoginForm extends JFrame implements ActionListener {
 				if (!usernames.contains(this.cmbUsername.getSelectedItem().toString())) this.writeUsername(this.cmbUsername.getSelectedItem().toString());
 				GameUpdater gu = new GameUpdater(values[2].trim(), values[1].trim(), values[0].trim());
 				gu.updateMC();
-				gu.updateBC(false);
+				gu.updateSpout(false);
 				
 				LauncherFrame launcher = new LauncherFrame();
 				
@@ -220,7 +216,6 @@ public class LoginForm extends JFrame implements ActionListener {
 				JOptionPane.showMessageDialog(this,"Incorrect username/password combination");
 				e.printStackTrace();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			

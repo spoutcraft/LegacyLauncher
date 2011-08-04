@@ -29,50 +29,34 @@ public class LauncherFrame extends Frame implements WindowListener{
 	}
 	
 	public void runGame(String user, String session, String downloadTicket, String mcpass) {
-		
+
 		this.setVisible(true);
-		
+
 		Applet applet = Launcher.getMinecraftApplet();
 
-       minecraft = new MinecraftAppletEnglober(applet);
-        /*minecraft.addParameter("userName", user);
-        minecraft.addParameter("sessionId", session);
-        minecraft.addParameter("downloadTicket", downloadTicket);
-        minecraft.addParameter("stand-alone", "true");*/
-        
-        minecraft.addParameter("username", user);
-        minecraft.addParameter("sessionid", session);
-        minecraft.addParameter("downloadticket", downloadTicket);
-        //minecraft.addParameter("stand-alone", "true");
-        minecraft.addParameter("mppass", mcpass);
-        
-        /*
-         this.launcher.customParameters.put("userName", values[2].trim());
-      this.launcher.customParameters.put("latestVersion", values[0].trim());
-      this.launcher.customParameters.put("downloadTicket", values[1].trim());
-      this.launcher.customParameters.put("sessionId", values[3].trim()); 
-         
-         */
-        
-        applet.setStub(minecraft);
-		
-        this.add(minecraft);
-        validate();
-        
-        minecraft.init();
-        minecraft.setSize(getWidth(), getHeight());
-              
-        minecraft.start();
+		minecraft = new MinecraftAppletEnglober(applet);
+
+		minecraft.addParameter("username", user);
+		minecraft.addParameter("sessionid", session);
+		minecraft.addParameter("downloadticket", downloadTicket);
+		minecraft.addParameter("mppass", mcpass);
+
+		applet.setStub(minecraft);
+
+		this.add(minecraft);
+		validate();
+
+		minecraft.init();
+		minecraft.setSize(getWidth(), getHeight());
+
+		minecraft.start();
 	}
 	
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void windowActivated(WindowEvent e) {		
 	}
 
 	
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -83,24 +67,20 @@ public class LauncherFrame extends Frame implements WindowListener{
 
 	
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
 	}
 }

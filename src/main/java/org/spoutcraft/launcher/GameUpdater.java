@@ -43,11 +43,11 @@ public class GameUpdater {
 	public final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
 	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
-	public final File bcDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
+	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
 	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String bcDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
-	public final String bcDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	
 	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
@@ -79,24 +79,12 @@ public class GameUpdater {
 		
 		// Processs minecraft.jar \\
 		downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
-		// Later in the process we will mod and move it
 		
 		// Process other Downloads
 		downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
 		downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
 		downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
-		getNatives();
-		
-		// Unzip lzma \\
-		/*extractLZMA(this.updateDir.getPath() + File.separator + "jinput.jar.pack.lzma" ,this.updateDir.getPath() + File.separator + "jinput.jar.pack");
-		extractLZMA(this.updateDir.getPath() + File.separator + "lwjgl.jar.pack.lzma" ,this.updateDir.getPath() + File.separator + "lwjgl.jar.pack");
-		extractLZMA(this.updateDir.getPath() + File.separator + "lwjgl_util.jar.pack.lzma" ,this.updateDir.getPath() + File.separator + "lwjgl_util.jar.pack");*/
-		extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.jar");
-		
-		// unzip pack and move to bin \\
-		/*extractPack(this.updateDir.getPath() + File.separator + "jinput.jar.pack" ,this.binDir.getPath() + File.separator + "jinput.jar");
-		extractPack(this.updateDir.getPath() + File.separator + "lwjgl.jar.pack" ,this.binDir.getPath() + File.separator + "lwjgl.jar");
-		extractPack(this.updateDir.getPath() + File.separator + "lwjgl_util.jar.pack" ,this.binDir.getPath() + File.separator + "lwjgl_util.jar");*/
+		getNatives();		
 		
 		// Extract Natives \\
 		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.jar"));
@@ -106,9 +94,9 @@ public class GameUpdater {
 		return true;
 	}
 	
-	public boolean updateBC(Boolean force) throws Exception {
+	public boolean updateSpout(Boolean force) throws Exception {
 		System.out.print("Checking for Spout update...\n");
-		if (!this.checkBCUpdate() && !force) {
+		if (!this.checkSpoutUpdate() && !force) {
 			System.out.print("Spout is up to date :)\n");
 			return false;
 		}
@@ -123,12 +111,12 @@ public class GameUpdater {
 		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
 		
 		if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
-			downloadFile(bcDownloadDevURL, spout.getPath());
+			downloadFile(spoutDownloadDevURL, spout.getPath());
 		} else {
-			downloadFile(bcDownloadURL, spout.getPath());
+			downloadFile(spoutDownloadURL, spout.getPath());
 		}
 		
-		this.unzipBC();
+		this.unzipSpout();
 		
 		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "Spout"));
 		
@@ -142,16 +130,16 @@ public class GameUpdater {
 		//Move file
 		updateMC.renameTo(mcJar);
 		
-		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
+		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
 		if (bcVersion.exists()) bcVersion.delete();
 		
-		this.writeFile(bcVersion.getPath(), this.getBCVersion());
+		this.writeFile(bcVersion.getPath(), this.getSpoutVersion());
 		
 		return true;
 	}
 	
 	public void performBackup() throws Exception {
-		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
+		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return;
 		
 		BufferedReader br;
@@ -240,6 +228,7 @@ public class GameUpdater {
 	}
 	
 	//I know that is is not the best method but screw it, I am tired of trying to do it myself :P
+	@SuppressWarnings("unused")
 	private void extractLZMA(String in, String out) throws Exception {
 		String[] args = { "d", in, out };
 		LzmaAlone.main(args);
@@ -398,8 +387,8 @@ public class GameUpdater {
 		tempFile.delete();
 	}
 
-	// BukkitContrib Stuff \\
-	public String getBCVersion() throws Exception {
+	// Spout Stuff \\
+	public String getSpoutVersion() throws Exception {
 		 String version = "-1";
 		 URL url;
 		 if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
@@ -418,10 +407,10 @@ public class GameUpdater {
 		 return null;
 	 }
 	
-	private boolean checkBCUpdate() throws Exception {
+	private boolean checkSpoutUpdate() throws Exception {
 		if (!PlatformUtils.getWorkingDirectory().exists()) return true;
-		if (!this.bcDir.exists()) return true;
-		File bcVersion = new File(this.bcDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!this.spoutDir.exists()) return true;
+		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return true;
 		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
 		String line = null;
@@ -430,7 +419,7 @@ public class GameUpdater {
 			version = line;
 		}
 		
-		String latest = this.getBCVersion();
+		String latest = this.getSpoutVersion();
 
 		if (latest == null) return false;
 		if (version.contains(".")) return true;
@@ -445,7 +434,7 @@ public class GameUpdater {
 		return false;
 	}
 	
-	public void unzipBC() throws Exception {
+	public void unzipSpout() throws Exception {
 		final int BUFFER = 2048;
 		BufferedOutputStream dest = null;
 		FileInputStream fis = new FileInputStream(new File(this.updateDir.getPath() + File.separator + "Spout.zip"));
