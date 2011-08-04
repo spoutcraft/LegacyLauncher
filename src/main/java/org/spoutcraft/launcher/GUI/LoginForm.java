@@ -78,16 +78,25 @@ public class LoginForm extends JFrame implements ActionListener {
 	
 	public LoginForm() {
 		
-		readUsername();
+		readUsedUsernames();
 		btnLogin.setBounds(761, 390, 86, 23);
 		btnLogin.addActionListener(this);
 		btnOptions.addActionListener(this);
 		
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
+		
+		try {
+			jedHTML = new JEditorPane("http://updates.getspout.org/");
+			jedHTML.setEditable(false);
+		} catch (IOException e1) {
+			jedHTML = new JEditorPane();
+			jedHTML.setEditable(false);
+			jedHTML.setText("Could not connect to the Spoutcraft Updates Page. Don't worry about it though :P");
+		}
+		
 		jedHTML.setBounds(0, 0, 855, 381);
 		jedHTML.setForeground(new Color(255, 255, 255));
-		jedHTML.setText("This will later show the HTML page for Spoutcraft launcher, and it will not show this ugly background. The grey is solely so I can see the boundaries of the JEditPane");
 		
 		jedHTML.addHyperlinkListener(new HyperlinkListener()
         {
@@ -161,7 +170,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	
 	
 	ArrayList<String> usernames = new ArrayList<String>();
-	public void readUsername() {
+	public void readUsedUsernames() {
 		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
 		if (!recentsU.exists()) return;
 		try{
@@ -178,7 +187,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		}
 	}
 	
-	public void writeUsername(String user) {
+	public void writeUsernameList(String user) {
 		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
 		try{
 			FileWriter fstream = new FileWriter(recentsU,true);
@@ -196,7 +205,12 @@ public class LoginForm extends JFrame implements ActionListener {
 		if (btnID.equals("Login")) {
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
-				if (!usernames.contains(this.cmbUsername.getSelectedItem().toString())) this.writeUsername(this.cmbUsername.getSelectedItem().toString());
+				if (!usernames.contains(this.cmbUsername.getSelectedItem().toString())) this.writeUsernameList(this.cmbUsername.getSelectedItem().toString());
+				
+				if (cbRemember.isSelected()) {
+					
+				}
+				
 				GameUpdater gu = new GameUpdater(values[2].trim(), values[1].trim(), values[0].trim());
 				gu.updateMC();
 				gu.updateSpout(false);
@@ -224,4 +238,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			options.setVisible(true);
 		}
 	}
+	
+		
+	
 }
