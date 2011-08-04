@@ -9,15 +9,25 @@ import java.awt.event.ActionListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Stack;
 
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -64,6 +74,18 @@ public class LoginForm extends JFrame implements ActionListener {
 		});
 	}
 
+	  private Cipher getCipher(int mode, String password) throws Exception {
+	    Random random = new Random(43287234L);
+	    byte[] salt = new byte[8];
+	    random.nextBytes(salt);
+	    PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
+
+	    SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
+	    Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
+	    cipher.init(mode, pbeKey, pbeParamSpec);
+	    return cipher;
+	  }
+	
 	/**
 	 * Create the frame.
 	 */
@@ -78,7 +100,6 @@ public class LoginForm extends JFrame implements ActionListener {
 	
 	public LoginForm() {
 		
-		readUsername();
 		btnLogin.setBounds(761, 390, 86, 23);
 		btnLogin.addActionListener(this);
 		btnOptions.addActionListener(this);
@@ -86,6 +107,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
 		jedHTML.setBounds(0, 0, 855, 381);
+		jedHTML.setEditable(false);
 		jedHTML.setForeground(new Color(255, 255, 255));
 		jedHTML.setText("This will later show the HTML page for Spoutcraft launcher, and it will not show this ugly background. The grey is solely so I can see the boundaries of the JEditPane");
 		
@@ -132,7 +154,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(633, 419, 119, 20);
 		
-		
+		readUsername();
 		
 		JLabel lblNewLabel = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		lblNewLabel.setBounds(757, 447, 86, 14);
@@ -161,7 +183,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	
 	
 	ArrayList<String> usernames = new ArrayList<String>();
-	public void readUsername() {
+	private void readUsername() {
 		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
 		if (!recentsU.exists()) return;
 		try{
@@ -176,9 +198,29 @@ public class LoginForm extends JFrame implements ActionListener {
 			in.close();
 		}catch (Exception e){
 		}
+		try {
+			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
+
+			Cipher cipher = getCipher(2, "passwordfile");
+			DataInputStream dis;
+			if (cipher != null)
+				dis = new DataInputStream(new CipherInputStream(new FileInputStream(lastLogin), cipher));
+			else {
+				dis = new DataInputStream(new FileInputStream(lastLogin));
+			}
+			String username = dis.readUTF();
+			this.cmbUsername.addItem(username);
+			usernames.add(username);
+			this.txtPassword.setText(dis.readUTF());
+			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
+			dis.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
-	public void writeUsername(String user) {
+
+	private void writeUsername(String user) {
 		File recentsU = new File(PlatformUtils.getWorkingDirectory(), "recentUsernames");
 		try{
 			FileWriter fstream = new FileWriter(recentsU,true);
@@ -188,7 +230,22 @@ public class LoginForm extends JFrame implements ActionListener {
 			out.close();
 		}catch (Exception e){
 		}
+		try {
+			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
 
+			Cipher cipher = getCipher(1, "passwordfile");
+			DataOutputStream dos;
+			if (cipher != null)
+				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin, true), cipher));
+			else {
+				dos = new DataOutputStream(new FileOutputStream(lastLogin, true));
+			}
+			dos.writeUTF(user);
+			dos.writeUTF(this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+			dos.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void actionPerformed(ActionEvent evt) {
