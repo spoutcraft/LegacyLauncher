@@ -65,6 +65,9 @@ public class LoginForm extends JFrame implements ActionListener {
 	 */
 	private static final long serialVersionUID = -192904429165686059L;
 	private JPanel contentPane;
+	GameUpdater gu = new GameUpdater();
+	public Boolean mcUpdate = false;
+	public Boolean spoutUpdate = false;
 
 	/**
 	 * Launch the application.
@@ -107,6 +110,9 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JScrollPane scrollPane;
 	
 	public LoginForm() {
+		
+		
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btnLogin.setBounds(745, 375, 86, 23);
@@ -244,6 +250,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		order.add(btnOptions);
 		
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
+		
 	}
 	
 	private void downloadFile(String url, String outPut) throws Exception {
@@ -395,7 +402,9 @@ public class LoginForm extends JFrame implements ActionListener {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
+	
 	public void actionPerformed(ActionEvent evt) {
 		String btnID = evt.getActionCommand();
 		if (evt.getSource() == btnLogin1 || evt.getSource() == btnLogin2) {
@@ -408,9 +417,18 @@ public class LoginForm extends JFrame implements ActionListener {
 				usernames.remove(this.cmbUsername.getSelectedItem().toString());
 				usernames.put(this.cmbUsername.getSelectedItem().toString(), this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
 				writeUsernameList();
-				GameUpdater gu = new GameUpdater(values[2].trim(), values[1].trim(), values[0].trim());
-				gu.updateMC();
-				gu.updateSpout(false);
+				
+				
+				gu.user =  values[2].trim();
+				gu.downloadTicket = values[1].trim();
+				gu.latestVersion =  Long.parseLong(values[0].trim());
+				
+				if (this.mcUpdate) {
+					gu.updateMC();
+					gu.updateSpout();
+				} else if (this.spoutUpdate) {
+					gu.updateSpout();
+				}
 				
 				LauncherFrame launcher = new LauncherFrame();
 				
@@ -438,5 +456,33 @@ public class LoginForm extends JFrame implements ActionListener {
 			this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
 			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
 		}
+	}
+	
+	public void onLoad() {
+		//check for MC updates
+		System.out.print("Checking for Minecraft Update...\n");
+		try {
+			if (!gu.mcUpdateAvailible(new File(gu.binDir + File.separator + "version")) && !gu.force) {
+				System.out.print("Minecraft is up to date.\n");
+			} else {
+				mcUpdate = true;
+			}
+		} catch (Exception e) {
+			mcUpdate = false;
+		}
+		
+		//check for spout updates
+		System.out.print("Checking for Spout update...\n");
+		try {
+			if (!gu.checkSpoutUpdate() && !gu.force) {
+				System.out.print("Spout is up to date :)\n");
+			} else {
+				spoutUpdate = false;
+			}
+		} catch (Exception e) {
+			spoutUpdate = false;
+		}
+		
+		
 	}
 }

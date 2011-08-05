@@ -17,7 +17,8 @@ public class Main {
 		PlatformUtils.getWorkingDirectory().mkdir();
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
 		LoginForm login = new LoginForm();
-		login.setVisible(true);	
+		login.setVisible(true);
+		login.onLoad();
 	}
 	
 	

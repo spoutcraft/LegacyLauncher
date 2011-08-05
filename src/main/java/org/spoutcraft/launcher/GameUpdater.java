@@ -50,27 +50,16 @@ public class GameUpdater {
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	public boolean devmode = false;
-	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
-		this.user = user;
-		this.downloadTicket = downloadTicket;
-		this.latestVersion = Long.parseLong(latestVersion);
+	
+	public GameUpdater() { 
 		settings.load();
 		if (settings.checkProperty("devupdate")) devmode = settings.getPropertyBoolean("devupdate");
 	}
 	
-	public GameUpdater(String user, String downloadTicket, String latestVersion, Boolean forceUpdate) { 
-		this.user = user;
-		this.downloadTicket = downloadTicket;
-		this.latestVersion = Long.parseLong(latestVersion);
-		this.force = forceUpdate;
-	}
 	
-	public boolean updateMC() throws Exception {
-		System.out.print("Checking for Minecraft Update...\n");
-		if (!this.mcUpdateAvailible(new File(this.binDir + File.separator + "version")) && !this.force) {
-			System.out.print("Minecraft is up to date.\n");
-			return false;
-		}
+	
+	public void updateMC() throws Exception {
+		
 		this.purgeDir(binDir);
 		this.purgeDir(updateDir);
 		
@@ -93,17 +82,9 @@ public class GameUpdater {
 		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.jar"));
 		
 		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
-		
-		return true;
 	}
 	
-	public boolean updateSpout(Boolean force) throws Exception {
-		System.out.print("Checking for Spout update...\n");
-		if (!this.checkSpoutUpdate() && !force) {
-			System.out.print("Spout is up to date :)\n");
-			return false;
-		}
-		
+	public boolean updateSpout() throws Exception {
 		performBackup();
 		
 		if (this.updateDir.exists()) this.purgeDir(updateDir);
@@ -414,7 +395,7 @@ public class GameUpdater {
 		 return null;
 	 }
 	
-	private boolean checkSpoutUpdate() throws Exception {
+	public boolean checkSpoutUpdate() throws Exception {
 		if (!PlatformUtils.getWorkingDirectory().exists()) return true;
 		if (!this.spoutDir.exists()) return true;
 		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
