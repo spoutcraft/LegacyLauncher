@@ -115,7 +115,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		}
 		
 		scrollPane.setBounds(0, 0, 855, 381);
-		jedHTML.setForeground(new Color(255, 255, 255));
+		jedHTML.setForeground(new Color(0, 0, 0));
 		
 		jedHTML.addHyperlinkListener(new HyperlinkListener()
         {
@@ -262,7 +262,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			} catch (MCNetworkException e) {
 				JOptionPane.showMessageDialog(this,"Cannot connect to minecraft.net");
 			} catch (OutdatedMCLauncherException e) {
-				JOptionPane.showMessageDialog(this,"The unthinkable has happened, alert alta189@getsport.org!!!!");
+				JOptionPane.showMessageDialog(this,"The unthinkable has happened, alert alta189@getspout.org!!!!");
 			} catch (UnsupportedEncodingException e) {
 				JOptionPane.showMessageDialog(this,"Incorrect username/password combination");
 				e.printStackTrace();
