@@ -87,6 +87,7 @@ public class GameUpdater {
 		getNatives();		
 		
 		// Extract Natives \\
+		extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.jar");
 		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.jar"));
 		
 		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
@@ -162,6 +163,7 @@ public class GameUpdater {
 		exclude.add(this.updateDir);
 		
 		zip.createNewFile();
+		
 		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
 	}
 	
