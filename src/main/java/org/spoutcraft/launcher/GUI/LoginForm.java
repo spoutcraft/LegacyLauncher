@@ -47,7 +47,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -105,7 +104,6 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnOptions = new JButton("Options");
 	private JButton btnLogin1;
 	private JButton btnLogin2;
-	private JToggleButton btnNewButton;
 	private JScrollPane scrollPane;
 	
 	public LoginForm() {
@@ -167,6 +165,43 @@ public class LoginForm extends JFrame implements ActionListener {
 		
 		cbRemember.setOpaque(false);
 		
+		JTextPane editorPane = new JTextPane();
+		editorPane.setContentType("text/html");
+		try {
+			editorPane.setPage(new URL("http://updates.getspout.org/"));
+		} catch (MalformedURLException e1) {
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		editorPane.setEditable(false);
+		editorPane.setOpaque(false);
+		
+		JLabel trans2;
+		
+		scrollPane = new JScrollPane(editorPane);
+		scrollPane.setBounds(473, 11, 372, 340);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.setOpaque(false);
+		scrollPane.getViewport().setOpaque(false);
+		
+		editorPane.setCaretPosition(0);
+		trans2 = new JLabel();
+		trans2.setBackground(new Color(229, 246, 255, 100));
+		trans2.setOpaque(true);
+		trans2.setBounds(473, 11, 372, 340);
+
+		JLabel login = new JLabel();
+		login.setBackground(new Color(255, 255, 255, 120));
+		login.setOpaque(true);
+		login.setBounds(473, 362, 372, 99);
+		
+		JLabel trans;
+		trans = new JLabel();
+		trans.setBackground(new Color(229, 246, 255, 60));
+		trans.setOpaque(true);
+		trans.setBounds(0, 0, 854, 480);
+		
 		cmbUsername.setEditable(true);
 		contentPane.setLayout(null);
 		cbRemember.setBounds(617, 428, 93, 23);
@@ -183,49 +218,9 @@ public class LoginForm extends JFrame implements ActionListener {
 		contentPane.add(btnLogin1);
 		contentPane.add(btnLogin2);
 		
-		JTextPane editorPane = new JTextPane();
-		editorPane.setContentType("text/html");
-		try {
-			editorPane.setPage(new URL("http://updates.getspout.org/"));
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		editorPane.setEditable(false);
-		editorPane.setBackground(new Color(229, 246, 255));
-		
-		btnNewButton = new JToggleButton("");
-		btnNewButton.setBounds(823, 12, 15, 15);
-		btnNewButton.setSelected(true);
-		btnNewButton.addActionListener(this);
-		btnNewButton.setBackground(new Color(229, 246, 255));
-		contentPane.add(btnNewButton);
-		
-		JPanel panel = new JPanel();
-		panel.setBounds(473, 8, 372, 23);
-		panel.setBackground(new Color(229, 246, 255, 150));
-		contentPane.add(panel);
-		
-		scrollPane = new JScrollPane(editorPane);
-		scrollPane.setBounds(473, 32, 372, 319);
-		scrollPane.setBorder(BorderFactory.createEmptyBorder());
-		scrollPane.setBackground(new Color(229, 246, 255));
-		
 		contentPane.add(scrollPane);
-		editorPane.setCaretPosition(0);
-		
-		JLabel login = new JLabel();
-		login.setBackground(new Color(255, 255, 255, 120));
-		login.setOpaque(true);
-		login.setBounds(473, 362, 372, 99);
+		contentPane.add(trans2);
 		contentPane.add(login);
-		
-		JLabel trans;
-		trans = new JLabel();
-		trans.setBackground(new Color(229, 246, 255, 60));
-		trans.setOpaque(true);
-		trans.setBounds(0, 0, 854, 480);
 		contentPane.add(trans);
 		
 		JLabel background;
@@ -404,8 +399,6 @@ public class LoginForm extends JFrame implements ActionListener {
 		if (evt.getSource() == btnLogin1 || evt.getSource() == btnLogin2) {
 			btnID = "Login";
 			this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
-		} else if (evt.getSource() == btnNewButton) {
-			scrollPane.setVisible(btnNewButton.isSelected());
 		}
 		if (btnID.equals("Login")) {
 			try {
