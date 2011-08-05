@@ -104,7 +104,7 @@ public class GameUpdater {
 			return false;
 		}
 		
-		//performBackup();
+		performBackup();
 		
 		if (this.updateDir.exists()) this.purgeDir(updateDir);
 		this.updateDir.mkdirs();
