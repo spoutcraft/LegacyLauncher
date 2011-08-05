@@ -57,43 +57,33 @@ public class LauncherFrame extends Frame implements WindowListener{
 
 	
 	public void windowClosed(WindowEvent e) {
-		
 	}
 
 	
 	public void windowClosing(WindowEvent e) {
-		new Thread() {
-	          public void run() {
-	            try {
-	              Thread.sleep(10000);
-	            } catch (InterruptedException e) {
-	              e.printStackTrace();
-	            }
-	            System.out.println("Exiting Spoutcraft");
-	            System.exit(0);
-	          }
-	        }
-	        .start();
-	        if (LauncherFrame.this.minecraft != null) {
-	          LauncherFrame.this.minecraft.stop();
-	          LauncherFrame.this.minecraft.destroy();
-	        }
-	        System.exit(0);
-     }
+		if (LauncherFrame.this.minecraft != null) {
+			LauncherFrame.this.minecraft.stop();
+			LauncherFrame.this.minecraft.destroy();
+		}
+		try {
+			Thread.sleep(10000L);
+		} catch (InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		System.out.println("Exiting Spoutcraft");
+		System.exit(0);
+	}
 
 	
 	public void windowDeactivated(WindowEvent e) {
-		
 	}
 
 	
 	public void windowDeiconified(WindowEvent e) {
-		
 	}
 
 	
 	public void windowIconified(WindowEvent e) {
-		
 	}
 
 	
