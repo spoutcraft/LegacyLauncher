@@ -20,7 +20,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	private MinecraftAppletEnglober minecraft;
 	
 	public LauncherFrame() {
-		super("Spoutcraft Custom Launcher");
+		super("Spoutcraft Launcher");
 		super.setVisible(true);
 		this.setSize(new Dimension(870, 518));
 		this.setResizable(true);
