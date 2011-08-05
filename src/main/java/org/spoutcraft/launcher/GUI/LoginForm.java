@@ -424,11 +424,10 @@ public class LoginForm extends JFrame implements ActionListener {
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
 				usernames.remove(this.cmbUsername.getSelectedItem().toString());
-				usernames.put(this.cmbUsername.getSelectedItem().toString(), this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+				gu.user =  values[2].trim();
+				usernames.put(gu.user, this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
 				writeUsernameList();
 				
-				
-				gu.user =  values[2].trim();
 				gu.downloadTicket = values[1].trim();
 				gu.latestVersion =  Long.parseLong(values[0].trim());
 				
