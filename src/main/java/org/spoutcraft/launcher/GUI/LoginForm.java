@@ -348,15 +348,17 @@ public class LoginForm extends JFrame implements ActionListener {
 					String user = dis.readUTF();
 					String pass = dis.readUTF();
 					
-					i++;
-					if (i == 1) {
-						btnLogin1.setText(user);
-						btnLogin1.setVisible(true);
-						drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170);
-					} else if (i == 2) {
-						btnLogin2.setText(user);
-						btnLogin2.setVisible(true);
-						drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170);
+					if (!pass.isEmpty()) {
+						i++;
+						if (i == 1) {
+							btnLogin1.setText(user);
+							btnLogin1.setVisible(true);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170);
+						} else if (i == 2) {
+							btnLogin2.setText(user);
+							btnLogin2.setVisible(true);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170);
+						}
 					}
 					
 					usernames.put(user, pass);
