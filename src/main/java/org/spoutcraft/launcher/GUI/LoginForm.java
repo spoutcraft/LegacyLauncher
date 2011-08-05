@@ -3,6 +3,7 @@ package org.spoutcraft.launcher.GUI;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
@@ -46,6 +47,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextPane;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
@@ -103,6 +105,8 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnOptions = new JButton("Options");
 	private JButton btnLogin1;
 	private JButton btnLogin2;
+	private JToggleButton btnNewButton;
+	private JScrollPane scrollPane;
 	
 	public LoginForm() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -117,7 +121,9 @@ public class LoginForm extends JFrame implements ActionListener {
 		
 		setTitle("Spoutcraft Launcher");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 861, 500);
+		
+		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+		setBounds((dim.width-861)/2, (dim.height-500)/2, 861, 500);
 		
 		contentPane = new JPanel();
 		
@@ -125,7 +131,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		setContentPane(contentPane);
 		
 		JLabel lblLogo = new JLabel("");
-		lblLogo.setBounds(8, 8, 294, 99);
+		lblLogo.setBounds(8, 0, 294, 99);
 		lblLogo.setIcon(new ImageIcon(LoginForm.class.getResource("/org/spoutcraft/launcher/spoutcraft.png")));
 		
 		JLabel lblMinecraftUsername = new JLabel("Minecraft Username: ");
@@ -177,8 +183,6 @@ public class LoginForm extends JFrame implements ActionListener {
 		contentPane.add(btnLogin1);
 		contentPane.add(btnLogin2);
 		
-		JLabel login;
-		
 		JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
 		try {
@@ -191,13 +195,27 @@ public class LoginForm extends JFrame implements ActionListener {
 		editorPane.setEditable(false);
 		editorPane.setBackground(new Color(229, 246, 255));
 		
-		JScrollPane scrollPane = new JScrollPane(editorPane);
-		scrollPane.setBounds(473, 8, 372, 343);
+		btnNewButton = new JToggleButton("");
+		btnNewButton.setBounds(823, 12, 15, 15);
+		btnNewButton.setSelected(true);
+		btnNewButton.addActionListener(this);
+		btnNewButton.setBackground(new Color(229, 246, 255));
+		contentPane.add(btnNewButton);
+		
+		JPanel panel = new JPanel();
+		panel.setBounds(473, 8, 372, 23);
+		panel.setBackground(new Color(229, 246, 255, 150));
+		contentPane.add(panel);
+		
+		scrollPane = new JScrollPane(editorPane);
+		scrollPane.setBounds(473, 32, 372, 319);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
+		scrollPane.setBackground(new Color(229, 246, 255));
+		
 		contentPane.add(scrollPane);
 		editorPane.setCaretPosition(0);
 		
-		login = new JLabel();
+		JLabel login = new JLabel();
 		login.setBackground(new Color(255, 255, 255, 120));
 		login.setOpaque(true);
 		login.setBounds(473, 362, 372, 99);
@@ -386,6 +404,8 @@ public class LoginForm extends JFrame implements ActionListener {
 		if (evt.getSource() == btnLogin1 || evt.getSource() == btnLogin2) {
 			btnID = "Login";
 			this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
+		} else if (evt.getSource() == btnNewButton) {
+			scrollPane.setVisible(btnNewButton.isSelected());
 		}
 		if (btnID.equals("Login")) {
 			try {
@@ -418,6 +438,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		} else if (btnID.equals("Options")) {
 			OptionDialog options = new OptionDialog();
 			options.setVisible(true);
+			options.setBounds((int) getBounds().getCenterX()-250, (int) getBounds().getCenterY()-75, 500, 150);
 		} else if (btnID.equals("comboBoxChanged")) {
 			this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
 			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
