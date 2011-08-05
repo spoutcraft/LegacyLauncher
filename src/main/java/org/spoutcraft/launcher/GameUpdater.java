@@ -153,52 +153,21 @@ public class GameUpdater {
 			version = line;
 		}
 		
+		if (!backupDir.exists()) backupDir.mkdir();
+		
 		File zip = new File(this.backupDir, version + "-backup.zip");
 		
 		if (zip.exists()) return;
 		
-		/*ArrayList<File> exclude = new ArrayList<File>();
+		ArrayList<File> exclude = new ArrayList<File>();
 		exclude.add(this.backupDir);
 		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
 			exclude.add(this.savesDir);
 		}
-		exclude.add(this.updateDir);*/
+		exclude.add(this.updateDir);
 		
+		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
 		
-		
-		//addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
-		
-		//zipFolder()
-	}
-	
-	public void zipFolder(String argIn, String argOut, ArrayList<String> argExclude) {
-		try
-		{
-			File inFolder = new File(argIn);
-			File outFolder = new File(argOut);
-			
-			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFolder)));
-			BufferedInputStream in = null;
-			byte[] data  = new byte[1000];
-			
-			String files[] = inFolder.list();
-			for (int i=0; i < files.length; i++) {
-				in = new BufferedInputStream(new FileInputStream
-						(inFolder.getPath() + "/" + files[i]), 1000);  
-				out.putNextEntry(new ZipEntry(files[i])); 
-				int count;
-				while((count = in.read(data,0,1000)) != -1) {
-					out.write(data, 0, count);
-				}
-				out.closeEntry();
-			}
-			out.flush();
-			out.close();
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		} 
-
 	}
 	
 	public void writeFile(String out, String contents) {
