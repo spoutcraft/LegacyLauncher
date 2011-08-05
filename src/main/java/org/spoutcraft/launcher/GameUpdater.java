@@ -142,11 +142,11 @@ public class GameUpdater {
 	}
 	
 	public void performBackup() throws Exception {
-		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
-		if (!bcVersion.exists()) return;
+		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!spoutVersion.exists()) return;
 		
 		BufferedReader br;
-		br = new BufferedReader(new FileReader(bcVersion));
+		br = new BufferedReader(new FileReader(spoutVersion));
 		String line = null;
 		String version = null;
 		if((line = br.readLine()) != null) {
@@ -157,14 +157,16 @@ public class GameUpdater {
 		
 		if (zip.exists()) return;
 		
-		ArrayList<File> exclude = new ArrayList<File>();
+		/*ArrayList<File> exclude = new ArrayList<File>();
 		exclude.add(this.backupDir);
 		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
 			exclude.add(this.savesDir);
 		}
-		exclude.add(this.updateDir);
+		exclude.add(this.updateDir);*/
 		
-		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
+		
+		
+		//addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
 		
 		//zipFolder()
 	}
