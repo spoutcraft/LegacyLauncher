@@ -62,15 +62,24 @@
     </dependencies>
    
     <build>
+        <defaultGoal>clean</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         <!-- Resources -->
         <resources>
             <resource>
                 <targetPath>.</targetPath>
-                <filtering>true</filtering>
-                <directory>${basedir}/src/</directory>
+                <filtering>false</filtering>
+                <directory>${basedir}/src</directory>
                 <includes>
                     <include>LICENSE.txt</include>
+                </includes>
+            </resource>
+            <resource>
+                <targetPath>org/spoutcraft/launcher</targetPath>
+                <filtering>false</filtering>
+                <directory>${basedir}/src/main/resources</directory>
+                <includes>
+                    <include>*</include>
                 </includes>
             </resource>
         </resources>
