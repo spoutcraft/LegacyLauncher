@@ -176,9 +176,11 @@ public class GameUpdater {
 		{
 			File inFolder = new File(argIn);
 			File outFolder = new File(argOut);
+			
 			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFolder)));
 			BufferedInputStream in = null;
 			byte[] data  = new byte[1000];
+			
 			String files[] = inFolder.list();
 			for (int i=0; i < files.length; i++) {
 				in = new BufferedInputStream(new FileInputStream
@@ -192,8 +194,8 @@ public class GameUpdater {
 			}
 			out.flush();
 			out.close();
-		}
-		catch(Exception e) {
+			
+		} catch(Exception e) {
 			e.printStackTrace();
 		} 
 
