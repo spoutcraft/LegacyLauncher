@@ -232,7 +232,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		JLabel background;
 		try {
 			File bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
-			if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 60 * 60 * 24 * 7) {
+			if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
 				downloadFile("http://www.getspout.org/splash/index.php", bgCache.getPath());
 			}
 			background = new JLabel(new ImageIcon(bgCache.getPath()));
