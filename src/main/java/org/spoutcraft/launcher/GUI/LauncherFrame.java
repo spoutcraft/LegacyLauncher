@@ -30,8 +30,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 	
 	public void runGame(String user, String session, String downloadTicket, String mcpass) {
 
-		this.setVisible(true);
-
 		Applet applet = Launcher.getMinecraftApplet();
 
 		minecraft = new MinecraftAppletEnglober(applet);
@@ -50,6 +48,8 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.setSize(getWidth(), getHeight());
 
 		minecraft.start();
+		
+		this.setVisible(true);
 	}
 	
 	public void windowActivated(WindowEvent e) {		
