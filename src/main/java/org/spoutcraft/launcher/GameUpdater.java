@@ -149,9 +149,12 @@ public class GameUpdater {
 		br = new BufferedReader(new FileReader(spoutVersion));
 		String line = null;
 		String version = null;
+		
 		if((line = br.readLine()) != null) {
 			version = line;
 		}
+		
+		if (version == null) return;
 		
 		if (!backupDir.exists()) backupDir.mkdir();
 		
