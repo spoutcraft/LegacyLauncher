@@ -49,7 +49,7 @@ public class GameUpdater {
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-	
+	public boolean devmode = false;
 	public GameUpdater(String user, String downloadTicket, String latestVersion) { 
 		this.user = user;
 		this.downloadTicket = downloadTicket;
@@ -162,9 +162,37 @@ public class GameUpdater {
 		}
 		exclude.add(this.updateDir);
 		
-		zip.createNewFile();
-		
 		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
+		
+		//zipFolder()
+	}
+	
+	public void zipFolder(String argIn, String argOut, ArrayList<String> argExclude) {
+		try
+		{
+			File inFolder = new File(argIn);
+			File outFolder = new File(argOut);
+			ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(outFolder)));
+			BufferedInputStream in = null;
+			byte[] data  = new byte[1000];
+			String files[] = inFolder.list();
+			for (int i=0; i < files.length; i++) {
+				in = new BufferedInputStream(new FileInputStream
+						(inFolder.getPath() + "/" + files[i]), 1000);  
+				out.putNextEntry(new ZipEntry(files[i])); 
+				int count;
+				while((count = in.read(data,0,1000)) != -1) {
+					out.write(data, 0, count);
+				}
+				out.closeEntry();
+			}
+			out.flush();
+			out.close();
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		} 
+
 	}
 	
 	public void writeFile(String out, String contents) {
@@ -428,7 +456,7 @@ public class GameUpdater {
 		int c = Integer.parseInt(version);
 		int l = Integer.parseInt(latest);
 		
-		if (c < l) {
+		if (c < l || (c > l && !devmode)) {
 			return true;
 		}
 		
