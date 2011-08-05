@@ -54,6 +54,8 @@ public class GameUpdater {
 		this.user = user;
 		this.downloadTicket = downloadTicket;
 		this.latestVersion = Long.parseLong(latestVersion);
+		settings.load();
+		if (settings.checkProperty("devupdate")) devmode = settings.getPropertyBoolean("devupdate");
 	}
 	
 	public GameUpdater(String user, String downloadTicket, String latestVersion, Boolean forceUpdate) { 
