@@ -230,7 +230,6 @@ public class GameUpdater {
 	}
 	
 	//I know that is is not the best method but screw it, I am tired of trying to do it myself :P
-	@SuppressWarnings("unused")
 	private void extractLZMA(String in, String out) throws Exception {
 		String[] args = { "d", in, out };
 		LzmaAlone.main(args);
