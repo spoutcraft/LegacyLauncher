@@ -102,6 +102,7 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnOptions = new JButton("Options");
 	
 	public LoginForm() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		btnLogin.setBounds(761, 390, 86, 23);
 		btnLogin.addActionListener(this);
@@ -263,6 +264,8 @@ public class LoginForm extends JFrame implements ActionListener {
 		this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
 		this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
 	}
+	
+	
 	
 
 	private void writeUsernameList() {
