@@ -251,8 +251,6 @@ public class LoginForm extends JFrame implements ActionListener {
 		
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 		
-		onLoad();
-		
 	}
 	
 	private void downloadFile(String url, String outPut) throws Exception {
