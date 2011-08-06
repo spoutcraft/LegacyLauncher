@@ -15,15 +15,11 @@ public class Main {
 	
 	public static void main(String[] args) throws Exception {
 		PlatformUtils.getWorkingDirectory().mkdir();
-		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
+		
 		LoginForm login = new LoginForm();
 		login.setVisible(true);
 		login.onLoad();
 	}
 	
-	
-	public static void write(Object msg) {
-		System.out.print(msg);
-		System.out.append("\n");
-	}
 }
