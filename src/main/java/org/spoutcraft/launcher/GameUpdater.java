@@ -107,7 +107,9 @@ public class GameUpdater {
 		dos.close();
 	}
 	
-	public Boolean mcUpdateAvailible(File versionFile) throws Exception {
+	public Boolean checkMCUpdate(File versionFile) throws Exception {
+		if (!this.binDir.exists()) return true;
+		if (!new File(binDir, "natives").exists()) return true;
 		if (!versionFile.exists()) return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
 		if (this.latestVersion > currentVersion) return true;

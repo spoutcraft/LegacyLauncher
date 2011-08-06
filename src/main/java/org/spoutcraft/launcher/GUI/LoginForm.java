@@ -251,6 +251,8 @@ public class LoginForm extends JFrame implements ActionListener {
 		
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 		
+		onLoad();
+		
 	}
 	
 	private void downloadFile(String url, String outPut) throws Exception {
@@ -419,6 +421,9 @@ public class LoginForm extends JFrame implements ActionListener {
 			this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
 		}
 		if (btnID.equals("Login")) {
+			this.btnLogin.setEnabled(false);
+			this.btnLogin1.setEnabled(false);
+			this.btnLogin2.setEnabled(false);
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
 				
@@ -451,7 +456,6 @@ public class LoginForm extends JFrame implements ActionListener {
 			} catch (OutdatedMCLauncherException e) {
 				JOptionPane.showMessageDialog(this,"The unthinkable has happened, alert alta189@getspout.org!!!!");
 			} catch (UnsupportedEncodingException e) {
-				JOptionPane.showMessageDialog(this,"Incorrect username/password combination");
 				e.printStackTrace();
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -471,7 +475,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		//check for MC updates
 		System.out.print("Checking for Minecraft Update...\n");
 		try {
-			if (!gu.mcUpdateAvailible(new File(gu.binDir + File.separator + "version"))) {
+			if (!gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"))) {
 				System.out.print("Minecraft is up to date.\n");
 			} else {
 				mcUpdate = true;
