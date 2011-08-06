@@ -45,7 +45,8 @@ public class GameUpdater {
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
 	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
 	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
-	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
+	public final String backupbaseURL = "http://s3.amazonaws.com/MinecraftDownload/";
+	public final String baseURL = "http://www.getspout.org/lwjgl/";
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
@@ -59,27 +60,14 @@ public class GameUpdater {
 	
 	
 	public void updateMC() throws Exception {
-		
 		this.purgeDir(binDir);
 		this.purgeDir(updateDir);
 		
 		binDir.mkdir();
 		updateDir.mkdir();
-		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
-		nativesDir.mkdir();
 		
 		// Processs minecraft.jar \\
-		downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
-		
-		// Process other Downloads
-		downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
-		getNatives();		
-		
-		// Extract Natives \\
-		extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.jar");
-		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.jar"));
+		downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
 		
 		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
 	}
@@ -90,11 +78,35 @@ public class GameUpdater {
 		if (this.updateDir.exists()) this.purgeDir(updateDir);
 		this.updateDir.mkdirs();
 		
-		if (!new File(this.updateDir.getPath() + File.separator + "minecraft.jar").exists()) downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
+		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
+		nativesDir.mkdir();
+		
+		// Process other Downloads
+		try {
+			downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
+		} catch (Exception e) {
+			downloadFile(backupbaseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
+		}
+		try {
+			downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
+		} catch (Exception e) {
+			downloadFile(backupbaseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
+		}
+		try {
+			downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
+		} catch (Exception e) {
+			downloadFile(backupbaseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
+		}
+		getNatives();
+		
+		// Extract Natives \\
+		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.zip"));
+		
+		if (!new File(this.updateDir.getPath() + File.separator + "minecraft.jar").exists()) downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
 		
 		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
 		
-		if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+		if (devmode) {
 			downloadFile(spoutDownloadDevURL, spout.getPath());
 		} else {
 			downloadFile(spoutDownloadURL, spout.getPath());
@@ -274,23 +286,28 @@ public class GameUpdater {
 	
 	private File getNatives() throws Exception {
 		String osName = System.getProperty("os.name").toLowerCase();
-		String url = null;
-	    if (osName.contains("win")) {
-	    	url = "https://s3.amazonaws.com/MinecraftDownload/windows_natives.jar.lzma";
+		String fname = null;
+		
+		if (osName.contains("win")) {
+	    	fname = "windows_natives";
 	    } else if (osName.contains("mac")) {
-	    	url = "https://s3.amazonaws.com/MinecraftDownload/macosx_natives.jar.lzma";
+	    	fname = "macosx_natives";
 	    } else if (osName.contains("solaris") || osName.contains("sunos")) {
-	    	url = "https://s3.amazonaws.com/MinecraftDownload/solaris_natives.jar.lzma";
-	    } else if (osName.contains("linux")) {
-	    	url = "https://s3.amazonaws.com/MinecraftDownload/linux_natives.jar.lzma";
-	    } else if (osName.contains("unix")) {
-	    	url = "https://s3.amazonaws.com/MinecraftDownload/linux_natives.jar.lzma";
+	    	fname = "solaris_natives";
+	    } else if (osName.contains("linux") || osName.contains("unix")) {
+	    	fname = "linux_natives";
 	    } else {
 	    	throw new UnsupportedOSException();
 	    }
 	    
 	    if (!updateDir.exists()) updateDir.mkdir();
-	    this.downloadFile(url, updateDir.getPath() + File.separator + "natives.jar.lzma");
+	    try {
+	    	this.downloadFile(baseURL + fname + ".zip", updateDir.getPath() + File.separator + "natives.zip");
+	    } catch (Exception e) {
+	    	// Failed to download from spoutcraft, try mc.net
+	    	this.downloadFile(backupbaseURL + fname + ".jar.lzma", updateDir.getPath() + File.separator + "natives.jar.lzma");
+			extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.zip");
+	    }
 	    
 	    return new File (updateDir.getPath() + File.separator + "natives.jar.lzma");
 	}
@@ -379,7 +396,7 @@ public class GameUpdater {
 	public String getSpoutVersion() throws Exception {
 		 String version = "-1";
 		 URL url;
-		 if (settings.checkProperty("devupdate") && settings.getPropertyBoolean("devupdate")) {
+		 if (devmode) {
 			 url = new URL("http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/buildNumber");
 		 } else {
 			 url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
