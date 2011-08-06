@@ -161,6 +161,8 @@ public class GameUpdater {
 			exclude.add(this.savesDir);
 		}
 		exclude.add(this.updateDir);
+
+		zip.createNewFile();
 		
 		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
 		
