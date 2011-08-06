@@ -53,6 +53,7 @@ import javax.swing.border.EmptyBorder;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
+import org.spoutcraft.launcher.SettingsHandler;
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
@@ -108,12 +109,11 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnLogin1;
 	private JButton btnLogin2;
 	private JScrollPane scrollPane;
+	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	
 	public LoginForm() {
 		
-		
-		
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		settings.load();
 		
 		btnLogin.setBounds(745, 375, 86, 23);
 		btnLogin.addActionListener(this);
@@ -412,8 +412,6 @@ public class LoginForm extends JFrame implements ActionListener {
 		}
 	}
 	
-	
-	
 	public void actionPerformed(ActionEvent evt) {
 		String btnID = evt.getActionCommand();
 		if (evt.getSource() == btnLogin1 || evt.getSource() == btnLogin2) {
@@ -423,14 +421,17 @@ public class LoginForm extends JFrame implements ActionListener {
 		if (btnID.equals("Login")) {
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
-				usernames.remove(this.cmbUsername.getSelectedItem().toString());
-				gu.user =  values[2].trim();
-				usernames.put(gu.user, this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
-				writeUsernameList();
 				
+				usernames.remove(this.cmbUsername.getSelectedItem().toString());
+				
+				gu.user =  values[2].trim();
 				gu.downloadTicket = values[1].trim();
 				gu.latestVersion =  Long.parseLong(values[0].trim());
+				if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
 				
+				usernames.put(gu.user, this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+				writeUsernameList();
+
 				if (this.mcUpdate) {
 					gu.updateMC();
 					gu.updateSpout();
