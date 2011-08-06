@@ -449,6 +449,7 @@ public class LoginForm extends JFrame implements ActionListener {
 				
 				launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(this.txtPassword.getPassword()));	
 				this.setVisible(false);
+				return;
 				
 			} catch (BadLoginException e) {
 				JOptionPane.showMessageDialog(this,"Incorrect username/password combination");
@@ -461,6 +462,10 @@ public class LoginForm extends JFrame implements ActionListener {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			
+			this.btnLogin.setEnabled(true);
+			this.btnLogin1.setEnabled(true);
+			this.btnLogin2.setEnabled(true);
 			
 		} else if (btnID.equals("Options")) {
 			OptionDialog options = new OptionDialog();
