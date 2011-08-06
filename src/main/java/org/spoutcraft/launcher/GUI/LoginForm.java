@@ -485,7 +485,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			if (!gu.checkSpoutUpdate()) {
 				System.out.print("Spout is up to date :)\n");
 			} else {
-				spoutUpdate = false;
+				spoutUpdate = true;
 			}
 		} catch (Exception e) {
 			spoutUpdate = false;
