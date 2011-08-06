@@ -462,7 +462,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		//check for MC updates
 		System.out.print("Checking for Minecraft Update...\n");
 		try {
-			if (!gu.mcUpdateAvailible(new File(gu.binDir + File.separator + "version")) && !gu.force) {
+			if (!gu.mcUpdateAvailible(new File(gu.binDir + File.separator + "version"))) {
 				System.out.print("Minecraft is up to date.\n");
 			} else {
 				mcUpdate = true;
@@ -474,7 +474,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		//check for spout updates
 		System.out.print("Checking for Spout update...\n");
 		try {
-			if (!gu.checkSpoutUpdate() && !gu.force) {
+			if (!gu.checkSpoutUpdate()) {
 				System.out.print("Spout is up to date :)\n");
 			} else {
 				spoutUpdate = false;

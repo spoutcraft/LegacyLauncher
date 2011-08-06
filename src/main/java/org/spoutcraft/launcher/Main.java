@@ -12,7 +12,7 @@ public class Main {
 		this.main(null);
 	}
 
-	@SuppressWarnings({ })
+	
 	public static void main(String[] args) throws Exception {
 		PlatformUtils.getWorkingDirectory().mkdir();
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
