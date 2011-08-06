@@ -110,11 +110,13 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnLogin2;
 	private JScrollPane scrollPane;
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+	OptionDialog options = new OptionDialog();
 	
 	public LoginForm() {
 		
 		settings.load();
 		
+		options.setVisible(false);
 		btnLogin.setBounds(745, 375, 86, 23);
 		btnLogin.setOpaque(false);
 		btnLogin.addActionListener(this);
@@ -468,7 +470,6 @@ public class LoginForm extends JFrame implements ActionListener {
 			this.btnLogin2.setEnabled(true);
 			
 		} else if (btnID.equals("Options")) {
-			OptionDialog options = new OptionDialog();
 			options.setVisible(true);
 			options.setBounds((int) getBounds().getCenterX()-250, (int) getBounds().getCenterY()-75, 500, 150);
 		} else if (btnID.equals("comboBoxChanged")) {
