@@ -427,6 +427,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			this.btnLogin.setEnabled(false);
 			this.btnLogin1.setEnabled(false);
 			this.btnLogin2.setEnabled(false);
+			options.setVisible(false);
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
 				
