@@ -116,7 +116,9 @@ public class LoginForm extends JFrame implements ActionListener {
 		settings.load();
 		
 		btnLogin.setBounds(745, 375, 86, 23);
+		btnLogin.setOpaque(false);
 		btnLogin.addActionListener(this);
+		btnOptions.setOpaque(false);
 		btnOptions.addActionListener(this);
 		cmbUsername.addActionListener(this);
 		
@@ -149,13 +151,14 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(617, 404, 119, 20);
 		
-
 		btnLogin1 = new JButton("Login as Player");
 		btnLogin1.setBounds(72, 428, 119, 23);
+		btnLogin1.setOpaque(false);
 		btnLogin1.addActionListener(this);
 		btnLogin1.setVisible(false);
 		btnLogin2 = new JButton("Login as Player");
 		btnLogin2.setBounds(261, 428, 119, 23);
+		btnLogin2.setOpaque(false);
 		btnLogin2.addActionListener(this);
 		btnLogin2.setVisible(false);
 		
