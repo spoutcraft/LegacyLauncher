@@ -102,146 +102,6 @@ public class GameUpdater {
 		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
 	}
 	
-	public boolean updateSpout() throws Exception {
-		performBackup();
-		
-		if (this.updateDir.exists()) this.purgeDir(updateDir);
-		this.updateDir.mkdirs();
-		
-		if (!new File(this.updateDir.getPath() + File.separator + "minecraft.jar").exists()) downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
-		
-		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
-		
-		if (devmode) {
-			downloadFile(spoutDownloadDevURL, spout.getPath());
-		} else {
-			downloadFile(spoutDownloadURL, spout.getPath());
-		}
-		
-		this.unzipSpout();
-		
-		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "Spout"));
-		
-		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
-		
-		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator);
-		
-		File mcJar = new File(binDir, "minecraft.jar");
-		mcJar.delete();
-		
-		//Move file
-		updateMC.renameTo(mcJar);
-		
-		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
-		if (bcVersion.exists()) bcVersion.delete();
-		
-		this.writeFile(bcVersion.getPath(), this.getSpoutVersion());
-		
-		return true;
-	}
-	
-	public void performBackup() throws Exception {
-		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
-		if (!spoutVersion.exists()) return;
-		
-		BufferedReader br;
-		br = new BufferedReader(new FileReader(spoutVersion));
-		String line = null;
-		String version = null;
-		
-		if((line = br.readLine()) != null) {
-			version = line;
-		}
-		
-		if (version == null) return;
-		
-		if (!backupDir.exists()) backupDir.mkdir();
-		
-		File zip = new File(this.backupDir, version + "-backup.zip");
-		
-		if (zip.exists()) return;
-		
-		ArrayList<File> exclude = new ArrayList<File>();
-		exclude.add(this.backupDir);
-		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
-			exclude.add(this.savesDir);
-		}
-		exclude.add(this.updateDir);
-
-		zip.createNewFile();
-		
-		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
-		
-	}
-	
-	public void writeFile(String out, String contents) {
-		FileWriter fWriter = null;
-		BufferedWriter writer = null; 
-		try {
-		  fWriter = new FileWriter(out);
-		  writer = new BufferedWriter(fWriter);
-		  System.out.print(contents);
-		  writer.write(contents);
-
-
-		   writer.close();
-		} catch (Exception e) {
-			
-		}
-	}
-	
-	private void purgeDir(File file) {
-		File delFile = file;
-		if (delFile.exists()) {
-			if (delFile.isDirectory()) deleteSubDir(delFile);
-			delFile.delete();
-		}
-	}
-	
-	private void deleteSubDir(File argFile) {
-		for (File file : argFile.listFiles()) {
-			if (file.isDirectory()) {
-				this.deleteSubDir(file);
-			}
-			file.delete();
-		}
-	}
-	
-	@SuppressWarnings("unused")
-	private void extractPack(String in, String out) throws Exception {
-		File f = new File(in);
-		if (!f.exists()) return;
-
-		FileOutputStream fostream = new FileOutputStream(out);
-		JarOutputStream jostream = new JarOutputStream(fostream);
-
-		Pack200.Unpacker unpacker = Pack200.newUnpacker();
-		unpacker.unpack(f, jostream);
-		jostream.close();
-
-		f.delete();
-	 }
-	
-	private void downloadFile(String url, String outPut) throws Exception {
-		BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-		FileOutputStream fos = new FileOutputStream(outPut);
-		BufferedOutputStream bout = new BufferedOutputStream(fos,1024);
-		byte[] data = new byte[1024];
-		int x=0;
-		while((x=in.read(data,0,1024))>=0)
-		{
-			bout.write(data,0,x);
-		}
-		bout.close();
-		in.close();
-	}
-	
-	//I know that is is not the best method but screw it, I am tired of trying to do it myself :P
-	private void extractLZMA(String in, String out) throws Exception {
-		String[] args = { "d", in, out };
-		LzmaAlone.main(args);
-	}
-	
 	public String readVersionFile(File file) throws Exception {
 		DataInputStream dis = new DataInputStream(new FileInputStream(file));
 		String version = dis.readUTF();
@@ -261,11 +121,11 @@ public class GameUpdater {
 		if (this.latestVersion > currentVersion) return true;
 		return false;
 	}
-		
+	
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {
-		
+
 		if (!nativesDir.exists())nativesDir.mkdir();
-		
+
 		JarFile jar = new JarFile(nativesJar);
 		Enumeration<JarEntry> entries = jar.entries();
 		while (entries.hasMoreElements()) {
@@ -277,130 +137,87 @@ public class GameUpdater {
 			File outFile = new File(nativesDir.getPath() + File.separator  + name);
 			if (!outFile.exists()) outFile.createNewFile();
 			OutputStream out = new FileOutputStream(new File(nativesDir.getPath() + File.separator  + name));
-	 
+
 			int read=0;
 			byte[] bytes = new byte[1024];
-	 
+
 			while((read = inputStream.read(bytes))!= -1){
 				out.write(bytes, 0, read);
 			}
-	 
+
 			inputStream.close();
 			out.flush();
 			out.close();
 		}
-		
+
 	}
-	
+
 	private File getNatives() throws Exception {
 		String osName = System.getProperty("os.name").toLowerCase();
 		String fname = null;
-		
+
 		if (osName.contains("win")) {
-	    	fname = "windows_natives";
-	    } else if (osName.contains("mac")) {
-	    	fname = "macosx_natives";
-	    } else if (osName.contains("solaris") || osName.contains("sunos")) {
-	    	fname = "solaris_natives";
-	    } else if (osName.contains("linux") || osName.contains("unix")) {
-	    	fname = "linux_natives";
-	    } else {
-	    	throw new UnsupportedOSException();
-	    }
-	    
-	    if (!updateDir.exists()) updateDir.mkdir();
-	    try {
-	    	this.downloadFile(baseURL + fname + ".zip", updateDir.getPath() + File.separator + "natives.zip");
-	    } catch (Exception e) {
-	    	// Failed to download from spoutcraft, try mc.net
-	    	this.downloadFile(backupbaseURL + fname + ".jar.lzma", updateDir.getPath() + File.separator + "natives.jar.lzma");
+			fname = "windows_natives";
+		} else if (osName.contains("mac")) {
+			fname = "macosx_natives";
+		} else if (osName.contains("solaris") || osName.contains("sunos")) {
+			fname = "solaris_natives";
+		} else if (osName.contains("linux") || osName.contains("unix")) {
+			fname = "linux_natives";
+		} else {
+			throw new UnsupportedOSException();
+		}
+
+		if (!updateDir.exists()) updateDir.mkdir();
+		try {
+			this.downloadFile(baseURL + fname + ".zip", updateDir.getPath() + File.separator + "natives.zip");
+		} catch (Exception e) {
+			// Failed to download from spoutcraft, try mc.net
+			this.downloadFile(backupbaseURL + fname + ".jar.lzma", updateDir.getPath() + File.separator + "natives.jar.lzma");
 			extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.zip");
-	    }
-	    
-	    return new File (updateDir.getPath() + File.separator + "natives.jar.lzma");
-	}
-	
-	public ArrayList<File> getFiles(File dir) {
-		return getFiles(dir, new ArrayList<File>());
-	}
-	
-	public ArrayList<File> getFiles(File dir, ArrayList<File> exclude) {
-		ArrayList<File> result = new ArrayList<File>();
-		for (File file : dir.listFiles()) {
-			if (!exclude.contains(dir)) {
-				if (file.isDirectory()) {
-					result.addAll(this.getFiles(file, exclude));
-					continue;
-				}
-				result.add(file);
-			}
 		}
-		return result;
-	}
-	
-	public void deleteFile(File argFile) {
-		File delFile = argFile;
-		if (delFile.exists()) delFile.delete();
-	}
-	
-	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir) throws IOException {
-        File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
-		tempFile.delete();
 
-		boolean renameOk=zipFile.renameTo(tempFile);
-		if (!renameOk)
-		{
-			throw new RuntimeException("could not rename the file "+zipFile.getAbsolutePath()+" to "+tempFile.getAbsolutePath());
-		}
-		byte[] buf = new byte[1024];
+		return new File (updateDir.getPath() + File.separator + "natives.jar.lzma");
+	}
+	
+	public boolean updateSpout() throws Exception {
+		performBackup();
 		
-		ZipInputStream zin = new ZipInputStream(new FileInputStream(tempFile));
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
-		ZipEntry entry = zin.getNextEntry();
-		while (entry != null) {
-			String name = entry.getName();
-			boolean notInFiles = true;
-			for (File f : files) {
-				String path = f.getPath();
-				path = path.replace(rootDir, "");
-				path = path.replaceAll("\\\\","/");
-				if (path.equals(name) || name.contains("META-INF")) {
-					notInFiles = false;
-					break;
-				}
-			}
-			if (notInFiles) {
-				out.putNextEntry(new ZipEntry(name));
-				int len;
-				while ((len = zin.read(buf)) > 0) {
-					out.write(buf, 0, len);
-				}
-			}
-			entry = zin.getNextEntry();
-		}	
-		zin.close();
-		for (File file : files) {
-			InputStream in = new FileInputStream(file);
-
-			String path = file.getPath();
-			path = path.replace(rootDir, "");
-			path = path.replaceAll("\\\\","/");
-			out.putNextEntry(new ZipEntry(path));
-
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-
-			out.closeEntry();
-			in.close();
+		if (this.updateDir.exists()) this.purgeDir(updateDir);
+		this.updateDir.mkdirs();
+		
+		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
+		
+		if (!updateMC.exists()) downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateMC.getPath());
+		
+		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
+		
+		if (devmode) {
+			downloadFile(spoutDownloadDevURL, spout.getPath());
+		} else {
+			downloadFile(spoutDownloadURL, spout.getPath());
 		}
-
-		out.close();
-		tempFile.delete();
+		
+		this.unzipSpout();
+		
+		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "Spout"));
+		
+		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator);
+		
+		File mcJar = new File(binDir, "minecraft.jar");
+		mcJar.delete();
+		
+		//Move file
+		updateMC.renameTo(mcJar);
+		
+		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		if (bcVersion.exists()) bcVersion.delete();
+		
+		this.writeFile(bcVersion.getPath(), this.getSpoutVersion());
+		
+		return true;
 	}
 
-	// Spout Stuff \\
 	public String getSpoutVersion() throws Exception {
 		 String version = "-1";
 		 URL url;
@@ -479,9 +296,38 @@ public class GameUpdater {
 		fis.close();
 	}
 	
-	public void write(Object msg) {
-		System.out.print(msg);
-		System.out.append("\n");
+	public void performBackup() throws Exception {
+		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!spoutVersion.exists()) return;
+		
+		BufferedReader br;
+		br = new BufferedReader(new FileReader(spoutVersion));
+		String line = null;
+		String version = null;
+		
+		if((line = br.readLine()) != null) {
+			version = line;
+		}
+		
+		if (version == null) return;
+		
+		if (!backupDir.exists()) backupDir.mkdir();
+		
+		File zip = new File(this.backupDir, version + "-backup.zip");
+		
+		if (zip.exists()) return;
+		
+		ArrayList<File> exclude = new ArrayList<File>();
+		exclude.add(this.backupDir);
+		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
+			exclude.add(this.savesDir);
+		}
+		exclude.add(this.updateDir);
+
+		zip.createNewFile();
+		
+		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
+		
 	}
 	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -511,6 +357,149 @@ public class GameUpdater {
 			return false;
 		}
 		return false;
+	}
+	
+	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir) throws IOException {
+        File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
+		tempFile.delete();
+
+		boolean renameOk=zipFile.renameTo(tempFile);
+		if (!renameOk)
+		{
+			throw new RuntimeException("could not rename the file "+zipFile.getAbsolutePath()+" to "+tempFile.getAbsolutePath());
+		}
+		byte[] buf = new byte[1024];
+		
+		ZipInputStream zin = new ZipInputStream(new FileInputStream(tempFile));
+		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
+		ZipEntry entry = zin.getNextEntry();
+		while (entry != null) {
+			String name = entry.getName();
+			boolean notInFiles = true;
+			for (File f : files) {
+				String path = f.getPath();
+				path = path.replace(rootDir, "");
+				path = path.replaceAll("\\\\","/");
+				if (path.equals(name) || name.contains("META-INF")) {
+					notInFiles = false;
+					break;
+				}
+			}
+			if (notInFiles) {
+				out.putNextEntry(new ZipEntry(name));
+				int len;
+				while ((len = zin.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+			}
+			entry = zin.getNextEntry();
+		}	
+		zin.close();
+		for (File file : files) {
+			InputStream in = new FileInputStream(file);
+
+			String path = file.getPath();
+			path = path.replace(rootDir, "");
+			path = path.replaceAll("\\\\","/");
+			out.putNextEntry(new ZipEntry(path));
+
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+
+			out.closeEntry();
+			in.close();
+		}
+
+		out.close();
+	}
+	
+	//I know that is is not the best method but screw it, I am tired of trying to do it myself :P
+	private void extractLZMA(String in, String out) throws Exception {
+		String[] args = { "d", in, out };
+		LzmaAlone.main(args);
+	}
+
+	@SuppressWarnings("unused")
+	private void extractPack(String in, String out) throws Exception {
+		File f = new File(in);
+		if (!f.exists()) return;
+
+		FileOutputStream fostream = new FileOutputStream(out);
+		JarOutputStream jostream = new JarOutputStream(fostream);
+
+		Pack200.Unpacker unpacker = Pack200.newUnpacker();
+		unpacker.unpack(f, jostream);
+		jostream.close();
+
+		f.delete();
+	}
+	
+	public void writeFile(String out, String contents) {
+		FileWriter fWriter = null;
+		BufferedWriter writer = null; 
+		try {
+		  fWriter = new FileWriter(out);
+		  writer = new BufferedWriter(fWriter);
+		  System.out.print(contents);
+		  writer.write(contents);
+
+
+		   writer.close();
+		} catch (Exception e) {
+			
+		}
+	}
+	
+	private void downloadFile(String url, String outPut) throws Exception {
+		BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
+		FileOutputStream fos = new FileOutputStream(outPut);
+		BufferedOutputStream bout = new BufferedOutputStream(fos,1024);
+		byte[] data = new byte[1024];
+		int x=0;
+		while((x=in.read(data,0,1024))>=0)
+		{
+			bout.write(data,0,x);
+		}
+		bout.close();
+		in.close();
+	}
+		
+	
+	public ArrayList<File> getFiles(File dir) {
+		return getFiles(dir, new ArrayList<File>());
+	}
+	
+	public ArrayList<File> getFiles(File dir, ArrayList<File> exclude) {
+		ArrayList<File> result = new ArrayList<File>();
+		for (File file : dir.listFiles()) {
+			if (!exclude.contains(dir)) {
+				if (file.isDirectory()) {
+					result.addAll(this.getFiles(file, exclude));
+					continue;
+				}
+				result.add(file);
+			}
+		}
+		return result;
+	}
+	
+	private void purgeDir(File file) {
+		File delFile = file;
+		if (delFile.exists()) {
+			if (delFile.isDirectory()) deleteSubDir(delFile);
+			delFile.delete();
+		}
+	}
+	
+	private void deleteSubDir(File argFile) {
+		for (File file : argFile.listFiles()) {
+			if (file.isDirectory()) {
+				this.deleteSubDir(file);
+			}
+			file.delete();
+		}
 	}
 
 }
