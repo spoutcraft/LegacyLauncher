@@ -47,7 +47,7 @@ public class GameUpdater {
 	public final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
 	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
-	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
+	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spoutcraft");
 	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
 	
 	/* Minecraft Updating Arguments */
@@ -204,10 +204,12 @@ public class GameUpdater {
 		//Move file
 		updateMC.renameTo(mcJar);
 		
-		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
-		if (bcVersion.exists()) bcVersion.delete();
+		if (this.spoutDir.exists()) this.spoutDir.mkdir();
 		
-		this.writeFile(bcVersion.getPath(), this.getSpoutVersion());
+		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		if (spoutVersion.exists()) spoutVersion.delete();
+		
+		this.writeFile(spoutVersion.getPath(), this.getSpoutVersion());
 		
 		return true;
 	}
@@ -438,11 +440,8 @@ public class GameUpdater {
 		  writer = new BufferedWriter(fWriter);
 		  System.out.print(contents);
 		  writer.write(contents);
-
-
 		   writer.close();
 		} catch (Exception e) {
-			
 		}
 	}
 	
