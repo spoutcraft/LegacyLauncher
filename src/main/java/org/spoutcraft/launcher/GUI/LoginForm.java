@@ -232,7 +232,7 @@ public class LoginForm extends JFrame implements ActionListener {
 		JLabel background;
 		try {
 			File bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
-			if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 60 * 60 * 24 * 7) {
+			if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
 				downloadFile("http://www.getspout.org/splash/index.php", bgCache.getPath());
 			}
 			background = new JLabel(new ImageIcon(bgCache.getPath()));
@@ -283,18 +283,27 @@ public class LoginForm extends JFrame implements ActionListener {
 			
 			drawCroped(originalImage, type, 20, 20, 28, 32, x, y+56, 7); // BODY
 			
-			drawCroped(originalImage, type, 48, 20, 52, 32, x-28, y+56, 7); // ARMS
-			drawCroped(originalImage, type, 48, 20, 52, 32, x+56, y+56, 7);
+			drawCroped(originalImage, type, 44, 20, 48, 32, x-28, y+56, 7); // ARMS
+			drawCroped(originalImage, type, 44, 20, 48, 32, x+56, y+56, 7, true);
 			
-			drawCroped(originalImage, type, 8, 20, 12, 32, x, y+140, 7); // LEGS
-			drawCroped(originalImage, type, 8, 20, 12, 32, x+28, y+140, 7);
+			drawCroped(originalImage, type, 4, 20, 8, 32, x, y+140, 7); // LEGS
+			drawCroped(originalImage, type, 4, 20, 8, 32, x+28, y+140, 7, true);
 		} catch (Exception e) { }
 	}
 	
 	public void drawCroped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale) {
+		drawCroped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false);
+	}
+	
+	public void drawCroped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect) {
 		BufferedImage resizedImage = new BufferedImage((sx2 - sx1)*scale, (sy2 - sy1)*scale, type);
 		Graphics2D g = resizedImage.createGraphics();
-		g.drawImage(img, 0, 0, (sx2 - sx1)*scale, (sy2 - sy1)*scale, sx1, sy1, sx2, sy2, null);
+		int asx2 = sx2, asx1 = sx1;
+		if (reflect) {
+			asx2 = sx1;
+			asx1 = sx2;
+		}
+		g.drawImage(img, 0, 0, (sx2 - sx1)*scale, (sy2 - sy1)*scale, asx1, sy1, asx2, sy2, null);
 		g.dispose();
 		
 		JLabel tmp = new JLabel(new ImageIcon(resizedImage));
@@ -415,11 +424,10 @@ public class LoginForm extends JFrame implements ActionListener {
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
 				usernames.remove(this.cmbUsername.getSelectedItem().toString());
-				usernames.put(this.cmbUsername.getSelectedItem().toString(), this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
+				gu.user =  values[2].trim();
+				usernames.put(gu.user, this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
 				writeUsernameList();
 				
-				
-				gu.user =  values[2].trim();
 				gu.downloadTicket = values[1].trim();
 				gu.latestVersion =  Long.parseLong(values[0].trim());
 				
