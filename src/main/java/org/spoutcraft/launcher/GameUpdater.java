@@ -30,10 +30,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
 
-
-
 import SevenZip.LzmaAlone;
-
 
 public class GameUpdater {
 	
