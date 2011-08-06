@@ -34,21 +34,30 @@ import SevenZip.LzmaAlone;
 
 public class GameUpdater {
 	
+	/* Minecraft Updating Arguments */
 	public long latestVersion;
-	public String user, downloadTicket;
+	public String user = "Player";
+	public String downloadTicket = "1";
+	
+	/* General Updating Settings */
+	public boolean devmode = false;
 	public Boolean force = false;
+	
+	/* Files */
 	public final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
 	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
 	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
 	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spout");
 	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
+	
+	/* Minecraft Updating Arguments */
 	public final String backupbaseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String baseURL = "http://www.getspout.org/lwjgl/";
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
-	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-	public boolean devmode = false;
 	
+	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+		
 	public GameUpdater() { 
 		settings.load();
 		if (settings.checkProperty("devupdate")) devmode = settings.getPropertyBoolean("devupdate");
@@ -65,15 +74,6 @@ public class GameUpdater {
 		
 		// Processs minecraft.jar \\
 		downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
-		
-		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
-	}
-	
-	public boolean updateSpout() throws Exception {
-		performBackup();
-		
-		if (this.updateDir.exists()) this.purgeDir(updateDir);
-		this.updateDir.mkdirs();
 		
 		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
 		nativesDir.mkdir();
@@ -98,6 +98,15 @@ public class GameUpdater {
 		
 		// Extract Natives \\
 		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.zip"));
+		
+		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
+	}
+	
+	public boolean updateSpout() throws Exception {
+		performBackup();
+		
+		if (this.updateDir.exists()) this.purgeDir(updateDir);
+		this.updateDir.mkdirs();
 		
 		if (!new File(this.updateDir.getPath() + File.separator + "minecraft.jar").exists()) downloadFile(backupbaseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
 		
