@@ -65,42 +65,8 @@ public class LoginForm extends JFrame implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -192904429165686059L;
-	private JPanel contentPane;
-	GameUpdater gu = new GameUpdater();
-	public Boolean mcUpdate = false;
-	public Boolean spoutUpdate = false;
-
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					LoginForm frame = new LoginForm();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	private Cipher getCipher(int mode, String password) throws Exception {
-		Random random = new Random(43287234L);
-		byte[] salt = new byte[8];
-		random.nextBytes(salt);
-		PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
-
-		SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
-		Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
-		cipher.init(mode, pbeKey, pbeParamSpec);
-		return cipher;
-	}
 	
-	/**
-	 * Create the frame.
-	 */
+	private JPanel contentPane;
 	private JPasswordField txtPassword;
 	private JComboBox cmbUsername = new JComboBox();
 	private JButton btnLogin = new JButton("Login");		
@@ -109,6 +75,12 @@ public class LoginForm extends JFrame implements ActionListener {
 	private JButton btnLogin1;
 	private JButton btnLogin2;
 	private JScrollPane scrollPane;
+	
+	HashMap<String, String> usernames = new HashMap<String, String>();
+	public Boolean mcUpdate = false;
+	public Boolean spoutUpdate = false;
+	
+	GameUpdater gu = new GameUpdater();	
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	
 	public LoginForm() {
@@ -344,7 +316,6 @@ public class LoginForm extends JFrame implements ActionListener {
 		}
 	}
 	
-	HashMap<String, String> usernames = new HashMap<String, String>();
 	private void readUsedUsernames() {
 		int i = 0;
 		try {
@@ -480,7 +451,10 @@ public class LoginForm extends JFrame implements ActionListener {
 			}
 		} catch (Exception e) {
 			mcUpdate = false;
+		
 		}
+		
+		if (mcUpdate) return;
 		
 		//check for spout updates
 		System.out.print("Checking for Spout update...\n");
@@ -493,7 +467,18 @@ public class LoginForm extends JFrame implements ActionListener {
 		} catch (Exception e) {
 			spoutUpdate = false;
 		}
-		
-		
+
+	}
+	
+	private Cipher getCipher(int mode, String password) throws Exception {
+		Random random = new Random(43287234L);
+		byte[] salt = new byte[8];
+		random.nextBytes(salt);
+		PBEParameterSpec pbeParamSpec = new PBEParameterSpec(salt, 5);
+
+		SecretKey pbeKey = SecretKeyFactory.getInstance("PBEWithMD5AndDES").generateSecret(new PBEKeySpec(password.toCharArray()));
+		Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
+		cipher.init(mode, pbeKey, pbeParamSpec);
+		return cipher;
 	}
 }
