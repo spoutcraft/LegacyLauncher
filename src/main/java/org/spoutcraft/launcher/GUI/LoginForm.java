@@ -82,13 +82,17 @@ public class LoginForm extends JFrame implements ActionListener {
 	
 	GameUpdater gu = new GameUpdater();	
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+	OptionDialog options = new OptionDialog();
 	
 	public LoginForm() {
 		
 		settings.load();
 		
+		options.setVisible(false);
 		btnLogin.setBounds(745, 375, 86, 23);
+		btnLogin.setOpaque(false);
 		btnLogin.addActionListener(this);
+		btnOptions.setOpaque(false);
 		btnOptions.addActionListener(this);
 		cmbUsername.addActionListener(this);
 		
@@ -121,13 +125,14 @@ public class LoginForm extends JFrame implements ActionListener {
 		txtPassword = new JPasswordField();
 		txtPassword.setBounds(617, 404, 119, 20);
 		
-
 		btnLogin1 = new JButton("Login as Player");
 		btnLogin1.setBounds(72, 428, 119, 23);
+		btnLogin1.setOpaque(false);
 		btnLogin1.addActionListener(this);
 		btnLogin1.setVisible(false);
 		btnLogin2 = new JButton("Login as Player");
 		btnLogin2.setBounds(261, 428, 119, 23);
+		btnLogin2.setOpaque(false);
 		btnLogin2.addActionListener(this);
 		btnLogin2.setVisible(false);
 		
@@ -393,6 +398,7 @@ public class LoginForm extends JFrame implements ActionListener {
 			this.btnLogin.setEnabled(false);
 			this.btnLogin1.setEnabled(false);
 			this.btnLogin2.setEnabled(false);
+			options.setVisible(false);
 			try {
 				String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
 				
@@ -417,6 +423,7 @@ public class LoginForm extends JFrame implements ActionListener {
 				
 				launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(this.txtPassword.getPassword()));	
 				this.setVisible(false);
+				return;
 				
 			} catch (BadLoginException e) {
 				JOptionPane.showMessageDialog(this,"Incorrect username/password combination");
@@ -430,8 +437,11 @@ public class LoginForm extends JFrame implements ActionListener {
 				e.printStackTrace();
 			}
 			
+			this.btnLogin.setEnabled(true);
+			this.btnLogin1.setEnabled(true);
+			this.btnLogin2.setEnabled(true);
+			
 		} else if (btnID.equals("Options")) {
-			OptionDialog options = new OptionDialog();
 			options.setVisible(true);
 			options.setBounds((int) getBounds().getCenterX()-250, (int) getBounds().getCenterY()-75, 500, 150);
 		} else if (btnID.equals("comboBoxChanged")) {
