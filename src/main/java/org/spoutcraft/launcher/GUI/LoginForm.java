@@ -60,7 +60,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     private JCheckBox cbRemember = new JCheckBox("Remember");
     private JButton btnLogin1;
     private JButton btnLogin2;
-
+    private JProgressBar progressBar;
     HashMap<String, String> usernames = new HashMap<String, String>();
     public Boolean mcUpdate = false;
     public Boolean spoutUpdate = false;
@@ -122,6 +122,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         btnLogin2.setOpaque(false);
         btnLogin2.addActionListener(this);
         btnLogin2.setVisible(false);
+
+        progressBar = new JProgressBar();
+        progressBar.setBounds(30, 100, 400, 23);
+        progressBar.setVisible(false);
+        progressBar.setStringPainted(true);
 
         readUsedUsernames();
 
@@ -192,6 +197,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         contentPane.add(trans2);
         contentPane.add(login);
         contentPane.add(trans);
+        contentPane.add(progressBar);
 
         final JLabel[] background = new JLabel[1];
         try {
@@ -276,9 +282,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     }
 
     public void stateChanged(String fileName, float progress) {
-        //progressBar.setVisible(true);
-        //progressBar.setValue(Math.round(progress));
-        System.out.println(fileName + ": " + progress);
+        int intProgress = Math.round(progress);
+        boolean notComplete = progress < 100;
+
+        progressBar.setValue(intProgress);
+        progressBar.setString(intProgress + "% " + fileName);
+        progressBar.setVisible(notComplete);
+
+        //System.out.println(fileName + ": " + progress);
     }
 
     public static class SpoutFocusTraversalPolicy extends FocusTraversalPolicy {
