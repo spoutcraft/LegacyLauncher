@@ -1,22 +1,16 @@
 package org.spoutcraft.launcher.GUI;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
+import org.spoutcraft.launcher.PlatformUtils;
+import org.spoutcraft.launcher.SettingsHandler;
+
+import javax.swing.*;
+import javax.swing.GroupLayout.Alignment;
+import javax.swing.LayoutStyle.ComponentPlacement;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
-import org.spoutcraft.launcher.PlatformUtils;
-import org.spoutcraft.launcher.SettingsHandler;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.JCheckBox;
-import javax.swing.LayoutStyle.ComponentPlacement;
 
 public class OptionDialog extends JDialog implements ActionListener {
 
@@ -24,21 +18,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 * 
 	 */
 	private static final long serialVersionUID = -2453348055512665749L;
-	private final JPanel contentPanel = new JPanel();
-	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			OptionDialog dialog = new OptionDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+    private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+
 	JCheckBox cbxDev = new JCheckBox("Use latest dev build. Remember to only use this if you know what you are doing!");
 	
 	JCheckBox cbxClip = new JCheckBox("Allow access to your clipboard");
@@ -69,7 +50,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		setResizable(false);
 		setBounds(100, 100, 500, 150);
 		getContentPane().setLayout(new BorderLayout());
-		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        JPanel contentPanel = new JPanel();
+        contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);

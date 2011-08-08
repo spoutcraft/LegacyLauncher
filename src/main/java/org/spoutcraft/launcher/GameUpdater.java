@@ -1,20 +1,11 @@
 package org.spoutcraft.launcher;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import SevenZip.LzmaAlone;
+import org.spoutcraft.launcher.AsyncDownload.Download;
+import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
+import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
+
+import java.io.*;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
@@ -28,12 +19,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
-
-import SevenZip.LzmaAlone;
-
-public class GameUpdater {
-	
+@SuppressWarnings({"ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored"})
+public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public long latestVersion;
 	public String user = "Player";
@@ -56,8 +43,12 @@ public class GameUpdater {
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-	
-	public void updateMC() throws Exception {
+    private DownloadListener listener;
+
+    public GameUpdater() {
+    }
+
+    public void updateMC() throws Exception {
 		this.purgeDir(binDir);
 		this.purgeDir(updateDir);
 		
@@ -91,7 +82,7 @@ public class GameUpdater {
 		// Extract Natives \\
 		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.zip"));
 		
-		writeVersionFile(new File(this.binDir + File.separator + "version"), new Long(this.latestVersion).toString());
+		writeVersionFile(new File(this.binDir + File.separator + "version"), Long.toString(this.latestVersion));
 	}
 	
 	public String readVersionFile(File file) throws Exception {
@@ -112,9 +103,8 @@ public class GameUpdater {
 		if (!new File(binDir, "natives").exists()) return true;
 		if (!versionFile.exists()) return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
-		if (this.latestVersion > currentVersion) return true;
-		return false;
-	}
+        return this.latestVersion > currentVersion;
+    }
 	
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {
 
@@ -123,7 +113,7 @@ public class GameUpdater {
 		JarFile jar = new JarFile(nativesJar);
 		Enumeration<JarEntry> entries = jar.entries();
 		while (entries.hasMoreElements()) {
-			JarEntry entry = (JarEntry)entries.nextElement();
+			JarEntry entry = entries.nextElement();
 			String name = entry.getName();
 			if (entry.isDirectory()) continue;
 			if (name.startsWith("META-INF")) continue;
@@ -132,7 +122,7 @@ public class GameUpdater {
 			if (!outFile.exists()) outFile.createNewFile();
 			OutputStream out = new FileOutputStream(new File(nativesDir.getPath() + File.separator  + name));
 
-			int read=0;
+			int read;
 			byte[] bytes = new byte[1024];
 
 			while((read = inputStream.read(bytes))!= -1){
@@ -148,7 +138,7 @@ public class GameUpdater {
 
 	private File getNatives() throws Exception {
 		String osName = System.getProperty("os.name").toLowerCase();
-		String fname = null;
+		String fname;
 
 		if (osName.contains("win")) {
 			fname = "windows_natives";
@@ -174,7 +164,7 @@ public class GameUpdater {
 		return new File (updateDir.getPath() + File.separator + "natives.jar.lzma");
 	}
 	
-	public boolean updateSpout() throws Exception {
+	public void updateSpout() throws Exception {
 		performBackup();
 		
 		if (this.updateDir.exists()) this.purgeDir(updateDir);
@@ -210,12 +200,10 @@ public class GameUpdater {
 		if (spoutVersion.exists()) spoutVersion.delete();
 		
 		this.writeFile(spoutVersion.getPath(), this.getSpoutVersion());
-		
-		return true;
-	}
+    }
 
 	public String getSpoutVersion() throws Exception {
-		 String version = "-1";
+		 String version;
 		 URL url;
 		 if (devmode) {
 			 url = new URL("http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/buildNumber");
@@ -224,8 +212,8 @@ public class GameUpdater {
 		 }
 		 
 		 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		 String str;
-		 while ((str = in.readLine()) != null) {
+		 String str = in.readLine();
+		 if (str != null) {
 		      version = str;
 		      return version;
 		 }
@@ -239,7 +227,7 @@ public class GameUpdater {
 		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return true;
 		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
-		String line = null;
+		String line;
 		String version = null;
 		if((line = br.readLine()) != null) {
 			version = line;
@@ -248,24 +236,22 @@ public class GameUpdater {
 		String latest = this.getSpoutVersion();
 
 		if (latest == null) return false;
+        if (version == null) return true;
 		if (version.contains(".")) return true;
 		
 		int c = Integer.parseInt(version);
 		int l = Integer.parseInt(latest);
-		
-		if (c < l || (c > l && !devmode)) {
-			return true;
-		}
-		
-		return false;
-	}
+
+        return c < l || (c > l && !devmode);
+
+    }
 	
 	public void unzipSpout() throws Exception {
 		final int BUFFER = 2048;
-		BufferedOutputStream dest = null;
+		BufferedOutputStream dest;
 		FileInputStream fis = new FileInputStream(new File(this.updateDir.getPath() + File.separator + "Spout.zip"));
-		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));;
-		ZipEntry entry;
+		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
+        ZipEntry entry;
 		File dir = new File(updateDir + File.separator + "Spout");
 		if (dir.exists()) {
 			this.purgeDir(dir);
@@ -298,7 +284,7 @@ public class GameUpdater {
 		
 		BufferedReader br;
 		br = new BufferedReader(new FileReader(spoutVersion));
-		String line = null;
+		String line;
 		String version = null;
 		
 		if((line = br.readLine()) != null) {
@@ -433,8 +419,8 @@ public class GameUpdater {
 	}
 	
 	public void writeFile(String out, String contents) {
-		FileWriter fWriter = null;
-		BufferedWriter writer = null; 
+		FileWriter fWriter;
+		BufferedWriter writer;
 		try {
 		  fWriter = new FileWriter(out);
 		  writer = new BufferedWriter(fWriter);
@@ -442,21 +428,14 @@ public class GameUpdater {
 		  writer.write(contents);
 		   writer.close();
 		} catch (Exception e) {
+            e.printStackTrace();
 		}
 	}
 	
 	private void downloadFile(String url, String outPut) throws Exception {
-		BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-		FileOutputStream fos = new FileOutputStream(outPut);
-		BufferedOutputStream bout = new BufferedOutputStream(fos,1024);
-		byte[] data = new byte[1024];
-		int x=0;
-		while((x=in.read(data,0,1024))>=0)
-		{
-			bout.write(data,0,x);
-		}
-		bout.close();
-		in.close();
+        Download download = new Download(url, outPut);
+        download.setListener(this);
+        download.run();
 	}
 		
 	
@@ -479,10 +458,9 @@ public class GameUpdater {
 	}
 	
 	private void purgeDir(File file) {
-		File delFile = file;
-		if (delFile.exists()) {
-			if (delFile.isDirectory()) deleteSubDir(delFile);
-			delFile.delete();
+		if (file.exists()) {
+			if (file.isDirectory()) deleteSubDir(file);
+			file.delete();
 		}
 	}
 	
@@ -495,4 +473,11 @@ public class GameUpdater {
 		}
 	}
 
+    public void stateChanged(String fileName, float progress) {
+        this.listener.stateChanged(fileName, progress);
+    }
+
+    public void setListener(DownloadListener listener) {
+        this.listener = listener;
+    }
 }

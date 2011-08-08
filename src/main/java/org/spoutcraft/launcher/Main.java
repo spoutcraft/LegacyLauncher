@@ -1,32 +1,34 @@
 package org.spoutcraft.launcher;
 
-import java.io.File;
-
-import javax.swing.UIManager;
-
 import org.spoutcraft.launcher.GUI.LoginForm;
 
+import javax.swing.*;
+import java.io.File;
+import java.util.Arrays;
 
 public class Main {
 	
 	@SuppressWarnings("static-access")
 	public Main() throws Exception {
-		this.main(null);
+		main(new String[0]);
 	}
 	
-	public static void main(String[] args) throws Exception {		
+	@SuppressWarnings({"ResultOfMethodCallIgnored"})
+    public static void main(String[] args) throws Exception {
+        if (Arrays.asList(args).contains("--portable")) {
+            PlatformUtils.setPortable(true);
+        }
 		PlatformUtils.getWorkingDirectory().mkdir();
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
 		
 		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            // Ignore and continue with Metal
+            System.out.println("[WARNING] Can't get system LnF: " + e);
         }
 		
 		LoginForm login = new LoginForm();
 		login.setVisible(true);
-		login.onLoad();
 	}
 	
 }

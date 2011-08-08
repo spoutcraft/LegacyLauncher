@@ -1,11 +1,11 @@
 package org.spoutcraft.launcher;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 
 public class MinecraftUtils {
@@ -27,9 +27,7 @@ public class MinecraftUtils {
 				}
 				throw new MCNetworkException();
 			}
-			String[] values = result.split(":");
-			//System.out.print(result);
-			return values;
+			return result.split(":");
 	}
 	
 }

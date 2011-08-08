@@ -1,15 +1,13 @@
 package org.spoutcraft.launcher.GUI;
 
-import java.applet.Applet;
-import java.awt.Dimension;
-import java.awt.Frame;
-import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
+import org.spoutcraft.launcher.PlatformUtils;
 
+import java.applet.Applet;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class LauncherFrame extends Frame implements WindowListener{
 
@@ -41,7 +39,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
-		minecraft.addParameter("portable", "true");
+		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
 
 		applet.setStub(minecraft);
 
@@ -55,7 +53,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		
 		this.setVisible(true);
 	}
-	
+
 	public void windowActivated(WindowEvent e) {		
 	}
 

@@ -1,14 +1,6 @@
 package org.spoutcraft.launcher;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.HashMap;
 
 /**
@@ -21,6 +13,7 @@ import java.util.HashMap;
  *
  */
 
+@SuppressWarnings({"JavadocReference", "UnusedDeclaration", "JavaDoc"})
 public class SettingsHandler {
 	
 	private File out;
@@ -105,10 +98,11 @@ public class SettingsHandler {
 			FileOutputStream output = null;
 			try
 			{
-				out.getParentFile().mkdirs();
+                //noinspection ResultOfMethodCallIgnored
+                out.getParentFile().mkdirs();
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
-				int length = 0;
+				int length;
 
 				while ((length = input.read(buf)) > 0) {
 					output.write(buf, 0, length);
@@ -118,15 +112,14 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (input != null)
-						input.close();
-				} catch (Exception e) {
+                    input.close();
+				} catch (Exception ignored) {
 				}
 				try {
 					if (output != null)
 						output.close();
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{
 				}
 			}
@@ -144,7 +137,7 @@ public class SettingsHandler {
 			{
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
-				int length = 0;
+				int length;
 
 				while ((length = input.read(buf)) > 0) {
 					output.write(buf, 0, length);
@@ -154,15 +147,14 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (input != null)
-						input.close();
-				} catch (Exception e) {
+                    input.close();
+				} catch (Exception ignored) {
 				}
 				try {
 					if (output != null)
 						output.close();
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{
 				}
 			}
@@ -178,7 +170,7 @@ public class SettingsHandler {
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
-			String line = null;
+			String line;
 			
 			while((line = br.readLine()) != null) {
 				if ((line.isEmpty()) || (line.startsWith("#")) || (!line.contains(": "))) continue;
@@ -260,7 +252,7 @@ public class SettingsHandler {
 	 */
 	public Boolean getPropertyBoolean(String property) {
 		try {
-			String result = null;
+			String result;
 			if (this.cached) {
 				result = this.cache.get(property);
 			} else {
@@ -285,7 +277,7 @@ public class SettingsHandler {
 	 */
 	public Double getPropertyDouble(String property) {
 		try {
-			String result = null;
+			String result;
 			if (this.cached) {
 				result = this.cache.get(property);
 			} else {
@@ -306,7 +298,7 @@ public class SettingsHandler {
 	 * @return Boolean check
 	 */
 	public Boolean checkProperty(String property) {
-		String check = null;
+		String check;
 		try {
 			if (this.cached) {
 				check = this.cache.get(property);
@@ -335,7 +327,8 @@ public class SettingsHandler {
 	private void flush(HashMap<Integer,String> newContents) {
 		try {
 			this.delFile(out);
-			out.createNewFile();
+            //noinspection ResultOfMethodCallIgnored
+            out.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(out));
 			for (int i = 1; i <= newContents.size(); i ++) {
 				String line = newContents.get(i);
@@ -346,11 +339,9 @@ public class SettingsHandler {
 				writer.append(line);
 				writer.append("\n");
 			}
-			if (writer != null) { 
-				writer.flush();
-				writer.close();
-			}
-			if (cached) this.load();
+            writer.flush();
+            writer.close();
+            if (cached) this.load();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -362,8 +353,10 @@ public class SettingsHandler {
 	 * @param File file
 	 */
 	private void delFile(File file) {
-		File delFile = file;
-		if (delFile.exists()) delFile.delete();
+		if (file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        }
 	}
 	
 	/**
@@ -376,7 +369,7 @@ public class SettingsHandler {
 		Integer i = 1;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
-			String line = null;
+			String line;
 			
 			while((line = br.readLine()) != null) {
 				if (line.isEmpty()) {
