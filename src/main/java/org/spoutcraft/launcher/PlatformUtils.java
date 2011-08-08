@@ -24,7 +24,7 @@ public class PlatformUtils {
 
 	public static File getWorkingDirectory(String applicationName) {
         if (portable) {
-            return new File("spoutcraft-data");
+            return new File("spoutcraft");
         }
 	    String userHome = System.getProperty("user.home", ".");
 	    File workingDirectory;
