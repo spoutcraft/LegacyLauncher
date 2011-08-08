@@ -8,11 +8,10 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 public class SystemConsoleListener {
-	@SuppressWarnings("unused")
+	
 	public void initialize() throws Exception {
 	        LogManager logManager = LogManager.getLogManager();
 	        logManager.reset();
-
 	        
 	        Handler fileHandler = new FileHandler("log", 10000, 3, true);
 	        fileHandler.setFormatter(new ClientLoggerFormatter());
@@ -24,6 +23,9 @@ public class SystemConsoleListener {
 	    	Handler ConsoleHandle = new StreamHandler(stdout, new ClientLoggerFormatter());
 	    	Logger.getLogger("").addHandler(ConsoleHandle);   
 	    	
+	    	Handler ErrHandle = new StreamHandler(stderr, new ClientLoggerFormatter());
+	    	Logger.getLogger("").addHandler(ErrHandle);  
+	    	
 	    	Logger logger;
 	    	SystemListenerStream los;
 
@@ -33,6 +35,7 @@ public class SystemConsoleListener {
 	    	
 	    	logger = Logger.getLogger("stderr");
 	    	los= new SystemListenerStream(logger, SystemListenerLevel.STDERR);
-	    	System.setErr(new PrintStream(los, true));	
+	    	System.setErr(new PrintStream(los, true));
+	    	
 	}
 }

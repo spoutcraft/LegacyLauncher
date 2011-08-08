@@ -13,9 +13,8 @@ public class Main {
 	public Main() throws Exception {
 		this.main(null);
 	}
-
 	
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {		
 		PlatformUtils.getWorkingDirectory().mkdir();
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
 		

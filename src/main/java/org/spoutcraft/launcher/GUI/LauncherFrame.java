@@ -41,6 +41,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
+		minecraft.addParameter("portable", "true");
 
 		applet.setStub(minecraft);
 
