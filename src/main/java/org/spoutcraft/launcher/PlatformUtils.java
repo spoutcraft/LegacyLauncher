@@ -21,11 +21,7 @@ public class PlatformUtils {
 		if (workDir == null) workDir = getWorkingDirectory("spoutcraft");
 		return workDir;
 	}
-	public static File getVanillaWorkingDirectory() {
-		if (workDir == null) workDir = getWorkingDirectory("minecraft");
-		return workDir;
-	}
-	
+
 	public static File getWorkingDirectory(String applicationName) {
         if (portable) {
             return new File("spoutcraft-data");

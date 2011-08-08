@@ -7,15 +7,15 @@ import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.GUI.LoginForm;
 
-
 public class Main {
 	
 	@SuppressWarnings("static-access")
 	public Main() throws Exception {
-		main(null);
+		main(new String[0]);
 	}
 	
-	public static void main(String[] args) throws Exception {
+	@SuppressWarnings({"ResultOfMethodCallIgnored"})
+    public static void main(String[] args) throws Exception {
         if (Arrays.asList(args).contains("--portable")) {
             PlatformUtils.setPortable(true);
         }

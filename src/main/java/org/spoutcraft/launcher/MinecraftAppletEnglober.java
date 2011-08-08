@@ -32,19 +32,15 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
     }
 
     public MinecraftAppletEnglober(Applet minecraftApplet) throws HeadlessException {
+        this();
         this.minecraftApplet = minecraftApplet;
-        
-        this.setLayout(new GridBagLayout());
         java.awt.GridBagConstraints gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.FIRST_LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
-        
         this.add(minecraftApplet, gridBagConstraints);
-        
-        this.customParameters = new HashMap<String, String>();
     }
 
     public Applet getMinecraftApplet() {
@@ -72,7 +68,7 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 
     @Override
     public String getParameter(String name) {
-        String custom = (String)this.customParameters.get(name);
+        String custom = this.customParameters.get(name);
         if (custom != null) return custom; try
         {
           return super.getParameter(name);
@@ -127,7 +123,7 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
         if (minecraftDocumentBase == null) {
             try {
                 minecraftDocumentBase = new URL("http://www.minecraft.net/game");
-            } catch (MalformedURLException ex) {
+            } catch (MalformedURLException ignored) {
             }
         }
         return minecraftDocumentBase;
