@@ -21,6 +21,7 @@ import java.util.HashMap;
  *
  */
 
+@SuppressWarnings({"JavadocReference", "UnusedDeclaration", "JavaDoc"})
 public class SettingsHandler {
 	
 	private File out;
@@ -105,7 +106,8 @@ public class SettingsHandler {
 			FileOutputStream output = null;
 			try
 			{
-				out.getParentFile().mkdirs();
+                //noinspection ResultOfMethodCallIgnored
+                out.getParentFile().mkdirs();
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
 				int length;
@@ -333,7 +335,8 @@ public class SettingsHandler {
 	private void flush(HashMap<Integer,String> newContents) {
 		try {
 			this.delFile(out);
-			out.createNewFile();
+            //noinspection ResultOfMethodCallIgnored
+            out.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(out));
 			for (int i = 1; i <= newContents.size(); i ++) {
 				String line = newContents.get(i);
@@ -358,7 +361,10 @@ public class SettingsHandler {
 	 * @param File file
 	 */
 	private void delFile(File file) {
-		if (file.exists()) file.delete();
+		if (file.exists()) {
+            //noinspection ResultOfMethodCallIgnored
+            file.delete();
+        }
 	}
 	
 	/**

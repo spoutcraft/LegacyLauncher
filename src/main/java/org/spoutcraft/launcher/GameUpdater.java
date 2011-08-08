@@ -35,6 +35,7 @@ import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
 import SevenZip.LzmaAlone;
 import org.spoutcraft.launcher.GUI.LoginForm;
 
+@SuppressWarnings({"ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored"})
 public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public long latestVersion;
@@ -128,7 +129,7 @@ public class GameUpdater implements DownloadListener {
 		JarFile jar = new JarFile(nativesJar);
 		Enumeration<JarEntry> entries = jar.entries();
 		while (entries.hasMoreElements()) {
-			JarEntry entry = (JarEntry)entries.nextElement();
+			JarEntry entry = entries.nextElement();
 			String name = entry.getName();
 			if (entry.isDirectory()) continue;
 			if (name.startsWith("META-INF")) continue;
