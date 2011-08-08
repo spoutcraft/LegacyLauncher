@@ -14,8 +14,4 @@ public class MinecraftClassLoader extends URLClassLoader{
 		String modifiedName = name.replace("//", "/");
 		return super.findClass(modifiedName);
 	}
-	
-	
-	
-
 }
