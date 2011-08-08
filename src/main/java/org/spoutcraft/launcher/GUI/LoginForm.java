@@ -195,13 +195,15 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         final JLabel[] background = new JLabel[1];
         try {
-            final File bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
-            if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
-                SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
+            final File bgCache;
+            bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
+            SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
                     @Override
                     protected Object doInBackground() throws Exception {
-                        Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
-                        download.run();
+                        if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
+                            Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
+                            download.run();
+                        }
                         return null;
                     }
 
@@ -213,7 +215,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                     }
                 };
                 bgThread.execute();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -226,7 +227,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         order.add(btnOptions);
 
         setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
-
     }
 
     public void drawCharacter(String url, int x, int y) {
