@@ -3,9 +3,7 @@ package org.spoutcraft.launcher;
 
 import java.applet.Applet;
 import java.applet.AppletStub;
-import java.awt.Dimension;
-import java.awt.GridBagLayout;
-import java.awt.HeadlessException;
+import java.awt.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;

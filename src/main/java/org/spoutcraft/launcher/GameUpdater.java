@@ -1,20 +1,11 @@
 package org.spoutcraft.launcher;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import SevenZip.LzmaAlone;
+import org.spoutcraft.launcher.AsyncDownload.Download;
+import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
+import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
+
+import java.io.*;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
@@ -27,13 +18,6 @@ import java.util.jar.Pack200;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
-
-import org.spoutcraft.launcher.AsyncDownload.Download;
-import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
-import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
-
-import SevenZip.LzmaAlone;
-import org.spoutcraft.launcher.GUI.LoginForm;
 
 @SuppressWarnings({"ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored"})
 public class GameUpdater implements DownloadListener {
