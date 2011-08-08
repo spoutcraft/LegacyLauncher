@@ -26,11 +26,6 @@ public class Download implements Runnable {
         return ((float)downloaded / size) * 100;
     }
 
-    public void start() {
-        Thread thread = new Thread(this);
-        thread.start();
-    }
-
     public void run() {
         RandomAccessFile file = null;
         InputStream stream = null;
