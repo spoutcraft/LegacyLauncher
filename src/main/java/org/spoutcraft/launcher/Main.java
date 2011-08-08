@@ -24,12 +24,11 @@ public class Main {
 		try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
-            // Ignore and continue with Metal
+            System.out.println("[WARNING] Can't get system LnF: " + e);
         }
 		
 		LoginForm login = new LoginForm();
 		login.setVisible(true);
-		login.onLoad();
 	}
 	
 }

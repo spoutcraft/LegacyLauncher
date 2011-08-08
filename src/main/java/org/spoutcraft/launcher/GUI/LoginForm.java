@@ -121,15 +121,25 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         cbRemember.setOpaque(false);
 
-        JTextPane editorPane = new JTextPane();
+        final JTextPane editorPane = new JTextPane();
         editorPane.setContentType("text/html");
-        try {
-            editorPane.setPage(new URL("http://updates.getspout.org/"));
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
+
+        SwingWorker<Object, Object> newsThread = new SwingWorker<Object, Object>() {
+            @Override
+            protected Object doInBackground() throws Exception {
+                try {
+                    editorPane.setPage(new URL("http://updates.getspout.org/"));
+                } catch (MalformedURLException e1) {
+                    e1.printStackTrace();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+
+                return null;
+            }
+        };
+        newsThread.execute();
+
         editorPane.setEditable(false);
         editorPane.setOpaque(false);
 
@@ -185,23 +195,23 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             final File bgCache;
             bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
             SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
-                    @Override
-                    protected Object doInBackground() throws Exception {
-                        if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
-                            Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
-                            download.run();
-                        }
-                        return null;
+                @Override
+                protected Object doInBackground() throws Exception {
+                    if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
+                        Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
+                        download.run();
                     }
+                    return null;
+                }
 
-                    @Override
-                    protected void done() {
-                        background[0] = new JLabel(new ImageIcon(bgCache.getPath())); // TODO unhack
-                        background[0].setBounds(0, 0, 854, 480);
-                        contentPane.add(background[0]);
-                    }
-                };
-                bgThread.execute();
+                @Override
+                protected void done() {
+                    background[0] = new JLabel(new ImageIcon(bgCache.getPath())); // TODO unhack
+                    background[0].setBounds(0, 0, 854, 480);
+                    contentPane.add(background[0]);
+                }
+            };
+            bgThread.execute();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -387,59 +397,78 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             this.btnLogin1.setEnabled(false);
             this.btnLogin2.setEnabled(false);
             options.setVisible(false);
-            try {
-                final String[] values = MinecraftUtils.doLogin(this.cmbUsername.getSelectedItem().toString(), new String(this.txtPassword.getPassword()));
+            SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
+                String[] values;
 
-                usernames.remove(this.cmbUsername.getSelectedItem().toString());
-
-                gu.user = values[2].trim();
-                gu.downloadTicket = values[1].trim();
-                gu.latestVersion = Long.parseLong(values[0].trim());
-                if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
-
-                usernames.put(gu.user, this.cbRemember.isSelected() ? new String(this.txtPassword.getPassword()) : "");
-                writeUsernameList();
-                SwingWorker<Boolean, Boolean> updateThread = new SwingWorker<Boolean, Boolean>() {
-                    @Override
-                    protected void done() {
-                        LauncherFrame launcher = new LauncherFrame();
-                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
-                        setVisible(false);
+                @Override
+                protected Boolean doInBackground() throws Exception {
+                    try {
+                        values = MinecraftUtils.doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
+                    } catch (BadLoginException e) {
+                        JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+                    } catch (MCNetworkException e) {
+                        JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
+                    } catch (OutdatedMCLauncherException e) {
+                        JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+                    return true;
+                }
 
-                    @Override
-                    protected Boolean doInBackground() throws Exception {
-                        if (mcUpdate)
-                        {
-                            gu.updateMC();
-                            gu.updateSpout();
+                @Override
+                protected void done() {
+                    usernames.remove(cmbUsername.getSelectedItem().toString());
+                    gu.user = values[2].trim();
+                    gu.downloadTicket = values[1].trim();
+                    gu.latestVersion = Long.parseLong(values[0].trim());
+                    if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
+                    usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
+                    writeUsernameList();
+                    SwingWorker<Boolean, Boolean> updateThread = new SwingWorker<Boolean, Boolean>() {
+                        @Override
+                        protected void done() {
+                            LauncherFrame launcher = new LauncherFrame();
+                            launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
+                            setVisible(false);
                         }
-                        else if (spoutUpdate)
-                        {
-                            gu.updateSpout();
+
+                        @Override
+                        protected Boolean doInBackground() throws Exception {
+                            progressBar.setVisible(true);
+
+                            progressBar.setString("Checking for Minecraft Update...\n");
+                            try {
+                                mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
+                            } catch (Exception e) {
+                                mcUpdate = false;
+                            }
+
+                            progressBar.setString("Checking for Spout update...\n");
+                            try {
+                                spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
+                            } catch (Exception e) {
+                                spoutUpdate = false;
+                            }
+
+                            boolean needUpdate = mcUpdate || spoutUpdate;
+                            progressBar.setVisible(needUpdate);
+
+                            if (mcUpdate) {
+                                gu.updateMC();
+                            }
+                            if (spoutUpdate) {
+                                gu.updateSpout();
+                            }
+                            return true;
                         }
-                        return true;
-                    }
-                };
-                updateThread.execute();
-                return;
-
-            } catch (BadLoginException e) {
-                JOptionPane.showMessageDialog(this, "Incorrect username/password combination");
-            } catch (MCNetworkException e) {
-                JOptionPane.showMessageDialog(this, "Cannot connect to minecraft.net");
-            } catch (OutdatedMCLauncherException e) {
-                JOptionPane.showMessageDialog(this, "The unthinkable has happened, alert alta189@getspout.org!!!!");
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            this.btnLogin.setEnabled(true);
-            this.btnLogin1.setEnabled(true);
-            this.btnLogin2.setEnabled(true);
-
+                    };
+                    updateThread.execute();
+                }
+            };
+            loginThread.execute();
         } else if (btnID.equals("Options")) {
             options.setVisible(true);
             options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 500, 150);
@@ -447,36 +476,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
             this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
         }
-    }
-
-    public void onLoad() {
-        //check for MC updates
-        System.out.print("Checking for Minecraft Update...\n");
-        try {
-            if (!gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"))) {
-                System.out.print("Minecraft is up to date.\n");
-            } else {
-                mcUpdate = true;
-            }
-        } catch (Exception e) {
-            mcUpdate = false;
-
-        }
-
-        if (mcUpdate) return;
-
-        //check for spout updates
-        System.out.print("Checking for Spout update...\n");
-        try {
-            if (!gu.checkSpoutUpdate()) {
-                System.out.print("Spout is up to date :)\n");
-            } else {
-                spoutUpdate = true;
-            }
-        } catch (Exception e) {
-            spoutUpdate = false;
-        }
-
     }
 
     private Cipher getCipher(int mode, String password) throws Exception {
