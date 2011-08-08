@@ -13,6 +13,8 @@ import java.security.cert.Certificate;
 import javax.net.ssl.HttpsURLConnection;
 
 public class PlatformUtils {
+
+    private static boolean portable;
 	private static File workDir = null;
 
 	public static File getWorkingDirectory() {
@@ -25,6 +27,9 @@ public class PlatformUtils {
 	}
 	
 	public static File getWorkingDirectory(String applicationName) {
+        if (portable) {
+            return new File("spoutcraft-data");
+        }
 	    String userHome = System.getProperty("user.home", ".");
 	    File workingDirectory;
 	    switch (getPlatform()) {
@@ -57,8 +62,16 @@ public class PlatformUtils {
 	    if (osName.contains("unix")) return OS.linux;
 	    return OS.unknown;
 	  }
-	  
-	  public enum OS {
+
+    public static boolean isPortable() {
+        return portable;
+    }
+
+    public static void setPortable(boolean portable) {
+        PlatformUtils.portable = portable;
+    }
+
+    public enum OS {
 	    linux, solaris, windows, macos, unknown;
 	  }
 	  
