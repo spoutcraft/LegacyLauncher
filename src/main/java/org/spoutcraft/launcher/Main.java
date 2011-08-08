@@ -11,7 +11,7 @@ public class Main {
 	
 	@SuppressWarnings("static-access")
 	public Main() throws Exception {
-		this.main(null);
+		main(null);
 	}
 	
 	public static void main(String[] args) throws Exception {		

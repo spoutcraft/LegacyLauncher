@@ -108,7 +108,7 @@ public class SettingsHandler {
 				out.getParentFile().mkdirs();
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
-				int length = 0;
+				int length;
 
 				while ((length = input.read(buf)) > 0) {
 					output.write(buf, 0, length);
@@ -118,15 +118,14 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (input != null)
-						input.close();
-				} catch (Exception e) {
+                    input.close();
+				} catch (Exception ignored) {
 				}
 				try {
 					if (output != null)
 						output.close();
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{
 				}
 			}
@@ -144,7 +143,7 @@ public class SettingsHandler {
 			{
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
-				int length = 0;
+				int length;
 
 				while ((length = input.read(buf)) > 0) {
 					output.write(buf, 0, length);
@@ -154,15 +153,14 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-					if (input != null)
-						input.close();
-				} catch (Exception e) {
+                    input.close();
+				} catch (Exception ignored) {
 				}
 				try {
 					if (output != null)
 						output.close();
 				}
-				catch (Exception e)
+				catch (Exception ignored)
 				{
 				}
 			}
@@ -178,7 +176,7 @@ public class SettingsHandler {
 		
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
-			String line = null;
+			String line;
 			
 			while((line = br.readLine()) != null) {
 				if ((line.isEmpty()) || (line.startsWith("#")) || (!line.contains(": "))) continue;
@@ -260,7 +258,7 @@ public class SettingsHandler {
 	 */
 	public Boolean getPropertyBoolean(String property) {
 		try {
-			String result = null;
+			String result;
 			if (this.cached) {
 				result = this.cache.get(property);
 			} else {
@@ -285,7 +283,7 @@ public class SettingsHandler {
 	 */
 	public Double getPropertyDouble(String property) {
 		try {
-			String result = null;
+			String result;
 			if (this.cached) {
 				result = this.cache.get(property);
 			} else {
@@ -306,7 +304,7 @@ public class SettingsHandler {
 	 * @return Boolean check
 	 */
 	public Boolean checkProperty(String property) {
-		String check = null;
+		String check;
 		try {
 			if (this.cached) {
 				check = this.cache.get(property);
@@ -346,11 +344,9 @@ public class SettingsHandler {
 				writer.append(line);
 				writer.append("\n");
 			}
-			if (writer != null) { 
-				writer.flush();
-				writer.close();
-			}
-			if (cached) this.load();
+            writer.flush();
+            writer.close();
+            if (cached) this.load();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -362,8 +358,7 @@ public class SettingsHandler {
 	 * @param File file
 	 */
 	private void delFile(File file) {
-		File delFile = file;
-		if (delFile.exists()) delFile.delete();
+		if (file.exists()) file.delete();
 	}
 	
 	/**
@@ -376,7 +371,7 @@ public class SettingsHandler {
 		Integer i = 1;
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
-			String line = null;
+			String line;
 			
 			while((line = br.readLine()) != null) {
 				if (line.isEmpty()) {

@@ -144,17 +144,6 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
     }
 
     @Override
-    public void setSize(int width, int height) {
-        super.setSize(width, height);
-    }
-
-    @Override
-    public void setSize(Dimension d) {
-        super.setSize(d);
-        //minecraftApplet.setSize(d);
-    }
-
-    @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
         minecraftApplet.setVisible(b);

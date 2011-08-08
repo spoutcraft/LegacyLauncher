@@ -27,9 +27,7 @@ public class MinecraftUtils {
 				}
 				throw new MCNetworkException();
 			}
-			String[] values = result.split(":");
-			//System.out.print(result);
-			return values;
+			return result.split(":");
 	}
 	
 }
