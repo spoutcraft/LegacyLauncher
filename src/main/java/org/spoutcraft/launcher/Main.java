@@ -1,6 +1,7 @@
 package org.spoutcraft.launcher;
 
 import java.io.File;
+import java.util.Arrays;
 
 import javax.swing.UIManager;
 
@@ -14,7 +15,10 @@ public class Main {
 		main(null);
 	}
 	
-	public static void main(String[] args) throws Exception {		
+	public static void main(String[] args) throws Exception {
+        if (Arrays.asList(args).contains("--portable")) {
+            PlatformUtils.setPortable(true);
+        }
 		PlatformUtils.getWorkingDirectory().mkdir();
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
 		
