@@ -333,6 +333,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             }
 
             try {
+                //noinspection InfiniteLoopStatement
                 while (true) {
                     String user = dis.readUTF();
                     String pass = dis.readUTF();
@@ -353,7 +354,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                     usernames.put(user, pass);
                     this.cmbUsername.addItem(user);
                 }
-            } catch (EOFException e) {
+            } catch (EOFException ignored) {
             }
             dis.close();
 
