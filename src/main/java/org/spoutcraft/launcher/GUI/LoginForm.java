@@ -11,8 +11,6 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -38,6 +36,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.AsyncDownload.Download;
 import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.MinecraftUtils;
@@ -59,10 +58,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     private JComboBox cmbUsername = new JComboBox();
     private JButton btnLogin = new JButton("Login");
     private JCheckBox cbRemember = new JCheckBox("Remember");
-    private JButton btnOptions = new JButton("Options");
     private JButton btnLogin1;
     private JButton btnLogin2;
-    private JScrollPane scrollPane;
 
     HashMap<String, String> usernames = new HashMap<String, String>();
     public Boolean mcUpdate = false;
@@ -81,6 +78,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         btnLogin.setBounds(745, 375, 86, 23);
         btnLogin.setOpaque(false);
         btnLogin.addActionListener(this);
+        JButton btnOptions = new JButton("Options");
         btnOptions.setOpaque(false);
         btnOptions.addActionListener(this);
         cmbUsername.addActionListener(this);
@@ -151,7 +149,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         JLabel trans2;
 
-        scrollPane = new JScrollPane(editorPane);
+        JScrollPane scrollPane = new JScrollPane(editorPane);
         scrollPane.setBounds(473, 11, 372, 340);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
         scrollPane.setOpaque(false);
@@ -195,15 +193,27 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         contentPane.add(login);
         contentPane.add(trans);
 
-        JLabel background;
+        final JLabel[] background = new JLabel[1];
         try {
-            File bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
+            final File bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
             if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
-                downloadFile("http://www.getspout.org/splash/index.php", bgCache.getPath());
+                SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
+                        download.run();
+                        return null;
+                    }
+
+                    @Override
+                    protected void done() {
+                        background[0] = new JLabel(new ImageIcon(bgCache.getPath())); // TODO unhack
+                        background[0].setBounds(0, 0, 854, 480);
+                        contentPane.add(background[0]);
+                    }
+                };
+                bgThread.execute();
             }
-            background = new JLabel(new ImageIcon(bgCache.getPath()));
-            background.setBounds(0, 0, 854, 480);
-            contentPane.add(background);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -217,19 +227,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
-    }
-
-    private void downloadFile(String url, String outPut) throws Exception {
-        BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
-        FileOutputStream fos = new FileOutputStream(outPut);
-        BufferedOutputStream bout = new BufferedOutputStream(fos, 1024);
-        byte[] data = new byte[1024];
-        int x;
-        while ((x = in.read(data, 0, 1024)) >= 0) {
-            bout.write(data, 0, x);
-        }
-        bout.close();
-        in.close();
     }
 
     public void drawCharacter(String url, int x, int y) {
