@@ -216,7 +216,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         contentPane.add(trans);
         contentPane.add(progressBar);
 
-        final JLabel background = new JLabel();
+        final JLabel background = new JLabel("Loading...");
+        background.setVerticalAlignment(SwingConstants.CENTER);
+        background.setHorizontalAlignment(SwingConstants.CENTER);
         background.setBounds(0, 0, 854, 480);
         contentPane.add(background);
 
