@@ -16,7 +16,7 @@ public class Main {
 	
 	@SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static void main(String[] args) throws Exception {
-        if (Arrays.asList(args).contains("--portable")) {
+        if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
             PlatformUtils.setPortable(true);
         }
 		PlatformUtils.getWorkingDirectory().mkdir();
