@@ -10,6 +10,8 @@ import java.awt.Graphics2D;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -47,7 +49,7 @@ import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
 
-public class LoginForm extends JFrame implements ActionListener, DownloadListener {
+public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener {
 
     /**
      *
@@ -188,6 +190,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         trans.setOpaque(true);
         trans.setBounds(0, 0, 854, 480);
 
+        cmbUsername.addKeyListener(this);
+        txtPassword.addKeyListener(this);
+        cbRemember.addKeyListener(this);
+
         cmbUsername.setEditable(true);
         contentPane.setLayout(null);
         cbRemember.setBounds(617, 428, 93, 23);
@@ -301,6 +307,18 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         //System.out.println(fileName + ": " + progress);
     }
 
+    public void keyTyped(KeyEvent e) {
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            doLogin();
+        }
+    }
+
+    public void keyReleased(KeyEvent e) {
+    }
+
     public static class SpoutFocusTraversalPolicy extends FocusTraversalPolicy {
         Vector<Component> order;
 
@@ -411,86 +429,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
         }
         if (btnID.equals("Login")) {
-            this.btnLogin.setEnabled(false);
-            this.btnLogin1.setEnabled(false);
-            this.btnLogin2.setEnabled(false);
-            options.setVisible(false);
-            SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
-                String[] values;
-
-                @Override
-                protected Boolean doInBackground() throws Exception {
-                    try {
-                        values = MinecraftUtils.doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
-                    } catch (BadLoginException e) {
-                        JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-                    } catch (MCNetworkException e) {
-                        JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
-                    } catch (OutdatedMCLauncherException e) {
-                        JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    return true;
-                }
-
-                @Override
-                protected void done() {
-                    usernames.remove(cmbUsername.getSelectedItem().toString());
-                    gu.user = values[2].trim();
-                    gu.downloadTicket = values[1].trim();
-                    gu.latestVersion = Long.parseLong(values[0].trim());
-                    if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
-                    usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
-                    writeUsernameList();
-
-                    progressBar.setVisible(true);
-                    SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
-                        @Override
-                        protected void done() {
-                            progressBar.setVisible(false);
-                            LauncherFrame launcher = new LauncherFrame();
-                            launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
-                            setVisible(false);
-                        }
-
-                        @Override
-                        protected Boolean doInBackground() throws Exception {
-
-                            publish("Checking for Minecraft Update...\n");
-                            try {
-                                mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
-                            } catch (Exception e) {
-                                mcUpdate = false;
-                            }
-
-                            publish("Checking for Spout update...\n");
-                            try {
-                                spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
-                            } catch (Exception e) {
-                                spoutUpdate = false;
-                            }
-
-                            if (mcUpdate) {
-                                gu.updateMC();
-                            }
-                            if (spoutUpdate) {
-                                gu.updateSpout();
-                            }
-                            return true;
-                        }
-
-                        @Override
-                        protected void process(List<String> chunks) {
-                            progressBar.setString(chunks.get(0));
-                        }
-                    };
-                    updateThread.execute();
-                }
-            };
-            loginThread.execute();
+            doLogin();
         } else if (btnID.equals("Options")) {
             options.setVisible(true);
             options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 500, 150);
@@ -498,6 +437,92 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
             this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
         }
+    }
+
+    private void doLogin() {
+        this.btnLogin.setEnabled(false);
+        this.btnLogin1.setEnabled(false);
+        this.btnLogin2.setEnabled(false);
+        options.setVisible(false);
+        SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
+            String[] values;
+
+            @Override
+            protected Boolean doInBackground() throws Exception {
+                try {
+                    values = MinecraftUtils.doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
+                } catch (BadLoginException e) {
+                    JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+                    this.cancel(true);
+                } catch (MCNetworkException e) {
+                    JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
+                    this.cancel(true);
+                } catch (OutdatedMCLauncherException e) {
+                    JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
+                    this.cancel(true);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
+            }
+
+            @Override
+            protected void done() {
+                usernames.remove(cmbUsername.getSelectedItem().toString());
+                gu.user = values[2].trim();
+                gu.downloadTicket = values[1].trim();
+                gu.latestVersion = Long.parseLong(values[0].trim());
+                if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
+                usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
+                writeUsernameList();
+
+                progressBar.setVisible(true);
+                SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
+                    @Override
+                    protected void done() {
+                        progressBar.setVisible(false);
+                        LauncherFrame launcher = new LauncherFrame();
+                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
+                        setVisible(false);
+                    }
+
+                    @Override
+                    protected Boolean doInBackground() throws Exception {
+
+                        publish("Checking for Minecraft Update...\n");
+                        try {
+                            mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
+                        } catch (Exception e) {
+                            mcUpdate = false;
+                        }
+
+                        publish("Checking for Spout update...\n");
+                        try {
+                            spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
+                        } catch (Exception e) {
+                            spoutUpdate = false;
+                        }
+
+                        if (mcUpdate) {
+                            gu.updateMC();
+                        }
+                        if (spoutUpdate) {
+                            gu.updateSpout();
+                        }
+                        return true;
+                    }
+
+                    @Override
+                    protected void process(List<String> chunks) {
+                        progressBar.setString(chunks.get(0));
+                    }
+                };
+                updateThread.execute();
+            }
+        };
+        loginThread.execute();
     }
 
     private Cipher getCipher(int mode, String password) throws Exception {
