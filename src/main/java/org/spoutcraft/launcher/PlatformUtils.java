@@ -13,18 +13,19 @@ import java.security.cert.Certificate;
 import javax.net.ssl.HttpsURLConnection;
 
 public class PlatformUtils {
+
+    private static boolean portable;
 	private static File workDir = null;
 
 	public static File getWorkingDirectory() {
 		if (workDir == null) workDir = getWorkingDirectory("spoutcraft");
 		return workDir;
 	}
-	public static File getVanillaWorkingDirectory() {
-		if (workDir == null) workDir = getWorkingDirectory("minecraft");
-		return workDir;
-	}
-	
+
 	public static File getWorkingDirectory(String applicationName) {
+        if (portable) {
+            return new File("spoutcraft");
+        }
 	    String userHome = System.getProperty("user.home", ".");
 	    File workingDirectory;
 	    switch (getPlatform()) {
@@ -57,10 +58,18 @@ public class PlatformUtils {
 	    if (osName.contains("unix")) return OS.linux;
 	    return OS.unknown;
 	  }
-	  
-	  public enum OS {
-	    linux, solaris, windows, macos, unknown;
-	  }
+
+    public static boolean isPortable() {
+        return portable;
+    }
+
+    public static void setPortable(boolean portable) {
+        PlatformUtils.portable = portable;
+    }
+
+    public enum OS {
+	    linux, solaris, windows, macos, unknown
+    }
 	  
 	  public static String excutePost(String targetURL, String urlParameters)
 	  {
@@ -103,7 +112,7 @@ public class PlatformUtils {
 	      InputStream is = connection.getInputStream();
 	      BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-	      StringBuffer response = new StringBuffer();
+          StringBuilder response = new StringBuilder();
 	      String line;
 	      while ((line = rd.readLine()) != null)
 	      {
@@ -112,8 +121,7 @@ public class PlatformUtils {
 	      }
 	      rd.close();
 
-	      String str1 = response.toString();
-	      return str1;
+	      return response.toString();
 	    }
 	    catch (Exception e)
 	    {

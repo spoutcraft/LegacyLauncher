@@ -9,7 +9,7 @@ import java.awt.event.WindowListener;
 
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
-
+import org.spoutcraft.launcher.PlatformUtils;
 
 public class LauncherFrame extends Frame implements WindowListener{
 
@@ -20,7 +20,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	private MinecraftAppletEnglober minecraft;
 	
 	public LauncherFrame() {
-		super("Spoutcraft Launcher");
+		super("Spoutcraft");
 		super.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLocation((dim.width-870)/2, (dim.height-518)/2);
@@ -41,7 +41,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
-		minecraft.addParameter("portable", "true");
+		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
 
 		applet.setStub(minecraft);
 
@@ -55,7 +55,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		
 		this.setVisible(true);
 	}
-	
+
 	public void windowActivated(WindowEvent e) {		
 	}
 
