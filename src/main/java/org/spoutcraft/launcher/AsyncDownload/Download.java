@@ -43,6 +43,7 @@ public class Download implements Runnable {
 
             int contentLength = connection.getContentLength();
             if (contentLength < 1) {
+                if (listener != null) listener.stateChanged(outPath, 0);
                 stream = connection.getInputStream();
                 FileOutputStream out = new FileOutputStream(outPath);
                 byte[] buffer = new byte[BUFFER];
@@ -52,6 +53,7 @@ public class Download implements Runnable {
                 }
                 stream.close();
                 out.close();
+                if (listener != null) listener.stateChanged(outPath, 100);
                 return;
             }
 
