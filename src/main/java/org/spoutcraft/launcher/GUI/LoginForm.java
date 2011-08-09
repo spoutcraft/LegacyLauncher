@@ -190,7 +190,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         trans.setOpaque(true);
         trans.setBounds(0, 0, 854, 480);
 
-        cmbUsername.addKeyListener(this);
+        cmbUsername.getEditor().addActionListener(this);
         txtPassword.addKeyListener(this);
         cbRemember.addKeyListener(this);
 
@@ -428,7 +428,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             btnID = "Login";
             this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
         }
-        if (btnID.equals("Login")) {
+        if (btnID.equals("Login") || btnID.equals(cmbUsername.getSelectedItem())) {
             doLogin();
         } else if (btnID.equals("Options")) {
             options.setVisible(true);
