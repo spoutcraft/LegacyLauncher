@@ -23,7 +23,7 @@ public class Download implements Runnable {
     }
 
     public float getProgress() {
-        return ((float)downloaded / size) * 100;
+        return ((float) downloaded / size) * 100;
     }
 
     public void run() {
@@ -43,7 +43,16 @@ public class Download implements Runnable {
 
             int contentLength = connection.getContentLength();
             if (contentLength < 1) {
-                throw new IOException("No content received");
+                stream = connection.getInputStream();
+                FileOutputStream out = new FileOutputStream(outPath);
+                byte[] buffer = new byte[BUFFER];
+                int length;
+                while ((length = stream.read(buffer)) > 0) {
+                    out.write(buffer, 0, length);
+                }
+                stream.close();
+                out.close();
+                return;
             }
 
             if (size == -1) {
