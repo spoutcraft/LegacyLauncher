@@ -26,19 +26,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = -2453348055512665749L;
 	private final JPanel contentPanel = new JPanel();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		try {
-			OptionDialog dialog = new OptionDialog();
-			dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-			dialog.setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
+
 	JCheckBox cbxDev = new JCheckBox("Use latest dev build. Remember to only use this if you know what you are doing!");
 	
 	JCheckBox cbxClip = new JCheckBox("Allow access to your clipboard");
