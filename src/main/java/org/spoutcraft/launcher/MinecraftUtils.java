@@ -1,11 +1,11 @@
 package org.spoutcraft.launcher;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 
 
 public class MinecraftUtils {

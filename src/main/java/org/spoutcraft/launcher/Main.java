@@ -1,10 +1,11 @@
 package org.spoutcraft.launcher;
 
-import org.spoutcraft.launcher.GUI.LoginForm;
-
-import javax.swing.*;
 import java.io.File;
 import java.util.Arrays;
+
+import javax.swing.UIManager;
+
+import org.spoutcraft.launcher.GUI.LoginForm;
 
 public class Main {
 	

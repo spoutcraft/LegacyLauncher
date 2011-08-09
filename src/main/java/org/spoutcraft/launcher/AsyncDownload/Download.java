@@ -1,11 +1,7 @@
 package org.spoutcraft.launcher.AsyncDownload;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.RandomAccessFile;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.net.*;
 
 /**
  * Downloads stuff asynchroniously.

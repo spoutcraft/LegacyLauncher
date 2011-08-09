@@ -1,10 +1,11 @@
 package org.spoutcraft.launcher.GUI;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Desktop;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
+
+import javax.swing.JLabel;
 
 public class HyperlinkJLabel extends JLabel implements MouseListener{
 

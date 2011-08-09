@@ -1,31 +1,50 @@
 package org.spoutcraft.launcher.GUI;
 
-import org.spoutcraft.launcher.AsyncDownload.Download;
-import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
-import org.spoutcraft.launcher.Exceptions.BadLoginException;
-import org.spoutcraft.launcher.Exceptions.MCNetworkException;
-import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
-import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.MinecraftUtils;
-import org.spoutcraft.launcher.PlatformUtils;
-import org.spoutcraft.launcher.SettingsHandler;
-
-import javax.crypto.*;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.PBEParameterSpec;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.FocusTraversalPolicy;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Vector;
+
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+import org.spoutcraft.launcher.AsyncDownload.Download;
+import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
+import org.spoutcraft.launcher.GameUpdater;
+import org.spoutcraft.launcher.MinecraftUtils;
+import org.spoutcraft.launcher.PlatformUtils;
+import org.spoutcraft.launcher.SettingsHandler;
+import org.spoutcraft.launcher.Exceptions.BadLoginException;
+import org.spoutcraft.launcher.Exceptions.MCNetworkException;
+import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
 
 public class LoginForm extends JFrame implements ActionListener, DownloadListener {
 
