@@ -22,6 +22,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
@@ -293,12 +294,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
     public void stateChanged(String fileName, float progress) {
         int intProgress = Math.round(progress);
-        boolean notComplete = progress < 100;
 
         progressBar.setValue(intProgress);
         progressBar.setString(intProgress + "% " + fileName);
-        progressBar.setVisible(notComplete);
-
         //System.out.println(fileName + ": " + progress);
     }
 
@@ -446,9 +444,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                     if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
                     usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
                     writeUsernameList();
-                    SwingWorker<Boolean, Boolean> updateThread = new SwingWorker<Boolean, Boolean>() {
+
+                    progressBar.setVisible(true);
+                    SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
                         @Override
                         protected void done() {
+                            progressBar.setVisible(false);
                             LauncherFrame launcher = new LauncherFrame();
                             launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
                             setVisible(false);
@@ -456,24 +457,20 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
                         @Override
                         protected Boolean doInBackground() throws Exception {
-                            progressBar.setVisible(true);
 
-                            progressBar.setString("Checking for Minecraft Update...\n");
+                            publish("Checking for Minecraft Update...\n");
                             try {
                                 mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
                             } catch (Exception e) {
                                 mcUpdate = false;
                             }
 
-                            progressBar.setString("Checking for Spout update...\n");
+                            publish("Checking for Spout update...\n");
                             try {
                                 spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
                             } catch (Exception e) {
                                 spoutUpdate = false;
                             }
-
-                            boolean needUpdate = mcUpdate || spoutUpdate;
-                            progressBar.setVisible(needUpdate);
 
                             if (mcUpdate) {
                                 gu.updateMC();
@@ -482,6 +479,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                                 gu.updateSpout();
                             }
                             return true;
+                        }
+
+                        @Override
+                        protected void process(List<String> chunks) {
+                            progressBar.setString(chunks.get(0));
                         }
                     };
                     updateThread.execute();
