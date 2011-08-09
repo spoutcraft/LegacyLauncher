@@ -91,7 +91,7 @@ public class Download implements Runnable {
     }
 
     private void stateChanged() {
-        listener.stateChanged(outPath, getProgress());
+        if (listener != null) listener.stateChanged(outPath, getProgress());
     }
 
     public void setListener(DownloadListener listener) {

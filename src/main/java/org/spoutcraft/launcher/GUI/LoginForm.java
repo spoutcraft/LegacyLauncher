@@ -37,12 +37,12 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import org.spoutcraft.launcher.AsyncDownload.Download;
-import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SettingsHandler;
+import org.spoutcraft.launcher.AsyncDownload.Download;
+import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
@@ -210,13 +210,16 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         contentPane.add(trans);
         contentPane.add(progressBar);
 
-        final JLabel[] background = new JLabel[1];
+        final JLabel background = new JLabel();
+        background.setBounds(0, 0, 854, 480);
+        contentPane.add(background);
+
         try {
             final File bgCache;
             bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
             SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
                 @Override
-                protected Object doInBackground() throws Exception {
+                protected Object doInBackground() throws MalformedURLException {
                     if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
                         Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
                         download.run();
@@ -226,9 +229,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
                 @Override
                 protected void done() {
-                    background[0] = new JLabel(new ImageIcon(bgCache.getPath())); // TODO unhack
-                    background[0].setBounds(0, 0, 854, 480);
-                    contentPane.add(background[0]);
+                    background.setIcon(new ImageIcon(bgCache.getPath()));
                 }
             };
             bgThread.execute();
