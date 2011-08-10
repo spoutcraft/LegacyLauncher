@@ -442,6 +442,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     }
 
     private void doLogin() {
+    	
+    	if (cmbUsername.getSelectedItem().toString() == null || new String(txtPassword.getPassword()) == null) {
+    		JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+    		return;
+    	}
+    	
         this.btnLogin.setEnabled(false);
         this.btnLogin1.setEnabled(false);
         this.btnLogin2.setEnabled(false);
