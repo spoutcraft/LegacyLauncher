@@ -9,12 +9,10 @@ import org.spoutcraft.launcher.GUI.LoginForm;
 
 public class Main {
 	
-	@SuppressWarnings("static-access")
 	public Main() throws Exception {
 		main(new String[0]);
 	}
 	
-	@SuppressWarnings({"ResultOfMethodCallIgnored"})
     public static void main(String[] args) throws Exception {
         if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
             PlatformUtils.setPortable(true);

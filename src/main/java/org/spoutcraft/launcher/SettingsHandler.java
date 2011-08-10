@@ -21,7 +21,6 @@ import java.util.HashMap;
  *
  */
 
-@SuppressWarnings({"JavadocReference", "UnusedDeclaration", "JavaDoc"})
 public class SettingsHandler {
 	
 	private File out;

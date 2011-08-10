@@ -34,7 +34,6 @@ import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
 
 import SevenZip.LzmaAlone;
 
-@SuppressWarnings({"ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored", "ResultOfMethodCallIgnored"})
 public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public long latestVersion;
