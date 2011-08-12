@@ -459,39 +459,25 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
             protected Boolean doInBackground() throws Exception {
                 try {
                     values = MinecraftUtils.doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
+                    return true;
                 } catch (BadLoginException e) {
                     JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-                    btnLogin.setEnabled(true);
-                    btnLogin1.setEnabled(true);
-                    btnLogin2.setEnabled(true);
                     this.cancel(true);
                 } catch (MCNetworkException e) {
                     JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
-                    btnLogin.setEnabled(true);
-                    btnLogin1.setEnabled(true);
-                    btnLogin2.setEnabled(true);
                     this.cancel(true);
                 } catch (OutdatedMCLauncherException e) {
                     JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
-                    btnLogin.setEnabled(true);
-                    btnLogin1.setEnabled(true);
-                    btnLogin2.setEnabled(true);
-                    this.cancel(true);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
-                    btnLogin.setEnabled(true);
-                    btnLogin1.setEnabled(true);
-                    btnLogin2.setEnabled(true);
-                    options.setVisible(true);
                     this.cancel(true);
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    btnLogin.setEnabled(true);
-                    btnLogin1.setEnabled(true);
-                    btnLogin2.setEnabled(true);
-                    this.cancel(true);
                 }
-                return true;
+                btnLogin.setEnabled(true);
+                btnLogin1.setEnabled(true);
+                btnLogin2.setEnabled(true);
+                this.cancel(true);
+                return false;
             }
 
             @Override
