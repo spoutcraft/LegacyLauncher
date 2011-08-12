@@ -52,7 +52,7 @@ public class GameUpdater implements DownloadListener {
 	
 	/* Minecraft Updating Arguments */
 	public final String backupbaseURL = "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String baseURL = "http://www.getspout.org/lwjgl/";
+	public final String baseURL = "http://www.minedev.net/spout/lwjgl/";
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
