@@ -179,7 +179,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>osxappbundle-maven-plugin</artifactId>
-                        <version>b${build.number}</version>
+                        <version>1.0-alpha-1</version>
                         <configuration>
                             <mainClass>${project.mainClass}</mainClass>
                             <bundleName>${project.name}</bundleName>
