@@ -3,9 +3,7 @@
 <plist version="0.9">
   <dict>
     <key>CFBundleName</key>
-    <string>${bundleName}</string>
-    <key>CFBundleIdentifier</key>
-    <string>${mainClass}</string>
+    <string>Spoutcraft Launcher</string>
     <key>CFBundleVersion</key>
     <string>dev-SNAPSHOT</string>
     <key>CFBundleAllowMixedLocalizations</key>
@@ -21,17 +19,17 @@
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleIconFile</key>
-    <string>${iconFile}</string>
+    <string>icon.icns</string>
     <key>Java</key>
     <dict>
       <key>MainClass</key>
       <string>${mainClass}</string>
-      <key>ClassPath</key>
-      <array><string>$JAVAROOT/launcher-dev-SNAPSHOT.jar</string></array>
       <key>JVMVersion</key>
       <string>1.5+</string>
       <key>VMOptions</key>
       <string>-Xms512M -Xmx1024M</string>
+      <key>ClassPath</key>
+      <array><string>$JAVAROOT/launcher-dev-SNAPSHOT.jar</string></array>
     </dict>
   </dict>
 </plist>
