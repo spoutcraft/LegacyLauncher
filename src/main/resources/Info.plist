@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+  <dict>
+    <key>CFBundleName</key>
+    <string>${bundleName}</string>
+    <key>CFBundleIdentifier</key>
+    <string>${mainClass}</string>
+    <key>CFBundleVersion</key>
+    <string>10.2</string>
+    <key>CFBundleAllowMixedLocalizations</key>
+    <string>true</string>
+    <key>CFBundleExecutable</key>
+    <string>JavaApplicationStub</string>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleSignature</key>
+    <string>????</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleIconFile</key>
+    <string>${iconFile}</string>
+    <key>Java</key>
+    <dict>
+        <key>MainClass</key>
+        <string>${mainClass}</string>
+        <key>JVMVersion</key>
+        <string>1.5+</string>
+        <key>ClassPath</key>
+        <string>$JAVAROOT/${project.artifactId}.jar</string>
+        <key>VMOptions</key>
+        <string>-Xms512M -Xmx1024M</string>
+        <key>Properties</key>
+            <dict>
+                <key>apple.laf.useScreenMenuBar</key>
+                <string>true</string>
+                <key>apple.awt.showGrowBox</key>
+                <string>true</string>
+            </dict>
+    </dict>
+  </dict>
+</plist>

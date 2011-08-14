@@ -102,6 +102,8 @@
                 </includes>
                 <excludes>
                     <exclude>icon.icns</exclude>
+                    <exclude>Info.plist</exclude>
+                    <exclude>JavaApplicationStub</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -200,8 +202,18 @@
                         <configuration>
                             <mainClass>${project.mainClass}</mainClass>
                             <bundleName>${project.name}</bundleName>
-                            <jvmVersion>1.5+</jvmVersion>
                             <iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
+                            <dictionaryFile>${basedir}/src/main/resources/Info.plist</dictionaryFile>
+                            <javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
+                            <additionalResources>
+                                <fileSet>
+                                    <directory>${basedir}/src</directory>
+                                    <includes>
+                                        <include>LICENSE.txt</include>
+                                    </includes>
+                                </fileSet>
+                            </additionalResources>
+                            <jvmVersion>1.5+</jvmVersion>
                         </configuration>
                         <executions>
                             <execution>
