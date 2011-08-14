@@ -7,7 +7,7 @@
     <key>CFBundleIdentifier</key>
     <string>${mainClass}</string>
     <key>CFBundleVersion</key>
-    <string>10.2</string>
+    <string>${build.number}</string>
     <key>CFBundleAllowMixedLocalizations</key>
     <string>true</string>
     <key>CFBundleExecutable</key>
@@ -24,21 +24,14 @@
     <string>${iconFile}</string>
     <key>Java</key>
     <dict>
-        <key>MainClass</key>
-        <string>${mainClass}</string>
-        <key>JVMVersion</key>
-        <string>1.5+</string>
-        <key>ClassPath</key>
-        <string>$JAVAROOT/${project.artifactId}.jar</string>
-        <key>VMOptions</key>
-        <string>-Xms512M -Xmx1024M</string>
-        <key>Properties</key>
-            <dict>
-                <key>apple.laf.useScreenMenuBar</key>
-                <string>true</string>
-                <key>apple.awt.showGrowBox</key>
-                <string>true</string>
-            </dict>
+      <key>MainClass</key>
+      <string>${mainClass}</string>
+      <key>ClassPath</key>
+      <array><string>$JAVAROOT/${project.artifactId}-${project.version}.jar</string></array>
+      <key>JVMVersion</key>
+      <string>1.5+</string>
+      <key>VMOptions</key>
+      <string>-Xms512M -Xmx1024M</string>
     </dict>
   </dict>
 </plist>
