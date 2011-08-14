@@ -203,7 +203,6 @@
                             <mainClass>${project.mainClass}</mainClass>
                             <bundleName>${project.name}</bundleName>
                             <iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
-                            <dictionaryFile>${basedir}/src/main/resources/Info.plist</dictionaryFile>
                             <javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
                             <additionalResources>
                                 <fileSet>
