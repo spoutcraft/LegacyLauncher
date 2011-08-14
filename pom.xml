@@ -18,6 +18,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.mainClass>${project.groupId}.${project.artifactId}.Main</project.mainClass>
+        <project.build.number>b0</project.build.number>
     </properties>
 
     <!-- License -->
@@ -56,13 +58,13 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.8.1</version>
+            <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
    
     <build>
-        <defaultGoal>clean</defaultGoal>
+        <defaultGoal>clean package</defaultGoal>
         <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
         <!-- Resources -->
         <resources>
@@ -82,6 +84,9 @@
                     <include>*</include>
                     <include>**/*</include>
                 </includes>
+                <excludes>
+                    <exclude>icon.icns</exclude>
+                </excludes>
             </resource>
         </resources>
         <!-- Plugins -->
@@ -100,12 +105,100 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>org.spoutcraft.launcher.Main</mainClass>
+                            <mainClass>${project.mainClass}</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
             </plugin>
         </plugins>
     </build>
+
+    <!-- Profiles -->
+    <profiles>
+        <!-- Windows -->
+        <profile>
+            <id>package-win</id>
+            <activation>
+                <os>
+                    <family>windows</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>l4j-clui</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                                <configuration>
+                                    <headerType>gui</headerType>
+                                    <outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
+                                    <jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
+                                    <classPath>
+                                        <mainClass>${project.mainClass}</mainClass>
+                                        <addDependencies>false</addDependencies>
+                                        <preCp>anything</preCp>
+                                    </classPath>
+                                    <jre>
+                                        <minVersion>1.5.0</minVersion>
+                                        <jdkPreference>preferJre</jdkPreference>
+                                    </jre>
+                                    <versionInfo>
+                                        <fileVersion>b${build.number}</fileVersion>
+                                        <txtFileVersion>b${build.number}</txtFileVersion>
+                                        <fileDescription>${project.name}</fileDescription>
+                                        <copyright>SpoutDev</copyright>
+                                        <productVersion>b${build.number}</productVersion>
+                                        <txtProductVersion>b${build.number}</txtProductVersion>
+                                        <productName>${project.name}</productName>
+                                        <internalName>${project.artifactId}</internalName>
+                                        <originalFilename>${project.artifactId}.exe</originalFilename>
+                                    </versionInfo>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!-- Mac OS X -->
+        <profile>
+            <id>package-mac</id>
+            <activation>
+                <os>
+                    <family>mac</family>
+                </os>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>osxappbundle-maven-plugin</artifactId>
+                        <version>b${build.number}</version>
+                        <configuration>
+                            <mainClass>${project.mainClass}</mainClass>
+                            <bundleName>${project.name}</bundleName>
+                            <jvmVersion>1.5+</jvmVersion>
+                            <iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>bundle</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>
