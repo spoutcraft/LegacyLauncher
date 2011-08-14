@@ -145,7 +145,7 @@
                     <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
-                        <version>1.5-SNAPSHOT</version>
+                        <version>1.4</version>
                         <executions>
                             <execution>
                                 <id>l4j-clui</id>
