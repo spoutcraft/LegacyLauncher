@@ -57,17 +57,16 @@
             </snapshots>
         </repository>
         <repository>
-            <id>softwaremill-repo</id>
-            <url>http://tools.softwaremill.pl/nexus/content/groups/smlcommon-repos/</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+          <id>akathist-repo</id>
+          <url>http://www.9stmaryrd.com/maven</url>
+      </repository>
     </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>akathist-repo</id>
+            <url>http://www.9stmaryrd.com/maven</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <!-- Dependencies -->
     <dependencies>
