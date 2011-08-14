@@ -149,12 +149,12 @@
                                         <jdkPreference>preferJre</jdkPreference>
                                     </jre>
                                     <versionInfo>
-                                        <fileVersion>b${build.number}</fileVersion>
-                                        <txtFileVersion>b${build.number}</txtFileVersion>
+                                        <fileVersion>${build.number}</fileVersion>
+                                        <txtFileVersion>${build.number}</txtFileVersion>
                                         <fileDescription>${project.name}</fileDescription>
                                         <copyright>SpoutDev</copyright>
-                                        <productVersion>b${build.number}</productVersion>
-                                        <txtProductVersion>b${build.number}</txtProductVersion>
+                                        <productVersion>${build.number}</productVersion>
+                                        <txtProductVersion>${build.number}</txtProductVersion>
                                         <productName>${project.name}</productName>
                                         <internalName>${project.artifactId}</internalName>
                                         <originalFilename>${project.artifactId}.exe</originalFilename>
