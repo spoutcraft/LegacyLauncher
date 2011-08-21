@@ -17,6 +17,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Font;
 
 public class OptionDialog extends JDialog implements ActionListener {
 
@@ -71,6 +72,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(cbxBack))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
+		cbxBack.setFont(new Font("Arial", Font.PLAIN, 11));
+		cbxClip.setFont(new Font("Arial", Font.PLAIN, 11));
+		cbxDev.setFont(new Font("Arial", Font.PLAIN, 11));
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
@@ -87,6 +91,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.setFont(new Font("Arial", Font.PLAIN, 11));
 				okButton.setActionCommand("OK");
 				okButton.addActionListener(this);
 				buttonPane.add(okButton);
@@ -94,6 +99,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setFont(new Font("Arial", Font.PLAIN, 11));
 				cancelButton.setActionCommand("Cancel");
 				cancelButton.addActionListener(this);
 				buttonPane.add(cancelButton);
