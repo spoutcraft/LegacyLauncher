@@ -495,10 +495,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                 SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
                     @Override
                     protected void done() {
-                        progressBar.setVisible(false);
-                        LauncherFrame launcher = new LauncherFrame();
-                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
-                        setVisible(false);
+                    	progressBar.setVisible(false);
+                    	if (!isCancelled()) {
+	                        LauncherFrame launcher = new LauncherFrame();
+	                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
+	                        setVisible(false);
+                    	}
                     }
 
                     @Override
@@ -513,16 +515,25 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
                         publish("Checking for Spout update...\n");
                         try {
-                            spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
+                            spoutUpdate = mcUpdate || gu.checkSpoutUpdate() || 1 == 1;
                         } catch (Exception e) {
                             spoutUpdate = false;
                         }
 
-                        if (mcUpdate) {
-                            gu.updateMC();
-                        }
-                        if (spoutUpdate) {
-                            gu.updateSpout();
+                        try {
+	                        if (mcUpdate) {
+	                            gu.updateMC();
+	                        }
+	                        if (spoutUpdate) {
+	                            gu.updateSpout();
+	                        }
+                        } catch (Exception e) {
+                        	JOptionPane.showMessageDialog(getParent(), "Download timeout!");
+                        	btnLogin.setEnabled(true);
+                            btnLogin1.setEnabled(true);
+                            btnLogin2.setEnabled(true);
+                            this.cancel(true);
+                        	return false;
                         }
                         return true;
                     }

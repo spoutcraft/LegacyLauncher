@@ -77,17 +77,11 @@ public class GameUpdater implements DownloadListener {
 		// Process other Downloads
 		try {
 			downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		} catch (Exception e) {
-			downloadFile(backupbaseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		}
-		try {
 			downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		} catch (Exception e) {
-			downloadFile(backupbaseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		}
-		try {
 			downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		} catch (Exception e) {
+			downloadFile(backupbaseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
+			downloadFile(backupbaseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
 			downloadFile(backupbaseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		}
 		getNatives();
@@ -449,6 +443,9 @@ public class GameUpdater implements DownloadListener {
         Download download = new Download(url, outPut);
         download.setListener(this);
         download.run();
+        if (!download.success) {
+        	throw new IOException();
+        }
 	}
 		
 	
