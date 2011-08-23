@@ -110,7 +110,7 @@ public class Download implements Runnable {
             FileOutputStream out = new FileOutputStream(outPath);
             byte[] buffer = new byte[BUFFER];
             int length;
-            while ((length = maybeAvailable(stream, buffer, 5)) > 0) {
+            while ((length = maybeAvailable(stream, buffer, 5000)) > 0) {
                 out.write(buffer, 0, length);
                 downloaded += length;
                 stateChanged();
