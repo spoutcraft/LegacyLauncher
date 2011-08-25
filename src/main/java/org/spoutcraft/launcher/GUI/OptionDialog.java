@@ -50,6 +50,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	JCheckBox cbxBack = new JCheckBox("Include worlds when doing automated backup");
 
+	JCheckBox cbxTPMC = new JCheckBox("Use .minecraft Texture packs?");
 
 	/**
 	 * Create the dialog.
@@ -70,6 +71,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (settings.checkProperty("worldbackup")) {
 			cbxBack.setSelected(settings.getPropertyBoolean("worldbackup"));
 		}
+		if (settings.checkProperty("useminecrafttp")) {
+			cbxTPMC.setSelected(settings.getPropertyBoolean("useminecrafttp"));
+		}
 		
 		setResizable(false);
 		setBounds(100, 100, 500, 150);
@@ -85,12 +89,14 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.addComponent(cbxDev)
 						.addComponent(cbxClip)
-						.addComponent(cbxBack))
-					.addContainerGap(17, Short.MAX_VALUE))
+						.addComponent(cbxBack)
+						.addComponent(cbxTPMC))
+					.addContainerGap(16, Short.MAX_VALUE))
 		);
 		cbxBack.setFont(new Font("Arial", Font.PLAIN, 11));
 		cbxClip.setFont(new Font("Arial", Font.PLAIN, 11));
 		cbxDev.setFont(new Font("Arial", Font.PLAIN, 11));
+		cbxTPMC.setFont(new Font("Arial", Font.PLAIN, 11));
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
@@ -98,6 +104,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(cbxClip)
 					.addComponent(cbxBack)
+					.addComponent(cbxTPMC)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
@@ -123,6 +130,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent evt) {
 		String btnID = evt.getActionCommand(); 
 		if (btnID.equals("OK")) {
@@ -140,6 +148,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 				settings.changeProperty("worldbackup", cbxBack.isSelected());
 			} else {
 				settings.put("worldbackup", cbxBack.isSelected());
+			}
+			if (settings.checkProperty("useminecrafttp")) {
+				settings.changeProperty("useminecrafttp", cbxTPMC.isSelected());
+			} else {
+				settings.put("useminecrafttp", cbxTPMC.isSelected());
 			}
 			this.setVisible(false);
 			this.dispose();
