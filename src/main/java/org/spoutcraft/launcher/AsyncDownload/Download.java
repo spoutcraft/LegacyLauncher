@@ -68,15 +68,15 @@ public class Download implements Runnable {
         };
 
         reader.start();
-        for(;;) {
+        while(true) {
 
             reader.join(timeout);
             if (!reader.isAlive())
                 break;
 
             interruptor.start();
-            interruptor.join(1000);
-            reader.join(1000);
+            interruptor.join(5000);
+            reader.join(5000);
             if (!reader.isAlive())
                 break;
 
