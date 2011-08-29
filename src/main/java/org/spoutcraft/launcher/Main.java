@@ -11,7 +11,7 @@ import org.spoutcraft.launcher.Logging.SystemConsoleListener;
 public class Main {
 	
 	public Main() throws Exception {
-		//main(new String[0]);
+		main(new String[0]);
 	}
 	
     public static void main(String[] args) throws Exception {  	
