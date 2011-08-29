@@ -1,3 +1,19 @@
+/*
+ * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
+ * 
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.spoutcraft.launcher;
 
 import java.io.BufferedInputStream;
@@ -77,17 +93,11 @@ public class GameUpdater implements DownloadListener {
 		// Process other Downloads
 		try {
 			downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		} catch (Exception e) {
-			downloadFile(backupbaseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		}
-		try {
 			downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		} catch (Exception e) {
-			downloadFile(backupbaseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		}
-		try {
 			downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		} catch (Exception e) {
+			downloadFile(backupbaseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
+			downloadFile(backupbaseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
 			downloadFile(backupbaseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		}
 		getNatives();
@@ -449,6 +459,9 @@ public class GameUpdater implements DownloadListener {
         Download download = new Download(url, outPut);
         download.setListener(this);
         download.run();
+        if (!download.success) {
+        	throw new IOException();
+        }
 	}
 		
 	

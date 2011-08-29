@@ -1,3 +1,19 @@
+/*
+ * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
+ * 
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.spoutcraft.launcher.GUI;
 
 import java.awt.Color;
@@ -78,13 +94,17 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         gu.setListener(this);
 
         options.setVisible(false);
+        btnLogin.setFont(new Font("Arial", Font.PLAIN, 11));
         btnLogin.setBounds(745, 375, 86, 23);
         btnLogin.setOpaque(false);
         btnLogin.addActionListener(this);
         JButton btnOptions = new JButton("Options");
+        btnOptions.setFont(new Font("Arial", Font.PLAIN, 11));
         btnOptions.setOpaque(false);
         btnOptions.addActionListener(this);
+        cmbUsername.setFont(new Font("Arial", Font.PLAIN, 11));
         cmbUsername.addActionListener(this);
+        cmbUsername.setOpaque(false);
 
         setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
         setResizable(false);
@@ -105,22 +125,27 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         lblLogo.setIcon(new ImageIcon(LoginForm.class.getResource("/org/spoutcraft/launcher/spoutcraft.png")));
 
         JLabel lblMinecraftUsername = new JLabel("Minecraft Username: ");
+        lblMinecraftUsername.setFont(new Font("Arial", Font.PLAIN, 11));
         lblMinecraftUsername.setHorizontalAlignment(SwingConstants.RIGHT);
         lblMinecraftUsername.setBounds(456, 379, 150, 14);
 
         JLabel lblPassword = new JLabel("Password: ");
+        lblPassword.setFont(new Font("Arial", Font.PLAIN, 11));
         lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
         lblPassword.setBounds(506, 404, 100, 20);
 
         txtPassword = new JPasswordField();
-        txtPassword.setBounds(617, 404, 119, 20);
+        txtPassword.setFont(new Font("Arial", Font.PLAIN, 11));
+        txtPassword.setBounds(616, 404, 119, 22);
 
         btnLogin1 = new JButton("Login as Player");
+        btnLogin1.setFont(new Font("Arial", Font.PLAIN, 11));
         btnLogin1.setBounds(72, 428, 119, 23);
         btnLogin1.setOpaque(false);
         btnLogin1.addActionListener(this);
         btnLogin1.setVisible(false);
         btnLogin2 = new JButton("Login as Player");
+        btnLogin2.setFont(new Font("Arial", Font.PLAIN, 11));
         btnLogin2.setBounds(261, 428, 119, 23);
         btnLogin2.setOpaque(false);
         btnLogin2.addActionListener(this);
@@ -130,16 +155,19 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         progressBar.setBounds(30, 100, 400, 23);
         progressBar.setVisible(false);
         progressBar.setStringPainted(true);
+        progressBar.setOpaque(true);
 
         readUsedUsernames();
 
         JLabel lblNewLabel = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
-        lblNewLabel.setBounds(741, 432, 86, 14);
+        lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblNewLabel.setBounds(716, 432, 111, 14);
 
         lblNewLabel.setText("<html><u>Need an account?</u></html>");
-        lblNewLabel.setFont(new Font("Tahoma", Font.PLAIN, 11));
+        lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         lblNewLabel.setForeground(new Color(0, 0, 255));
-        cmbUsername.setBounds(616, 376, 119, 20);
+        cmbUsername.setBounds(616, 376, 119, 25);
+        cbRemember.setFont(new Font("Arial", Font.PLAIN, 11));
 
         cbRemember.setOpaque(false);
 
@@ -495,10 +523,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                 SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
                     @Override
                     protected void done() {
-                        progressBar.setVisible(false);
-                        LauncherFrame launcher = new LauncherFrame();
-                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
-                        setVisible(false);
+                    	progressBar.setVisible(false);
+                    	if (!isCancelled()) {
+	                        LauncherFrame launcher = new LauncherFrame();
+	                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
+	                        setVisible(false);
+                    	}
                     }
 
                     @Override
@@ -518,11 +548,20 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                             spoutUpdate = false;
                         }
 
-                        if (mcUpdate) {
-                            gu.updateMC();
-                        }
-                        if (spoutUpdate) {
-                            gu.updateSpout();
+                        try {
+	                        if (mcUpdate) {
+	                            gu.updateMC();
+	                        }
+	                        if (spoutUpdate) {
+	                            gu.updateSpout();
+	                        }
+                        } catch (Exception e) {
+                        	JOptionPane.showMessageDialog(getParent(), "Download timeout!");
+                        	btnLogin.setEnabled(true);
+                            btnLogin1.setEnabled(true);
+                            btnLogin2.setEnabled(true);
+                            this.cancel(true);
+                        	return false;
                         }
                         return true;
                     }

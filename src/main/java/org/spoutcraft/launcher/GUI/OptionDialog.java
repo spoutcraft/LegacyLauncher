@@ -1,3 +1,19 @@
+/*
+ * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
+ * 
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 package org.spoutcraft.launcher.GUI;
 
 import java.awt.BorderLayout;
@@ -17,6 +33,7 @@ import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
+import java.awt.Font;
 
 public class OptionDialog extends JDialog implements ActionListener {
 
@@ -71,6 +88,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(cbxBack))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
+		cbxBack.setFont(new Font("Arial", Font.PLAIN, 11));
+		cbxClip.setFont(new Font("Arial", Font.PLAIN, 11));
+		cbxDev.setFont(new Font("Arial", Font.PLAIN, 11));
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
@@ -87,6 +107,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
+				okButton.setFont(new Font("Arial", Font.PLAIN, 11));
 				okButton.setActionCommand("OK");
 				okButton.addActionListener(this);
 				buttonPane.add(okButton);
@@ -94,6 +115,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
+				cancelButton.setFont(new Font("Arial", Font.PLAIN, 11));
 				cancelButton.setActionCommand("Cancel");
 				cancelButton.addActionListener(this);
 				buttonPane.add(cancelButton);
