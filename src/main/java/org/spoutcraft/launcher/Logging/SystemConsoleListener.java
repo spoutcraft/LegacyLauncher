@@ -16,6 +16,7 @@
  */
 package org.spoutcraft.launcher.Logging;
 
+import java.io.File;
 import java.io.PrintStream;
 import java.util.logging.FileHandler;
 import java.util.logging.Handler;
@@ -23,13 +24,17 @@ import java.util.logging.LogManager;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
+import org.spoutcraft.launcher.PlatformUtils;
+
 public class SystemConsoleListener {
 	
 	public void initialize() throws Exception {
 	        LogManager logManager = LogManager.getLogManager();
 	        logManager.reset();
 	        
-	        Handler fileHandler = new FileHandler("log", 10000, 5, true);
+	        new File(PlatformUtils.getWorkingDirectory() + "Logs").mkdirs();
+	        
+	        Handler fileHandler = new FileHandler(PlatformUtils.getWorkingDirectory() + "Logs" + File.separator + "log", 10000, 5, true);
 	        fileHandler.setFormatter(new ClientLoggerFormatter());
 	        Logger.getLogger("").addHandler(fileHandler);   
 	       
