@@ -88,6 +88,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
     OptionDialog options = new OptionDialog();
 
+    Container loginPane = new Container();
+    Container offlinePane = new Container();
+    
     public LoginForm() {
 
         settings.load();
@@ -95,7 +98,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         options.setVisible(false);
         btnLogin.setFont(new Font("Arial", Font.PLAIN, 11));
-        btnLogin.setBounds(745, 375, 86, 23);
+        btnLogin.setBounds(272, 13, 86, 23);
         btnLogin.setOpaque(false);
         btnLogin.addActionListener(this);
         JButton btnOptions = new JButton("Options");
@@ -127,16 +130,16 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         JLabel lblMinecraftUsername = new JLabel("Minecraft Username: ");
         lblMinecraftUsername.setFont(new Font("Arial", Font.PLAIN, 11));
         lblMinecraftUsername.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblMinecraftUsername.setBounds(456, 379, 150, 14);
+        lblMinecraftUsername.setBounds(-17, 17, 150, 14);
 
         JLabel lblPassword = new JLabel("Password: ");
         lblPassword.setFont(new Font("Arial", Font.PLAIN, 11));
         lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblPassword.setBounds(506, 404, 100, 20);
+        lblPassword.setBounds(33, 42, 100, 20);
 
         txtPassword = new JPasswordField();
         txtPassword.setFont(new Font("Arial", Font.PLAIN, 11));
-        txtPassword.setBounds(616, 404, 119, 22);
+        txtPassword.setBounds(143, 42, 119, 22);
 
         btnLogin1 = new JButton("Login as Player");
         btnLogin1.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -161,12 +164,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         JLabel lblNewLabel = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
         lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblNewLabel.setBounds(716, 432, 111, 14);
+        lblNewLabel.setBounds(243, 70, 111, 14);
 
         lblNewLabel.setText("<html><u>Need an account?</u></html>");
         lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 11));
         lblNewLabel.setForeground(new Color(0, 0, 255));
-        cmbUsername.setBounds(616, 376, 119, 25);
+        cmbUsername.setBounds(143, 14, 119, 25);
         cbRemember.setFont(new Font("Arial", Font.PLAIN, 11));
 
         cbRemember.setOpaque(false);
@@ -224,20 +227,44 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
         cmbUsername.setEditable(true);
         contentPane.setLayout(null);
-        cbRemember.setBounds(617, 428, 93, 23);
-        contentPane.add(cbRemember);
+        cbRemember.setBounds(144, 66, 93, 23);
         contentPane.add(lblLogo);
-        contentPane.add(lblPassword);
-        contentPane.add(lblMinecraftUsername);
-        contentPane.add(txtPassword);
-        contentPane.add(cmbUsername);
-        contentPane.add(btnLogin);
-        btnOptions.setBounds(745, 403, 86, 23);
-        contentPane.add(btnOptions);
-        contentPane.add(lblNewLabel);
+        btnOptions.setBounds(272, 41, 86, 23);
         contentPane.add(btnLogin1);
         contentPane.add(btnLogin2);
 
+         loginPane.setBounds(473, 362, 372, 99);
+         loginPane.add(lblPassword);
+         loginPane.add(lblMinecraftUsername);
+         loginPane.add(txtPassword);
+         loginPane.add(cmbUsername);
+         loginPane.add(btnLogin);
+         loginPane.add(cbRemember);
+         loginPane.add(lblNewLabel);
+         loginPane.add(btnOptions);
+         contentPane.add(loginPane);
+         
+         JLabel offline_msg = new JLabel("Could not connect to minecraft.net");
+         offline_msg.setFont(new Font("Arial", Font.PLAIN, 14));
+         offline_msg.setBounds(25, 40, 217, 17);
+         
+         JButton button = new JButton("Try Again");
+         button.setOpaque(false);
+         button.setFont(new Font("Arial", Font.PLAIN, 12));
+         button.setBounds(257, 20, 100, 25);
+         
+         JButton button_1 = new JButton("Offline Mode");
+         button_1.setOpaque(false);
+         button_1.setFont(new Font("Arial", Font.PLAIN, 12));
+         button_1.setBounds(257, 52, 100, 25);
+         
+         offlinePane.setBounds(473, 362, 372, 99);
+         offlinePane.add(button);
+         offlinePane.add(button_1);
+         offlinePane.add(offline_msg);
+         offlinePane.setVisible(false);
+         contentPane.add(offlinePane);
+        
         contentPane.add(scrollPane);
         contentPane.add(trans2);
         contentPane.add(login);
