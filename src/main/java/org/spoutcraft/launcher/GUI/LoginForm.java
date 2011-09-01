@@ -113,7 +113,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds((dim.width - 861) / 2, (dim.height - 500) / 2, 861, 500);
+        setBounds((dim.width - 860) / 2, (dim.height - 500) / 2, 860, 500);
 
         contentPane = new JPanel();
 
@@ -266,6 +266,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                 @Override
                 protected void done() {
                     background.setIcon(new ImageIcon(bgCache.getPath()));
+                    background.setVerticalAlignment(SwingConstants.TOP);
+                    background.setHorizontalAlignment(SwingConstants.LEFT);
                 }
             };
             bgThread.execute();
