@@ -25,34 +25,68 @@ import org.spoutcraft.launcher.GUI.LoginForm;
 import org.spoutcraft.launcher.Logging.SystemConsoleListener;
 
 public class Main {
-	
+
 	public Main() throws Exception {
 		main(new String[0]);
 	}
-	
-    public static void main(String[] args) throws Exception {  	
-        
-    	if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-            PlatformUtils.setPortable(true);
-        }
-        
-		PlatformUtils.getWorkingDirectory().mkdir();
+
+	public static void main(String[] args) throws Exception {
+
+		PlatformUtils.getWorkingDirectory().mkdirs();
+
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
-		
-		if (!PlatformUtils.getWorkingDirectory().exists()) {
-    		PlatformUtils.getWorkingDirectory().mkdirs();
-    	}
-    	SystemConsoleListener listener = new SystemConsoleListener();
-    	listener.initialize();
-		
+
+		SystemConsoleListener listener = new SystemConsoleListener();
+
+		listener.initialize();
+
 		try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            System.out.println("[WARNING] Can't get system LnF: " + e);
-        }
-		
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.out.println("[WARNING] Can't get system LnF: " + e);
+		}
+
 		LoginForm login = new LoginForm();
+
+		switch (args.length) {
+		case 4:
+			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+				PlatformUtils.setPortable(true);
+			}
+
+			login.doLogin(args[0], args[1]);
+
+			MinecraftUtils.setServer(args[2]);
+			break;
+
+		case 3:
+			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+				PlatformUtils.setPortable(true);
+			}
+
+			login.doLogin(args[0], args[1]);
+
+			MinecraftUtils.setServer(args[2]);
+			break;
+		case 2:
+			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+				PlatformUtils.setPortable(true);
+			}
+
+			login.doLogin(args[0], args[1]);
+
+			break;
+		default:
+			if (args.length > 5) {
+				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+					PlatformUtils.setPortable(true);
+				}
+
+				MinecraftUtils.setServer(args[2]);
+			}
+		}
+
 		login.setVisible(true);
 	}
-	
+
 }

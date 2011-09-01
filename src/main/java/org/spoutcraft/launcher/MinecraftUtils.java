@@ -25,7 +25,10 @@ import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
 
 
 public class MinecraftUtils {
-
+	
+	public static String server = null;
+	public static String port = null;
+	
 	public static String[] doLogin(String user, String pass) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException {
 		
 			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
@@ -44,6 +47,14 @@ public class MinecraftUtils {
 				throw new MCNetworkException();
 			}
 			return result.split(":");
+	}
+	
+	public static void setServer(String server) {
+		if (server.contains(":")) {
+			String[] serv = server.split(":");
+			MinecraftUtils.server = serv[0];
+			MinecraftUtils.port = serv[1];
+		}
 	}
 	
 }

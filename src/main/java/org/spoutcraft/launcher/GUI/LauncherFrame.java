@@ -25,6 +25,7 @@ import java.awt.event.WindowListener;
 
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
+import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 
 public class LauncherFrame extends Frame implements WindowListener{
@@ -58,6 +59,13 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
+		if (!MinecraftUtils.server.equals(null)) {
+			minecraft.addParameter("server", MinecraftUtils.server);
+			if (!MinecraftUtils.port.equals(null)) {
+				minecraft.addParameter("port", MinecraftUtils.server);
+			}
+		}
+		
 
 		applet.setStub(minecraft);
 
