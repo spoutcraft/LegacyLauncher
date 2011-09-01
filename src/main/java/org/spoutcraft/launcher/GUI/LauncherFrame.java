@@ -59,9 +59,9 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
-		if (!MinecraftUtils.server.equals(null)) {
+		if (MinecraftUtils.server != null) {
 			minecraft.addParameter("server", MinecraftUtils.server);
-			if (!MinecraftUtils.port.equals(null)) {
+			if (MinecraftUtils.port != null) {
 				minecraft.addParameter("port", MinecraftUtils.server);
 			}
 		}
