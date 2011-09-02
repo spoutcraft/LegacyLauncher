@@ -71,12 +71,12 @@ public class GameUpdater implements DownloadListener {
 	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-    private DownloadListener listener;
+	private DownloadListener listener;
 
-    public GameUpdater() {
-    }
+	public GameUpdater() {
+	}
 
-    public void updateMC() throws Exception {
+	public void updateMC() throws Exception {
 		this.purgeDir(binDir);
 		this.purgeDir(updateDir);
 		
@@ -119,8 +119,8 @@ public class GameUpdater implements DownloadListener {
 		if (!new File(binDir, "natives").exists()) return true;
 		if (!versionFile.exists()) return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
-        return this.latestVersion > currentVersion;
-    }
+		return this.latestVersion > currentVersion;
+	}
 	
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {
 
@@ -214,7 +214,7 @@ public class GameUpdater implements DownloadListener {
 		if (spoutVersion.exists()) spoutVersion.delete();
 		
 		this.writeFile(spoutVersion.getPath(), this.getSpoutVersion());
-    }
+	}
 
 	public String getSpoutVersion() throws Exception {
 		 String version;
@@ -228,8 +228,8 @@ public class GameUpdater implements DownloadListener {
 		 BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
 		 String str = in.readLine();
 		 if (str != null) {
-		      version = str;
-		      return version;
+			  version = str;
+			  return version;
 		 }
 		 in.close();
 		 return null;
@@ -250,22 +250,22 @@ public class GameUpdater implements DownloadListener {
 		String latest = this.getSpoutVersion();
 
 		if (latest == null) return false;
-        if (version == null) return true;
+		if (version == null) return true;
 		if (version.contains(".")) return true;
 		
 		int c = Integer.parseInt(version);
 		int l = Integer.parseInt(latest);
 
-        return c < l || (c > l && !devmode);
+		return c < l || (c > l && !devmode);
 
-    }
+	}
 	
 	public void unzipSpout() throws Exception {
 		final int BUFFER = 2048;
 		BufferedOutputStream dest;
 		FileInputStream fis = new FileInputStream(new File(this.updateDir.getPath() + File.separator + "Spout.zip"));
 		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-        ZipEntry entry;
+		ZipEntry entry;
 		File dir = new File(updateDir + File.separator + "Spout");
 		if (dir.exists()) {
 			this.purgeDir(dir);
@@ -356,7 +356,7 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir) throws IOException {
-        File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
+		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
 		boolean renameOk=zipFile.renameTo(tempFile);
@@ -442,17 +442,17 @@ public class GameUpdater implements DownloadListener {
 		  writer.write(contents);
 		   writer.close();
 		} catch (Exception e) {
-            e.printStackTrace();
+			e.printStackTrace();
 		}
 	}
 	
 	private void downloadFile(String url, String outPut) throws Exception {
-        Download download = new Download(url, outPut);
-        download.setListener(this);
-        download.run();
-        if (!download.success) {
-        	throw new IOException();
-        }
+		Download download = new Download(url, outPut);
+		download.setListener(this);
+		download.run();
+		if (!download.success) {
+			throw new IOException();
+		}
 	}
 		
 	
@@ -490,11 +490,11 @@ public class GameUpdater implements DownloadListener {
 		}
 	}
 
-    public void stateChanged(String fileName, float progress) {
-        this.listener.stateChanged(fileName, progress);
-    }
+	public void stateChanged(String fileName, float progress) {
+		this.listener.stateChanged(fileName, progress);
+	}
 
-    public void setListener(DownloadListener listener) {
-        this.listener = listener;
-    }
+	public void setListener(DownloadListener listener) {
+		this.listener = listener;
+	}
 }

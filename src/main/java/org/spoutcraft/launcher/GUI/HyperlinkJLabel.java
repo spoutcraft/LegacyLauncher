@@ -35,12 +35,12 @@ public class HyperlinkJLabel extends JLabel implements MouseListener{
 		Desktop desktop = Desktop.getDesktop();
 		if (!desktop.isSupported( java.awt.Desktop.Action.BROWSE ) ) return;
 		try {
-            URI uri = new java.net.URI( url );
-            desktop.browse( uri );
-        }
-        catch ( Exception e ) {
-        	System.err.println( e.getMessage() );
-        }
+			URI uri = new java.net.URI( url );
+			desktop.browse( uri );
+		}
+		catch ( Exception e ) {
+			System.err.println( e.getMessage() );
+		}
 	}
 	
 	public HyperlinkJLabel(String text, String url) {

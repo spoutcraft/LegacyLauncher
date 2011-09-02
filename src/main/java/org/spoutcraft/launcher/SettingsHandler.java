@@ -121,8 +121,8 @@ public class SettingsHandler {
 			FileOutputStream output = null;
 			try
 			{
-                //noinspection ResultOfMethodCallIgnored
-                out.getParentFile().mkdirs();
+				//noinspection ResultOfMethodCallIgnored
+				out.getParentFile().mkdirs();
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
 				int length;
@@ -135,7 +135,7 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-                    input.close();
+					input.close();
 				} catch (Exception ignored) {
 				}
 				try {
@@ -170,7 +170,7 @@ public class SettingsHandler {
 				e.printStackTrace();
 			} finally {
 				try {
-                    input.close();
+					input.close();
 				} catch (Exception ignored) {
 				}
 				try {
@@ -350,8 +350,8 @@ public class SettingsHandler {
 	private void flush(HashMap<Integer,String> newContents) {
 		try {
 			this.delFile(out);
-            //noinspection ResultOfMethodCallIgnored
-            out.createNewFile();
+			//noinspection ResultOfMethodCallIgnored
+			out.createNewFile();
 			BufferedWriter writer = new BufferedWriter(new FileWriter(out));
 			for (int i = 1; i <= newContents.size(); i ++) {
 				String line = newContents.get(i);
@@ -362,9 +362,9 @@ public class SettingsHandler {
 				writer.append(line);
 				writer.append("\n");
 			}
-            writer.flush();
-            writer.close();
-            if (cached) this.load();
+			writer.flush();
+			writer.close();
+			if (cached) this.load();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -377,9 +377,9 @@ public class SettingsHandler {
 	 */
 	private void delFile(File file) {
 		if (file.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            file.delete();
-        }
+			//noinspection ResultOfMethodCallIgnored
+			file.delete();
+		}
 	}
 	
 	/**

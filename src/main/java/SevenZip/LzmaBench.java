@@ -297,7 +297,7 @@ public class LzmaBench
 			System.out.println("\nError: dictionary size for benchmark must be >= 18 (256 KB)");
 			return 1;
 		}
-		System.out.print("\n       Compressing                Decompressing\n\n");
+		System.out.print("\n	   Compressing				Decompressing\n\n");
 		
 		SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
 		SevenZip.Compression.LZMA.Decoder decoder = new SevenZip.Compression.LZMA.Decoder();
@@ -371,7 +371,7 @@ public class LzmaBench
 			}
 			long benchSize = kBufferSize - (long)progressInfo.InSize;
 			PrintResults(dictionarySize, encodeTime, benchSize, false, 0);
-			System.out.print("     ");
+			System.out.print("	 ");
 			PrintResults(dictionarySize, decodeTime, kBufferSize, true, compressedSize);
 			System.out.println();
 			
@@ -382,10 +382,10 @@ public class LzmaBench
 		}
 		System.out.println("---------------------------------------------------");
 		PrintResults(dictionarySize, totalEncodeTime, totalBenchSize, false, 0);
-		System.out.print("     ");
+		System.out.print("	 ");
 		PrintResults(dictionarySize, totalDecodeTime,
 				kBufferSize * (long)numIterations, true, totalCompressedSize);
-		System.out.println("    Average");
+		System.out.println("	Average");
 		return 0;
 	}
 }
