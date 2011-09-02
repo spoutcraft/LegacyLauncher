@@ -499,10 +499,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     }
 
     private void doLogin() {
-    	doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
+    	doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()), false);
     }
     
     public void doLogin(final String user, final String pass) {
+    	doLogin(user, pass, true);
+    }
+    
+    public void doLogin(final String user, final String pass, final boolean cmdLine) {
     	if (user == null || pass == null) {
     		JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
     		return;
@@ -547,6 +551,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                 gu.downloadTicket = values[1].trim();
                 gu.latestVersion = Long.parseLong(values[0].trim());
                 if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
+                if (cmdLine == false) {
+                	usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
+                	writeUsernameList();
+                }
                 progressBar.setVisible(true);
                 SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
                     @Override
