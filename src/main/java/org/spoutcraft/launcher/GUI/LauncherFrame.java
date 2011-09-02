@@ -62,11 +62,11 @@ public class LauncherFrame extends Frame implements WindowListener{
 		if (MinecraftUtils.server != null) {
 			minecraft.addParameter("server", MinecraftUtils.server);
 			if (MinecraftUtils.port != null) {
-				minecraft.addParameter("port", MinecraftUtils.server);
+				minecraft.addParameter("port", MinecraftUtils.port);
 			}
 		}
 		
-
+		applet.setStub(minecraft);
 
 		this.add(minecraft);
 		validate();
