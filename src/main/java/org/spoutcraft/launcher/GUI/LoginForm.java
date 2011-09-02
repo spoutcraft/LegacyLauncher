@@ -73,12 +73,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private static final long serialVersionUID = -192904429165686059L;
 
 	private JPanel contentPane;
-	private JPasswordField txtPassword;
-	private JComboBox cmbUsername = new JComboBox();
-	private JButton btnLogin = new JButton("Login");
-	private JCheckBox cbRemember = new JCheckBox("Remember");
-	private JButton btnLogin1;
-	private JButton btnLogin2;
+	private JPasswordField passwordField;
+	private JComboBox usernameField = new JComboBox();
+	private JButton loginButton = new JButton("Login");
+	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
+	private JButton loginSkin1;
+	private JButton loginSkin2;
 	private JProgressBar progressBar;
 	HashMap<String, String> usernames = new HashMap<String, String>();
 	public Boolean mcUpdate = false;
@@ -97,17 +97,17 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		gu.setListener(this);
 
 		options.setVisible(false);
-		btnLogin.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnLogin.setBounds(272, 13, 86, 23);
-		btnLogin.setOpaque(false);
-		btnLogin.addActionListener(this);
-		JButton btnOptions = new JButton("Options");
-		btnOptions.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnOptions.setOpaque(false);
-		btnOptions.addActionListener(this);
-		cmbUsername.setFont(new Font("Arial", Font.PLAIN, 11));
-		cmbUsername.addActionListener(this);
-		cmbUsername.setOpaque(false);
+		loginButton.setFont(new Font("Arial", Font.PLAIN, 11));
+		loginButton.setBounds(272, 13, 86, 23);
+		loginButton.setOpaque(false);
+		loginButton.addActionListener(this);
+		JButton options = new JButton("Options");
+		options.setFont(new Font("Arial", Font.PLAIN, 11));
+		options.setOpaque(false);
+		options.addActionListener(this);
+		usernameField.setFont(new Font("Arial", Font.PLAIN, 11));
+		usernameField.addActionListener(this);
+		usernameField.setOpaque(false);
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 		setResizable(false);
@@ -137,22 +137,22 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		lblPassword.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblPassword.setBounds(33, 42, 100, 20);
 
-		txtPassword = new JPasswordField();
-		txtPassword.setFont(new Font("Arial", Font.PLAIN, 11));
-		txtPassword.setBounds(143, 42, 119, 22);
+		passwordField = new JPasswordField();
+		passwordField.setFont(new Font("Arial", Font.PLAIN, 11));
+		passwordField.setBounds(143, 42, 119, 22);
 
-		btnLogin1 = new JButton("Login as Player");
-		btnLogin1.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnLogin1.setBounds(72, 428, 119, 23);
-		btnLogin1.setOpaque(false);
-		btnLogin1.addActionListener(this);
-		btnLogin1.setVisible(false);
-		btnLogin2 = new JButton("Login as Player");
-		btnLogin2.setFont(new Font("Arial", Font.PLAIN, 11));
-		btnLogin2.setBounds(261, 428, 119, 23);
-		btnLogin2.setOpaque(false);
-		btnLogin2.addActionListener(this);
-		btnLogin2.setVisible(false);
+		loginSkin1 = new JButton("Login as Player");
+		loginSkin1.setFont(new Font("Arial", Font.PLAIN, 11));
+		loginSkin1.setBounds(72, 428, 119, 23);
+		loginSkin1.setOpaque(false);
+		loginSkin1.addActionListener(this);
+		loginSkin1.setVisible(false);
+		loginSkin2 = new JButton("Login as Player");
+		loginSkin2.setFont(new Font("Arial", Font.PLAIN, 11));
+		loginSkin2.setBounds(261, 428, 119, 23);
+		loginSkin2.setOpaque(false);
+		loginSkin2.addActionListener(this);
+		loginSkin2.setVisible(false);
 
 		progressBar = new JProgressBar();
 		progressBar.setBounds(30, 100, 400, 23);
@@ -162,17 +162,17 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		readUsedUsernames();
 
-		JLabel lblNewLabel = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
-		lblNewLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-		lblNewLabel.setBounds(243, 70, 111, 14);
+		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
+		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
+		purchaseAccount.setBounds(243, 70, 111, 14);
 
-		lblNewLabel.setText("<html><u>Need an account?</u></html>");
-		lblNewLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-		lblNewLabel.setForeground(new Color(0, 0, 255));
-		cmbUsername.setBounds(143, 14, 119, 25);
-		cbRemember.setFont(new Font("Arial", Font.PLAIN, 11));
+		purchaseAccount.setText("<html><u>Need an account?</u></html>");
+		purchaseAccount.setFont(new Font("Arial", Font.PLAIN, 11));
+		purchaseAccount.setForeground(new Color(0, 0, 255));
+		usernameField.setBounds(143, 14, 119, 25);
+		rememberCheckbox.setFont(new Font("Arial", Font.PLAIN, 11));
 
-		cbRemember.setOpaque(false);
+		rememberCheckbox.setOpaque(false);
 
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
@@ -221,47 +221,47 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		trans.setOpaque(true);
 		trans.setBounds(0, 0, 854, 480);
 
-		cmbUsername.getEditor().addActionListener(this);
-		txtPassword.addKeyListener(this);
-		cbRemember.addKeyListener(this);
+		usernameField.getEditor().addActionListener(this);
+		passwordField.addKeyListener(this);
+		rememberCheckbox.addKeyListener(this);
 
-		cmbUsername.setEditable(true);
+		usernameField.setEditable(true);
 		contentPane.setLayout(null);
-		cbRemember.setBounds(144, 66, 93, 23);
+		rememberCheckbox.setBounds(144, 66, 93, 23);
 		contentPane.add(lblLogo);
-		btnOptions.setBounds(272, 41, 86, 23);
-		contentPane.add(btnLogin1);
-		contentPane.add(btnLogin2);
+		options.setBounds(272, 41, 86, 23);
+		contentPane.add(loginSkin1);
+		contentPane.add(loginSkin2);
 
 		 loginPane.setBounds(473, 362, 372, 99);
 		 loginPane.add(lblPassword);
 		 loginPane.add(lblMinecraftUsername);
-		 loginPane.add(txtPassword);
-		 loginPane.add(cmbUsername);
-		 loginPane.add(btnLogin);
-		 loginPane.add(cbRemember);
-		 loginPane.add(lblNewLabel);
-		 loginPane.add(btnOptions);
+		 loginPane.add(passwordField);
+		 loginPane.add(usernameField);
+		 loginPane.add(loginButton);
+		 loginPane.add(rememberCheckbox);
+		 loginPane.add(purchaseAccount);
+		 loginPane.add(options);
 		 contentPane.add(loginPane);
 		 
-		 JLabel offline_msg = new JLabel("Could not connect to minecraft.net");
-		 offline_msg.setFont(new Font("Arial", Font.PLAIN, 14));
-		 offline_msg.setBounds(25, 40, 217, 17);
+		 JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
+		 offlineMessage.setFont(new Font("Arial", Font.PLAIN, 14));
+		 offlineMessage.setBounds(25, 40, 217, 17);
 		 
-		 JButton button = new JButton("Try Again");
-		 button.setOpaque(false);
-		 button.setFont(new Font("Arial", Font.PLAIN, 12));
-		 button.setBounds(257, 20, 100, 25);
+		 JButton tryAgain = new JButton("Try Again");
+		 tryAgain.setOpaque(false);
+		 tryAgain.setFont(new Font("Arial", Font.PLAIN, 12));
+		 tryAgain.setBounds(257, 20, 100, 25);
 		 
-		 JButton button_1 = new JButton("Offline Mode");
-		 button_1.setOpaque(false);
-		 button_1.setFont(new Font("Arial", Font.PLAIN, 12));
-		 button_1.setBounds(257, 52, 100, 25);
+		 JButton offlineMode = new JButton("Offline Mode");
+		 offlineMode.setOpaque(false);
+		 offlineMode.setFont(new Font("Arial", Font.PLAIN, 12));
+		 offlineMode.setBounds(257, 52, 100, 25);
 		 
 		 offlinePane.setBounds(473, 362, 372, 99);
-		 offlinePane.add(button);
-		 offlinePane.add(button_1);
-		 offlinePane.add(offline_msg);
+		 offlinePane.add(tryAgain);
+		 offlinePane.add(offlineMode);
+		 offlinePane.add(offlineMessage);
 		 offlinePane.setVisible(false);
 		 contentPane.add(offlinePane);
 		
@@ -303,11 +303,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 
 		Vector<Component> order = new Vector<Component>(5);
-		order.add(cmbUsername.getEditor().getEditorComponent());
-		order.add(txtPassword);
-		order.add(cbRemember);
-		order.add(btnLogin);
-		order.add(btnOptions);
+		order.add(usernameField.getEditor().getEditorComponent());
+		order.add(passwordField);
+		order.add(rememberCheckbox);
+		order.add(loginButton);
+		order.add(options);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 	}
@@ -322,27 +322,27 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
-			drawCroped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8); // HAT
+			drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8); // HAT
 
-			drawCroped(originalImage, type, 8, 8, 16, 16, x, y, 7); // HEAD
+			drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7); // HEAD
 
-			drawCroped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7); // BODY
+			drawCropped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7); // BODY
 
-			drawCroped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7); // ARMS
-			drawCroped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true);
+			drawCropped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7); // ARMS
+			drawCropped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true);
 
-			drawCroped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7); // LEGS
-			drawCroped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true);
+			drawCropped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7); // LEGS
+			drawCropped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void drawCroped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale) {
-		drawCroped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false);
+	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale) {
+		drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false);
 	}
 
-	public void drawCroped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect) {
+	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect) {
 		BufferedImage resizedImage = new BufferedImage((sx2 - sx1) * scale, (sy2 - sy1) * scale, type);
 		Graphics2D g = resizedImage.createGraphics();
 		int asx2 = sx2, asx1 = sx1;
@@ -435,18 +435,18 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					if (!pass.isEmpty()) {
 						i++;
 						if (i == 1) {
-							btnLogin1.setText(user);
-							btnLogin1.setVisible(true);
+							loginSkin1.setText(user);
+							loginSkin1.setVisible(true);
 							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170);
 						} else if (i == 2) {
-							btnLogin2.setText(user);
-							btnLogin2.setVisible(true);
+							loginSkin2.setText(user);
+							loginSkin2.setVisible(true);
 							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170);
 						}
 					}
 
 					usernames.put(user, pass);
-					this.cmbUsername.addItem(user);
+					this.usernameField.addItem(user);
 				}
 			} catch (EOFException ignored) {
 			}
@@ -455,8 +455,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
-		this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
+		this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
+		this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
 	}
 
 
@@ -481,25 +481,25 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 	}
 
-	public void actionPerformed(ActionEvent evt) {
-		String btnID = evt.getActionCommand();
-		if (evt.getSource() == btnLogin1 || evt.getSource() == btnLogin2) {
-			btnID = "Login";
-			this.cmbUsername.setSelectedItem(((JButton) evt.getSource()).getText());
+	public void actionPerformed(ActionEvent event) {
+		String eventId = event.getActionCommand();
+		if (event.getSource() == loginSkin1 || event.getSource() == loginSkin2) {
+			eventId = "Login";
+			this.usernameField.setSelectedItem(((JButton) event.getSource()).getText());
 		}
-		if (btnID.equals("Login") || btnID.equals(cmbUsername.getSelectedItem())) {
+		if (eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) {
 			doLogin();
-		} else if (btnID.equals("Options")) {
+		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
 			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 500, 150);
-		} else if (btnID.equals("comboBoxChanged")) {
-			this.txtPassword.setText(usernames.get(this.cmbUsername.getSelectedItem().toString()));
-			this.cbRemember.setSelected(this.txtPassword.getPassword().length > 0);
+		} else if (eventId.equals("comboBoxChanged")) {
+			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
+			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
 		}
 	}
 
 	private void doLogin() {
-		doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()), false);
+		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false);
 	}
 	
 	public void doLogin(final String user, final String pass) {
@@ -508,13 +508,13 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	
 	public void doLogin(final String user, final String pass, final boolean cmdLine) {
 		if (user == null || pass == null) {
-			JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 			return;
 		}
 		
-		this.btnLogin.setEnabled(false);
-		this.btnLogin1.setEnabled(false);
-		this.btnLogin2.setEnabled(false);
+		this.loginButton.setEnabled(false);
+		this.loginSkin1.setEnabled(false);
+		this.loginSkin2.setEnabled(false);
 		options.setVisible(false);
 		SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
 			String[] values;
@@ -525,21 +525,21 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					values = MinecraftUtils.doLogin(user, pass);
 					return true;
 				} catch (BadLoginException e) {
-					JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 					this.cancel(true);
 				} catch (MCNetworkException e) {
 					JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
 					this.cancel(true);
 				} catch (OutdatedMCLauncherException e) {
-					JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
+					JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert dev@getspout.org!!!!");
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 					this.cancel(true);
 				} catch (Exception e) {
 				}
-				btnLogin.setEnabled(true);
-				btnLogin1.setEnabled(true);
-				btnLogin2.setEnabled(true);
+				loginButton.setEnabled(true);
+				loginSkin1.setEnabled(true);
+				loginSkin2.setEnabled(true);
 				this.cancel(true);
 				return false;
 			}
@@ -552,7 +552,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				gu.latestVersion = Long.parseLong(values[0].trim());
 				if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
 				if (cmdLine == false) {
-					usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
+					usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
 					writeUsernameList();
 				}
 				progressBar.setVisible(true);
@@ -593,9 +593,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							}
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
-							btnLogin.setEnabled(true);
-							btnLogin1.setEnabled(true);
-							btnLogin2.setEnabled(true);
+							loginButton.setEnabled(true);
+							loginSkin1.setEnabled(true);
+							loginSkin2.setEnabled(true);
 							this.cancel(true);
 							return false;
 						}
