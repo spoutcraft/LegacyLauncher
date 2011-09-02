@@ -47,24 +47,24 @@ public class PlatformUtils {
 		switch (getPlatform()) {
 		case linux:
 		case solaris:
-		  workingDirectory = new File(userHome, '.' + applicationName + '/');
-		  break;
+		workingDirectory = new File(userHome, '.' + applicationName + '/');
+		break;
 		case windows:
-		  String applicationData = System.getenv("APPDATA");
-		  if (applicationData != null) workingDirectory = new File(applicationData, "." + applicationName + '/'); else
+		String applicationData = System.getenv("APPDATA");
+		if (applicationData != null) workingDirectory = new File(applicationData, "." + applicationName + '/'); else
 			workingDirectory = new File(userHome, '.' + applicationName + '/');
-		  break;
+		break;
 		case macos:
-		  workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
-		  break;
+		workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
+		break;
 		default:
-		  workingDirectory = new File(userHome, applicationName + '/');
+		workingDirectory = new File(userHome, applicationName + '/');
 		}
 		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) throw new RuntimeException("The working directory could not be created: " + workingDirectory);
 		return workingDirectory;
-	  }
+	}
 
-	  public static OS getPlatform() {
+	public static OS getPlatform() {
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.contains("win")) return OS.windows;
 		if (osName.contains("mac")) return OS.macos;
@@ -73,7 +73,7 @@ public class PlatformUtils {
 		if (osName.contains("linux")) return OS.linux;
 		if (osName.contains("unix")) return OS.linux;
 		return OS.unknown;
-	  }
+	}
 
 	public static boolean isPortable() {
 		return portable;
@@ -86,70 +86,69 @@ public class PlatformUtils {
 	public enum OS {
 		linux, solaris, windows, macos, unknown
 	}
-	  
-	  public static String excutePost(String targetURL, String urlParameters)
-	  {
+	
+	public static String excutePost(String targetURL, String urlParameters) {
 		HttpsURLConnection connection = null;
 		try
 		{
-		  URL url = new URL(targetURL);
-		  connection = (HttpsURLConnection)url.openConnection();
-		  connection.setRequestMethod("POST");
-		  connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+		URL url = new URL(targetURL);
+		connection = (HttpsURLConnection)url.openConnection();
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-		  connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
-		  connection.setRequestProperty("Content-Language", "en-US");
+		connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
+		connection.setRequestProperty("Content-Language", "en-US");
 
-		  connection.setUseCaches(false);
-		  connection.setDoInput(true);
-		  connection.setDoOutput(true);
+		connection.setUseCaches(false);
+		connection.setDoInput(true);
+		connection.setDoOutput(true);
 
-		  connection.connect();
-		  Certificate[] certs = connection.getServerCertificates();
+		connection.connect();
+		Certificate[] certs = connection.getServerCertificates();
 
-		  byte[] bytes = new byte[294];
-		  DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
-		  dis.readFully(bytes);
-		  dis.close();
+		byte[] bytes = new byte[294];
+		DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
+		dis.readFully(bytes);
+		dis.close();
 
-		  Certificate c = certs[0];
-		  PublicKey pk = c.getPublicKey();
-		  byte[] data = pk.getEncoded();
+		Certificate c = certs[0];
+		PublicKey pk = c.getPublicKey();
+		byte[] data = pk.getEncoded();
 
-		  for (int i = 0; i < data.length; i++) {
+		for (int i = 0; i < data.length; i++) {
 			if (data[i] == bytes[i]) continue; throw new RuntimeException("Public key mismatch");
-		  }
+		}
 
-		  DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		  wr.writeBytes(urlParameters);
-		  wr.flush();
-		  wr.close();
+		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+		wr.writeBytes(urlParameters);
+		wr.flush();
+		wr.close();
 
-		  InputStream is = connection.getInputStream();
-		  BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		InputStream is = connection.getInputStream();
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-		  StringBuilder response = new StringBuilder();
-		  String line;
-		  while ((line = rd.readLine()) != null)
-		  {
+		StringBuilder response = new StringBuilder();
+		String line;
+		while ((line = rd.readLine()) != null)
+		{
 			response.append(line);
 			response.append('\r');
-		  }
-		  rd.close();
+		}
+		rd.close();
 
-		  return response.toString();
+		return response.toString();
 		}
 		catch (Exception e)
 		{
-		  e.printStackTrace();
-		  return null;
+		e.printStackTrace();
+		return null;
 		}
 		finally
 		{
-		  if (connection != null)
+		if (connection != null)
 			connection.disconnect();
 		}
-	  }
+	}
 
 
 

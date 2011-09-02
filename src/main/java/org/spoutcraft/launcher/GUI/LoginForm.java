@@ -362,6 +362,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		int intProgress = Math.round(progress);
 
 		progressBar.setValue(intProgress);
+		if (fileName.length() > 40) {
+			fileName = fileName.substring(0, 40);
+		}
 		progressBar.setString(intProgress + "% " + fileName);
 		//System.out.println(fileName + ": " + progress);
 	}
@@ -508,7 +511,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	
 	public void doLogin(final String user, final String pass, final boolean cmdLine) {
 		if (user == null || pass == null) {
-			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
+			JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
 			return;
 		}
 		
@@ -521,6 +524,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
+				progressBar.setVisible(true);
+				progressBar.setString("Connecting to www.minecraft.net...");
 				try {
 					values = MinecraftUtils.doLogin(user, pass);
 					return true;
@@ -555,7 +560,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
 					writeUsernameList();
 				}
-				progressBar.setVisible(true);
+				
 				SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
 					@Override
 					protected void done() {
