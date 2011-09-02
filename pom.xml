@@ -19,7 +19,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.mainClass>${project.groupId}.${project.artifactId}.Main</project.mainClass>
-        <project.build.number>b0</project.build.number>
+        <project.release.version>1.0.2</project.release.version>
+        <project.build.number>0</project.build.number>
+        <project.version.string>${release.version}.${build.number}</project.version.string>
     </properties>
 
     <!-- License -->
@@ -56,17 +58,7 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
-        <repository>
-          <id>akathist-repo</id>
-          <url>http://www.9stmaryrd.com/maven</url>
-      </repository>
     </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>akathist-repo</id>
-            <url>http://www.9stmaryrd.com/maven</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <!-- Dependencies -->
     <dependencies>
@@ -119,7 +111,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.1</version>
+                <version>2.3.2</version>
                 <configuration>
                     <archive>
                         <manifest>
@@ -136,28 +128,28 @@
         <!-- Windows -->
         <profile>
             <id>package-win</id>
-            <activation>
+            <!--<activation>
                 <os>
                     <family>windows</family>
                 </os>
-            </activation>
+            </activation>-->
             <build>
                 <plugins>
                     <plugin>
-                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
-                        <artifactId>launch4j-maven-plugin</artifactId>
-                        <version>1.3</version>
+                        <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+                        <artifactId>launch4j-plugin</artifactId>
+                        <version>1.5.0.0</version>
                         <executions>
                             <execution>
-                                <id>l4j-clui</id>
+                                <id>launch4j</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>launch4j</goal>
                                 </goals>
                                 <configuration>
                                     <headerType>gui</headerType>
+  								<stayAlive>true</stayAlive>
                                     <outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
-                                    <jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
                                     <classPath>
                                         <mainClass>${project.mainClass}</mainClass>
                                         <addDependencies>false</addDependencies>
@@ -165,15 +157,15 @@
                                     </classPath>
                                     <jre>
                                         <minVersion>1.5.0</minVersion>
-                                        <jdkPreference>preferJre</jdkPreference>
                                     </jre>
+                                    <icon>${basedir}/src/main/resources/icon.ico</icon>
                                     <versionInfo>
-                                        <fileVersion>0.0.0.${build.number}</fileVersion>
-                                        <txtFileVersion>0.0.0.${build.number}</txtFileVersion>
+                                        <fileVersion>1.0.2.${build.number}</fileVersion>
+                                        <txtFileVersion>1.0.2.${build.number}</txtFileVersion>
                                         <fileDescription>${project.name}</fileDescription>
                                         <copyright>SpoutDev</copyright>
-                                        <productVersion>0.0.0.${build.number}</productVersion>
-                                        <txtProductVersion>0.0.0.${build.number}</txtProductVersion>
+                                        <productVersion>1.0.2.${build.number}</productVersion>
+                                        <txtProductVersion>1.0.2.${build.number}</txtProductVersion>
                                         <productName>${project.name}</productName>
                                         <internalName>${project.artifactId}</internalName>
                                         <originalFilename>${project.artifactId}.exe</originalFilename>
@@ -188,11 +180,11 @@
         <!-- Mac OS X -->
         <profile>
             <id>package-mac</id>
-            <activation>
+            <!--<activation>
                 <os>
                     <family>mac</family>
                 </os>
-            </activation>
+            </activation>-->
             <build>
                 <plugins>
                     <plugin>
@@ -203,11 +195,11 @@
                             <mainClass>${project.mainClass}</mainClass>
                             <bundleName>${project.name}</bundleName>
                             <iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
-                            <dictionaryFile>${basedir}/src/main/resources/Info.plist</dictionaryFile>
+                            <dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
                             <javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
                             <additionalResources>
                                 <fileSet>
-                                    <directory>${basedir}/src</directory>
+                                    <directory>${basedir}</directory>
                                     <includes>
                                         <include>LICENSE.txt</include>
                                     </includes>
