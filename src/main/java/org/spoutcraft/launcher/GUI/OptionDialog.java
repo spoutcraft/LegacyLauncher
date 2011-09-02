@@ -44,11 +44,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 	private final JPanel contentPanel = new JPanel();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
-	JCheckBox cbxDev = new JCheckBox("Use latest dev build. Remember to only use this if you know what you are doing!");
+	JCheckBox devCheckbox = new JCheckBox("Use latest dev build. Dangerous!");
 	
-	JCheckBox cbxClip = new JCheckBox("Allow access to your clipboard");
+	JCheckBox clipboardCheckbox = new JCheckBox("Allow access to your clipboard");
 	
-	JCheckBox cbxBack = new JCheckBox("Include worlds when doing automated backup");
+	JCheckBox backupCheckbox = new JCheckBox("Include worlds when doing automated backup");
+	
+	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
 
 
 	/**
@@ -62,17 +64,20 @@ public class OptionDialog extends JDialog implements ActionListener {
 		System.out.println(settings.getLineCount());
 		
 		if (settings.checkProperty("devupdate")) {
-			cbxDev.setSelected(settings.getPropertyBoolean("devupdate"));
+			devCheckbox.setSelected(settings.getPropertyBoolean("devupdate"));
 		}
 		if (settings.checkProperty("clipboardaccess")) {
-			cbxClip.setSelected(settings.getPropertyBoolean("clipboardaccess"));
+			clipboardCheckbox.setSelected(settings.getPropertyBoolean("clipboardaccess"));
 		}
 		if (settings.checkProperty("worldbackup")) {
-			cbxBack.setSelected(settings.getPropertyBoolean("worldbackup"));
+			backupCheckbox.setSelected(settings.getPropertyBoolean("worldbackup"));
+		}
+		if (settings.checkProperty("retryLogins")) {
+			retryLoginCheckbox.setSelected(settings.getPropertyBoolean("retryLogins"));
 		}
 		
 		setResizable(false);
-		setBounds(100, 100, 500, 150);
+		setBounds(100, 100, 300, 200);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -83,21 +88,25 @@ public class OptionDialog extends JDialog implements ActionListener {
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(cbxDev)
-						.addComponent(cbxClip)
-						.addComponent(cbxBack))
+						.addComponent(devCheckbox)
+						.addComponent(clipboardCheckbox)
+						.addComponent(backupCheckbox)
+						.addComponent(retryLoginCheckbox))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
-		cbxBack.setFont(new Font("Arial", Font.PLAIN, 11));
-		cbxClip.setFont(new Font("Arial", Font.PLAIN, 11));
-		cbxDev.setFont(new Font("Arial", Font.PLAIN, 11));
+		Font font = new Font("Arial", Font.PLAIN, 11);
+		backupCheckbox.setFont(font);
+		clipboardCheckbox.setFont(font);
+		devCheckbox.setFont(font);
+		retryLoginCheckbox.setFont(font);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addComponent(cbxDev)
+					.addComponent(devCheckbox)
+					.addComponent(retryLoginCheckbox)
 					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(cbxClip)
-					.addComponent(cbxBack)
+					.addComponent(clipboardCheckbox)
+					.addComponent(backupCheckbox)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
@@ -127,19 +136,24 @@ public class OptionDialog extends JDialog implements ActionListener {
 		String btnID = evt.getActionCommand(); 
 		if (btnID.equals("OK")) {
 			if (settings.checkProperty("devupdate")) {
-				settings.changeProperty("devupdate", cbxDev.isSelected());
+				settings.changeProperty("devupdate", devCheckbox.isSelected());
 			} else {
-				settings.put("devupdate", cbxDev.isSelected());
+				settings.put("devupdate", devCheckbox.isSelected());
 			}
 			if (settings.checkProperty("clipboardaccess")) {
-				settings.changeProperty("clipboardaccess", cbxClip.isSelected());
+				settings.changeProperty("clipboardaccess", clipboardCheckbox.isSelected());
 			} else {
-				settings.put("clipboardaccess", cbxClip.isSelected());
+				settings.put("clipboardaccess", clipboardCheckbox.isSelected());
 			}
 			if (settings.checkProperty("worldbackup")) {
-				settings.changeProperty("worldbackup", cbxBack.isSelected());
+				settings.changeProperty("worldbackup", backupCheckbox.isSelected());
 			} else {
-				settings.put("worldbackup", cbxBack.isSelected());
+				settings.put("worldbackup", backupCheckbox.isSelected());
+			}
+			if (settings.checkProperty("retryLogins")) {
+				settings.changeProperty("retryLogins", retryLoginCheckbox.isSelected());
+			} else {
+				settings.put("retryLogins", retryLoginCheckbox.isSelected());
 			}
 			this.setVisible(false);
 			this.dispose();

@@ -27,11 +27,14 @@ import java.security.PublicKey;
 import java.security.cert.Certificate;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.JProgressBar;
 
 public class PlatformUtils {
 
 	private static boolean portable;
 	private static File workDir = null;
+	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+
 
 	public static File getWorkingDirectory() {
 		if (workDir == null) workDir = getWorkingDirectory("spoutcraft");
@@ -87,70 +90,102 @@ public class PlatformUtils {
 		linux, solaris, windows, macos, unknown
 	}
 	
-	public static String excutePost(String targetURL, String urlParameters) {
+	public static String excutePost(String targetURL, String urlParameters, JProgressBar progress) {
 		HttpsURLConnection connection = null;
 		try
 		{
-		URL url = new URL(targetURL);
-		connection = (HttpsURLConnection)url.openConnection();
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-		connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
-		connection.setRequestProperty("Content-Language", "en-US");
-
-		connection.setUseCaches(false);
-		connection.setDoInput(true);
-		connection.setDoOutput(true);
-
-		connection.connect();
-		Certificate[] certs = connection.getServerCertificates();
-
-		byte[] bytes = new byte[294];
-		DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
-		dis.readFully(bytes);
-		dis.close();
-
-		Certificate c = certs[0];
-		PublicKey pk = c.getPublicKey();
-		byte[] data = pk.getEncoded();
-
-		for (int i = 0; i < data.length; i++) {
-			if (data[i] == bytes[i]) continue; throw new RuntimeException("Public key mismatch");
-		}
-
-		DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-		wr.writeBytes(urlParameters);
-		wr.flush();
-		wr.close();
-
-		InputStream is = connection.getInputStream();
-		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-
-		StringBuilder response = new StringBuilder();
-		String line;
-		while ((line = rd.readLine()) != null)
-		{
-			response.append(line);
-			response.append('\r');
-		}
-		rd.close();
-
-		return response.toString();
+			URL url = new URL(targetURL);
+			connection = (HttpsURLConnection)url.openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	
+			connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
+			connection.setRequestProperty("Content-Language", "en-US");
+	
+			connection.setUseCaches(false);
+			connection.setDoInput(true);
+			connection.setDoOutput(true);
+			
+			int tries = 3;
+			if (settings.checkProperty("retryLogins")) {
+				tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
+			}
+			
+			connection.setReadTimeout(5000);
+			
+			for (int i = 0; i < tries; i++) {
+				try {
+					connection.connect();
+				}
+				catch (Exception loginFailed) {
+					if (tries == (i + 1)) {
+						progress.setString("Login Failed");
+						throw loginFailed;
+					}
+				}
+				//Tests whether the connection opened
+				try {
+					if (connection.getServerCertificates() != null)
+						break;
+				}
+				catch (Exception e) {
+					String message = "Login failed once, retrying connection...";
+					if (i == 1) {
+						message = "Login failed twice, final try...";
+					}
+					progress.setString(message);
+					connection.setReadTimeout(connection.getReadTimeout() * 2);
+					if (tries == (i + 1)) {
+						progress.setString("Login Failed");
+						throw e;
+					}
+				}
+			}
+			
+			Certificate[] certs = connection.getServerCertificates();
+	
+			byte[] bytes = new byte[294];
+			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
+			dis.readFully(bytes);
+			dis.close();
+	
+			Certificate c = certs[0];
+			PublicKey pk = c.getPublicKey();
+			byte[] data = pk.getEncoded();
+	
+			for (int i = 0; i < data.length; i++) {
+				if (data[i] == bytes[i]) continue; throw new RuntimeException("Public key mismatch");
+			}
+	
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
+	
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+	
+			StringBuilder response = new StringBuilder();
+			String line;
+			while ((line = rd.readLine()) != null)
+			{
+				response.append(line);
+				response.append('\r');
+			}
+			rd.close();
+	
+			return response.toString();
 		}
 		catch (Exception e)
 		{
-		e.printStackTrace();
-		return null;
+			e.printStackTrace();
+			return null;
 		}
 		finally
 		{
-		if (connection != null)
-			connection.disconnect();
+			if (connection != null) {
+				connection.disconnect();
+			}
 		}
 	}
-
-
-
-
 }

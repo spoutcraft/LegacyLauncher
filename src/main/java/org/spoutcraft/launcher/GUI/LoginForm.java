@@ -494,7 +494,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 500, 150);
+			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 170);
 		} else if (eventId.equals("comboBoxChanged")) {
 			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
@@ -527,19 +527,23 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				progressBar.setVisible(true);
 				progressBar.setString("Connecting to www.minecraft.net...");
 				try {
-					values = MinecraftUtils.doLogin(user, pass);
+					values = MinecraftUtils.doLogin(user, pass, progressBar);
 					return true;
 				} catch (BadLoginException e) {
 					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 					this.cancel(true);
+					progressBar.setVisible(false);
 				} catch (MCNetworkException e) {
 					JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
 					this.cancel(true);
+					progressBar.setVisible(false);
 				} catch (OutdatedMCLauncherException e) {
 					JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert dev@getspout.org!!!!");
+					progressBar.setVisible(false);
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 					this.cancel(true);
+					progressBar.setVisible(false);
 				} catch (Exception e) {
 				}
 				loginButton.setEnabled(true);

@@ -19,6 +19,8 @@ package org.spoutcraft.launcher;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import javax.swing.JProgressBar;
+
 import org.spoutcraft.launcher.Exceptions.BadLoginException;
 import org.spoutcraft.launcher.Exceptions.MCNetworkException;
 import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
@@ -29,10 +31,10 @@ public class MinecraftUtils {
 	public static String server = null;
 	public static String port = null;
 	
-	public static String[] doLogin(String user, String pass) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException {
+	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException {
 		
 			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
-			String result = PlatformUtils.excutePost("https://login.minecraft.net/", parameters);
+			String result = PlatformUtils.excutePost("https://login.minecraft.net/", parameters, progress);
 			if (result == null) {
 				throw new MCNetworkException();
 			}
