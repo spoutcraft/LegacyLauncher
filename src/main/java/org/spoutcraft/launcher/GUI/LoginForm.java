@@ -499,114 +499,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
     }
 
     private void doLogin() {
-    	if (cmbUsername.getSelectedItem().toString() == null || new String(txtPassword.getPassword()) == null) {
-    		JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-    		return;
-    	}
-    	
-        this.btnLogin.setEnabled(false);
-        this.btnLogin1.setEnabled(false);
-        this.btnLogin2.setEnabled(false);
-        options.setVisible(false);
-        SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
-            String[] values;
-
-            @Override
-            protected Boolean doInBackground() throws Exception {
-                try {
-                    values = MinecraftUtils.doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
-                    return true;
-                } catch (BadLoginException e) {
-                    JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-                    this.cancel(true);
-                } catch (MCNetworkException e) {
-                    JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
-                    this.cancel(true);
-                } catch (OutdatedMCLauncherException e) {
-                    JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert alta189@getspout.org!!!!");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                    this.cancel(true);
-                } catch (Exception e) {
-                }
-                btnLogin.setEnabled(true);
-                btnLogin1.setEnabled(true);
-                btnLogin2.setEnabled(true);
-                this.cancel(true);
-                return false;
-            }
-
-            @Override
-            protected void done() {
-            	if (values == null || values.length < 4) return;
-                usernames.remove(cmbUsername.getSelectedItem().toString());
-                gu.user = values[2].trim();
-                gu.downloadTicket = values[1].trim();
-                gu.latestVersion = Long.parseLong(values[0].trim());
-                if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
-                usernames.put(gu.user, cbRemember.isSelected() ? new String(txtPassword.getPassword()) : "");
-                writeUsernameList();
-
-                progressBar.setVisible(true);
-                SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
-                    @Override
-                    protected void done() {
-                    	progressBar.setVisible(false);
-                    	if (!isCancelled()) {
-	                        LauncherFrame launcher = new LauncherFrame();
-	                        launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), new String(txtPassword.getPassword()));
-	                        setVisible(false);
-                    	}
-                    }
-
-                    @Override
-                    protected Boolean doInBackground() throws Exception {
-
-                        publish("Checking for Minecraft Update...\n");
-                        try {
-                            mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
-                        } catch (Exception e) {
-                            mcUpdate = false;
-                        }
-
-                        publish("Checking for Spout update...\n");
-                        try {
-                            spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
-                        } catch (Exception e) {
-                            spoutUpdate = false;
-                        }
-
-                        try {
-	                        if (mcUpdate) {
-	                            gu.updateMC();
-	                        }
-	                        if (spoutUpdate) {
-	                            gu.updateSpout();
-	                        }
-                        } catch (Exception e) {
-                        	JOptionPane.showMessageDialog(getParent(), "Download timeout!");
-                        	btnLogin.setEnabled(true);
-                            btnLogin1.setEnabled(true);
-                            btnLogin2.setEnabled(true);
-                            this.cancel(true);
-                        	return false;
-                        }
-                        return true;
-                    }
-
-                    @Override
-                    protected void process(List<String> chunks) {
-                        progressBar.setString(chunks.get(0));
-                    }
-                };
-                updateThread.execute();
-            }
-        };
-        loginThread.execute();
+    	doLogin(cmbUsername.getSelectedItem().toString(), new String(txtPassword.getPassword()));
     }
     
     public void doLogin(final String user, final String pass) {
-    	if (cmbUsername.getSelectedItem().toString() == null || new String(txtPassword.getPassword()) == null) {
+    	if (user == null || pass == null) {
     		JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
     		return;
     	}
