@@ -362,8 +362,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		int intProgress = Math.round(progress);
 
 		progressBar.setValue(intProgress);
-		if (fileName.length() > 40) {
-			fileName = fileName.substring(0, 40);
+		if (fileName.length() > 60) {
+			fileName = fileName.substring(0, 60) + "...";
 		}
 		progressBar.setString(intProgress + "% " + fileName);
 		//System.out.println(fileName + ": " + progress);
@@ -494,7 +494,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 170);
+			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 200);
 		} else if (eventId.equals("comboBoxChanged")) {
 			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
@@ -581,7 +581,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 						publish("Checking for Minecraft Update...\n");
 						try {
-							mcUpdate = gu.checkMCUpdate(new File(gu.binDir + File.separator + "version"));
+							mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
 						} catch (Exception e) {
 							mcUpdate = false;
 						}

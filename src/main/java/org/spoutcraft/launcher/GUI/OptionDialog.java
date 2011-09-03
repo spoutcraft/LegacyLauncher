@@ -27,6 +27,7 @@ import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SettingsHandler;
 import javax.swing.GroupLayout;
@@ -51,6 +52,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JCheckBox backupCheckbox = new JCheckBox("Include worlds when doing automated backup");
 	
 	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
+	
+	JButton clearCache = new JButton("Clear Cache");
 
 
 	/**
@@ -62,6 +65,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 		settings.load();
 		
 		System.out.println(settings.getLineCount());
+		
+		devCheckbox.setToolTipText("Uses the latest development builds of Spoutcraft. They are often unstable!");
+		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
+		backupCheckbox.setToolTipText("Backs up your Spoutcraft SP worlds after each Spoutcraft update");
+		retryLoginCheckbox.setToolTipText("Retries logging into minecraft.net up to 3 times after a failure");
+		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
 		
 		if (settings.checkProperty("devupdate")) {
 			devCheckbox.setSelected(settings.getPropertyBoolean("devupdate"));
@@ -77,7 +86,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 		
 		setResizable(false);
-		setBounds(100, 100, 300, 200);
+		setBounds(100, 100, 300, 230);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -91,7 +100,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(devCheckbox)
 						.addComponent(clipboardCheckbox)
 						.addComponent(backupCheckbox)
-						.addComponent(retryLoginCheckbox))
+						.addComponent(retryLoginCheckbox)
+						.addComponent(clearCache))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
 		Font font = new Font("Arial", Font.PLAIN, 11);
@@ -99,6 +109,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 		clipboardCheckbox.setFont(font);
 		devCheckbox.setFont(font);
 		retryLoginCheckbox.setFont(font);
+		clearCache.setFont(font);
+		clearCache.setActionCommand("Clear Cache");
+		clearCache.addActionListener(this);
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
@@ -107,6 +120,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clipboardCheckbox)
 					.addComponent(backupCheckbox)
+					.addComponent(clearCache)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);
@@ -116,7 +130,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			{
 				JButton okButton = new JButton("OK");
-				okButton.setFont(new Font("Arial", Font.PLAIN, 11));
+				okButton.setFont(font);
 				okButton.setActionCommand("OK");
 				okButton.addActionListener(this);
 				buttonPane.add(okButton);
@@ -124,7 +138,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			{
 				JButton cancelButton = new JButton("Cancel");
-				cancelButton.setFont(new Font("Arial", Font.PLAIN, 11));
+				cancelButton.setFont(font);
 				cancelButton.setActionCommand("Cancel");
 				cancelButton.addActionListener(this);
 				buttonPane.add(cancelButton);
@@ -161,6 +175,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.setVisible(false);
 			this.dispose();
 		}
-		
+		else if (btnID.equals("Clear Cache")) {
+			GameUpdater.purgeDir(GameUpdater.binDir);
+			GameUpdater.purgeDir(GameUpdater.updateDir);
+		}
 	}
 }

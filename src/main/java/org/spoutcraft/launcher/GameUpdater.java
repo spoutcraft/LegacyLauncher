@@ -60,16 +60,16 @@ public class GameUpdater implements DownloadListener {
 	public boolean devmode = false;
 
 	/* Files */
-	public final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
-	public final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "updateFolder");
-	public final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
-	public final File spoutDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spoutcraft");
-	public final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
+	public static final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "bin");
+	public static final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "temp");
+	public static final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "backups");
+	public static final File spoutcraftDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "spoutcraft");
+	public static final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() +  File.separator + "saves");
 	
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String spoutDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
-	public final String spoutDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
 
@@ -77,28 +77,28 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public void updateMC() throws Exception {
-		this.purgeDir(binDir);
-		this.purgeDir(updateDir);
+		purgeDir(binDir);
+		purgeDir(updateDir);
 		
 		binDir.mkdir();
 		updateDir.mkdir();
 		
 		// Processs minecraft.jar \\
-		downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, this.updateDir + File.separator + "minecraft.jar");
+		downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, GameUpdater.updateDir + File.separator + "minecraft.jar");
 		
 		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
 		nativesDir.mkdir();
 		
 		// Process other Downloads
-		downloadFile(baseURL + "jinput.jar", this.binDir.getPath() + File.separator + "jinput.jar");
-		downloadFile(baseURL + "lwjgl.jar", this.binDir.getPath() + File.separator + "lwjgl.jar");
-		downloadFile(baseURL + "lwjgl_util.jar", this.binDir.getPath() + File.separator + "lwjgl_util.jar");
+		downloadFile(baseURL + "jinput.jar", GameUpdater.binDir.getPath() + File.separator + "jinput.jar");
+		downloadFile(baseURL + "lwjgl.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl.jar");
+		downloadFile(baseURL + "lwjgl_util.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		getNatives();
 		
 		// Extract Natives \\
-		extractNatives(nativesDir, new File(this.updateDir.getPath() + File.separator + "natives.zip"));
+		extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
 		
-		writeVersionFile(new File(this.binDir + File.separator + "version"), Long.toString(this.latestVersion));
+		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
 	}
 	
 	public String readVersionFile(File file) throws Exception {
@@ -115,7 +115,7 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	public Boolean checkMCUpdate(File versionFile) throws Exception {
-		if (!this.binDir.exists()) return true;
+		if (!GameUpdater.binDir.exists()) return true;
 		if (!new File(binDir, "natives").exists()) return true;
 		if (!versionFile.exists()) return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
@@ -172,7 +172,7 @@ public class GameUpdater implements DownloadListener {
 		
 		this.downloadFile(baseURL + fname + ".jar.lzma", updateDir.getPath() + File.separator + "natives.jar.lzma");
 		
-		extractLZMA(this.updateDir.getPath() + File.separator + "natives.jar.lzma", this.updateDir.getPath() + File.separator + "natives.zip");
+		extractLZMA(GameUpdater.updateDir.getPath() + File.separator + "natives.jar.lzma", GameUpdater.updateDir.getPath() + File.separator + "natives.zip");
 		
 
 		return new File (updateDir.getPath() + File.separator + "natives.jar.lzma");
@@ -181,26 +181,26 @@ public class GameUpdater implements DownloadListener {
 	public void updateSpout() throws Exception {
 		performBackup();
 		
-		if (this.updateDir.exists()) this.purgeDir(updateDir);
-		this.updateDir.mkdirs();
+		if (GameUpdater.updateDir.exists()) purgeDir(updateDir);
+		GameUpdater.updateDir.mkdirs();
 		
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
 		
 		if (!updateMC.exists()) downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateMC.getPath());
 		
-		File spout = new File(this.updateDir.getPath() + File.separator + "Spout.zip");
+		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 		
 		if (devmode) {
-			downloadFile(spoutDownloadDevURL, spout.getPath());
+			downloadFile(spoutcraftDownloadDevURL, spout.getPath());
 		} else {
-			downloadFile(spoutDownloadURL, spout.getPath());
+			downloadFile(spoutcraftDownloadURL, spout.getPath());
 		}
 		
 		this.unzipSpout();
 		
-		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "Spout"));
+		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"));
 		
-		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "updateFolder" + File.separator + "Spout" + File.separator);
+		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator);
 		
 		File mcJar = new File(binDir, "minecraft.jar");
 		mcJar.delete();
@@ -208,9 +208,9 @@ public class GameUpdater implements DownloadListener {
 		//Move file
 		updateMC.renameTo(mcJar);
 		
-		if (this.spoutDir.exists()) this.spoutDir.mkdir();
+		if (GameUpdater.spoutcraftDir.exists()) GameUpdater.spoutcraftDir.mkdir();
 		
-		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		File spoutVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
 		if (spoutVersion.exists()) spoutVersion.delete();
 		
 		this.writeFile(spoutVersion.getPath(), this.getSpoutVersion());
@@ -237,8 +237,8 @@ public class GameUpdater implements DownloadListener {
 	
 	public boolean checkSpoutUpdate() throws Exception {
 		if (!PlatformUtils.getWorkingDirectory().exists()) return true;
-		if (!this.spoutDir.exists()) return true;
-		File bcVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!GameUpdater.spoutcraftDir.exists()) return true;
+		File bcVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!bcVersion.exists()) return true;
 		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
 		String line;
@@ -263,12 +263,12 @@ public class GameUpdater implements DownloadListener {
 	public void unzipSpout() throws Exception {
 		final int BUFFER = 2048;
 		BufferedOutputStream dest;
-		FileInputStream fis = new FileInputStream(new File(this.updateDir.getPath() + File.separator + "Spout.zip"));
+		FileInputStream fis = new FileInputStream(new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip"));
 		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
 		ZipEntry entry;
-		File dir = new File(updateDir + File.separator + "Spout");
+		File dir = new File(updateDir + File.separator + "spoutcraft");
 		if (dir.exists()) {
-			this.purgeDir(dir);
+			purgeDir(dir);
 		}
 
 		dir.mkdir();
@@ -293,7 +293,7 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	public void performBackup() throws Exception {
-		File spoutVersion = new File(this.spoutDir.getPath() + File.separator + "versionSpoutcraft");
+		File spoutVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!spoutVersion.exists()) return;
 		
 		BufferedReader br;
@@ -309,16 +309,16 @@ public class GameUpdater implements DownloadListener {
 		
 		if (!backupDir.exists()) backupDir.mkdir();
 		
-		File zip = new File(this.backupDir, version + "-backup.zip");
+		File zip = new File(GameUpdater.backupDir, version + "-backup.zip");
 		
 		if (zip.exists()) return;
 		
 		ArrayList<File> exclude = new ArrayList<File>();
-		exclude.add(this.backupDir);
+		exclude.add(GameUpdater.backupDir);
 		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
-			exclude.add(this.savesDir);
+			exclude.add(GameUpdater.savesDir);
 		}
-		exclude.add(this.updateDir);
+		exclude.add(GameUpdater.updateDir);
 
 		zip.createNewFile();
 		
@@ -474,17 +474,17 @@ public class GameUpdater implements DownloadListener {
 		return result;
 	}
 	
-	private void purgeDir(File file) {
+	public static void purgeDir(File file) {
 		if (file.exists()) {
 			if (file.isDirectory()) deleteSubDir(file);
 			file.delete();
 		}
 	}
 	
-	private void deleteSubDir(File argFile) {
+	public static void deleteSubDir(File argFile) {
 		for (File file : argFile.listFiles()) {
 			if (file.isDirectory()) {
-				this.deleteSubDir(file);
+				deleteSubDir(file);
 			}
 			file.delete();
 		}

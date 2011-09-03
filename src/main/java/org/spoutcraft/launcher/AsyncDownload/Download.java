@@ -73,10 +73,6 @@ public class Download implements Runnable {
 			interruptor.start();
 			interruptor.join(5000);
 			reader.join(5000);
-			
-			if (reader.isAlive()) {
-				throw new IOException("Download Timeout");
-			}
 		}
 
 		if (maybeException[0] != null)
