@@ -32,9 +32,10 @@ public class SystemConsoleListener {
 			LogManager logManager = LogManager.getLogManager();
 			logManager.reset();
 			
-			new File(PlatformUtils.getWorkingDirectory() + "Logs").mkdirs();
+			File logDir = new File(PlatformUtils.getWorkingDirectory() + File.separator + "Logs");
+			logDir.mkdirs();
 			
-			Handler fileHandler = new FileHandler(PlatformUtils.getWorkingDirectory() + "Logs" + File.separator + "log", 10000, 5, true);
+			Handler fileHandler = new FileHandler(new File(logDir, "spoutcraft_%g.log").getPath(), 100000, 5, true);
 			fileHandler.setFormatter(new ClientLoggerFormatter());
 			Logger.getLogger("").addHandler(fileHandler);   
 		   
