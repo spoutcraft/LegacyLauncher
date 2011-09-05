@@ -53,6 +53,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
 	
+	JCheckBox latestLWJGLCheckbox = new JCheckBox("Use latest LWJGL binaries");
+	
 	JButton clearCache = new JButton("Clear Cache");
 
 
@@ -70,6 +72,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
 		backupCheckbox.setToolTipText("Backs up your Spoutcraft SP worlds after each Spoutcraft update");
 		retryLoginCheckbox.setToolTipText("Retries logging into minecraft.net up to 3 times after a failure");
+		latestLWJGLCheckbox.setToolTipText("Minecraft normally uses older, more compatible versions of LWJGL, but the latest may improve performance or fix audio issues");
 		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
 		
 		if (settings.checkProperty("devupdate")) {
@@ -84,9 +87,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (settings.checkProperty("retryLogins")) {
 			retryLoginCheckbox.setSelected(settings.getPropertyBoolean("retryLogins"));
 		}
+		if (settings.checkProperty("latestLWJGL")) {
+			latestLWJGLCheckbox.setSelected(settings.getPropertyBoolean("latestLWJGL"));
+		}
 		
 		setResizable(false);
-		setBounds(100, 100, 300, 230);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
@@ -101,6 +106,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(clipboardCheckbox)
 						.addComponent(backupCheckbox)
 						.addComponent(retryLoginCheckbox)
+						.addComponent(latestLWJGLCheckbox)
 						.addComponent(clearCache))
 					.addContainerGap(17, Short.MAX_VALUE))
 		);
@@ -120,6 +126,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clipboardCheckbox)
 					.addComponent(backupCheckbox)
+					.addComponent(latestLWJGLCheckbox)
 					.addComponent(clearCache)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
@@ -168,6 +175,22 @@ public class OptionDialog extends JDialog implements ActionListener {
 				settings.changeProperty("retryLogins", retryLoginCheckbox.isSelected());
 			} else {
 				settings.put("retryLogins", retryLoginCheckbox.isSelected());
+			}
+			boolean clearCache = false;
+			if (settings.checkProperty("latestLWJGL")) {
+				if (settings.getPropertyBoolean("latestLWJGL") != latestLWJGLCheckbox.isSelected()){
+					clearCache = true;
+				}
+				settings.changeProperty("latestLWJGL", latestLWJGLCheckbox.isSelected());
+			} else {
+				settings.put("latestLWJGL", latestLWJGLCheckbox.isSelected());
+				if (latestLWJGLCheckbox.isSelected()) {
+					clearCache = true;
+				}
+			}
+			if (clearCache) {
+				GameUpdater.purgeDir(GameUpdater.binDir);
+				GameUpdater.purgeDir(GameUpdater.updateDir);
 			}
 			this.setVisible(false);
 			this.dispose();

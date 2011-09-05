@@ -494,7 +494,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 200);
+			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 215);
 		} else if (eventId.equals("comboBoxChanged")) {
 			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
