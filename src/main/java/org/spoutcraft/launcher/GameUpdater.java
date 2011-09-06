@@ -68,6 +68,7 @@ public class GameUpdater implements DownloadListener {
 
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
+	public final String latestLWJGLURL = "http://www.minedev.net/spout/lwjgl/";
 	public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
@@ -90,15 +91,42 @@ public class GameUpdater implements DownloadListener {
 		nativesDir.mkdir();
 
 		// Process other Downloads
-		downloadFile(baseURL + "jinput.jar", GameUpdater.binDir.getPath() + File.separator + "jinput.jar");
-		downloadFile(baseURL + "lwjgl.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl.jar");
-		downloadFile(baseURL + "lwjgl_util.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl_util.jar");
+		downloadFile(getNativesUrl() + "jinput.jar", GameUpdater.binDir.getPath() + File.separator + "jinput.jar");
+		downloadFile(getNativesUrl() + "lwjgl.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl.jar");
+		downloadFile(getNativesUrl() + "lwjgl_util.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl_util.jar");
 		getNatives();
 
 		// Extract Natives \\
 		extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
 
 		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
+	}
+
+	public String getNativesUrl() {
+		if (settings.checkProperty("latestLWJGL")) {
+			if (settings.getPropertyBoolean("latestLWJGL")) {
+				return latestLWJGLURL;
+			}
+		}
+		return baseURL;
+	}
+
+	public String getNativesUrl(String fileName) {
+		if (settings.checkProperty("latestLWJGL")) {
+			if (settings.getPropertyBoolean("latestLWJGL")) {
+				return latestLWJGLURL + fileName + ".zip";
+			}
+		}
+		return baseURL + fileName + ".jar.lzma";
+	}
+
+	public boolean isLZMANatives() {
+		if (settings.checkProperty("latestLWJGL")) {
+			if (settings.getPropertyBoolean("latestLWJGL")) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public String readVersionFile(File file) throws Exception {
@@ -178,9 +206,10 @@ public class GameUpdater implements DownloadListener {
 		if (!updateDir.exists())
 			updateDir.mkdir();
 
-		this.downloadFile(baseURL + fname + ".jar.lzma", updateDir.getPath() + File.separator + "natives.jar.lzma");
+		this.downloadFile(getNativesUrl(fname), updateDir.getPath() + File.separator + (isLZMANatives() ? "natives.jar.lzma" : "natives.zip"));
 
-		extractLZMA(GameUpdater.updateDir.getPath() + File.separator + "natives.jar.lzma", GameUpdater.updateDir.getPath() + File.separator + "natives.zip");
+		if (isLZMANatives())
+			extractLZMA(GameUpdater.updateDir.getPath() + File.separator + "natives.jar.lzma", GameUpdater.updateDir.getPath() + File.separator + "natives.zip");
 
 		return new File(updateDir.getPath() + File.separator + "natives.jar.lzma");
 	}
@@ -246,29 +275,6 @@ public class GameUpdater implements DownloadListener {
 		return null;
 	}
 
-	public boolean allowUpdate() {
-		try {
-			String version = null;
-			URL url = new URL("http://dl.dropbox.com/u/27798409/AllowMC.txt");
-			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-			String str = in.readLine();
-			if (str != null) {
-				version = str;
-				System.out.println(version);
-			}
-			in.close();
-
-			if (version == null)
-				return false;
-
-			if (version.equalsIgnoreCase("true") || version.equalsIgnoreCase("false")) {
-				return Boolean.valueOf(version);
-			}
-		} catch (Exception ex) {
-		}
-		return false;
-	}
-
 	public boolean checkSpoutUpdate() throws Exception {
 		if (!PlatformUtils.getWorkingDirectory().exists())
 			return true;
@@ -298,6 +304,29 @@ public class GameUpdater implements DownloadListener {
 
 		return c < l || (c > l && !devmode);
 
+	}
+
+	public boolean allowUpdate() {
+		try {
+			String version = null;
+			URL url = new URL("http://dl.dropbox.com/u/27798409/AllowMC.txt");
+			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+			String str = in.readLine();
+			if (str != null) {
+				version = str;
+				System.out.println(version);
+			}
+			in.close();
+
+			if (version == null)
+				return false;
+
+			if (version.equalsIgnoreCase("true") || version.equalsIgnoreCase("false")) {
+				return Boolean.valueOf(version);
+			}
+		} catch (Exception ex) {
+		}
+		return false;
 	}
 
 	public void unzipSpout() throws Exception {
