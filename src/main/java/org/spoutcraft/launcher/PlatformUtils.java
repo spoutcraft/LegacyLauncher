@@ -35,9 +35,9 @@ public class PlatformUtils {
 	private static File workDir = null;
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
-
 	public static File getWorkingDirectory() {
-		if (workDir == null) workDir = getWorkingDirectory("spoutcraft");
+		if (workDir == null)
+			workDir = getWorkingDirectory("spoutcraft");
 		return workDir;
 	}
 
@@ -48,33 +48,42 @@ public class PlatformUtils {
 		String userHome = System.getProperty("user.home", ".");
 		File workingDirectory;
 		switch (getPlatform()) {
-		case linux:
-		case solaris:
-		workingDirectory = new File(userHome, '.' + applicationName + '/');
-		break;
-		case windows:
-		String applicationData = System.getenv("APPDATA");
-		if (applicationData != null) workingDirectory = new File(applicationData, "." + applicationName + '/'); else
-			workingDirectory = new File(userHome, '.' + applicationName + '/');
-		break;
-		case macos:
-		workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
-		break;
-		default:
-		workingDirectory = new File(userHome, applicationName + '/');
+			case linux:
+			case solaris:
+				workingDirectory = new File(userHome, '.' + applicationName + '/');
+				break;
+			case windows:
+				String applicationData = System.getenv("APPDATA");
+				if (applicationData != null)
+					workingDirectory = new File(applicationData, "." + applicationName + '/');
+				else
+					workingDirectory = new File(userHome, '.' + applicationName + '/');
+				break;
+			case macos:
+				workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
+				break;
+			default:
+				workingDirectory = new File(userHome, applicationName + '/');
 		}
-		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) throw new RuntimeException("The working directory could not be created: " + workingDirectory);
+		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs()))
+			throw new RuntimeException("The working directory could not be created: " + workingDirectory);
 		return workingDirectory;
 	}
 
 	public static OS getPlatform() {
 		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win")) return OS.windows;
-		if (osName.contains("mac")) return OS.macos;
-		if (osName.contains("solaris")) return OS.solaris;
-		if (osName.contains("sunos")) return OS.solaris;
-		if (osName.contains("linux")) return OS.linux;
-		if (osName.contains("unix")) return OS.linux;
+		if (osName.contains("win"))
+			return OS.windows;
+		if (osName.contains("mac"))
+			return OS.macos;
+		if (osName.contains("solaris"))
+			return OS.solaris;
+		if (osName.contains("sunos"))
+			return OS.solaris;
+		if (osName.contains("linux"))
+			return OS.linux;
+		if (osName.contains("unix"))
+			return OS.linux;
 		return OS.unknown;
 	}
 
@@ -87,48 +96,49 @@ public class PlatformUtils {
 	}
 
 	public enum OS {
-		linux, solaris, windows, macos, unknown
+		linux,
+		solaris,
+		windows,
+		macos,
+		unknown
 	}
-	
+
 	public static String excutePost(String targetURL, String urlParameters, JProgressBar progress) {
 		HttpsURLConnection connection = null;
-		try
-		{
+		try {
 			URL url = new URL(targetURL);
-			connection = (HttpsURLConnection)url.openConnection();
+			connection = (HttpsURLConnection) url.openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-	
+
 			connection.setRequestProperty("Content-Length", Integer.toString(urlParameters.getBytes().length));
 			connection.setRequestProperty("Content-Language", "en-US");
-	
+
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			
+
 			int tries = 3;
 			if (settings.checkProperty("retryLogins")) {
 				tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
 			}
-			
+
 			connection.setReadTimeout(5000);
-			
+
 			for (int i = 0; i < tries; i++) {
 				try {
 					connection.connect();
-				}
-				catch (Exception loginFailed) {
+				} catch (Exception loginFailed) {
 					if (tries == (i + 1)) {
 						progress.setString("Login Failed");
 						throw loginFailed;
 					}
 				}
-				//Tests whether the connection opened
+				// Tests whether the connection opened
 				try {
 					if (connection.getServerCertificates() != null)
 						break;
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					String message = "Login failed once, retrying connection...";
 					if (i == 1) {
 						message = "Login failed twice, final try...";
@@ -141,48 +151,45 @@ public class PlatformUtils {
 					}
 				}
 			}
-			
+
 			Certificate[] certs = connection.getServerCertificates();
-	
+
 			byte[] bytes = new byte[294];
 			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
 			dis.readFully(bytes);
 			dis.close();
-	
+
 			Certificate c = certs[0];
 			PublicKey pk = c.getPublicKey();
 			byte[] data = pk.getEncoded();
-	
+
 			for (int i = 0; i < data.length; i++) {
-				if (data[i] == bytes[i]) continue; throw new RuntimeException("Public key mismatch");
+				if (data[i] == bytes[i])
+					continue;
+				throw new RuntimeException("Public key mismatch");
 			}
-	
+
 			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
 			wr.writeBytes(urlParameters);
 			wr.flush();
 			wr.close();
-	
+
 			InputStream is = connection.getInputStream();
 			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-	
+
 			StringBuilder response = new StringBuilder();
 			String line;
-			while ((line = rd.readLine()) != null)
-			{
+			while ((line = rd.readLine()) != null) {
 				response.append(line);
 				response.append('\r');
 			}
 			rd.close();
-	
+
 			return response.toString();
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
-		}
-		finally
-		{
+		} finally {
 			if (connection != null) {
 				connection.disconnect();
 			}

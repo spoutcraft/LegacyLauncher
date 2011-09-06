@@ -581,6 +581,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 						publish("Checking for Minecraft Update...\n");
 						try {
+							
 							mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
 						} catch (Exception e) {
 							mcUpdate = false;
@@ -594,11 +595,15 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						}
 
 						try {
-							if (mcUpdate) {
-								gu.updateMC();
-							}
-							if (spoutUpdate) {
-								gu.updateSpout();
+							if (gu.allowUpdate()) {
+								if (mcUpdate) {
+									gu.updateMC();
+								}
+								if (spoutUpdate) {
+									gu.updateSpout();
+								}
+							} else {
+								System.out.println("MC Updates are not allowed until Spoutcraft for 1.8 is released");
 							}
 						} catch (Exception e) {
 							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
