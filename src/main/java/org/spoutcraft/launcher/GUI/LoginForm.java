@@ -595,7 +595,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						}
 
 						try {
-							if (gu.allowUpdate()) {
+							if (gu.allowUpdate() || gu.latestVersion <= 1310111031000L) {
 								if (mcUpdate) {
 									gu.updateMC();
 								}
