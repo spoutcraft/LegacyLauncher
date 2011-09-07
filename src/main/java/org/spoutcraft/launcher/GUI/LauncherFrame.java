@@ -77,7 +77,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.start();
 		
 		this.setVisible(true);
-		System.gc();
+		//System.gc();
 	}
 
 	public void windowActivated(WindowEvent e) {		
@@ -104,7 +104,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 
 	
 	public void windowDeactivated(WindowEvent e) {
-		System.gc();
+		//System.gc();
 	}
 
 	
