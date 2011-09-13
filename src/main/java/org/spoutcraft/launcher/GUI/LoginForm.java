@@ -548,7 +548,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				} catch (Exception e) {
 				}
 				loginButton.setEnabled(true);
-				optionsButton.setEnabled(false);
+				optionsButton.setEnabled(true);
 				loginSkin1.setEnabled(true);
 				loginSkin2.setEnabled(true);
 				this.cancel(true);
@@ -611,7 +611,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							e.printStackTrace();
 							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
 							loginButton.setEnabled(true);
-							optionsButton.setEnabled(false);
+							optionsButton.setEnabled(true);
 							loginSkin1.setEnabled(true);
 							loginSkin2.setEnabled(true);
 							this.cancel(true);
