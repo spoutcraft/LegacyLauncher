@@ -373,7 +373,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+		if (loginButton.isEnabled() && e.getKeyCode() == KeyEvent.VK_ENTER) {
 			doLogin();
 		}
 	}
@@ -490,7 +490,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			eventId = "Login";
 			this.usernameField.setSelectedItem(((JButton) event.getSource()).getText());
 		}
-		if (eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) {
+		if ((eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) && loginButton.isEnabled()) {
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
