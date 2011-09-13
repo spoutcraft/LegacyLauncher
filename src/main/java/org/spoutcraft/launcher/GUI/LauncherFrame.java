@@ -23,6 +23,8 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import javax.swing.JOptionPane;
+
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
@@ -50,6 +52,10 @@ public class LauncherFrame extends Frame implements WindowListener{
 	public void runGame(String user, String session, String downloadTicket, String mcpass) {
 
 		Applet applet = Launcher.getMinecraftApplet();
+		if (applet == null) {
+			JOptionPane.showMessageDialog(getParent(), "Failed to launch game!");
+			return;
+		}
 
 		minecraft = new MinecraftAppletEnglober(applet);
 

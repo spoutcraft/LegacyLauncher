@@ -437,8 +437,8 @@ public class GameUpdater implements DownloadListener {
 		}
 		byte[] buf = new byte[1024];
 
-		ZipInputStream zin = new ZipInputStream(new FileInputStream(tempFile));
-		ZipOutputStream out = new ZipOutputStream(new FileOutputStream(zipFile));
+		ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
+		ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
 		ZipEntry entry = zin.getNextEntry();
 		while (entry != null) {
 			String name = entry.getName();
@@ -464,6 +464,7 @@ public class GameUpdater implements DownloadListener {
 		zin.close();
 		for (File file : files) {
 			InputStream in = new FileInputStream(file);
+			BufferedInputStream bis = new BufferedInputStream(in);
 
 			String path = file.getPath();
 			path = path.replace(rootDir, "");
@@ -471,12 +472,12 @@ public class GameUpdater implements DownloadListener {
 			out.putNextEntry(new ZipEntry(path));
 
 			int len;
-			while ((len = in.read(buf)) > 0) {
+			while ((len = bis.read(buf)) > 0) {
 				out.write(buf, 0, len);
 			}
 
+			bis.close();
 			out.closeEntry();
-			in.close();
 		}
 
 		out.close();

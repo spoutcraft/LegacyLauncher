@@ -136,8 +136,40 @@ public class PlatformUtils {
 				}
 				// Tests whether the connection opened
 				try {
-					if (connection.getServerCertificates() != null)
-						break;
+					Certificate[] certs = connection.getServerCertificates();
+
+					byte[] bytes = new byte[294];
+					DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
+					dis.readFully(bytes);
+					dis.close();
+
+					Certificate c = certs[0];
+					PublicKey pk = c.getPublicKey();
+					byte[] data = pk.getEncoded();
+
+					for (int j = 0; j < data.length; j++) {
+						if (data[j] == bytes[j])
+							continue;
+						throw new RuntimeException("Public key mismatch");
+					}
+
+					DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+					wr.writeBytes(urlParameters);
+					wr.flush();
+					wr.close();
+
+					InputStream is = connection.getInputStream();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+
+					StringBuilder response = new StringBuilder();
+					String line;
+					while ((line = rd.readLine()) != null) {
+						response.append(line);
+						response.append('\r');
+					}
+					rd.close();
+
+					return response.toString();
 				} catch (Exception e) {
 					String message = "Login failed once, retrying connection...";
 					if (i == 1) {
@@ -151,41 +183,6 @@ public class PlatformUtils {
 					}
 				}
 			}
-
-			Certificate[] certs = connection.getServerCertificates();
-
-			byte[] bytes = new byte[294];
-			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
-			dis.readFully(bytes);
-			dis.close();
-
-			Certificate c = certs[0];
-			PublicKey pk = c.getPublicKey();
-			byte[] data = pk.getEncoded();
-
-			for (int i = 0; i < data.length; i++) {
-				if (data[i] == bytes[i])
-					continue;
-				throw new RuntimeException("Public key mismatch");
-			}
-
-			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-			wr.writeBytes(urlParameters);
-			wr.flush();
-			wr.close();
-
-			InputStream is = connection.getInputStream();
-			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-
-			StringBuilder response = new StringBuilder();
-			String line;
-			while ((line = rd.readLine()) != null) {
-				response.append(line);
-				response.append('\r');
-			}
-			rd.close();
-
-			return response.toString();
 		} catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -194,5 +191,6 @@ public class PlatformUtils {
 				connection.disconnect();
 			}
 		}
+		return null;
 	}
 }

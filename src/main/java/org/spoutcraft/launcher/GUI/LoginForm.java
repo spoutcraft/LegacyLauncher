@@ -606,6 +606,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 								System.out.println("MC Updates are not allowed until Spoutcraft for 1.8 is released");
 							}
 						} catch (Exception e) {
+							e.printStackTrace();
 							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
 							loginButton.setEnabled(true);
 							loginSkin1.setEnabled(true);
