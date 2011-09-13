@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import org.spoutcraft.launcher.GameUpdater;
+import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SettingsHandler;
 import javax.swing.GroupLayout;
@@ -35,6 +36,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Font;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 public class OptionDialog extends JDialog implements ActionListener {
 
@@ -43,7 +46,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = -2453348055512665749L;
 	private final JPanel contentPanel = new JPanel();
-	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+	public static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	JCheckBox devCheckbox = new JCheckBox("Use latest dev build. Dangerous!");
 	
@@ -54,6 +57,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
 	
 	JCheckBox latestLWJGLCheckbox = new JCheckBox("Use latest LWJGL binaries");
+	
+	JComboBox memoryCombo = new JComboBox();
 	
 	JButton clearCache = new JButton("Clear Cache");
 
@@ -96,6 +101,18 @@ public class OptionDialog extends JDialog implements ActionListener {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
+		memoryCombo.addItem("256 MB");
+		memoryCombo.addItem("512 MB");
+		memoryCombo.addItem("1 GB");
+		memoryCombo.addItem("2 GB");
+		memoryCombo.addItem("4 GB");
+		
+		if (settings.checkProperty("memory")) {
+			memoryCombo.setSelectedIndex(settings.getPropertyInteger("memory"));
+		}
+		
+		JLabel lblMemoryToAllocate = new JLabel("Memory to allocate");
+		
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
@@ -107,8 +124,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(backupCheckbox)
 						.addComponent(retryLoginCheckbox)
 						.addComponent(latestLWJGLCheckbox)
-						.addComponent(clearCache))
-					.addContainerGap(17, Short.MAX_VALUE))
+						.addComponent(clearCache)
+						.addGroup(gl_contentPanel.createSequentialGroup()
+							.addComponent(lblMemoryToAllocate)
+							.addPreferredGap(ComponentPlacement.RELATED)
+							.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.addContainerGap(27, Short.MAX_VALUE))
 		);
 		Font font = new Font("Arial", Font.PLAIN, 11);
 		backupCheckbox.setFont(font);
@@ -127,6 +148,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addComponent(clipboardCheckbox)
 					.addComponent(backupCheckbox)
 					.addComponent(latestLWJGLCheckbox)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+						.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.addComponent(lblMemoryToAllocate))
+					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clearCache)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
@@ -175,6 +201,15 @@ public class OptionDialog extends JDialog implements ActionListener {
 				settings.changeProperty("retryLogins", retryLoginCheckbox.isSelected());
 			} else {
 				settings.put("retryLogins", retryLoginCheckbox.isSelected());
+			}
+			if (settings.checkProperty("memory")) {
+				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
+					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
+					int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
+					Main.reboot("-Xmx" + mem + "m");
+				}
+			} else {
+				settings.put("memory", memoryCombo.getSelectedIndex());
 			}
 			boolean clearCache = false;
 			if (settings.checkProperty("latestLWJGL")) {

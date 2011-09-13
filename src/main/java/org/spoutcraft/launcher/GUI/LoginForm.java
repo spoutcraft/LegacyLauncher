@@ -76,6 +76,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private JPasswordField passwordField;
 	private JComboBox usernameField = new JComboBox();
 	private JButton loginButton = new JButton("Login");
+	JButton optionsButton = new JButton("Options");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
 	private JButton loginSkin2;
@@ -101,10 +102,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginButton.setBounds(272, 13, 86, 23);
 		loginButton.setOpaque(false);
 		loginButton.addActionListener(this);
-		JButton options = new JButton("Options");
-		options.setFont(new Font("Arial", Font.PLAIN, 11));
-		options.setOpaque(false);
-		options.addActionListener(this);
+		optionsButton.setFont(new Font("Arial", Font.PLAIN, 11));
+		optionsButton.setOpaque(false);
+		optionsButton.addActionListener(this);
 		usernameField.setFont(new Font("Arial", Font.PLAIN, 11));
 		usernameField.addActionListener(this);
 		usernameField.setOpaque(false);
@@ -229,41 +229,41 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		contentPane.setLayout(null);
 		rememberCheckbox.setBounds(144, 66, 93, 23);
 		contentPane.add(lblLogo);
-		options.setBounds(272, 41, 86, 23);
+		optionsButton.setBounds(272, 41, 86, 23);
 		contentPane.add(loginSkin1);
 		contentPane.add(loginSkin2);
 
-		 loginPane.setBounds(473, 362, 372, 99);
-		 loginPane.add(lblPassword);
-		 loginPane.add(lblMinecraftUsername);
-		 loginPane.add(passwordField);
-		 loginPane.add(usernameField);
-		 loginPane.add(loginButton);
-		 loginPane.add(rememberCheckbox);
-		 loginPane.add(purchaseAccount);
-		 loginPane.add(options);
-		 contentPane.add(loginPane);
-		 
-		 JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
-		 offlineMessage.setFont(new Font("Arial", Font.PLAIN, 14));
-		 offlineMessage.setBounds(25, 40, 217, 17);
-		 
-		 JButton tryAgain = new JButton("Try Again");
-		 tryAgain.setOpaque(false);
-		 tryAgain.setFont(new Font("Arial", Font.PLAIN, 12));
-		 tryAgain.setBounds(257, 20, 100, 25);
-		 
-		 JButton offlineMode = new JButton("Offline Mode");
-		 offlineMode.setOpaque(false);
-		 offlineMode.setFont(new Font("Arial", Font.PLAIN, 12));
-		 offlineMode.setBounds(257, 52, 100, 25);
-		 
-		 offlinePane.setBounds(473, 362, 372, 99);
-		 offlinePane.add(tryAgain);
-		 offlinePane.add(offlineMode);
-		 offlinePane.add(offlineMessage);
-		 offlinePane.setVisible(false);
-		 contentPane.add(offlinePane);
+		loginPane.setBounds(473, 362, 372, 99);
+		loginPane.add(lblPassword);
+		loginPane.add(lblMinecraftUsername);
+		loginPane.add(passwordField);
+		loginPane.add(usernameField);
+		loginPane.add(loginButton);
+		loginPane.add(rememberCheckbox);
+		loginPane.add(purchaseAccount);
+		loginPane.add(optionsButton);
+		contentPane.add(loginPane);
+		
+		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
+		offlineMessage.setFont(new Font("Arial", Font.PLAIN, 14));
+		offlineMessage.setBounds(25, 40, 217, 17);
+		
+		JButton tryAgain = new JButton("Try Again");
+		tryAgain.setOpaque(false);
+		tryAgain.setFont(new Font("Arial", Font.PLAIN, 12));
+		tryAgain.setBounds(257, 20, 100, 25);
+		
+		JButton offlineMode = new JButton("Offline Mode");
+		offlineMode.setOpaque(false);
+		offlineMode.setFont(new Font("Arial", Font.PLAIN, 12));
+		offlineMode.setBounds(257, 52, 100, 25);
+		
+		offlinePane.setBounds(473, 362, 372, 99);
+		offlinePane.add(tryAgain);
+		offlinePane.add(offlineMode);
+		offlinePane.add(offlineMessage);
+		offlinePane.setVisible(false);
+		contentPane.add(offlinePane);
 		
 		contentPane.add(scrollPane);
 		contentPane.add(trans2);
@@ -307,7 +307,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		order.add(passwordField);
 		order.add(rememberCheckbox);
 		order.add(loginButton);
-		order.add(options);
+		order.add(optionsButton);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 	}
@@ -494,7 +494,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 215);
+			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 250);
 		} else if (eventId.equals("comboBoxChanged")) {
 			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
@@ -516,6 +516,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 		
 		this.loginButton.setEnabled(false);
+		this.optionsButton.setEnabled(false);
 		this.loginSkin1.setEnabled(false);
 		this.loginSkin2.setEnabled(false);
 		options.setVisible(false);
@@ -547,6 +548,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				} catch (Exception e) {
 				}
 				loginButton.setEnabled(true);
+				optionsButton.setEnabled(false);
 				loginSkin1.setEnabled(true);
 				loginSkin2.setEnabled(true);
 				this.cancel(true);
@@ -609,6 +611,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							e.printStackTrace();
 							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
 							loginButton.setEnabled(true);
+							optionsButton.setEnabled(false);
 							loginSkin1.setEnabled(true);
 							loginSkin2.setEnabled(true);
 							this.cancel(true);
@@ -627,7 +630,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		};
 		loginThread.execute();
 	}
-
+	
 	private Cipher getCipher(int mode, String password) throws Exception {
 		Random random = new Random(43287234L);
 		byte[] salt = new byte[8];

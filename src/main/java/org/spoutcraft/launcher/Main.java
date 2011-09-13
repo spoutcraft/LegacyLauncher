@@ -17,21 +17,64 @@
 package org.spoutcraft.launcher;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.GUI.LoginForm;
+import org.spoutcraft.launcher.GUI.OptionDialog;
 import org.spoutcraft.launcher.Logging.SystemConsoleListener;
 
 public class Main {
+	
+	static String[] args_temp;
+	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 
 	public Main() throws Exception {
 		main(new String[0]);
 	}
 
+	public static void reboot(String memory) {
+		try {
+			String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			ArrayList<String> params = new ArrayList<String>();
+			params.add("javaw");
+			params.add(memory);
+			params.add("-classpath");
+			params.add(pathToJar);
+			params.add("org.spoutcraft.launcher.Main");
+			for (String arg : args_temp) {
+				params.add(arg);
+			}
+			ProcessBuilder pb = new ProcessBuilder(params);
+			Process process = pb.start();
+			if(process == null)
+				throw new Exception("!");
+			System.exit(0);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	public static void main(String[] args) throws Exception {
-
+		args_temp = args;
+		boolean relaunch = false;
+		try {
+			if (!recursion.exists()) {
+				relaunch = true;
+			} else {
+				recursion.delete();
+			}
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
+		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
+			int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
+			recursion.createNewFile();
+			reboot("-Xmx" + mem + "m");
+		}
+		
 		PlatformUtils.getWorkingDirectory().mkdirs();
 
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
