@@ -47,6 +47,7 @@ import java.util.zip.ZipOutputStream;
 import org.spoutcraft.launcher.AsyncDownload.Download;
 import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
 import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
+import org.spoutcraft.launcher.Logging.SystemConsoleListener;
 
 import SevenZip.LzmaAlone;
 
@@ -402,11 +403,11 @@ public class GameUpdater implements DownloadListener {
 			exclude.add(GameUpdater.savesDir);
 		}
 		exclude.add(GameUpdater.updateDir);
+		exclude.add(SystemConsoleListener.logDir);
 
 		zip.createNewFile();
 
 		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
-
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -473,21 +474,22 @@ public class GameUpdater implements DownloadListener {
 		}
 		zin.close();
 		for (File file : files) {
-			InputStream in = new FileInputStream(file);
-			BufferedInputStream bis = new BufferedInputStream(in);
-
-			String path = file.getPath();
-			path = path.replace(rootDir, "");
-			path = path.replaceAll("\\\\", "/");
-			out.putNextEntry(new ZipEntry(path));
-
-			int len;
-			while ((len = bis.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-
-			bis.close();
-			out.closeEntry();
+			try {
+				InputStream in = new FileInputStream(file);
+	
+				String path = file.getPath();
+				path = path.replace(rootDir, "");
+				path = path.replaceAll("\\\\", "/");
+				out.putNextEntry(new ZipEntry(path));
+	
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+	
+				out.closeEntry();
+				in.close();
+			} catch (Exception e) { }
 		}
 
 		out.close();

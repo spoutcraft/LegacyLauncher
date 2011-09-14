@@ -28,11 +28,12 @@ import org.spoutcraft.launcher.PlatformUtils;
 
 public class SystemConsoleListener {
 	
+	public static File logDir = new File(PlatformUtils.getWorkingDirectory() + File.separator + "Logs");
+	
 	public void initialize() throws Exception {
 			LogManager logManager = LogManager.getLogManager();
 			logManager.reset();
 			
-			File logDir = new File(PlatformUtils.getWorkingDirectory() + File.separator + "Logs");
 			logDir.mkdirs();
 			
 			Handler fileHandler = new FileHandler(new File(logDir, "spoutcraft_%g.log").getPath(), 100000, 5, true);
