@@ -73,6 +73,7 @@ public class GameUpdater implements DownloadListener {
 	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
+	private byte allowUpdates = -1;
 
 	public GameUpdater() {
 	}
@@ -307,26 +308,35 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public boolean allowUpdate() {
-		try {
-			String version = null;
-			URL url = new URL("http://dl.dropbox.com/u/27798409/AllowMC.txt");
-			BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-			String str = in.readLine();
-			if (str != null) {
-				version = str;
-				System.out.println(version);
+		if (allowUpdates == -1) {
+			try {
+				String version = null;
+				URL url = new URL("http://dl.dropbox.com/u/27798409/AllowMC.txt");
+				BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+				String str = in.readLine();
+				if (str != null) {
+					version = str;
+					System.out.println(version);
+				}
+				in.close();
+	
+				if (version == null) {
+					allowUpdates = 0;
+					return false;
+				}
+	
+				if (version.equalsIgnoreCase("true")) {
+					allowUpdates = 1;
+					return true;
+				}
 			}
-			in.close();
-
-			if (version == null)
-				return false;
-
-			if (version.equalsIgnoreCase("true") || version.equalsIgnoreCase("false")) {
-				return Boolean.valueOf(version);
+			catch (Exception ex) {
+				
 			}
-		} catch (Exception ex) {
+			allowUpdates = 0;
+			return false;
 		}
-		return false;
+		return allowUpdates != 0;
 	}
 
 	public void unzipSpout() throws Exception {

@@ -84,7 +84,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public Boolean mcUpdate = false;
 	public Boolean spoutUpdate = false;
 
-	GameUpdater gu = new GameUpdater();
+	public static final GameUpdater gu = new GameUpdater();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	OptionDialog options = new OptionDialog();
 
