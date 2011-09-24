@@ -54,9 +54,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 		Applet applet = Launcher.getMinecraftApplet();
 		if (applet == null) {
 			String message = "Failed to launch Spoutcraft!\nTry clearing the cache from the options menu.";
-			if (!LoginForm.gu.allowUpdate()) {
-				message = "Failed to launch Spoutcraft!\nYou can only play Spoutcraft for MC 1.73\nif you had it installed before the 1.8 update. :(";
-			}
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.setVisible(false);
 			this.dispose();

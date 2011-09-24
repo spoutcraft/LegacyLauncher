@@ -70,8 +70,8 @@ public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://www.minedev.net/spout/lwjgl/";
-	public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
-	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT-MC-1.7.3.zip";
+	public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
 	private byte allowUpdates = -1;
@@ -320,19 +320,18 @@ public class GameUpdater implements DownloadListener {
 					System.out.println(version);
 				}
 				in.close();
-	
+
 				if (version == null) {
 					allowUpdates = 0;
 					return false;
 				}
-	
+
 				if (version.equalsIgnoreCase("true")) {
 					allowUpdates = 1;
 					return true;
 				}
-			}
-			catch (Exception ex) {
-				
+			} catch (Exception ex) {
+
 			}
 			allowUpdates = 0;
 			return false;
@@ -476,20 +475,21 @@ public class GameUpdater implements DownloadListener {
 		for (File file : files) {
 			try {
 				InputStream in = new FileInputStream(file);
-	
+
 				String path = file.getPath();
 				path = path.replace(rootDir, "");
 				path = path.replaceAll("\\\\", "/");
 				out.putNextEntry(new ZipEntry(path));
-	
+
 				int len;
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
 				}
-	
+
 				out.closeEntry();
 				in.close();
-			} catch (Exception e) { }
+			} catch (Exception e) {
+			}
 		}
 
 		out.close();
