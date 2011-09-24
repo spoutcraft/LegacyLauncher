@@ -30,6 +30,8 @@ public class SystemConsoleListener {
 	
 	public static File logDir = new File(PlatformUtils.getWorkingDirectory() + File.separator + "Logs");
 	
+	public static PrintStream out = null;
+	
 	public void initialize() throws Exception {
 			LogManager logManager = LogManager.getLogManager();
 			logManager.reset();
@@ -59,6 +61,8 @@ public class SystemConsoleListener {
 			/*logger = Logger.getLogger("stderr");
 			los= new SystemListenerStream(logger, SystemListenerLevel.STDERR);
 			System.setErr(new PrintStream(los, true));*/
+			
+			SystemConsoleListener.out = stdout;
 			
 	}
 }
