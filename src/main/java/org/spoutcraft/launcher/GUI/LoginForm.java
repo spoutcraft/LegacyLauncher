@@ -597,7 +597,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						} else {
 							runGame();
 						}
-						
+						this.cancel(true);
 					}
 
 					protected Boolean doInBackground() throws Exception {
@@ -624,6 +624,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 				};
 				updateThread.execute();
+				this.cancel(true);
 
 			}
 		};
@@ -636,6 +637,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			protected void done() {
 				progressBar.setVisible(false);
 				runGame();
+				this.cancel(true);
 			}
 
 			protected Boolean doInBackground() throws Exception {
@@ -688,5 +690,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		LauncherFrame launcher = new LauncherFrame();
 		launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
 		setVisible(false);
+		dispose();
 	}
 }
