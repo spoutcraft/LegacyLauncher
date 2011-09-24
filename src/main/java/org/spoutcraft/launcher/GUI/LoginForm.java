@@ -110,7 +110,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	Container offlinePane = new Container();
 
 	public LoginForm() {
-		this.updateDialog = new UpdateDialog(this);
+		LoginForm.updateDialog = new UpdateDialog(this);
 		settings.load();
 		gu.setListener(this);
 
@@ -195,7 +195,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		editorPane.setContentType("text/html");
 
 		SwingWorker<Object, Object> newsThread = new SwingWorker<Object, Object>() {
-			@Override
+
 			protected Object doInBackground() throws Exception {
 				try {
 					editorPane.setPage(new URL("http://updates.getspout.org/"));
@@ -298,7 +298,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			final File bgCache;
 			bgCache = new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg");
 			SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
-				@Override
+
 				protected Object doInBackground() throws MalformedURLException {
 					if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
 						Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
@@ -307,7 +307,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					return null;
 				}
 
-				@Override
 				protected void done() {
 					background.setIcon(new ImageIcon(bgCache.getPath()));
 					background.setVerticalAlignment(SwingConstants.TOP);
@@ -539,7 +538,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		options.setVisible(false);
 		SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
 
-			@Override
 			protected Boolean doInBackground() throws Exception {
 				progressBar.setVisible(true);
 				progressBar.setString("Connecting to www.minecraft.net...");
@@ -571,7 +569,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				return false;
 			}
 
-			@Override
 			protected void done() {
 				if (values == null || values.length < 4)
 					return;
@@ -589,7 +586,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 				SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
 
-					@Override
 					protected void done() {
 						if (mcUpdate) {
 							updateDialog.setToUpdate("Minecraft");
@@ -599,7 +595,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						LoginForm.updateDialog.setVisible(true);
 					}
 
-					@Override
 					protected Boolean doInBackground() throws Exception {
 
 						publish("Checking for Minecraft Update...\n");
@@ -619,7 +614,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 					}
 
-					@Override
 					protected void process(List<String> chunks) {
 						progressBar.setString(chunks.get(0));
 					}
@@ -632,19 +626,13 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	public void updateThread() {
-		SwingWorker<Boolean, Boolean> updateThread = new SwingWorker<Boolean, Boolean>() {
+		SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
 
-			@Override
 			protected void done() {
 				progressBar.setVisible(false);
-				if (!isCancelled()) {
-					LauncherFrame launcher = new LauncherFrame();
-					launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
-					setVisible(false);
-				}
+				runGame();
 			}
 
-			@Override
 			protected Boolean doInBackground() throws Exception {
 				try {
 					if (mcUpdate) {
@@ -656,6 +644,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					JOptionPane.showMessageDialog(getParent(), e.getMessage());
 					JOptionPane.showMessageDialog(getParent(), "Download timeout!");
 					loginButton.setEnabled(true);
 					optionsButton.setEnabled(true);
@@ -666,8 +655,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				}
 				return true;
 			}
-			
-			@Override
+
 			protected void process(List<String> chunks) {
 				progressBar.setString(chunks.get(0));
 			}
@@ -687,5 +675,13 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		Cipher cipher = Cipher.getInstance("PBEWithMD5AndDES");
 		cipher.init(mode, pbeKey, pbeParamSpec);
 		return cipher;
+	}
+
+	public void runGame() {
+		LoginForm.updateDialog.dispose();
+		LoginForm.updateDialog = null;
+		LauncherFrame launcher = new LauncherFrame();
+		launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
+		setVisible(false);
 	}
 }
