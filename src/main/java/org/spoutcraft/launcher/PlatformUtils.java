@@ -32,13 +32,10 @@ import javax.swing.JProgressBar;
 public class PlatformUtils {
 
 	private static boolean portable;
-	private static File workDir = null;
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	public static File getWorkingDirectory() {
-		if (workDir == null)
-			workDir = getWorkingDirectory("spoutcraft");
-		return workDir;
+        return getWorkingDirectory("spoutcraft");
 	}
 
 	public static File getWorkingDirectory(String applicationName) {
