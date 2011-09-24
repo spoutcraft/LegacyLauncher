@@ -52,7 +52,21 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
 import org.spoutcraft.launcher.GameUpdater;
@@ -84,6 +98,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	HashMap<String, String> usernames = new HashMap<String, String>();
 	public Boolean mcUpdate = false;
 	public Boolean spoutUpdate = false;
+	public static UpdateDialog updateDialog;
+	private static String pass = null;
+	public static String[] values = null;
 
 	public static final GameUpdater gu = new GameUpdater();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
@@ -91,9 +108,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	Container loginPane = new Container();
 	Container offlinePane = new Container();
-	
-	public LoginForm() {
 
+	public LoginForm() {
+		this.updateDialog = new UpdateDialog(this);
 		settings.load();
 		gu.setListener(this);
 
@@ -243,28 +260,28 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginPane.add(purchaseAccount);
 		loginPane.add(optionsButton);
 		contentPane.add(loginPane);
-		
+
 		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
 		offlineMessage.setFont(new Font("Arial", Font.PLAIN, 14));
 		offlineMessage.setBounds(25, 40, 217, 17);
-		
+
 		JButton tryAgain = new JButton("Try Again");
 		tryAgain.setOpaque(false);
 		tryAgain.setFont(new Font("Arial", Font.PLAIN, 12));
 		tryAgain.setBounds(257, 20, 100, 25);
-		
+
 		JButton offlineMode = new JButton("Offline Mode");
 		offlineMode.setOpaque(false);
 		offlineMode.setFont(new Font("Arial", Font.PLAIN, 12));
 		offlineMode.setBounds(257, 52, 100, 25);
-		
+
 		offlinePane.setBounds(473, 362, 372, 99);
 		offlinePane.add(tryAgain);
 		offlinePane.add(offlineMode);
 		offlinePane.add(offlineMessage);
 		offlinePane.setVisible(false);
 		contentPane.add(offlinePane);
-		
+
 		contentPane.add(scrollPane);
 		contentPane.add(trans2);
 		contentPane.add(login);
@@ -320,7 +337,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			} catch (Exception e) {
 				originalImage = ImageIO.read(new URL("https://www.minecraft.net/img/char.png"));
 			}
-			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+			int type = BufferedImage.TYPE_INT_ARGB;// originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
 			drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8); // HAT
 
@@ -366,7 +383,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			fileName = fileName.substring(0, 60) + "...";
 		}
 		progressBar.setString(intProgress + "% " + fileName);
-		//System.out.println(fileName + ": " + progress);
+		// System.out.println(fileName + ": " + progress);
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -419,7 +436,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		int i = 0;
 		try {
 			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
-			if (!lastLogin.exists()) return;
+			if (!lastLogin.exists())
+				return;
 			Cipher cipher = getCipher(2, "passwordfile");
 
 			DataInputStream dis;
@@ -430,7 +448,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			}
 
 			try {
-				//noinspection InfiniteLoopStatement
+				// noinspection InfiniteLoopStatement
 				while (true) {
 					String user = dis.readUTF();
 					String pass = dis.readUTF();
@@ -461,7 +479,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 		this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
 	}
-
 
 	private void writeUsernameList() {
 		try {
@@ -504,24 +521,23 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private void doLogin() {
 		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false);
 	}
-	
+
 	public void doLogin(final String user, final String pass) {
 		doLogin(user, pass, true);
 	}
-	
+
 	public void doLogin(final String user, final String pass, final boolean cmdLine) {
 		if (user == null || pass == null) {
 			JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
 			return;
 		}
-		
+
 		this.loginButton.setEnabled(false);
 		this.optionsButton.setEnabled(false);
 		this.loginSkin1.setEnabled(false);
 		this.loginSkin2.setEnabled(false);
 		options.setVisible(false);
 		SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
-			String[] values;
 
 			@Override
 			protected Boolean doInBackground() throws Exception {
@@ -557,25 +573,30 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 			@Override
 			protected void done() {
-				if (values == null || values.length < 4) return;
+				if (values == null || values.length < 4)
+					return;
 				gu.user = values[2].trim();
 				gu.downloadTicket = values[1].trim();
 				gu.latestVersion = Long.parseLong(values[0].trim());
-				if (settings.checkProperty("devupdate")) gu.devmode = settings.getPropertyBoolean("devupdate");
+				if (settings.checkProperty("devupdate"))
+					gu.devmode = settings.getPropertyBoolean("devupdate");
 				if (cmdLine == false) {
 					usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
 					writeUsernameList();
 				}
-				
+
+				LoginForm.pass = pass;
+
 				SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
+
 					@Override
 					protected void done() {
-						progressBar.setVisible(false);
-						if (!isCancelled()) {
-							LauncherFrame launcher = new LauncherFrame();
-							launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
-							setVisible(false);
+						if (mcUpdate) {
+							updateDialog.setToUpdate("Minecraft");
+						} else if (spoutUpdate) {
+							updateDialog.setToUpdate("Spoutcraft");
 						}
+						LoginForm.updateDialog.setVisible(true);
 					}
 
 					@Override
@@ -583,7 +604,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 						publish("Checking for Minecraft Update...\n");
 						try {
-							
 							mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
 						} catch (Exception e) {
 							mcUpdate = false;
@@ -595,29 +615,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						} catch (Exception e) {
 							spoutUpdate = false;
 						}
-
-						try {
-							if (gu.allowUpdate() || gu.latestVersion <= 1310111031000L) {
-								if (mcUpdate) {
-									gu.updateMC();
-								}
-								if (spoutUpdate) {
-									gu.updateSpout();
-								}
-							} else {
-								System.out.println("MC Updates are not allowed until Spoutcraft for 1.8 is released");
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-							JOptionPane.showMessageDialog(getParent(), "Download timeout!");
-							loginButton.setEnabled(true);
-							optionsButton.setEnabled(true);
-							loginSkin1.setEnabled(true);
-							loginSkin2.setEnabled(true);
-							this.cancel(true);
-							return false;
-						}
 						return true;
+
 					}
 
 					@Override
@@ -626,11 +625,58 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 				};
 				updateThread.execute();
+
 			}
 		};
 		loginThread.execute();
 	}
-	
+
+	public void updateThread() {
+		SwingWorker<Boolean, Boolean> updateThread = new SwingWorker<Boolean, Boolean>() {
+
+			@Override
+			protected void done() {
+				progressBar.setVisible(false);
+				if (!isCancelled()) {
+					LauncherFrame launcher = new LauncherFrame();
+					launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
+					setVisible(false);
+				}
+			}
+
+			@Override
+			protected Boolean doInBackground() throws Exception {
+				try {
+					if (mcUpdate) {
+						gu.updateMC();
+					}
+
+					if (spoutUpdate) {
+						gu.updateSpout();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					JOptionPane.showMessageDialog(getParent(), "Download timeout!");
+					loginButton.setEnabled(true);
+					optionsButton.setEnabled(true);
+					loginSkin1.setEnabled(true);
+					loginSkin2.setEnabled(true);
+					this.cancel(true);
+					return false;
+				}
+				return true;
+			}
+			
+			@Override
+			protected void process(List<String> chunks) {
+				progressBar.setString(chunks.get(0));
+			}
+
+		};
+		updateThread.execute();
+
+	}
+
 	private Cipher getCipher(int mode, String password) throws Exception {
 		Random random = new Random(43287234L);
 		byte[] salt = new byte[8];
