@@ -592,7 +592,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						} else if (spoutUpdate) {
 							updateDialog.setToUpdate("Spoutcraft");
 						}
-						LoginForm.updateDialog.setVisible(true);
+						if (mcUpdate || spoutUpdate) {
+							LoginForm.updateDialog.setVisible(true);
+						} else {
+							runGame();
+						}
+						
 					}
 
 					protected Boolean doInBackground() throws Exception {
