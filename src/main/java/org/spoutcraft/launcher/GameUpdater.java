@@ -133,14 +133,6 @@ public class GameUpdater implements DownloadListener {
 		return jenkinsURL;
 	}
 	
-	public String getRecommendedBuildUrl() {
-		return getBuildUrl("Spoutcraft/recommended/Spoutcraft.zip", "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
-	}
-	
-	public String getDevelopmentBuildUrl() {
-		return getBuildUrl("Spoutcraft/latest/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
-	}
-	
 	public boolean isAddressReachable(String url) {
 		try {
 			URL test = new URL(url);
@@ -281,6 +273,7 @@ public class GameUpdater implements DownloadListener {
 
 	public void updateSpout() throws Exception {
 		performBackup();
+		String newversion = getSpoutVersion();
 
 		if (GameUpdater.updateDir.exists())
 			purgeDir(updateDir);
@@ -293,12 +286,7 @@ public class GameUpdater implements DownloadListener {
 
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
-		if (devmode) {
-			System.out.println(getDevelopmentBuildUrl());
-			downloadFile(getDevelopmentBuildUrl(), spout.getPath());
-		} else {
-			downloadFile(getRecommendedBuildUrl(), spout.getPath());
-		}
+		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/Spoutcraft.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
 
 		this.unzipSpout();
 
@@ -319,7 +307,7 @@ public class GameUpdater implements DownloadListener {
 		if (spoutVersion.exists())
 			spoutVersion.delete();
 
-		this.writeFile(spoutVersion.getPath(), this.getSpoutVersion());
+		this.writeFile(spoutVersion.getPath(), newversion);
 	}
 
 	public String getSpoutVersion() throws Exception {
