@@ -286,7 +286,7 @@ public class GameUpdater implements DownloadListener {
 
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
-		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/Spoutcraft.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
+		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
 
 		this.unzipSpout();
 
