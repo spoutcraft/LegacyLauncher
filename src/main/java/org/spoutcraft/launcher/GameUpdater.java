@@ -138,19 +138,17 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	public String getDevelopmentBuildUrl() {
-		return getBuildUrl("Spoutcraft/latest/Spoutcraft.zip", "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
+		return getBuildUrl("Spoutcraft/latest/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
 	}
 	
 	public boolean isAddressReachable(String url) {
 		try {
 			URL test = new URL(url);
+			HttpURLConnection.setFollowRedirects(false);
 			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
 			urlConnect.setRequestMethod("HEAD");
-			urlConnect.connect();
-			System.out.println(urlConnect.getResponseCode());
-			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK); //TODO: Not working!
+			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
 		} catch (Exception e) {
-			e.printStackTrace();
 			return false;
 		}
 	}
