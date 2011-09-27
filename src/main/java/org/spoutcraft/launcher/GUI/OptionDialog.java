@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -206,7 +206,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
 					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
 					int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
-					Main.reboot("-Xmx" + mem + "m");
+					//Main.reboot("-Xmx" + mem + "m");
 				}
 			} else {
 				settings.put("memory", memoryCombo.getSelectedIndex());

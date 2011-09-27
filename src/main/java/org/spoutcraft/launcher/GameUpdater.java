@@ -31,11 +31,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Random;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -44,10 +46,10 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.spoutcraft.launcher.AsyncDownload.Download;
-import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
-import org.spoutcraft.launcher.Exceptions.UnsupportedOSException;
-import org.spoutcraft.launcher.Logging.SystemConsoleListener;
+import org.spoutcraft.launcher.async.Download;
+import org.spoutcraft.launcher.async.DownloadListener;
+import org.spoutcraft.launcher.exception.UnsupportedOSException;
+import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 import SevenZip.LzmaAlone;
 
@@ -70,11 +72,14 @@ public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://www.minedev.net/spout/lwjgl/";
-	public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
-	public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	//public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	//public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
 	private byte allowUpdates = -1;
+	private String[] mirrors = null;
+	private final Random rand = new Random();
 
 	public GameUpdater() {
 	}
@@ -102,6 +107,74 @@ public class GameUpdater implements DownloadListener {
 		extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
 
 		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
+	}
+	
+	public String getRecommendedBuildUrl() {
+		if (mirrors == null) {
+			try {
+				updateMirrors();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		int random = rand.nextInt(10 * mirrors.length);
+		int index = random / 10;
+		//Test for bad, down mirrors
+		for (int i = index; i < mirrors.length + index; i++) {
+			int j = i;
+			if (j > mirrors.length) j-= mirrors.length;
+			String mirror = mirrors[index] + "Spoutcraft/recommended/Spoutcraft.zip";
+			if (isAddressReachable(mirror)) {
+				return mirror;
+			}
+		}
+		System.err.println("All mirrors failed, defaulting to jenkins");
+		return "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	}
+	
+	public String getDevelopmentBuildUrl() {
+		if (mirrors == null) {
+			try {
+				updateMirrors();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		int random = rand.nextInt(10 * mirrors.length);
+		int index = random / 10;
+		//Test for bad, down mirrors
+		for (int i = index; i < mirrors.length + index; i++) {
+			int j = i;
+			if (j > mirrors.length) j-= mirrors.length;
+			String mirror = mirrors[index] + "Spoutcraft/recommended/Spoutcraft.zip";
+			if (isAddressReachable(mirror)) {
+				return mirror;
+			}
+		}
+		System.err.println("All mirrors failed, defaulting to jenkins");
+		return "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	}
+	
+	public boolean isAddressReachable(String url) {
+		try {
+			URL test = new URL(url);
+			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
+			urlConnect.getContent();
+		}
+		catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
+	
+	public void updateMirrors() throws IOException {
+		URL url = new URL(spoutcraftMirrors);
+		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
+		String data = in.readLine();
+		mirrors = data.split(" ");
+		in.close();
 	}
 
 	public String getNativesUrl() {
@@ -231,9 +304,9 @@ public class GameUpdater implements DownloadListener {
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
 		if (devmode) {
-			downloadFile(spoutcraftDownloadDevURL, spout.getPath());
+			downloadFile(getDevelopmentBuildUrl(), spout.getPath());
 		} else {
-			downloadFile(spoutcraftDownloadURL, spout.getPath());
+			downloadFile(getRecommendedBuildUrl(), spout.getPath());
 		}
 
 		this.unzipSpout();

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -73,11 +73,11 @@ import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
 import org.spoutcraft.launcher.SettingsHandler;
-import org.spoutcraft.launcher.AsyncDownload.Download;
-import org.spoutcraft.launcher.AsyncDownload.DownloadListener;
-import org.spoutcraft.launcher.Exceptions.BadLoginException;
-import org.spoutcraft.launcher.Exceptions.MCNetworkException;
-import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
+import org.spoutcraft.launcher.async.Download;
+import org.spoutcraft.launcher.async.DownloadListener;
+import org.spoutcraft.launcher.exception.BadLoginException;
+import org.spoutcraft.launcher.exception.MCNetworkException;
+import org.spoutcraft.launcher.exception.OutdatedMCLauncherException;
 
 public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener {
 
@@ -651,8 +651,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
-					JOptionPane.showMessageDialog(getParent(), e.getMessage());
-					JOptionPane.showMessageDialog(getParent(), "Download timeout!");
+					JOptionPane.showMessageDialog(getParent(), "Download Interrupted!");
+					LauncherFrame.errorInDownload = true;
 					loginButton.setEnabled(true);
 					optionsButton.setEnabled(true);
 					loginSkin1.setEnabled(true);

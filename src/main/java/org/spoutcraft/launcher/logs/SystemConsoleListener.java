@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.Logging;
+package org.spoutcraft.launcher.logs;
 
 import java.io.File;
 import java.io.PrintStream;

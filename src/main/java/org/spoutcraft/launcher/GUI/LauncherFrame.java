@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.applet.Applet;
 import java.awt.Dimension;
@@ -37,6 +37,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	 */
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
+	public static boolean errorInDownload = false;
 	
 	public LauncherFrame() {
 		super("Spoutcraft");
@@ -52,7 +53,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	public void runGame(String user, String session, String downloadTicket, String mcpass) {
 
 		Applet applet = Launcher.getMinecraftApplet();
-		if (applet == null) {
+		if (applet == null || errorInDownload) {
 			String message = "Failed to launch Spoutcraft!\nTry clearing the cache from the options menu.";
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.setVisible(false);

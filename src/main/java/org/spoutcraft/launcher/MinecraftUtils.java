@@ -21,9 +21,9 @@ import java.net.URLEncoder;
 
 import javax.swing.JProgressBar;
 
-import org.spoutcraft.launcher.Exceptions.BadLoginException;
-import org.spoutcraft.launcher.Exceptions.MCNetworkException;
-import org.spoutcraft.launcher.Exceptions.OutdatedMCLauncherException;
+import org.spoutcraft.launcher.exception.BadLoginException;
+import org.spoutcraft.launcher.exception.MCNetworkException;
+import org.spoutcraft.launcher.exception.OutdatedMCLauncherException;
 
 
 public class MinecraftUtils {

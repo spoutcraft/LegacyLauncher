@@ -14,11 +14,35 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.AsyncDownload;
+package org.spoutcraft.launcher.exception;
 
-/**
- * Listens for async file download state.
- */
-public interface DownloadListener {
-	public void stateChanged(String fileName, float progress);
+public class MCNetworkException extends Exception{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 5521671148991031931L;
+	private final Throwable cause;
+	private final String message;
+	
+	public MCNetworkException(String message) {
+	  this(null, message);
+	}
+
+	public MCNetworkException(Throwable throwable, String message) {
+	  this.cause = null;
+	  this.message = message;
+	}
+
+	public MCNetworkException() {
+	  this(null, "Could not connect to minecraft.net");
+	}
+
+	public Throwable getCause() {
+	  return this.cause;
+	}
+
+	public String getMessage() {
+	  return this.message;
+	}
 }
