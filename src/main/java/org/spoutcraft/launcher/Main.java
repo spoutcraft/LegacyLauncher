@@ -72,7 +72,7 @@ public class Main {
 		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
 			int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
 			recursion.createNewFile();
-			//reboot("-Xmx" + mem + "m");
+			reboot("-Xmx" + mem + "m");
 		}
 		
 		PlatformUtils.getWorkingDirectory().mkdirs();
