@@ -78,7 +78,7 @@ public class GameUpdater implements DownloadListener {
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
 	private byte allowUpdates = -1;
-	private String[] mirrors = null;
+	private ArrayList<String> mirrors = new ArrayList<String>();
 	private final Random rand = new Random();
 
 	public GameUpdater() {
@@ -109,8 +109,8 @@ public class GameUpdater implements DownloadListener {
 		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
 	}
 	
-	public String getRecommendedBuildUrl() {
-		if (mirrors == null) {
+	public String getBuildUrl(String mirrorURI, String jenkinsURL) {
+		if (mirrors.size() == 0) {
 			try {
 				updateMirrors();
 			}
@@ -118,62 +118,54 @@ public class GameUpdater implements DownloadListener {
 				e.printStackTrace();
 			}
 		}
-		int random = rand.nextInt(10 * mirrors.length);
+		int random = rand.nextInt(10 * mirrors.size());
 		int index = random / 10;
 		//Test for bad, down mirrors
-		for (int i = index; i < mirrors.length + index; i++) {
+		for (int i = index; i < mirrors.size() + index; i++) {
 			int j = i;
-			if (j > mirrors.length) j-= mirrors.length;
-			String mirror = mirrors[index] + "Spoutcraft/recommended/Spoutcraft.zip";
+			if (j > mirrors.size()) j-= mirrors.size();
+			String mirror = "http://" + mirrors.get(index) + "/" + mirrorURI;
 			if (isAddressReachable(mirror)) {
 				return mirror;
 			}
 		}
 		System.err.println("All mirrors failed, defaulting to jenkins");
-		return "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+		return jenkinsURL;
+	}
+	
+	public String getRecommendedBuildUrl() {
+		return getBuildUrl("Spoutcraft/recommended/Spoutcraft.zip", "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
 	}
 	
 	public String getDevelopmentBuildUrl() {
-		if (mirrors == null) {
-			try {
-				updateMirrors();
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		int random = rand.nextInt(10 * mirrors.length);
-		int index = random / 10;
-		//Test for bad, down mirrors
-		for (int i = index; i < mirrors.length + index; i++) {
-			int j = i;
-			if (j > mirrors.length) j-= mirrors.length;
-			String mirror = mirrors[index] + "Spoutcraft/recommended/Spoutcraft.zip";
-			if (isAddressReachable(mirror)) {
-				return mirror;
-			}
-		}
-		System.err.println("All mirrors failed, defaulting to jenkins");
-		return "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+		return getBuildUrl("Spoutcraft/latest/Spoutcraft.zip", "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip");
 	}
 	
 	public boolean isAddressReachable(String url) {
 		try {
 			URL test = new URL(url);
 			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
-			urlConnect.getContent();
-		}
-		catch (Exception e) {
+			urlConnect.setRequestMethod("HEAD");
+			urlConnect.connect();
+			System.out.println(urlConnect.getResponseCode());
+			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK); //TODO: Not working!
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
-		return true;
 	}
 	
 	public void updateMirrors() throws IOException {
-		URL url = new URL(spoutcraftMirrors);
-		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		String data = in.readLine();
-		mirrors = data.split(" ");
+		URL url = new URL("http://cdn.getspout.org/mirrors.html");
+		HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+		System.setProperty("http.agent", ""); //Spoofing the user agent is required to track stats
+		con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+		mirrors.clear();
+		String data = "";
+		while ((data = in.readLine()) != null) {
+			mirrors.add(data);
+		}
 		in.close();
 	}
 
@@ -304,6 +296,7 @@ public class GameUpdater implements DownloadListener {
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
 		if (devmode) {
+			System.out.println(getDevelopmentBuildUrl());
 			downloadFile(getDevelopmentBuildUrl(), spout.getPath());
 		} else {
 			downloadFile(getRecommendedBuildUrl(), spout.getPath());

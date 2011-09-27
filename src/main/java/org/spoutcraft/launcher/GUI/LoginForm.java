@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.gui;
+package org.spoutcraft.launcher.GUI;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -612,6 +612,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						publish("Checking for Spout update...\n");
 						try {
 							spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
+							spoutUpdate = true;
 						} catch (Exception e) {
 							spoutUpdate = false;
 						}

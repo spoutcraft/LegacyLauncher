@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import javax.swing.UIManager;
 
-import org.spoutcraft.launcher.gui.LoginForm;
-import org.spoutcraft.launcher.gui.OptionDialog;
+import org.spoutcraft.launcher.GUI.LoginForm;
+import org.spoutcraft.launcher.GUI.OptionDialog;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 public class Main {

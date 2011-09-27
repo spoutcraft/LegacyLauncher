@@ -1,4 +1,4 @@
-package org.spoutcraft.launcher.gui;
+package org.spoutcraft.launcher.GUI;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
