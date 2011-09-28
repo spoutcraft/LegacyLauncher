@@ -125,9 +125,19 @@ public class Download implements Runnable {
 			//Skip bytes in the stream to resume the download
 			long toSkip = downloaded;
 			if (resume && listener != null) listener.stateChanged("Download Failed, Attempting to Resume...", getProgress());
+			int zeroSkips = 0;
 			while (toSkip > 0) {
 				long skipped = maybeAvailable(stream, buffer, 5000);
-				toSkip -= skipped;
+				if (skipped > 0) {
+					toSkip -= skipped;
+					zeroSkips = 0;
+				}
+				else {
+					zeroSkips++;
+				}
+				if (zeroSkips > 3) {
+					break; //failing!
+				}
 			}
 			//Total restart
 			if (toSkip > 0) {
