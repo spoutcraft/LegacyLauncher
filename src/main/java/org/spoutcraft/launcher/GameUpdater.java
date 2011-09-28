@@ -90,8 +90,6 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public void updateMC() throws Exception {
-		FileUtils.deleteDirectory(binDir);
-		FileUtils.deleteDirectory(updateDir);
 
 		binDir.mkdir();
 		binCacheDir.mkdir();
