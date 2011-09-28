@@ -697,6 +697,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			optionsButton.setEnabled(true);
 			loginSkin1.setEnabled(true);
 			loginSkin2.setEnabled(true);
+			progressBar.setVisible(false);
 		}
 	}
 }

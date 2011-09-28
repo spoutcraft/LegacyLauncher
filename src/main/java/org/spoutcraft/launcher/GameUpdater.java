@@ -288,9 +288,6 @@ public class GameUpdater implements DownloadListener {
 		performBackup();
 		String newversion = getSpoutVersion();
 
-		if (updateDir.exists()) {
-			FileUtils.deleteDirectory(updateDir);
-		}
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
 		
