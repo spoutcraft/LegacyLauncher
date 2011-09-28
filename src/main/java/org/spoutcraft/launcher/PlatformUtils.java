@@ -128,6 +128,7 @@ public class PlatformUtils {
 			for (int i = 0; i < tries; i++) {
 				try {
 					connection.connect();
+					connection.getServerCertificates();
 				} catch (Exception loginFailed) {
 					if (tries == (i + 1)) {
 						progress.setString("Login Failed");

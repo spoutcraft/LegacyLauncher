@@ -14,19 +14,21 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.PlatformUtils;
@@ -206,7 +208,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
 					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
 					int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
-					//Main.reboot("-Xmx" + mem + "m");
+					Main.reboot("-Xmx" + mem + "m");
 				}
 			} else {
 				settings.put("memory", memoryCombo.getSelectedIndex());
@@ -224,8 +226,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 				}
 			}
 			if (clearCache) {
-				GameUpdater.purgeDir(GameUpdater.binDir);
-				GameUpdater.purgeDir(GameUpdater.updateDir);
+				clearCache();
+				
 			}
 			this.setVisible(false);
 			this.dispose();
@@ -234,8 +236,16 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}
 		else if (btnID.equals("Clear Cache")) {
-			GameUpdater.purgeDir(GameUpdater.binDir);
-			GameUpdater.purgeDir(GameUpdater.updateDir);
+			clearCache();
+		}
+	}
+	
+	private static void clearCache() {
+		try {
+			FileUtils.deleteDirectory(GameUpdater.binDir);
+			FileUtils.deleteDirectory(GameUpdater.updateDir);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 }

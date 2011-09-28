@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -94,7 +94,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
 	private JButton loginSkin2;
-	private JProgressBar progressBar;
+	public final JProgressBar progressBar;
 	HashMap<String, String> usernames = new HashMap<String, String>();
 	public Boolean mcUpdate = false;
 	public Boolean spoutUpdate = false;
@@ -686,11 +686,18 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	public void runGame() {
-		LoginForm.updateDialog.dispose();
-		LoginForm.updateDialog = null;
 		LauncherFrame launcher = new LauncherFrame();
-		launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
-		setVisible(false);
-		dispose();
+		if (launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass)) {
+			LoginForm.updateDialog.dispose();
+			LoginForm.updateDialog = null;
+			setVisible(false);
+			dispose();
+		}
+		else {
+			loginButton.setEnabled(true);
+			optionsButton.setEnabled(true);
+			loginSkin1.setEnabled(true);
+			loginSkin2.setEnabled(true);
+		}
 	}
 }

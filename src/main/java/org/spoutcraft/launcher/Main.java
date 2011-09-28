@@ -22,8 +22,8 @@ import java.util.Arrays;
 
 import javax.swing.UIManager;
 
-import org.spoutcraft.launcher.GUI.LoginForm;
-import org.spoutcraft.launcher.GUI.OptionDialog;
+import org.spoutcraft.launcher.gui.LoginForm;
+import org.spoutcraft.launcher.gui.OptionDialog;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 public class Main {
@@ -72,7 +72,7 @@ public class Main {
 		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
 			int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
 			recursion.createNewFile();
-			//reboot("-Xmx" + mem + "m");
+			reboot("-Xmx" + mem + "m");
 		}
 		
 		PlatformUtils.getWorkingDirectory().mkdirs();

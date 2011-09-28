@@ -29,12 +29,13 @@ public class Download implements Runnable {
 	private static final int BUFFER = 1024;
 
 	private URL url;
-	private int size = -1;
-	private int downloaded = 0;
+	private long size = -1;
+	private long downloaded = 0;
 	private String outPath;
 	private DownloadListener listener;
-	public boolean success = false;
-	
+	private boolean success = false;
+	private File outFile = null;
+	private int retries = 3;
 	public Download(String url, String outPath) throws MalformedURLException {
 		this.url = new URL(url);
 		this.outPath = outPath;
@@ -82,35 +83,86 @@ public class Download implements Runnable {
 	}
 	
 	public void run() {
+		run(false);
+	}
+	
+	public void run(boolean resume) {
 		RandomAccessFile file = null;
 		InputStream stream = null;
-
+		
 		try {
-			HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-			connection.setRequestProperty("Range", "bytes=" + downloaded + "-");
-
+			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+			connection.setRequestProperty("Range", "bytes=0-");
 			connection.connect();
 
-			if (connection.getResponseCode() / 100 != 2) {
+			int tries = 5;
+			boolean response = false;
+			while (tries > 0) {
+				if (connection.getResponseCode() / 100 != 2) {
+					tries--;
+					Thread.sleep(100);
+				}
+				else {
+					response = true;
+					break;
+				}
+			}
+			if (!response) {
 				throw new IOException("Incorrect response code: " + connection.getResponseCode());
 			}
-
-			size = connection.getContentLength();
+			
+			//Don't reset the size, we already know it!
+			if (!resume) {
+				size = connection.getContentLength();
+			}
+			
 			if (listener != null) listener.stateChanged(outPath, 0);
-			stream = connection.getInputStream();
-			FileOutputStream out = new FileOutputStream(outPath);
+			stream = new BufferedInputStream(connection.getInputStream());
+			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outPath, resume));
 			byte[] buffer = new byte[BUFFER];
 			int length;
-			while ((length = maybeAvailable(stream, buffer, 5000)) > 0) {
-				out.write(buffer, 0, length);
-				downloaded += length;
-				stateChanged();
+			boolean success = true;
+			//Skip bytes in the stream to resume the download
+			long toSkip = downloaded;
+			if (resume && listener != null) listener.stateChanged("Download Failed, Attempting to Resume...", getProgress());
+			while (toSkip > 0) {
+				long skipped = maybeAvailable(stream, buffer, 5000);
+				toSkip -= skipped;
+			}
+			//Total restart
+			if (toSkip > 0) {
+				if (retries > 0) {
+					listener.stateChanged("Download Failed, Restarting...", getProgress());
+					retries--;
+					run();
+					return;
+				}
+				throw new IOException("Failed to complete download!");
+			}
+			stateChanged();
+			while (true) {
+				length = maybeAvailable(stream, buffer, 5000);
+				if (length > 0) {
+					out.write(buffer, 0, length);
+					downloaded += length;
+					stateChanged();
+				}
+				else {
+					success = downloaded == size;
+					break;
+				}
 			}
 			stream.close();
 			out.close();
-			if (listener != null) listener.stateChanged(outPath, 100);
-			success = true;
+			if (listener != null && success) {
+				listener.stateChanged(outPath, 100);
+			}
+			outFile = new File(outPath);
+			this.success = success;
+			if (!success){
+				//downloaded = outFile.length();
+				run(true);
+			}
 			return;
 			
 		} catch (Exception e) {
@@ -138,5 +190,13 @@ public class Download implements Runnable {
 
 	public void setListener(DownloadListener listener) {
 		this.listener = listener;
+	}
+
+	public boolean isSuccess() {
+		return success;
+	}
+
+	public File getOutFile() {
+		return outFile;
 	}
 }

@@ -43,9 +43,13 @@ import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Pack200;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.exception.UnsupportedOSException;
@@ -64,6 +68,7 @@ public class GameUpdater implements DownloadListener {
 
 	/* Files */
 	public static final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin");
+	public static final File binCacheDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin_cache");
 	public static final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "temp");
 	public static final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "backups");
 	public static final File spoutcraftDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "spoutcraft");
@@ -85,22 +90,29 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public void updateMC() throws Exception {
-		purgeDir(binDir);
-		purgeDir(updateDir);
+		FileUtils.deleteDirectory(binDir);
+		FileUtils.deleteDirectory(updateDir);
 
 		binDir.mkdir();
+		binCacheDir.mkdir();
 		updateDir.mkdir();
 
 		// Processs minecraft.jar \\
-		downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, GameUpdater.updateDir + File.separator + "minecraft.jar");
+		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
+		if (!mcCache.exists()) {
+			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateDir + File.separator + "minecraft.jar", "minecraft_1.8.1.jar");
+		}
+		else {
+			copy(mcCache, new File(updateDir, "minecraft.jar"));
+		}
 
 		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
 		nativesDir.mkdir();
 
 		// Process other Downloads
-		downloadFile(getNativesUrl() + "jinput.jar", GameUpdater.binDir.getPath() + File.separator + "jinput.jar");
-		downloadFile(getNativesUrl() + "lwjgl.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl.jar");
-		downloadFile(getNativesUrl() + "lwjgl_util.jar", GameUpdater.binDir.getPath() + File.separator + "lwjgl_util.jar");
+		downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar");
+		downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar");
+		downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar");
 		getNatives();
 
 		// Extract Natives \\
@@ -126,6 +138,7 @@ public class GameUpdater implements DownloadListener {
 			if (j > mirrors.size()) j-= mirrors.size();
 			String mirror = "http://" + mirrors.get(index) + "/" + mirrorURI;
 			if (isAddressReachable(mirror)) {
+				System.out.println("Using mirror: " + mirror);
 				return mirror;
 			}
 		}
@@ -282,14 +295,20 @@ public class GameUpdater implements DownloadListener {
 	public void updateSpout() throws Exception {
 		performBackup();
 
-		if (GameUpdater.updateDir.exists())
-			purgeDir(updateDir);
-		GameUpdater.updateDir.mkdirs();
-
+		if (updateDir.exists()) {
+			FileUtils.deleteDirectory(updateDir);
+		}
+		updateDir.mkdirs();
+		binCacheDir.mkdirs();
+		
+		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
+		if (mcCache.exists()) {
+			copy(mcCache, updateMC);
+		}
 
 		if (!updateMC.exists())
-			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateMC.getPath());
+			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateMC.getPath(), "minecraft_1.8.1.jar");
 
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
@@ -300,7 +319,7 @@ public class GameUpdater implements DownloadListener {
 			downloadFile(getRecommendedBuildUrl(), spout.getPath());
 		}
 
-		this.unzipSpout();
+		unzipArchive(new File(updateDir.getPath() + File.separator + "spoutcraft.zip"), new File(updateDir + File.separator + "spoutcraft"));
 
 		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"));
 
@@ -402,8 +421,57 @@ public class GameUpdater implements DownloadListener {
 		}
 		return allowUpdates != 0;
 	}
+	
+	public void unzipArchive(File archive, File outputDir) throws ZipException, IOException {
+		ZipFile zipfile = new ZipFile(archive);
+		for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
+			ZipEntry entry = (ZipEntry) e.nextElement();
+			unzipEntry(zipfile, entry, outputDir);
+		}
+	}
+	
+	private void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
 
-	public void unzipSpout() throws Exception {
+		if (entry.isDirectory()) {
+			(new File(outputDir, entry.getName())).mkdirs();
+			return;
+		}
+
+		File outputFile = new File(outputDir, entry.getName());
+		if (!outputFile.getParentFile().exists()){
+			(new File(outputDir, entry.getName())).mkdirs();
+		}
+		if (outputFile.isDirectory()) {
+			outputFile.delete();
+		}
+		InputStream inputStream = zipfile.getInputStream(entry);
+		OutputStream outputStream = new FileOutputStream(outputFile);
+
+		try {
+			IOUtils.copy(inputStream, outputStream);
+		} finally {
+			outputStream.close();
+			inputStream.close();
+		}
+	}
+	
+	public static void copy(File input, File output) throws IOException {
+		FileInputStream inputStream = null;
+		FileOutputStream outputStream = null;
+		try {
+			inputStream = new FileInputStream(input);
+			outputStream = new FileOutputStream(output);
+			IOUtils.copy(inputStream, outputStream);
+		}
+		finally {
+			if (inputStream != null)
+				inputStream.close();
+			if (outputStream != null)
+				outputStream.close();
+		}
+	}
+
+	public void unzipSpout1() throws Exception {
 		final int BUFFER = 2048;
 		BufferedOutputStream dest;
 		FileInputStream fis = new FileInputStream(new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip"));
@@ -411,11 +479,12 @@ public class GameUpdater implements DownloadListener {
 		ZipEntry entry;
 		File dir = new File(updateDir + File.separator + "spoutcraft");
 		if (dir.exists()) {
-			purgeDir(dir);
+			FileUtils.deleteDirectory(dir);
 		}
 
 		dir.mkdir();
 		while ((entry = zis.getNextEntry()) != null) {
+			zis.mark(1024 * 1024);
 			int count;
 			byte data[] = new byte[BUFFER];
 			if (entry.isDirectory()) {
@@ -424,8 +493,15 @@ public class GameUpdater implements DownloadListener {
 			} else {
 				FileOutputStream fos = new FileOutputStream(new File(dir.getPath() + File.separator + entry.getName()));
 				dest = new BufferedOutputStream(fos, BUFFER);
-				while ((count = zis.read(data, 0, BUFFER)) != -1) {
-					dest.write(data, 0, count);
+				try {
+					while ((count = zis.read(data, 0, BUFFER)) != -1) {
+						dest.write(data, 0, count);
+					}
+				}
+				catch (Exception e) {
+					String failedEntry = dir.getPath() + File.separator + entry.getName();
+					System.out.println("Failed Reading/Writing " + failedEntry);
+					e.printStackTrace();
 				}
 				dest.flush();
 				dest.close();
@@ -594,14 +670,21 @@ public class GameUpdater implements DownloadListener {
 			e.printStackTrace();
 		}
 	}
-
-	private void downloadFile(String url, String outPut) throws Exception {
-		Download download = new Download(url, outPut);
+	
+	private void downloadFile(String url, String output, String cacheName) throws IOException {
+		Download download = new Download(url, output);
 		download.setListener(this);
 		download.run();
-		if (!download.success) {
+		if (!download.isSuccess()) {
 			throw new IOException();
 		}
+		if (cacheName != null) {
+			copy(download.getOutFile(), new File(binCacheDir, cacheName));
+		}
+	}
+
+	private void downloadFile(String url, String output) throws IOException {
+		downloadFile(url, output, null);
 	}
 
 	public ArrayList<File> getFiles(File dir) {
@@ -620,23 +703,6 @@ public class GameUpdater implements DownloadListener {
 			}
 		}
 		return result;
-	}
-
-	public static void purgeDir(File file) {
-		if (file.exists()) {
-			if (file.isDirectory())
-				deleteSubDir(file);
-			file.delete();
-		}
-	}
-
-	public static void deleteSubDir(File argFile) {
-		for (File file : argFile.listFiles()) {
-			if (file.isDirectory()) {
-				deleteSubDir(file);
-			}
-			file.delete();
-		}
 	}
 
 	public void stateChanged(String fileName, float progress) {

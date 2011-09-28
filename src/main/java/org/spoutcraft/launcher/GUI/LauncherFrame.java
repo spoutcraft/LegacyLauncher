@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.applet.Applet;
 import java.awt.Dimension;
@@ -50,15 +50,15 @@ public class LauncherFrame extends Frame implements WindowListener{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 	}
 	
-	public void runGame(String user, String session, String downloadTicket, String mcpass) {
+	public boolean runGame(String user, String session, String downloadTicket, String mcpass) {
 
 		Applet applet = Launcher.getMinecraftApplet();
 		if (applet == null || errorInDownload) {
-			String message = "Failed to launch Spoutcraft!\nTry clearing the cache from the options menu.";
+			String message = "Failed to launch Spoutcraft!";
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.setVisible(false);
 			this.dispose();
-			return;
+			return false;
 		}
 
 		minecraft = new MinecraftAppletEnglober(applet);
@@ -87,7 +87,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.start();
 		
 		this.setVisible(true);
-		//System.gc();
+		return true;
 	}
 
 	public void windowActivated(WindowEvent e) {		
@@ -114,7 +114,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 
 	
 	public void windowDeactivated(WindowEvent e) {
-		//System.gc();
 	}
 
 	

@@ -1,4 +1,4 @@
-package org.spoutcraft.launcher.GUI;
+package org.spoutcraft.launcher.gui;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -26,7 +26,8 @@ public class UpdateDialog extends JDialog implements ActionListener {
 	
 	public UpdateDialog(LoginForm lf) {
 		this.lf = lf;
-		setBounds(100, 100, 450, 136);
+		setBounds((Toolkit.getDefaultToolkit().getScreenSize().width - 450) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - 136) / 2, 450, 136);
+		this.toFront();
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -34,32 +35,22 @@ public class UpdateDialog extends JDialog implements ActionListener {
 
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 
-		{
-			label.setFont(new Font("Arial", Font.PLAIN, 18));
-			contentPanel.add(label);
-		}
-		{
-			JLabel lblThereIsA = new JLabel("Would you like to update?");
-			lblThereIsA.setFont(new Font("Arial", Font.PLAIN, 18));
-			contentPanel.add(lblThereIsA);
-		}
-		{
-			JPanel buttonPane = new JPanel();
-			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
-			getContentPane().add(buttonPane, BorderLayout.SOUTH);
-			{
-				JButton okButton = new JButton("Yes");
-				okButton.addActionListener(this);
-				okButton.setActionCommand("Yes");
-				buttonPane.add(okButton);
-				getRootPane().setDefaultButton(okButton);
-			}
-			{
-				JButton cancelButton = new JButton("No");
-				buttonPane.add(cancelButton);
-				cancelButton.addActionListener(this);
-			}
-		}
+		label.setFont(new Font("Arial", Font.PLAIN, 18));
+		contentPanel.add(label);
+		JLabel lblThereIsA = new JLabel("Would you like to update?");
+		lblThereIsA.setFont(new Font("Arial", Font.PLAIN, 18));
+		contentPanel.add(lblThereIsA);
+		JPanel buttonPane = new JPanel();
+		buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
+		getContentPane().add(buttonPane, BorderLayout.SOUTH);
+		JButton okButton = new JButton("Yes");
+		okButton.addActionListener(this);
+		okButton.setActionCommand("Yes");
+		buttonPane.add(okButton);
+		getRootPane().setDefaultButton(okButton);
+		JButton cancelButton = new JButton("No");
+		buttonPane.add(cancelButton);
+		cancelButton.addActionListener(this);
 	}
 
 	public void actionPerformed(ActionEvent e) {
