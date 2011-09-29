@@ -96,7 +96,7 @@ public class GameUpdater implements DownloadListener {
 
 		// Processs minecraft.jar \\
 		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
-		if (!mcCache.exists()) {
+		if (mcCache.length() < 1000) {
 			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateDir + File.separator + "minecraft.jar", "minecraft_1.8.1.jar");
 		}
 		else {
