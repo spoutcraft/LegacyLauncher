@@ -300,7 +300,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			SwingWorker<Object, Object> bgThread = new SwingWorker<Object, Object>() {
 
 				protected Object doInBackground() throws MalformedURLException {
-					if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24 * 7) {
+					if (!bgCache.exists() || System.currentTimeMillis() - bgCache.lastModified() > 1000 * 60 * 60 * 24) {
 						Download download = new Download("http://www.getspout.org/splash/index.php", bgCache.getPath());
 						download.run();
 					}
