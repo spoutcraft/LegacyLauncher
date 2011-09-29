@@ -156,7 +156,7 @@ public class Download implements Runnable {
 			}
 			in.close();
 			bos.close();*/
-			success = true;
+			success = size == outFile.length();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
