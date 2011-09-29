@@ -68,7 +68,7 @@ public class GameUpdater implements DownloadListener {
 
 	/* Files */
 	public static final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin");
-	public static final File binCacheDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin_cache");
+	public static final File binCacheDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin" + File.separator + "cache");
 	public static final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "temp");
 	public static final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "backups");
 	public static final File spoutcraftDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "spoutcraft");
@@ -108,11 +108,33 @@ public class GameUpdater implements DownloadListener {
 		nativesDir.mkdir();
 
 		// Process other Downloads
-		downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar");
-		downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar");
-		downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar");
+		mcCache = new File(binCacheDir, "jinput.jar");
+		if (!mcCache.exists()) {
+			downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
+		}
+		else {
+			copy(mcCache, new File(updateDir, "jinput.jar"));
+		}
+		
+		mcCache = new File(binCacheDir, "lwjgl.jar");
+		if (!mcCache.exists()) {
+			downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
+		}
+		else {
+			copy(mcCache, new File(updateDir, "lwjgl.jar"));
+		}
+		
+		mcCache = new File(binCacheDir, "lwjgl_util.jar");
+		if (!mcCache.exists()) {
+			downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
+		}
+		else {
+			copy(mcCache, new File(updateDir, "lwjgl_util.jar"));
+		}
+		
 		getNatives();
 
+		stateChanged("Extracting Files...", 0);
 		// Extract Natives \\
 		extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
 

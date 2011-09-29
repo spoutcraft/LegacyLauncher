@@ -33,8 +33,6 @@ public class PlatformUtils {
 
 	private static boolean portable;
 	private static File workDir = null;
-	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-
 	public static File getWorkingDirectory() {
 		if (workDir == null)
 			workDir = getWorkingDirectory("spoutcraft");
@@ -117,76 +115,47 @@ public class PlatformUtils {
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
+			
+			connection.setConnectTimeout(10000);
 
-			int tries = 3;
-			if (settings.checkProperty("retryLogins")) {
-				tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
+			connection.connect();
+			Certificate[] certs = connection.getServerCertificates();
+
+			byte[] bytes = new byte[294];
+			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
+			dis.readFully(bytes);
+			dis.close();
+
+			Certificate c = certs[0];
+			PublicKey pk = c.getPublicKey();
+			byte[] data = pk.getEncoded();
+
+			for (int j = 0; j < data.length; j++) {
+				if (data[j] == bytes[j])
+					continue;
+				throw new RuntimeException("Public key mismatch");
 			}
 
-			connection.setReadTimeout(5000);
+			DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+			wr.writeBytes(urlParameters);
+			wr.flush();
+			wr.close();
 
-			for (int i = 0; i < tries; i++) {
-				try {
-					connection.connect();
-					connection.getServerCertificates();
-				} catch (Exception loginFailed) {
-					if (tries == (i + 1)) {
-						progress.setString("Login Failed");
-						throw loginFailed;
-					}
-				}
-				// Tests whether the connection opened
-				try {
-					Certificate[] certs = connection.getServerCertificates();
+			InputStream is = connection.getInputStream();
+			BufferedReader rd = new BufferedReader(new InputStreamReader(is));
 
-					byte[] bytes = new byte[294];
-					DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
-					dis.readFully(bytes);
-					dis.close();
-
-					Certificate c = certs[0];
-					PublicKey pk = c.getPublicKey();
-					byte[] data = pk.getEncoded();
-
-					for (int j = 0; j < data.length; j++) {
-						if (data[j] == bytes[j])
-							continue;
-						throw new RuntimeException("Public key mismatch");
-					}
-
-					DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
-					wr.writeBytes(urlParameters);
-					wr.flush();
-					wr.close();
-
-					InputStream is = connection.getInputStream();
-					BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-
-					StringBuilder response = new StringBuilder();
-					String line;
-					while ((line = rd.readLine()) != null) {
-						response.append(line);
-						response.append('\r');
-					}
-					rd.close();
-
-					return response.toString();
-				} catch (Exception e) {
-					String message = "Login failed once, retrying connection...";
-					if (i == 1) {
-						message = "Login failed twice, final try...";
-					}
-					progress.setString(message);
-					connection.setReadTimeout(connection.getReadTimeout() * 2);
-					if (tries == (i + 1)) {
-						progress.setString("Login Failed");
-						throw e;
-					}
-				}
+			StringBuilder response = new StringBuilder();
+			String line;
+			while ((line = rd.readLine()) != null) {
+				response.append(line);
+				response.append('\r');
 			}
+			rd.close();
+
+			return response.toString();
 		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			String message = "Login failed...";
+			progress.setString(message);
 		} finally {
 			if (connection != null) {
 				connection.disconnect();

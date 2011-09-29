@@ -18,16 +18,17 @@ package org.spoutcraft.launcher.async;
 
 import java.io.*;
 import java.net.*;
+import java.nio.channels.Channels;
 import java.nio.channels.ClosedByInterruptException;
+import java.nio.channels.ReadableByteChannel;
 
 /**
  * Downloads stuff asynchroniously.
  * In fact, it's a modified version of StackOverflow sample ;)
  */
 public class Download implements Runnable {
-
-	private static final int BUFFER = 1024;
-
+	private static final long TIMEOUT = 10000;
+	
 	private URL url;
 	private long size = -1;
 	private long downloaded = 0;
@@ -35,7 +36,6 @@ public class Download implements Runnable {
 	private DownloadListener listener;
 	private boolean success = false;
 	private File outFile = null;
-	private int retries = 3;
 	public Download(String url, String outPath) throws MalformedURLException {
 		this.url = new URL(url);
 		this.outPath = outPath;
@@ -83,115 +83,117 @@ public class Download implements Runnable {
 	}
 	
 	public void run() {
-		run(false);
-	}
-	
-	public void run(boolean resume) {
-		RandomAccessFile file = null;
-		InputStream stream = null;
-		
 		try {
-			HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-			connection.setRequestProperty("Range", "bytes=0-");
-			connection.connect();
-
-			int tries = 5;
-			boolean response = false;
-			while (tries > 0) {
-				if (connection.getResponseCode() / 100 != 2) {
-					tries--;
-					Thread.sleep(100);
-				}
-				else {
-					response = true;
-					break;
-				}
-			}
-			if (!response) {
-				throw new IOException("Incorrect response code: " + connection.getResponseCode());
-			}
+			URLConnection conn = url.openConnection();
+			//conn.setRequestProperty("Range", "bytes=0-");
+			///((HttpURLConnection)conn).setRequestMethod("HEAD");
+			//((HttpURLConnection)conn).setRequestProperty("Cache-Control", "no-cache");
+			//conn.setReadTimeout(20000);
+			InputStream in = getConnectionInputStream(conn);
 			
-			//Don't reset the size, we already know it!
-			if (!resume) {
-				size = connection.getContentLength();
-			}
+			size = conn.getContentLength();
+			outFile = new File(outPath);
+			outFile.delete();
 			
-			if (listener != null) listener.stateChanged(outPath, 0);
-			stream = new BufferedInputStream(connection.getInputStream());
-			BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(outPath, resume));
-			byte[] buffer = new byte[BUFFER];
-			int length;
-			boolean success = true;
-			//Skip bytes in the stream to resume the download
-			long toSkip = downloaded;
-			if (resume && listener != null) listener.stateChanged("Download Failed, Attempting to Resume...", getProgress());
-			int zeroSkips = 0;
-			while (toSkip > 0) {
-				long skipped = maybeAvailable(stream, buffer, 5000);
-				if (skipped > 0) {
-					toSkip -= skipped;
-					zeroSkips = 0;
-				}
-				else {
-					zeroSkips++;
-				}
-				if (zeroSkips > 3) {
-					break; //failing!
-				}
-			}
-			//Total restart
-			if (toSkip > 0) {
-				if (retries > 0) {
-					listener.stateChanged("Download Failed, Restarting...", getProgress());
-					retries--;
-					run();
-					return;
-				}
-				throw new IOException("Failed to complete download!");
-			}
+			final ReadableByteChannel rbc = Channels.newChannel(in);
+			final FileOutputStream fos = new FileOutputStream(outFile);
+			
 			stateChanged();
-			while (true) {
-				length = maybeAvailable(stream, buffer, 5000);
-				if (length > 0) {
-					out.write(buffer, 0, length);
-					downloaded += length;
+			
+			//Create a thread to monitor progress
+			Thread progress = new Thread() {
+				long last = System.currentTimeMillis();
+				public void run() {
+					while(!this.isInterrupted()) {
+						
+						long diff = outFile.length() - downloaded;
+						downloaded = outFile.length();
+						
+						if (diff == 0) { //nothing downloaded
+							if ((System.currentTimeMillis() - last) > TIMEOUT) { //waited too long
+								if (listener != null) { //alert ui
+									listener.stateChanged("Download Failed", getProgress());
+								}
+								try {
+									rbc.close();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+								return;
+							}
+						}
+						else {
+							last = System.currentTimeMillis();
+						}
+						
+						stateChanged();
+						try {
+							sleep(100);
+						} catch (InterruptedException ignore) {break;}
+					}
+				}
+			};
+			progress.start();
+			
+			
+			fos.getChannel().transferFrom(rbc, 0, size);
+			in.close();
+			rbc.close();
+			progress.interrupt();
+			
+			/*FileOutputStream fos = new FileOutputStream(outFile);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			
+			
+			int bytes;
+			stateChanged();
+			while ((bytes = bis.read(buffer, 0, buffer.length)) != -1) {
+				if (bytes > 0) {
+					bos.write(buffer, 0, bytes);
+					downloaded += bytes;
 					stateChanged();
 				}
-				else {
-					success = downloaded == size;
-					break;
-				}
 			}
-			stream.close();
-			out.close();
-			if (listener != null && success) {
-				listener.stateChanged(outPath, 100);
-			}
-			outFile = new File(outPath);
-			this.success = success;
-			if (!success){
-				//downloaded = outFile.length();
-				run(true);
-			}
-			return;
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (file != null) {
-				try {
-					file.close();
-				} catch (Exception ignored) {
-				}
-			}
-
-			if (stream != null) {
-				try {
-					stream.close();
-				} catch (Exception ignored) {
-				}
-			}
+			in.close();
+			bos.close();*/
+			success = true;
 		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	protected InputStream getConnectionInputStream(final URLConnection urlconnection) throws Exception {
+		final InputStream[] is = new InputStream[1];
+
+		for (int j = 0; (j < 3) && (is[0] == null); j++) {
+			Thread stream = new Thread() {
+				public void run() {
+					try {
+						is[0] = urlconnection.getInputStream();
+					} catch (IOException ignore) { }
+				}
+			};
+			stream.start();
+			int iterationCount = 0;
+			while ((is[0] == null) && (iterationCount++ < 5)) {
+				try {
+					stream.join(1000L);
+				}
+				catch (InterruptedException ignore) { }
+			}
+			if (is[0] != null) continue;
+			try {
+				stream.interrupt();
+				stream.join();
+			}
+			catch (InterruptedException ignore) { }
+		}
+
+		if (is[0] == null) {
+			throw new Exception("Unable to download file");
+		}
+		return new BufferedInputStream(is[0]);
 	}
 
 	private void stateChanged() {
