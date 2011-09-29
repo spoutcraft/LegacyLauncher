@@ -27,7 +27,7 @@ import java.nio.channels.ReadableByteChannel;
  * In fact, it's a modified version of StackOverflow sample ;)
  */
 public class Download implements Runnable {
-	private static final long TIMEOUT = 10000;
+	private static final long TIMEOUT = 30000;
 	
 	private URL url;
 	private long size = -1;

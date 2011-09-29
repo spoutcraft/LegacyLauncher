@@ -372,10 +372,10 @@ public class GameUpdater implements DownloadListener {
 			return true;
 		if (!GameUpdater.spoutcraftDir.exists())
 			return true;
-		File bcVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
-		if (!bcVersion.exists())
+		File spoutcraftVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
+		if (!spoutcraftVersion.exists())
 			return true;
-		BufferedReader br = new BufferedReader(new FileReader(bcVersion));
+		BufferedReader br = new BufferedReader(new FileReader(spoutcraftVersion));
 		String line;
 		String version = null;
 		if ((line = br.readLine()) != null) {
@@ -683,6 +683,7 @@ public class GameUpdater implements DownloadListener {
 		download.setListener(this);
 		download.run();
 		if (!download.isSuccess()) {
+			download.getOutFile().delete();
 			throw new IOException();
 		}
 		if (cacheName != null) {

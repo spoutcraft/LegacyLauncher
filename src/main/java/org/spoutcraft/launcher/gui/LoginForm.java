@@ -633,10 +633,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public void updateThread() {
 		SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
-
+			boolean error = false;
 			protected void done() {
 				progressBar.setVisible(false);
-				runGame();
+				if (!error){
+					runGame();
+				}
 				this.cancel(true);
 			}
 
@@ -653,6 +655,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(getParent(), "Download Interrupted!");
 					LauncherFrame.errorInDownload = true;
+					error = true;
 					loginButton.setEnabled(true);
 					optionsButton.setEnabled(true);
 					loginSkin1.setEnabled(true);
