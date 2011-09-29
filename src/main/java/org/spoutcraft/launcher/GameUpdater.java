@@ -48,7 +48,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
@@ -238,6 +237,8 @@ public class GameUpdater implements DownloadListener {
 		if (!new File(binDir, "natives").exists())
 			return true;
 		if (!versionFile.exists())
+			return true;
+		if ((new File(binDir, "minecraft.jar").length() < 1500))
 			return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
 		return this.latestVersion > currentVersion;
@@ -476,46 +477,6 @@ public class GameUpdater implements DownloadListener {
 			if (outputStream != null)
 				outputStream.close();
 		}
-	}
-
-	public void unzipSpout1() throws Exception {
-		final int BUFFER = 2048;
-		BufferedOutputStream dest;
-		FileInputStream fis = new FileInputStream(new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip"));
-		ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
-		ZipEntry entry;
-		File dir = new File(updateDir + File.separator + "spoutcraft");
-		if (dir.exists()) {
-			FileUtils.deleteDirectory(dir);
-		}
-
-		dir.mkdir();
-		while ((entry = zis.getNextEntry()) != null) {
-			zis.mark(1024 * 1024);
-			int count;
-			byte data[] = new byte[BUFFER];
-			if (entry.isDirectory()) {
-				File f2 = new File(dir.getPath() + File.separator + entry.getName());
-				f2.mkdir();
-			} else {
-				FileOutputStream fos = new FileOutputStream(new File(dir.getPath() + File.separator + entry.getName()));
-				dest = new BufferedOutputStream(fos, BUFFER);
-				try {
-					while ((count = zis.read(data, 0, BUFFER)) != -1) {
-						dest.write(data, 0, count);
-					}
-				}
-				catch (Exception e) {
-					String failedEntry = dir.getPath() + File.separator + entry.getName();
-					System.out.println("Failed Reading/Writing " + failedEntry);
-					e.printStackTrace();
-				}
-				dest.flush();
-				dest.close();
-			}
-		}
-		zis.close();
-		fis.close();
 	}
 
 	public void performBackup() throws Exception {

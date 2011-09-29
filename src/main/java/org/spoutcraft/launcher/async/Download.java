@@ -101,6 +101,7 @@ public class Download implements Runnable {
 			stateChanged();
 			
 			//Create a thread to monitor progress
+			final Thread instance = Thread.currentThread();
 			Thread progress = new Thread() {
 				long last = System.currentTimeMillis();
 				public void run() {
@@ -116,6 +117,7 @@ public class Download implements Runnable {
 								}
 								try {
 									rbc.close();
+									instance.interrupt();
 								} catch (IOException e) {
 									e.printStackTrace();
 								}

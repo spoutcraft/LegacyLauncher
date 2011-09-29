@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -79,7 +81,7 @@ import org.spoutcraft.launcher.exception.BadLoginException;
 import org.spoutcraft.launcher.exception.MCNetworkException;
 import org.spoutcraft.launcher.exception.OutdatedMCLauncherException;
 
-public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener {
+public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener, WindowListener {
 
 	/**
 	 *
@@ -113,6 +115,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		LoginForm.updateDialog = new UpdateDialog(this);
 		settings.load();
 		gu.setListener(this);
+		
+		this.addWindowListener(this);
 
 		options.setVisible(false);
 		loginButton.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -702,5 +706,42 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
 		}
+	}
+	
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosing(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowClosed(WindowEvent e) {
+		if (!LauncherFrame.successfulGameLaunch) {
+			System.out.println("Exiting the Spoutcraft Launcher");
+			System.exit(0);
+		}
+	}
+
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

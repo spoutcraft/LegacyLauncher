@@ -38,6 +38,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
 	public static boolean errorInDownload = false;
+	public static boolean successfulGameLaunch = false;
 	
 	public LauncherFrame() {
 		super("Spoutcraft");
@@ -87,6 +88,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.start();
 		
 		this.setVisible(true);
+		successfulGameLaunch = true;
 		return true;
 	}
 
