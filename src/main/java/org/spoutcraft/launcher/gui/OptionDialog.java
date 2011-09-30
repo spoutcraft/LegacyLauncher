@@ -204,6 +204,9 @@ public class OptionDialog extends JDialog implements ActionListener {
 				settings.put("retryLogins", retryLoginCheckbox.isSelected());
 			}
 			if (settings.checkProperty("memory")) {
+				if (settings.getPropertyInteger("memory") > 3) {
+					settings.changeProperty("memory", "0");
+				}
 				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
 					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
 					int mem = 1 << 9 + OptionDialog.settings.getPropertyInteger("memory");
