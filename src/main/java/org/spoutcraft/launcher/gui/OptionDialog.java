@@ -103,8 +103,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
-		memoryCombo.addItem("256 MB");
 		memoryCombo.addItem("512 MB");
+		memoryCombo.addItem("768 MB");
 		memoryCombo.addItem("1 GB");
 		memoryCombo.addItem("2 GB");
 		memoryCombo.addItem("4 GB");
