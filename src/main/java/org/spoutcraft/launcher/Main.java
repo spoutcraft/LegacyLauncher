@@ -70,12 +70,7 @@ public class Main {
 			//e.printStackTrace();
 		}
 		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
-			int optionMem = OptionDialog.settings.getPropertyInteger("memory");
-			if (optionMem < 512) {
-				OptionDialog.settings.put("memory", 768);
-				optionMem = 768;
-			}
-			int mem = 1 << 8 + optionMem;
+			int mem = 1 << (9 + OptionDialog.settings.getPropertyInteger("memory"));
 			recursion.createNewFile();
 			reboot("-Xmx" + mem + "m");
 		}

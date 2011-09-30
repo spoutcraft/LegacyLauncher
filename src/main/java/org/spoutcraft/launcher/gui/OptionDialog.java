@@ -104,7 +104,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 		
 		memoryCombo.addItem("512 MB");
-		memoryCombo.addItem("768 MB");
 		memoryCombo.addItem("1 GB");
 		memoryCombo.addItem("2 GB");
 		memoryCombo.addItem("4 GB");
@@ -207,7 +206,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			if (settings.checkProperty("memory")) {
 				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
 					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
-					int mem = 1 << 8 + OptionDialog.settings.getPropertyInteger("memory");
+					int mem = 1 << 9 + OptionDialog.settings.getPropertyInteger("memory");
 					Main.reboot("-Xmx" + mem + "m");
 				}
 			} else {
