@@ -27,112 +27,106 @@ import org.spoutcraft.launcher.gui.OptionDialog;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 public class Main {
-	
-	static String[] args_temp;
-	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 
-	public Main() throws Exception {
-		main(new String[0]);
-	}
+    static String[] args_temp;
+    static File recursion;
 
-	public static void reboot(String memory) {
-		try {
-			String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-			ArrayList<String> params = new ArrayList<String>();
-			params.add("javaw");
-			params.add(memory);
-			params.add("-classpath");
-			params.add(pathToJar);
-			params.add("org.spoutcraft.launcher.Main");
-			for (String arg : args_temp) {
-				params.add(arg);
-			}
-			ProcessBuilder pb = new ProcessBuilder(params);
-			Process process = pb.start();
-			if(process == null)
-				throw new Exception("!");
-			System.exit(0);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public static void main(String[] args) throws Exception {
-		args_temp = args;
-		boolean relaunch = false;
-		try {
-			if (!recursion.exists()) {
-				relaunch = true;
-			} else {
-				recursion.delete();
-			}
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
-			if (OptionDialog.settings.getPropertyInteger("memory") > 3) {
-				OptionDialog.settings.changeProperty("memory", "0");
-			}
-			int mem = 1 << (9 + OptionDialog.settings.getPropertyInteger("memory"));
-			recursion.createNewFile();
-			reboot("-Xmx" + mem + "m");
-		}
-		
-		PlatformUtils.getWorkingDirectory().mkdirs();
+    public Main() throws Exception {
+        main(new String[0]);
+    }
 
-		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
+    public static void reboot(String memory) {
+        try {
+            String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            ArrayList<String> params = new ArrayList<String>();
+            if (PlatformUtils.getPlatform() == PlatformUtils.OS.windows) {
+                params.add("javaw"); // Windows-specific
+            } else {
+                params.add("java"); // Linux/Mac/whatever
+            }
+            params.add(memory);
+            params.add("-classpath");
+            params.add(pathToJar);
+            params.add("org.spoutcraft.launcher.Main");
+            for (String arg : args_temp) {
+                params.add(arg);
+            }
+            ProcessBuilder pb = new ProcessBuilder(params);
+            Process process = pb.start();
+            if (process == null)
+                throw new Exception("!");
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-		SystemConsoleListener listener = new SystemConsoleListener();
+    public static void main(String[] args) throws Exception {
+        if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+            PlatformUtils.setPortable(true);
+        }
+        PlatformUtils.getWorkingDirectory().mkdirs();
 
-		listener.initialize();
+        args_temp = args;
+        boolean relaunch = false;
+        recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
+        if (!Arrays.asList(args).contains("--no-recurse")) {
+            try {
+                if (!recursion.exists()) {
+                    relaunch = true;
+                } else {
+                    recursion.delete();
+                }
+            } catch (Exception e) {
+                //e.printStackTrace();
+            }
+            if (relaunch && OptionDialog.settings.checkProperty("memory")) {
+                if (OptionDialog.settings.getPropertyInteger("memory") > 3) {
+                    OptionDialog.settings.changeProperty("memory", "0");
+                }
+                int mem = 1 << (9 + OptionDialog.settings.getPropertyInteger("memory"));
+                recursion.createNewFile();
+                reboot("-Xmx" + mem + "m");
+            }
+        }
 
-		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
-			System.out.println("[WARNING] Can't get system LnF: " + e);
-		}
+        new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
 
-		LoginForm login = new LoginForm();
+        SystemConsoleListener listener = new SystemConsoleListener();
 
-		switch (args.length) {
-		case 4:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
+        listener.initialize();
 
-			login.doLogin(args[0], args[1]);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            System.out.println("[WARNING] Can't get system LnF: " + e);
+        }
 
-			MinecraftUtils.setServer(args[2]);
-			break;
+        LoginForm login = new LoginForm();
 
-		case 3:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
+        switch (args.length) {
+            case 4:
+                login.doLogin(args[0], args[1]);
 
-			login.doLogin(args[0], args[1]);
+                MinecraftUtils.setServer(args[2]);
+                break;
 
-			MinecraftUtils.setServer(args[2]);
-			break;
-		case 2:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
+            case 3:
+                login.doLogin(args[0], args[1]);
 
-			login.doLogin(args[0], args[1]);
+                MinecraftUtils.setServer(args[2]);
+                break;
+            case 2:
+                login.doLogin(args[0], args[1]);
 
-			break;
-		default:
-			if (args.length > 5) {
-				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-					PlatformUtils.setPortable(true);
-				}
+                break;
+            default:
+                if (args.length > 5) {
+                    MinecraftUtils.setServer(args[2]);
+                }
+        }
 
-				MinecraftUtils.setServer(args[2]);
-			}
-		}
-
-		login.setVisible(true);
-	}
+        login.setVisible(true);
+    }
 
 }
