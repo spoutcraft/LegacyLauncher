@@ -154,7 +154,7 @@ public class GameUpdater implements DownloadListener {
 		//Test for bad, down mirrors
 		for (int i = index; i < mirrors.size() + index; i++) {
 			int j = i;
-			if (j > mirrors.size()) j-= mirrors.size();
+			if (j >= mirrors.size()) j-= mirrors.size();
 			String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
 			if (isAddressReachable(mirror)) {
 				System.out.println("Using mirror: " + mirror);
