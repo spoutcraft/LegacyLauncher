@@ -43,13 +43,13 @@ public class SystemConsoleListener {
 			Logger.getLogger("").addHandler(fileHandler);   
 		   
 			PrintStream stdout = System.out;
-			/*PrintStream stderr = System.err;*/
+			PrintStream stderr = System.err;
 			
 			Handler ConsoleHandle = new StreamHandler(stdout, new ClientLoggerFormatter());
 			Logger.getLogger("").addHandler(ConsoleHandle);   
 			
-			/*Handler ErrHandle = new StreamHandler(stderr, new ClientLoggerFormatter());
-			Logger.getLogger("").addHandler(ErrHandle);  */
+			Handler ErrHandle = new StreamHandler(stderr, new ClientLoggerFormatter());
+			Logger.getLogger("").addHandler(ErrHandle);  
 			
 			Logger logger;
 			SystemListenerStream los;
@@ -58,9 +58,9 @@ public class SystemConsoleListener {
 			los = new SystemListenerStream(logger, SystemListenerLevel.STDOUT);
 			System.setOut(new PrintStream(los, true));
 			
-			/*logger = Logger.getLogger("stderr");
+			logger = Logger.getLogger("stderr");
 			los= new SystemListenerStream(logger, SystemListenerLevel.STDERR);
-			System.setErr(new PrintStream(los, true));*/
+			System.setErr(new PrintStream(los, true));
 			
 			SystemConsoleListener.out = stdout;
 			
