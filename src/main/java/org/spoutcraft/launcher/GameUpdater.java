@@ -151,6 +151,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		int random = rand.nextInt(10 * mirrors.size());
 		int index = random / 10;
+		float progress = 0F;
 		//Test for bad, down mirrors
 		for (int i = index; i < mirrors.size() + index; i++) {
 			int j = i;
@@ -158,7 +159,12 @@ public class GameUpdater implements DownloadListener {
 			String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
 			if (isAddressReachable(mirror)) {
 				System.out.println("Using mirror: " + mirror);
+				stateChanged("Contacting Mirrors...", 100F);
 				return mirror;
+			}
+			else {
+				progress += 100F / mirrors.size();
+				stateChanged("Contacting Mirrors...", progress);
 			}
 		}
 		System.err.println("All mirrors failed, defaulting to jenkins");
@@ -251,6 +257,10 @@ public class GameUpdater implements DownloadListener {
 
 		JarFile jar = new JarFile(nativesJar);
 		Enumeration<JarEntry> entries = jar.entries();
+		
+		float progressStep = 100F / jar.size();
+		float progress = 0;
+		
 		while (entries.hasMoreElements()) {
 			JarEntry entry = entries.nextElement();
 			String name = entry.getName();
@@ -270,6 +280,9 @@ public class GameUpdater implements DownloadListener {
 			while ((read = inputStream.read(bytes)) != -1) {
 				out.write(bytes, 0, read);
 			}
+			
+			progress += progressStep;
+			stateChanged("Extracting Files...", progress);
 
 			inputStream.close();
 			out.flush();
@@ -323,15 +336,18 @@ public class GameUpdater implements DownloadListener {
 
 		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
 
+		stateChanged("Looking Up Mirrors...", 0F);
 		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
 
-		stateChanged("Unzipping files...", 100F);
+		stateChanged("Unzipping Spoutcraft Files...", 0F);
 		
 		unzipArchive(new File(updateDir.getPath() + File.separator + "spoutcraft.zip"), new File(updateDir + File.separator + "spoutcraft"));
 
 		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"));
+		
+		stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", 0F);
 
-		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator);
+		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator, true);
 
 		File mcJar = new File(binDir, "minecraft.jar");
 		mcJar.delete();
@@ -431,10 +447,16 @@ public class GameUpdater implements DownloadListener {
 	
 	public void unzipArchive(File archive, File outputDir) throws ZipException, IOException {
 		ZipFile zipfile = new ZipFile(archive);
+		float progress = 0F;
+		float progressStep = 100F / zipfile.size();
 		for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
 			ZipEntry entry = (ZipEntry) e.nextElement();
 			unzipEntry(zipfile, entry, outputDir);
+			
+			progress += progressStep;
+			stateChanged("Unzipping Spoutcraft Files...", progress);
 		}
+		stateChanged("Unzipping Spoutcraft Files...", 100F);
 	}
 	
 	private void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
@@ -513,7 +535,7 @@ public class GameUpdater implements DownloadListener {
 
 		zip.createNewFile();
 
-		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator);
+		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator, false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -544,7 +566,7 @@ public class GameUpdater implements DownloadListener {
 		return false;
 	}
 
-	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir) throws IOException {
+	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir, boolean progressBar) throws IOException {
 		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
@@ -553,6 +575,12 @@ public class GameUpdater implements DownloadListener {
 			throw new RuntimeException("could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
 		}
 		byte[] buf = new byte[1024];
+		
+		float progress = 0F;
+		float progressStep = 0F;
+		if (progressBar) {
+			progressStep = 100F / (files.size() + new JarFile(tempFile).size());
+		}
 
 		ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
 		ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(zipFile)));
@@ -577,6 +605,11 @@ public class GameUpdater implements DownloadListener {
 				}
 			}
 			entry = zin.getNextEntry();
+			
+			progress += progressStep;
+			if (progressBar) {
+				stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", progress);
+			}
 		}
 		zin.close();
 		for (File file : files) {
@@ -591,6 +624,11 @@ public class GameUpdater implements DownloadListener {
 				int len;
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
+				}
+				
+				progress += progressStep;
+				if (progressBar) {
+					stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", progress);
 				}
 
 				out.closeEntry();

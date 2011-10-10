@@ -23,14 +23,14 @@ import java.util.Arrays;
 import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.gui.LoginForm;
-import org.spoutcraft.launcher.gui.OptionDialog;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 public class Main {
 	
 	static String[] args_temp;
 	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
-	static File settingsFile = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties");
+	static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+	static File settingsFile = new File(settingsDir, "spoutcraft.properties");
 	static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	public Main() throws Exception {
@@ -72,7 +72,7 @@ public class Main {
 			//e.printStackTrace();
 		}
 		if (!settingsFile.exists()) {
-			settingsFile.mkdirs();
+			settingsDir.mkdirs();
 			settingsFile.createNewFile();
 		}
 		if (relaunch && settings.checkProperty("memory")) {
