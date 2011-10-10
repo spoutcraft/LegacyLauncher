@@ -638,15 +638,31 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	private void downloadFile(String url, String output, String cacheName) throws IOException {
-		Download download = new Download(url, output);
-		download.setListener(this);
-		download.run();
-		if (!download.isSuccess()) {
-			download.getOutFile().delete();
-			throw new IOException();
+		int tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
+		File outputFile = null;
+		while (tries > 0) {
+			System.out.println("Starting download of " + url + ", with " + tries + " tries remaining");
+			tries--;
+			Download download = new Download(url, output);
+			download.setListener(this);
+			download.run();
+			if (!download.isSuccess()) {
+				if (download.getOutFile() != null) {
+					download.getOutFile().delete();
+				}
+				System.err.println("Download of " + url + " Failed!");
+				stateChanged("Download Failed, retries remaining: " + tries, 0F);
+			}
+			else {
+				outputFile = download.getOutFile();
+				break;
+			}
+		}
+		if (outputFile == null) {
+			throw new IOException("Failed to download " + url);
 		}
 		if (cacheName != null) {
-			copy(download.getOutFile(), new File(binCacheDir, cacheName));
+			copy(outputFile, new File(binCacheDir, cacheName));
 		}
 	}
 
