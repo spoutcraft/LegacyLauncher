@@ -113,9 +113,6 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 	@Override
 	public void start() {
 		if (minecraftApplet != null) {
-			System.out.println(minecraftApplet.getHeight() + " : " + minecraftApplet.getWidth());
-			
-			
 			minecraftApplet.start();
 			active = true;
 		}

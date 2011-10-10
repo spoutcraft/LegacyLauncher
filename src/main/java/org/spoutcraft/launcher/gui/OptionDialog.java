@@ -72,9 +72,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		setTitle("Spoutcraft Settings");
 		
 		settings.load();
-		
-		System.out.println(settings.getLineCount());
-		
+				
 		devCheckbox.setToolTipText("Uses the latest development builds of Spoutcraft. They are often unstable!");
 		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
 		backupCheckbox.setToolTipText("Backs up your Spoutcraft SP worlds after each Spoutcraft update");

@@ -94,7 +94,7 @@ public class Main {
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
-			System.out.println("[WARNING] Can't get system LnF: " + e);
+			System.out.println("Warning: Can't get system LnF: " + e);
 		}
 
 		LoginForm login = new LoginForm();

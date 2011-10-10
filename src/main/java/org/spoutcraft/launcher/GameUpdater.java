@@ -408,7 +408,6 @@ public class GameUpdater implements DownloadListener {
 				String str = in.readLine();
 				if (str != null) {
 					version = str;
-					System.out.println(version);
 				}
 				in.close();
 
@@ -631,7 +630,6 @@ public class GameUpdater implements DownloadListener {
 		try {
 			fWriter = new FileWriter(out);
 			writer = new BufferedWriter(fWriter);
-			System.out.print(contents);
 			writer.write(contents);
 			writer.close();
 		} catch (Exception e) {

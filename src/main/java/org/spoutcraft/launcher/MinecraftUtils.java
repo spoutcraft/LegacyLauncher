@@ -44,7 +44,7 @@ public class MinecraftUtils {
 				} else if (result.trim().equals("Old version")) {
 					throw new OutdatedMCLauncherException();
 				} else {
-					System.out.print(result);
+					System.err.print("Unknown login result: " + result);
 				}
 				throw new MCNetworkException();
 			}

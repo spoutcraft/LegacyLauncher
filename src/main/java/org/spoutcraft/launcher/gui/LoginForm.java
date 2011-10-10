@@ -386,7 +386,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			fileName = fileName.substring(0, 60) + "...";
 		}
 		progressBar.setString(intProgress + "% " + fileName);
-		// System.out.println(fileName + ": " + progress);
 	}
 
 	public void keyTyped(KeyEvent e) {
