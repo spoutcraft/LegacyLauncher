@@ -39,7 +39,7 @@ public class HyperlinkJLabel extends JLabel implements MouseListener{
 			desktop.browse( uri );
 		}
 		catch ( Exception e ) {
-			System.err.println( e.getMessage() );
+			System.err.println("Unable to open browser to " + url);
 		}
 	}
 	

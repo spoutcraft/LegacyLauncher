@@ -30,6 +30,8 @@ public class Main {
 	
 	static String[] args_temp;
 	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
+	static File settingsFile = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties");
+	static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	public Main() throws Exception {
 		main(new String[0]);
@@ -69,13 +71,16 @@ public class Main {
 		} catch (Exception e) {
 			//e.printStackTrace();
 		}
-		if (relaunch && OptionDialog.settings.checkProperty("memory")) {
-			if (OptionDialog.settings.getPropertyInteger("memory") > 3) {
-				OptionDialog.settings.changeProperty("memory", "0");
+		if (!settingsFile.exists()) {
+			settingsFile.createNewFile();
+		}
+		if (relaunch && settings.checkProperty("memory")) {
+			if (settings.getPropertyInteger("memory") > 3) {
+				settings.changeProperty("memory", "0");
 			}
-			int mem = 1 << (9 + OptionDialog.settings.getPropertyInteger("memory"));
+			int mem = 1 << (9 + settings.getPropertyInteger("memory"));
 			recursion.createNewFile();
-			reboot("-Xmx" + mem + "m");
+			//reboot("-Xmx" + mem + "m");
 		}
 		
 		PlatformUtils.getWorkingDirectory().mkdirs();

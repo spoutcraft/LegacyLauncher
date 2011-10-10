@@ -48,7 +48,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	 */
 	private static final long serialVersionUID = -2453348055512665749L;
 	private final JPanel contentPanel = new JPanel();
-	public static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	JCheckBox devCheckbox = new JCheckBox("Use latest dev build. Dangerous!");
 	
