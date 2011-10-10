@@ -570,7 +570,18 @@ public class GameUpdater implements DownloadListener {
 		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
-		boolean renameOk = zipFile.renameTo(tempFile);
+		copy(zipFile, tempFile);
+		boolean renameOk = false;
+		int tries = 5;
+		while (!renameOk && tries > 0) {
+			renameOk = zipFile.renameTo(tempFile);
+			if (!renameOk){
+				try {
+					Thread.sleep(250);
+				} catch (InterruptedException e) {}
+			}
+			tries--;
+		}
 		if (!renameOk) {
 			throw new RuntimeException("could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
 		}

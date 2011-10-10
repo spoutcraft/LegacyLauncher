@@ -282,8 +282,8 @@ public class SettingsHandler {
 				HashMap<String,String> contents = this.loadHashMap();
 				result = contents.get(property);
 			}
-			if (result.equalsIgnoreCase("true") || result.equalsIgnoreCase("false")) {
-				return Boolean.valueOf(result.toLowerCase());
+			if (result != null && result.equalsIgnoreCase("true")) {
+				return true;
 			} else {
 				return false;
 			}
