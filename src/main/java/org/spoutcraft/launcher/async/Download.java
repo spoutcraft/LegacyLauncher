@@ -19,7 +19,6 @@ package org.spoutcraft.launcher.async;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.Channels;
-import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ReadableByteChannel;
 
 /**
@@ -45,43 +44,6 @@ public class Download implements Runnable {
 		return ((float) downloaded / size) * 100;
 	}
 
-	public static int maybeAvailable(final InputStream in, final byte[] buffer, long timeout)
-			throws IOException, InterruptedException {
-
-		final int[] dataReady = {0};
-		final IOException[] maybeException = {null};
-		final Thread reader = new Thread() {
-			public void run() {
-				try {
-					dataReady[0] = in.read(buffer);
-				} catch (ClosedByInterruptException e) {
-					System.err.println("Reader interrupted.");
-				} catch (IOException e) {
-					maybeException[0] = e;
-				}
-			}
-		};
-
-		Thread interruptor = new Thread() {
-			public void run() {
-				reader.interrupt();
-			}
-		};
-
-		reader.start();
-		reader.join(timeout);
-		if (reader.isAlive()) {
-			interruptor.start();
-			interruptor.join(5000);
-			reader.join(5000);
-		}
-
-		if (maybeException[0] != null)
-			throw maybeException[0];
-
-		return dataReady[0];
-	}
-	
 	public void run() {
 		try {
 			URLConnection conn = url.openConnection();
