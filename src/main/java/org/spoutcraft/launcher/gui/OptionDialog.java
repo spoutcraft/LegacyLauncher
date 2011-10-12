@@ -79,6 +79,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		retryLoginCheckbox.setToolTipText("Retries logging into minecraft.net up to 3 times after a failure");
 		latestLWJGLCheckbox.setToolTipText("Minecraft normally uses older, more compatible versions of LWJGL, but the latest may improve performance or fix audio issues");
 		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
+		memoryCombo.setToolTipText("Allows you to adjust the memory assigned to Spoutcraft. Assigning more memory than you have may cause crashes.");
 		
 		if (settings.checkProperty("devupdate")) {
 			devCheckbox.setSelected(settings.getPropertyBoolean("devupdate"));
@@ -105,6 +106,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		memoryCombo.addItem("1 GB");
 		memoryCombo.addItem("2 GB");
 		memoryCombo.addItem("4 GB");
+		memoryCombo.addItem("8 GB");
+		memoryCombo.addItem("16 GB");
 		
 		if (settings.checkProperty("memory")) {
 			memoryCombo.setSelectedIndex(settings.getPropertyInteger("memory"));
