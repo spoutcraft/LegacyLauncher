@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -97,7 +98,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	JButton optionsButton = new JButton("Options");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
+	private List<JButton> loginSkin1Image;
 	private JButton loginSkin2;
+	private List<JButton> loginSkin2Image;
 	public final JProgressBar progressBar;
 	HashMap<String, String> usernames = new HashMap<String, String>();
 	public Boolean mcUpdate = false;
@@ -170,12 +173,15 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginSkin1.setOpaque(false);
 		loginSkin1.addActionListener(this);
 		loginSkin1.setVisible(false);
+		loginSkin1Image = new ArrayList<JButton>();
+		
 		loginSkin2 = new JButton("Login as Player");
 		loginSkin2.setFont(new Font("Arial", Font.PLAIN, 11));
 		loginSkin2.setBounds(261, 428, 119, 23);
 		loginSkin2.setOpaque(false);
 		loginSkin2.addActionListener(this);
 		loginSkin2.setVisible(false);
+		loginSkin2Image = new ArrayList<JButton>();
 
 		progressBar = new JProgressBar();
 		progressBar.setBounds(30, 100, 400, 23);
@@ -334,7 +340,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 	}
 
-	public void drawCharacter(String url, int x, int y, JButton button) {
+	public void drawCharacter(String url, int x, int y, List<JButton> buttons) {
 		BufferedImage originalImage;
 		try {
 			try {
@@ -342,29 +348,29 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			} catch (Exception e) {
 				originalImage = ImageIO.read(new URL("https://www.minecraft.net/img/char.png"));
 			}
-			int type = BufferedImage.TYPE_INT_ARGB;// originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+			
+			buttons.add(drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
 
-			drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8, button); // HAT
+			buttons.add(drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7)); // HEAD
 
-			drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7, button); // HEAD
+			buttons.add(drawCropped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7)); // BODY
 
-			drawCropped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7, button); // BODY
+			buttons.add(drawCropped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7)); // ARMS
+			buttons.add(drawCropped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true));
 
-			drawCropped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7, button); // ARMS
-			drawCropped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true, button);
-
-			drawCropped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7, button); // LEGS
-			drawCropped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true, button);
+			buttons.add(drawCropped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7)); // LEGS
+			buttons.add(drawCropped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, JButton button) {
-		drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false, button);
+	public JButton drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale) {
+		return drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false);
 	}
 
-	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect, final JButton button) {
+	public JButton drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect) {
 		BufferedImage resizedImage = new BufferedImage((sx2 - sx1) * scale, (sy2 - sy1) * scale, type);
 		Graphics2D g = resizedImage.createGraphics();
 		int asx2 = sx2, asx1 = sx1;
@@ -375,22 +381,22 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		g.drawImage(img, 0, 0, (sx2 - sx1) * scale, (sy2 - sy1) * scale, asx1, sy1, asx2, sy2, null);
 		g.dispose();
 
-		//make image clickable.
-		class TempJLabel extends JLabel {
-			public TempJLabel(ImageIcon image) {
-				super(image);
-				addMouseListener(new MouseAdapter() {
-					public void mouseClicked(MouseEvent e) {
-						if(e.getButton()!=MouseEvent.BUTTON1) return;
-						button.doClick();
-					}
-				});
-			}
-		}
+		JButton tmp = new JButton(new ImageIcon(resizedImage));
+		tmp.setSelectedIcon(tmp.getIcon());
+		tmp.setDisabledIcon(tmp.getPressedIcon());
+		tmp.setPressedIcon(tmp.getIcon());
 		
-		JLabel tmp = new TempJLabel(new ImageIcon(resizedImage));
+		tmp.setOpaque(false);
+		tmp.setFocusable(false);
+		
+		tmp.setContentAreaFilled(false);
+		tmp.setBorderPainted(false);
+		tmp.setRolloverEnabled(false);
+		
 		tmp.setBounds(x, y, (sx2 - sx1) * scale, (sy2 - sy1) * scale);
+		tmp.addActionListener(this);
 		contentPane.add(tmp);
+		return tmp;
 	}
 
 	public void stateChanged(String fileName, float progress) {
@@ -475,11 +481,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						if (i == 1) {
 							loginSkin1.setText(user);
 							loginSkin1.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
 						} else if (i == 2) {
 							loginSkin2.setText(user);
 							loginSkin2.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
 						}
 					}
 
@@ -523,6 +529,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		if (event.getSource() == loginSkin1 || event.getSource() == loginSkin2) {
 			eventId = "Login";
 			this.usernameField.setSelectedItem(((JButton) event.getSource()).getText());
+		} else if(loginSkin1Image.contains(event.getSource())) {
+			eventId = "Login";
+			this.usernameField.setSelectedItem(loginSkin1.getText());
+		} else if(loginSkin2Image.contains(event.getSource())) {
+			eventId = "Login";
+			this.usernameField.setSelectedItem(loginSkin2.getText());
 		}
 		if ((eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) && loginButton.isEnabled()) {
 			doLogin();
