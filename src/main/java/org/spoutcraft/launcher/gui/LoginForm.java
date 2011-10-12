@@ -28,6 +28,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -332,7 +334,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 	}
 
-	public void drawCharacter(String url, int x, int y) {
+	public void drawCharacter(String url, int x, int y, JButton button) {
 		BufferedImage originalImage;
 		try {
 			try {
@@ -342,27 +344,27 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;// originalImage.getType() == 0? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
-			drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8); // HAT
+			drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8, button); // HAT
 
-			drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7); // HEAD
+			drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7, button); // HEAD
 
-			drawCropped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7); // BODY
+			drawCropped(originalImage, type, 20, 20, 28, 32, x, y + 56, 7, button); // BODY
 
-			drawCropped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7); // ARMS
-			drawCropped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true);
+			drawCropped(originalImage, type, 44, 20, 48, 32, x - 28, y + 56, 7, button); // ARMS
+			drawCropped(originalImage, type, 44, 20, 48, 32, x + 56, y + 56, 7, true, button);
 
-			drawCropped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7); // LEGS
-			drawCropped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true);
+			drawCropped(originalImage, type, 4, 20, 8, 32, x, y + 140, 7, button); // LEGS
+			drawCropped(originalImage, type, 4, 20, 8, 32, x + 28, y + 140, 7, true, button);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale) {
-		drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false);
+	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, JButton button) {
+		drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false, button);
 	}
 
-	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect) {
+	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect, final JButton button) {
 		BufferedImage resizedImage = new BufferedImage((sx2 - sx1) * scale, (sy2 - sy1) * scale, type);
 		Graphics2D g = resizedImage.createGraphics();
 		int asx2 = sx2, asx1 = sx1;
@@ -373,7 +375,20 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		g.drawImage(img, 0, 0, (sx2 - sx1) * scale, (sy2 - sy1) * scale, asx1, sy1, asx2, sy2, null);
 		g.dispose();
 
-		JLabel tmp = new JLabel(new ImageIcon(resizedImage));
+		//make image clickable.
+		class TempJLabel extends JLabel {
+			public TempJLabel(ImageIcon image) {
+				super(image);
+				addMouseListener(new MouseAdapter() {
+					public void mouseClicked(MouseEvent e) {
+						if(e.getButton()!=MouseEvent.BUTTON1) return;
+						button.doClick();
+					}
+				});
+			}
+		}
+		
+		JLabel tmp = new TempJLabel(new ImageIcon(resizedImage));
 		tmp.setBounds(x, y, (sx2 - sx1) * scale, (sy2 - sy1) * scale);
 		contentPane.add(tmp);
 	}
@@ -460,11 +475,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						if (i == 1) {
 							loginSkin1.setText(user);
 							loginSkin1.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1);
 						} else if (i == 2) {
 							loginSkin2.setText(user);
 							loginSkin2.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170);
+							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2);
 						}
 					}
 
