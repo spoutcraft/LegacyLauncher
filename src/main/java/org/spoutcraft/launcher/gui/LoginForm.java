@@ -28,6 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -363,7 +364,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		drawCropped(img, type, sx1, sy1, sx2, sy2, x, y, scale, false, button);
 	}
 
-	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect, JButton button) {
+	public void drawCropped(BufferedImage img, int type, int sx1, int sy1, int sx2, int sy2, int x, int y, int scale, boolean reflect, final JButton button) {
 		BufferedImage resizedImage = new BufferedImage((sx2 - sx1) * scale, (sy2 - sy1) * scale, type);
 		Graphics2D g = resizedImage.createGraphics();
 		int asx2 = sx2, asx1 = sx1;
@@ -375,23 +376,19 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		g.dispose();
 
 		//make image clickable.
-		JLabel tmp = new JLabel(new ImageIcon(resizedImage), button) {
-			private JButton button;
-			
-			public JLabel(ImageIcon icon, JButton button) {
-				super(icon);
-				this.button=button;
+		class TempJLabel extends JLabel {
+			public TempJLabel(ImageIcon image) {
+				super(image);
 				addMouseListener(new MouseAdapter() {
 					public void mouseClicked(MouseEvent e) {
 						if(e.getButton()!=MouseEvent.BUTTON1) return;
-						int argb = resizedImage.getRGB(e.getX(),e.getY());
-						int a = (argb>>24)&0xFF;
-						if(a!=0) return;
 						button.doClick();
 					}
 				});
 			}
 		}
+		
+		JLabel tmp = new TempJLabel(new ImageIcon(resizedImage));
 		tmp.setBounds(x, y, (sx2 - sx1) * scale, (sy2 - sy1) * scale);
 		contentPane.add(tmp);
 	}
