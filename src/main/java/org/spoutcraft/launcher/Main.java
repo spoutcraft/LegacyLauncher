@@ -16,7 +16,9 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,6 +30,7 @@ import org.spoutcraft.launcher.logs.SystemConsoleListener;
 public class Main {
 	
 	static String[] args_temp;
+	static int build = -1;
 	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 	static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
 	static File settingsFile = new File(settingsDir, "spoutcraft.properties");
@@ -76,14 +79,13 @@ public class Main {
 			settingsFile.createNewFile();
 		}
 		if (relaunch && settings.checkProperty("memory")) {
-			if (settings.getPropertyInteger("memory") > 3) {
+			if (settings.getPropertyInteger("memory") > 5) {
 				settings.changeProperty("memory", "0");
 			}
 			int mem = 1 << (9 + settings.getPropertyInteger("memory"));
 			recursion.createNewFile();
 			reboot("-Xmx" + mem + "m");
 		}
-		
 		PlatformUtils.getWorkingDirectory().mkdirs();
 
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
@@ -91,6 +93,10 @@ public class Main {
 		SystemConsoleListener listener = new SystemConsoleListener();
 
 		listener.initialize();
+		
+		System.out.println("------------------------------------------");
+		System.out.println("Spoutcraft Launcher is starting....");
+		System.out.println("Spoutcraft Launcher Build: " + getBuild());
 
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -139,6 +145,23 @@ public class Main {
 		}
 
 		login.setVisible(true);
+	}
+
+	private static int getBuild() {
+		if (build == -1) {
+			File buildInfo = new File(PlatformUtils.getWorkingDirectory(), "launcherVersion");
+			if (buildInfo.exists()) {
+				try {
+					BufferedReader bf = new BufferedReader(new FileReader(buildInfo));
+					String version = bf.readLine();
+					build = Integer.parseInt(version);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return build;
 	}
 
 }
