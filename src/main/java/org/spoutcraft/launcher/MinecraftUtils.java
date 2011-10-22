@@ -32,8 +32,7 @@ public class MinecraftUtils {
 	public static String port = null;
 	
 	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException {
-		    throw new MCNetworkException();
-			/*String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
+			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
 			String result = PlatformUtils.excutePost("https://login.minecraft.net/", parameters, progress);
 			if (result == null) {
 				throw new MCNetworkException();
@@ -50,7 +49,7 @@ public class MinecraftUtils {
 				}
 				throw new MCNetworkException();
 			}
-			return result.split(":");*/
+			return result.split(":");
 	}
 	
 	public static void setServer(String server) {
