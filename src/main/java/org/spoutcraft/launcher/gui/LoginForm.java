@@ -578,6 +578,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 					this.cancel(true);
 					progressBar.setVisible(false);
+				} catch (MinecraftUserNotPremiumException e)
+                {
+                    JOptionPane.showMessageDialog(getParent(), "The specified account is not a premium account.\n\n -You will be unable to authenticate with servers which require authentication.\n -Updates to Minecraft may fail.");
+                    values = new String[] { "0", "0", user.trim(), "0" };
+                    return true;
 				} catch (MCNetworkException e) {
 					JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
 					this.cancel(true);

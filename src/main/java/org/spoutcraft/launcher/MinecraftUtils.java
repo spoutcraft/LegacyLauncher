@@ -41,6 +41,8 @@ public class MinecraftUtils {
 			if (!result.contains(":")) {
 				if (result.trim().equals("Bad login")) {
 					throw new BadLoginException();
+				} else if (result.trim().equals("User not premium")) {
+                    throw new MinecraftUserNotPremiumException();
 				} else if (result.trim().equals("Old version")) {
 					throw new OutdatedMCLauncherException();
 				} else {
