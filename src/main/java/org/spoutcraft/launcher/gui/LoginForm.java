@@ -74,14 +74,12 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
 import javax.swing.border.EmptyBorder;
 
-import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.MinecraftUtils;
-import org.spoutcraft.launcher.PlatformUtils;
-import org.spoutcraft.launcher.SettingsHandler;
+import org.spoutcraft.launcher.*;
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.exception.BadLoginException;
 import org.spoutcraft.launcher.exception.MCNetworkException;
+import org.spoutcraft.launcher.exception.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exception.OutdatedMCLauncherException;
 
 public class LoginForm extends JFrame implements ActionListener, DownloadListener, KeyListener, WindowListener {
@@ -111,6 +109,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public static final GameUpdater gu = new GameUpdater();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+    private File lastloginFile = new File(PlatformUtils.getWorkingDirectory(), "lastlogin-spoutcraft");
 	OptionDialog options = new OptionDialog();
 
 	Container loginPane = new Container();
@@ -573,15 +572,38 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				progressBar.setString("Connecting to www.minecraft.net...");
 				try {
 					values = MinecraftUtils.doLogin(user, pass, progressBar);
+                    LastLoginUtils.setLastLogin(values[2].trim(), pass, lastloginFile);
 					return true;
 				} catch (BadLoginException e) {
 					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 					this.cancel(true);
 					progressBar.setVisible(false);
-				} catch (MCNetworkException e) {
-					JOptionPane.showMessageDialog(getParent(), "Cannot connect to minecraft.net");
+                } catch (MinecraftUserNotPremiumException e)
+                {
+                    JOptionPane.showMessageDialog(getParent(), "The specified account is not premium");
 					this.cancel(true);
 					progressBar.setVisible(false);
+				} catch (MCNetworkException e) {
+                    if (LastLoginUtils.isLastLogin(user, pass, lastloginFile))
+                    {
+                        int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION)
+                        {
+                            values = new String[] { "0", "0", user, "0" };
+                            return true;
+                        }
+                        else
+                        {
+                            this.cancel(true);
+					        progressBar.setVisible(false);
+                        }
+                    }
+                    else
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
+					    this.cancel(true);
+					    progressBar.setVisible(false);
+                    }
 				} catch (OutdatedMCLauncherException e) {
 					JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert dev@getspout.org!!!!");
 					progressBar.setVisible(false);
@@ -602,60 +624,59 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			protected void done() {
 				if (values == null || values.length < 4)
 					return;
-				gu.user = values[2].trim();
-				gu.downloadTicket = values[1].trim();
-				gu.latestVersion = Long.parseLong(values[0].trim());
-				if (settings.checkProperty("devupdate"))
-					gu.devmode = settings.getPropertyBoolean("devupdate");
-				if (cmdLine == false) {
-					usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
-					writeUsernameList();
-				}
 
-				LoginForm.pass = pass;
+                LoginForm.pass = pass;
 
-				SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
+                gu.user = values[2].trim();
+                gu.downloadTicket = values[1].trim();
+                gu.latestVersion = Long.parseLong(values[0].trim());
+                if (settings.checkProperty("devupdate"))
+                    gu.devmode = settings.getPropertyBoolean("devupdate");
+                if (cmdLine == false) {
+                    usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
+                    writeUsernameList();
+                }
 
-					protected void done() {
-						if (mcUpdate) {
-							updateDialog.setToUpdate("Minecraft");
-						} else if (spoutUpdate) {
-							updateDialog.setToUpdate("Spoutcraft");
-						}
-						if (mcUpdate || spoutUpdate) {
-							LoginForm.updateDialog.setVisible(true);
-						} else {
-							runGame();
-						}
-						this.cancel(true);
-					}
+                SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
 
-					protected Boolean doInBackground() throws Exception {
+                    protected void done() {
+                        if (mcUpdate) {
+                            updateDialog.setToUpdate("Minecraft");
+                        } else if (spoutUpdate) {
+                            updateDialog.setToUpdate("Spoutcraft");
+                        }
+                        if (mcUpdate || spoutUpdate) {
+                            LoginForm.updateDialog.setVisible(true);
+                        } else {
+                            runGame();
+                        }
+                        this.cancel(true);
+                    }
 
-						publish("Checking for Minecraft Update...\n");
-						try {
-							mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
-						} catch (Exception e) {
-							mcUpdate = false;
-						}
+                    protected Boolean doInBackground() throws Exception
+                    {
+                        publish("Checking for Minecraft Update...\n");
+                        try {
+                            mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
+                        } catch (Exception e) {
+                            mcUpdate = false;
+                        }
 
-						publish("Checking for Spout update...\n");
-						try {
-							spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
-						} catch (Exception e) {
-							spoutUpdate = false;
-						}
-						return true;
+                        publish("Checking for Spout update...\n");
+                        try {
+                            spoutUpdate = mcUpdate || gu.checkSpoutUpdate();
+                        } catch (Exception e) {
+                            spoutUpdate = false;
+                        }
+                        return true;
+                    }
 
-					}
-
-					protected void process(List<String> chunks) {
-						progressBar.setString(chunks.get(0));
-					}
-				};
-				updateThread.execute();
+                    protected void process(List<String> chunks) {
+                        progressBar.setString(chunks.get(0));
+                    }
+                };
+                updateThread.execute();
 				this.cancel(true);
-
 			}
 		};
 		loginThread.execute();
