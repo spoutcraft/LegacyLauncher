@@ -28,8 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -43,6 +41,8 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,6 +89,24 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	 */
 	private static final long serialVersionUID = -192904429165686059L;
 
+    private static final class UserPasswordInformation
+    {
+        public boolean isHash;
+        public byte[] passwordHash = null;
+        public String password = null;
+
+        public UserPasswordInformation(String pass)
+        {
+            isHash = false;
+            password = pass;
+        }
+        public UserPasswordInformation(byte[] hash)
+        {
+            isHash = true;
+            passwordHash = hash;
+        }
+    }
+
 	private JPanel contentPane;
 	private JPasswordField passwordField;
 	private JComboBox usernameField = new JComboBox();
@@ -100,7 +118,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private JButton loginSkin2;
 	private List<JButton> loginSkin2Image;
 	public final JProgressBar progressBar;
-	HashMap<String, String> usernames = new HashMap<String, String>();
+	HashMap<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	public Boolean mcUpdate = false;
 	public Boolean spoutUpdate = false;
 	public static UpdateDialog updateDialog;
@@ -109,7 +127,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public static final GameUpdater gu = new GameUpdater();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
-    private File lastloginFile = new File(PlatformUtils.getWorkingDirectory(), "lastlogin-spoutcraft");
 	OptionDialog options = new OptionDialog();
 
 	Container loginPane = new Container();
@@ -473,22 +490,31 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				// noinspection InfiniteLoopStatement
 				while (true) {
 					String user = dis.readUTF();
-					String pass = dis.readUTF();
+                    boolean isHash = dis.readBoolean();
+                    if (isHash)
+                    {
+                        byte[] hash = new byte[32];
+                        dis.read(hash);
 
-					if (!pass.isEmpty()) {
-						i++;
-						if (i == 1) {
-							loginSkin1.setText(user);
-							loginSkin1.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
-						} else if (i == 2) {
-							loginSkin2.setText(user);
-							loginSkin2.setVisible(true);
-							drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
-						}
-					}
-
-					usernames.put(user, pass);
+                        usernames.put(user, new UserPasswordInformation(hash));
+                    }
+                    else
+                    {
+                        String pass = dis.readUTF();
+                        if (!pass.isEmpty()) {
+                            i++;
+                            if (i == 1) {
+                                loginSkin1.setText(user);
+                                loginSkin1.setVisible(true);
+                                drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
+                            } else if (i == 2) {
+                                loginSkin2.setText(user);
+                                loginSkin2.setVisible(true);
+                                drawCharacter("http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
+                            }
+					    }
+                        usernames.put(user, new UserPasswordInformation(pass));
+                    }
 					this.usernameField.addItem(user);
 				}
 			} catch (EOFException ignored) {
@@ -498,8 +524,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
-		this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
+
+        updatePasswordField();
 	}
 
 	private void writeUsernameList() {
@@ -507,6 +533,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			File lastLogin = new File(PlatformUtils.getWorkingDirectory(), "lastlogin");
 
 			Cipher cipher = getCipher(1, "passwordfile");
+
 			DataOutputStream dos;
 			if (cipher != null)
 				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin), cipher));
@@ -515,7 +542,16 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			}
 			for (String user : usernames.keySet()) {
 				dos.writeUTF(user);
-				dos.writeUTF(usernames.get(user));
+                UserPasswordInformation info = usernames.get(user);
+                dos.writeBoolean(info.isHash);
+                if (info.isHash)
+                {
+                    dos.write(info.passwordHash);
+                }
+                else
+                {
+                    dos.writeUTF(info.password);
+                }
 			}
 			dos.close();
 		} catch (Exception e) {
@@ -541,10 +577,24 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			options.setVisible(true);
 			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 250);
 		} else if (eventId.equals("comboBoxChanged")) {
-			this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
-			this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
+			updatePasswordField();
 		}
 	}
+
+    private void updatePasswordField()
+    {
+        UserPasswordInformation info = usernames.get(this.usernameField.getSelectedItem().toString());
+        if (info.isHash)
+        {
+            this.passwordField.setText("");
+            this.rememberCheckbox.setSelected(false);
+        }
+        else
+        {
+            this.passwordField.setText(info.password);
+            this.rememberCheckbox.setSelected(true);
+        }
+    }
 
 	private void doLogin() {
 		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false);
@@ -572,7 +622,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				progressBar.setString("Connecting to www.minecraft.net...");
 				try {
 					values = MinecraftUtils.doLogin(user, pass, progressBar);
-                    LastLoginUtils.setLastLogin(values[2].trim(), pass, lastloginFile);
 					return true;
 				} catch (BadLoginException e) {
 					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
@@ -584,7 +633,50 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					this.cancel(true);
 					progressBar.setVisible(false);
 				} catch (MCNetworkException e) {
-                    if (LastLoginUtils.isLastLogin(user, pass, lastloginFile))
+                    UserPasswordInformation info = null;
+                    for (String username : usernames.keySet())
+                    {
+                        if (user.equalsIgnoreCase(username))
+                        {
+                            info = usernames.get(username);
+                            break;
+                        }
+                    }
+                    boolean authFailed = (info == null);
+
+                    if (!authFailed)
+                    {
+                        if (info.isHash)
+                        {
+                            try
+                            {
+                                MessageDigest digest = MessageDigest.getInstance("SHA-256");
+                                byte[] hash = digest.digest(pass.getBytes());
+                                for (int i = 0; i < hash.length; i++)
+                                {
+                                    if (hash[i] != info.passwordHash[i])
+                                    {
+                                        authFailed = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            catch (NoSuchAlgorithmException ex)
+                            {
+                                authFailed = true;
+                            }
+                        }
+                        else
+                        {
+                            authFailed = !(pass.equals(info.password));
+                        }
+                    }
+
+                    if (authFailed)
+                    {
+                        JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
+                    }
+                    else
                     {
                         int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
                         if (result == JOptionPane.YES_OPTION)
@@ -592,18 +684,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                             values = new String[] { "0", "0", user, "0" };
                             return true;
                         }
-                        else
-                        {
-                            this.cancel(true);
-					        progressBar.setVisible(false);
-                        }
                     }
-                    else
-                    {
-                        JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
-					    this.cancel(true);
-					    progressBar.setVisible(false);
-                    }
+					this.cancel(true);
+					progressBar.setVisible(false);
 				} catch (OutdatedMCLauncherException e) {
 					JOptionPane.showMessageDialog(getParent(), "The unthinkable has happened, alert dev@getspout.org!!!!");
 					progressBar.setVisible(false);
@@ -627,13 +710,38 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
                 LoginForm.pass = pass;
 
+                MessageDigest digest = null;
+
+                try
+                {
+                    digest = MessageDigest.getInstance("SHA-256");
+                }
+                catch (NoSuchAlgorithmException e)
+                {
+                }
+
                 gu.user = values[2].trim();
                 gu.downloadTicket = values[1].trim();
                 gu.latestVersion = Long.parseLong(values[0].trim());
                 if (settings.checkProperty("devupdate"))
                     gu.devmode = settings.getPropertyBoolean("devupdate");
                 if (cmdLine == false) {
-                    usernames.put(gu.user, rememberCheckbox.isSelected() ? new String(passwordField.getPassword()) : "");
+                    String password = new String(passwordField.getPassword());
+                    if (rememberCheckbox.isSelected())
+                    {
+                        usernames.put(gu.user, new UserPasswordInformation(password));
+                    }
+                    else
+                    {
+                        if (digest == null)
+                        {
+                            usernames.put(gu.user, new UserPasswordInformation(""));
+                        }
+                        else
+                        {
+                            usernames.put(gu.user, new UserPasswordInformation(digest.digest(password.getBytes())));
+                        }
+                    }
                     writeUsernameList();
                 }
 
@@ -723,7 +831,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		};
 		updateThread.execute();
-
 	}
 
 	private Cipher getCipher(int mode, String password) throws Exception {
