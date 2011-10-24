@@ -44,7 +44,11 @@ public class Main {
 		try {
 			String pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
 			ArrayList<String> params = new ArrayList<String>();
-			params.add("javaw");
+            if (PlatformUtils.getPlatform() == PlatformUtils.OS.windows) {
+                params.add("javaw"); // Windows-specific
+            } else {
+                params.add("java"); // Linux/Mac/whatever
+            }
 			params.add(memory);
 			params.add("-classpath");
 			params.add(pathToJar);
