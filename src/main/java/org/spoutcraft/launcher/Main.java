@@ -31,10 +31,10 @@ public class Main {
 	
 	static String[] args_temp;
 	public static int build = -1;
-	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
-	static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
-	static File settingsFile = new File(settingsDir, "spoutcraft.properties");
-	static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
+	static File recursion;
+	static File settingsDir;
+	static File settingsFile;
+	static SettingsHandler settings;
 
 	public Main() throws Exception {
 		main(new String[0]);
@@ -67,6 +67,15 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
+		if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
+			PlatformUtils.setPortable(true);
+		}
+		
+		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp")
+		settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+		settingsFile = new File(settingsDir, "spoutcraft.properties");
+		settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
+		
 		args_temp = args;
 		boolean relaunch = false;
 		try {
@@ -112,38 +121,22 @@ public class Main {
 
 		switch (args.length) {
 		case 4:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
 			login.doLogin(args[0], args[1]);
 
 			MinecraftUtils.setServer(args[2]);
 			break;
 
-		case 3:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
+		case 3:		
 			login.doLogin(args[0], args[1]);
 
 			MinecraftUtils.setServer(args[2]);
 			break;
 		case 2:
-			if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-				PlatformUtils.setPortable(true);
-			}
-
 			login.doLogin(args[0], args[1]);
 
 			break;
 		default:
 			if (args.length > 5) {
-				if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-					PlatformUtils.setPortable(true);
-				}
-
 				MinecraftUtils.setServer(args[2]);
 			}
 		}
