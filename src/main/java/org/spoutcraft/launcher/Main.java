@@ -30,7 +30,7 @@ import org.spoutcraft.launcher.logs.SystemConsoleListener;
 public class Main {
 	
 	static String[] args_temp;
-	static int build = -1;
+	public static int build = -1;
 	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 	static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
 	static File settingsFile = new File(settingsDir, "spoutcraft.properties");

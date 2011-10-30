@@ -17,6 +17,7 @@
 package org.spoutcraft.launcher.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -63,6 +64,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JComboBox memoryCombo = new JComboBox();
 	
 	JButton clearCache = new JButton("Clear Cache");
+	
+	JLabel buildInfo = new JLabel();
 
 
 	/**
@@ -72,6 +75,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 		setTitle("Spoutcraft Settings");
 		
 		settings.load();
+		
+		buildInfo.setText("Spoutcraft Launcher Build " + Main.build);
+		buildInfo.setOpaque(true);
+		buildInfo.setForeground(Color.DARK_GRAY);
+		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev" );
 				
 		devCheckbox.setToolTipText("Uses the latest development builds of Spoutcraft. They are often unstable!");
 		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
@@ -127,6 +135,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(retryLoginCheckbox)
 						.addComponent(latestLWJGLCheckbox)
 						.addComponent(clearCache)
+						.addComponent(buildInfo)
 						.addGroup(gl_contentPanel.createSequentialGroup()
 							.addComponent(lblMemoryToAllocate)
 							.addPreferredGap(ComponentPlacement.RELATED)
@@ -156,6 +165,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(lblMemoryToAllocate))
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clearCache)
+					.addPreferredGap(ComponentPlacement.RELATED)
+					.addComponent(buildInfo)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);

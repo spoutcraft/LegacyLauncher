@@ -39,6 +39,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -209,7 +210,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 			protected Object doInBackground() throws Exception {
 				try {
-					editorPane.setPage(new URL("http://updates.getspout.org/"));
+					URL url = new URL("http://updates.getspout.org/");
+					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+					if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+						editorPane.setPage(url);
+					}
+					else {
+						editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
+					}
 				} catch (MalformedURLException e1) {
 					e1.printStackTrace();
 				} catch (IOException e1) {
