@@ -71,7 +71,7 @@ public class Main {
 			PlatformUtils.setPortable(true);
 		}
 		
-		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp")
+		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 		settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
 		settingsFile = new File(settingsDir, "spoutcraft.properties");
 		settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
