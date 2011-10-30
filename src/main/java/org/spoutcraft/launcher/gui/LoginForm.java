@@ -89,19 +89,16 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	 */
 	private static final long serialVersionUID = -192904429165686059L;
 
-    private static final class UserPasswordInformation
-    {
+    private static final class UserPasswordInformation {
         public boolean isHash;
         public byte[] passwordHash = null;
         public String password = null;
 
-        public UserPasswordInformation(String pass)
-        {
+        public UserPasswordInformation(String pass) {
             isHash = false;
             password = pass;
         }
-        public UserPasswordInformation(byte[] hash)
-        {
+        public UserPasswordInformation(byte[] hash) {
             isHash = true;
             passwordHash = hash;
         }
@@ -491,15 +488,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				while (true) {
 					String user = dis.readUTF();
                     boolean isHash = dis.readBoolean();
-                    if (isHash)
-                    {
+                    if (isHash) {
                         byte[] hash = new byte[32];
                         dis.read(hash);
 
                         usernames.put(user, new UserPasswordInformation(hash));
-                    }
-                    else
-                    {
+                    } else {
                         String pass = dis.readUTF();
                         if (!pass.isEmpty()) {
                             i++;
@@ -544,12 +538,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				dos.writeUTF(user);
                 UserPasswordInformation info = usernames.get(user);
                 dos.writeBoolean(info.isHash);
-                if (info.isHash)
-                {
+                if (info.isHash) {
                     dos.write(info.passwordHash);
-                }
-                else
-                {
+                } else {
                     dos.writeUTF(info.password);
                 }
 			}
@@ -581,16 +572,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 	}
 
-    private void updatePasswordField()
-    {
+    private void updatePasswordField() {
         UserPasswordInformation info = usernames.get(this.usernameField.getSelectedItem().toString());
-        if (info.isHash)
-        {
+        if (info.isHash) {
             this.passwordField.setText("");
             this.rememberCheckbox.setSelected(false);
-        }
-        else
-        {
+        } else {
             this.passwordField.setText(info.password);
             this.rememberCheckbox.setSelected(true);
         }
@@ -634,53 +621,39 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					progressBar.setVisible(false);
 				} catch (MCNetworkException e) {
                     UserPasswordInformation info = null;
-                    for (String username : usernames.keySet())
-                    {
-                        if (user.equalsIgnoreCase(username))
-                        {
+                    for (String username : usernames.keySet()) {
+                        if (user.equalsIgnoreCase(username)) {
                             info = usernames.get(username);
                             break;
                         }
                     }
                     boolean authFailed = (info == null);
 
-                    if (!authFailed)
-                    {
-                        if (info.isHash)
-                        {
-                            try
-                            {
+                    if (!authFailed) {
+                        if (info.isHash) {
+                            try {
                                 MessageDigest digest = MessageDigest.getInstance("SHA-256");
                                 byte[] hash = digest.digest(pass.getBytes());
-                                for (int i = 0; i < hash.length; i++)
-                                {
-                                    if (hash[i] != info.passwordHash[i])
-                                    {
+                                for (int i = 0; i < hash.length; i++) {
+                                    if (hash[i] != info.passwordHash[i]) {
                                         authFailed = true;
                                         break;
                                     }
                                 }
                             }
-                            catch (NoSuchAlgorithmException ex)
-                            {
+                            catch (NoSuchAlgorithmException ex) {
                                 authFailed = true;
                             }
-                        }
-                        else
-                        {
+                        } else {
                             authFailed = !(pass.equals(info.password));
                         }
                     }
 
-                    if (authFailed)
-                    {
+                    if (authFailed) {
                         JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
-                    }
-                    else
-                    {
+                    } else {
                         int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
-                        if (result == JOptionPane.YES_OPTION)
-                        {
+                        if (result == JOptionPane.YES_OPTION) {
                             values = new String[] { "0", "0", user, "0" };
                             return true;
                         }
@@ -712,12 +685,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
                 MessageDigest digest = null;
 
-                try
-                {
+                try {
                     digest = MessageDigest.getInstance("SHA-256");
-                }
-                catch (NoSuchAlgorithmException e)
-                {
+                } catch (NoSuchAlgorithmException e) {
                 }
 
                 gu.user = values[2].trim();
@@ -727,18 +697,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
                     gu.devmode = settings.getPropertyBoolean("devupdate");
                 if (cmdLine == false) {
                     String password = new String(passwordField.getPassword());
-                    if (rememberCheckbox.isSelected())
-                    {
+                    if (rememberCheckbox.isSelected()) {
                         usernames.put(gu.user, new UserPasswordInformation(password));
                     }
-                    else
-                    {
-                        if (digest == null)
-                        {
+                    else {
+                        if (digest == null) {
                             usernames.put(gu.user, new UserPasswordInformation(""));
                         }
-                        else
-                        {
+                        else {
                             usernames.put(gu.user, new UserPasswordInformation(digest.digest(password.getBytes())));
                         }
                     }
