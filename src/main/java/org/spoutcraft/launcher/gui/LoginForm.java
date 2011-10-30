@@ -214,6 +214,22 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
 						editorPane.setPage(url);
+						try {
+							Thread.sleep(1000); //page does not load instantly, need to wait for it
+						}
+						catch (InterruptedException e) {}
+						String text = editorPane.getText();
+						int index = text.indexOf("<!-- BEGIN TUMBLR CODE -->");
+						int endIndex = text.indexOf("<!-- END TUMBLR CODE -->") + "<!-- END TUMBLR CODE -->".length();
+						if (index > -1 && endIndex > -1) {
+							text = text.substring(0, index) + text.substring(endIndex);
+						}
+						text = text.replaceAll("<li>", "- ");
+						text = text.replaceAll("</li>", "<br/>");
+						text = text.replaceAll("<p>", "");
+						text = text.replace("</p>", "<br/>");
+						text = text.replaceAll("</p>", "<br/><br/>");
+						editorPane.setText(text);
 					}
 					else {
 						editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
