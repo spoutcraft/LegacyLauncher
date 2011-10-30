@@ -28,8 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -191,8 +189,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		progressBar.setOpaque(true);
 
 		readUsedUsernames();
-		
-		loginButton.setEnabled(true); //enable once logins are read
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -341,6 +337,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		order.add(optionsButton);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
+		
+		loginButton.setEnabled(true); //enable once logins are read
 	}
 
 	public void drawCharacter(String url, int x, int y, List<JButton> buttons) {
@@ -550,15 +548,23 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		}
 	}
 
-	private void doLogin() {
+	public void doLogin() {
 		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false);
+	}
+	
+	public void doLogin(final boolean silentMode) {
+		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false, silentMode);
 	}
 
 	public void doLogin(final String user, final String pass) {
 		doLogin(user, pass, true);
 	}
-
+	
 	public void doLogin(final String user, final String pass, final boolean cmdLine) {
+		doLogin(user, pass, cmdLine, false);
+	}
+
+	public void doLogin(final String user, final String pass, final boolean cmdLine, final boolean silentMode) {
 		if (user == null || pass == null) {
 			JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
 			return;
@@ -625,7 +631,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						} else if (spoutUpdate) {
 							updateDialog.setToUpdate("Spoutcraft");
 						}
-						if (mcUpdate || spoutUpdate) {
+						if (silentMode) {
+							updateThread();
+						}
+						else if (mcUpdate || spoutUpdate) {
 							LoginForm.updateDialog.setVisible(true);
 						} else {
 							runGame();
@@ -722,19 +731,22 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public void runGame() {
 		LauncherFrame launcher = new LauncherFrame();
-		if (launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass)) {
+		launcher.setLoginForm(this);
+		int result = launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
+		if (result == LauncherFrame.SUCCESSFUL_LAUNCH) {
 			LoginForm.updateDialog.dispose();
 			LoginForm.updateDialog = null;
 			setVisible(false);
 			dispose();
 		}
-		else {
+		else if (result == LauncherFrame.ERROR_IN_LAUNCH){
 			loginButton.setEnabled(true);
 			optionsButton.setEnabled(true);
 			loginSkin1.setEnabled(true);
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
 		}
+		//Do nothing for retrying launch
 	}
 	
 	public void windowOpened(WindowEvent e) {

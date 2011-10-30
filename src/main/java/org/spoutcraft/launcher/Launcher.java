@@ -21,12 +21,14 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
+
 
 
 public class Launcher {
 	
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet() {
+	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException{
 			   
 		File mcBinFolder = new File(PlatformUtils.getWorkingDirectory(), "bin");
 		
@@ -55,14 +57,11 @@ public class Launcher {
 			ex.printStackTrace();
 			return null;
 		} catch (ClassNotFoundException ex) {
-			ex.printStackTrace();
-			return null;
+			throw new CorruptedMinecraftJarException(ex);
 		} catch (IllegalAccessException ex) {
-			ex.printStackTrace();
-			return null;
+			throw new CorruptedMinecraftJarException(ex);
 		} catch (InstantiationException ex) {
-			ex.printStackTrace();
-			return null;
+			throw new CorruptedMinecraftJarException(ex);
 		}
 	}
 	

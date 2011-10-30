@@ -29,16 +29,18 @@ import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
+import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
 public class LauncherFrame extends Frame implements WindowListener{
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
+	private LoginForm loginForm = null;
 	public static boolean errorInDownload = false;
 	public static boolean successfulGameLaunch = false;
+	
+	public static final int RETRYING_LAUNCH = -1;
+	public static final int ERROR_IN_LAUNCH = 0;
+	public static final int SUCCESSFUL_LAUNCH = 1;
 	
 	public LauncherFrame() {
 		super("Spoutcraft");
@@ -51,15 +53,43 @@ public class LauncherFrame extends Frame implements WindowListener{
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 	}
 	
-	public boolean runGame(String user, String session, String downloadTicket, String mcpass) {
+	public void setLoginForm(LoginForm form) {
+		loginForm = form;
+	}
+	
+	public LoginForm getLoginForm() {
+		return loginForm;
+	}
+	
+	public int runGame(String user, String session, String downloadTicket, String mcpass) {
 
-		Applet applet = Launcher.getMinecraftApplet();
+		Applet applet = null;
+		try {
+			applet = Launcher.getMinecraftApplet();
+		}
+		catch (CorruptedMinecraftJarException corruption) {
+			String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
+			this.setVisible(false);
+			int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION);
+			int result = RETRYING_LAUNCH;
+			if (option == JOptionPane.YES_OPTION) {
+				loginForm.progressBar.setString("Deleting Corrupted Files...");
+				OptionDialog.clearCache();
+				loginForm.progressBar.setString("Retrying Login...");
+				loginForm.doLogin(true);
+			}
+			else {
+				result = ERROR_IN_LAUNCH;
+			}
+			this.dispose();
+			return result;
+		}
 		if (applet == null || errorInDownload) {
 			String message = "Failed to launch Spoutcraft!";
-			JOptionPane.showMessageDialog(getParent(), message);
 			this.setVisible(false);
+			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
-			return false;
+			return ERROR_IN_LAUNCH;
 		}
 
 		minecraft = new MinecraftAppletEnglober(applet);
@@ -89,7 +119,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 		
 		this.setVisible(true);
 		successfulGameLaunch = true;
-		return true;
+		return SUCCESSFUL_LAUNCH;
 	}
 
 	public void windowActivated(WindowEvent e) {		
