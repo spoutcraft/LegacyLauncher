@@ -128,6 +128,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginButton.setBounds(272, 13, 86, 23);
 		loginButton.setOpaque(false);
 		loginButton.addActionListener(this);
+		loginButton.setEnabled(false); //disable until login info is read
 		optionsButton.setFont(new Font("Arial", Font.PLAIN, 11));
 		optionsButton.setOpaque(false);
 		optionsButton.addActionListener(this);
@@ -190,6 +191,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		progressBar.setOpaque(true);
 
 		readUsedUsernames();
+		
+		loginButton.setEnabled(true); //enable once logins are read
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
