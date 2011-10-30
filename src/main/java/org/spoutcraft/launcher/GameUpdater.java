@@ -141,31 +141,31 @@ public class GameUpdater implements DownloadListener {
 	}
 	
 	public String getBuildUrl(String mirrorURI, String jenkinsURL) {
-		if (mirrors.size() == 0) {
-			try {
+		try {
+			if (mirrors.size() == 0) {
 				updateMirrors();
 			}
-			catch (Exception e) {
-				e.printStackTrace();
+			int random = rand.nextInt(10 * mirrors.size());
+			int index = random / 10;
+			float progress = 0F;
+			//Test for bad, down mirrors
+			for (int i = index; i < mirrors.size() + index; i++) {
+				int j = i;
+				if (j >= mirrors.size()) j-= mirrors.size();
+				String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
+				if (isAddressReachable(mirror)) {
+					System.out.println("Using mirror: " + mirror);
+					stateChanged("Contacting Mirrors...", 100F);
+					return mirror;
+				}
+				else {
+					progress += 100F / mirrors.size();
+					stateChanged("Contacting Mirrors...", progress);
+				}
 			}
 		}
-		int random = rand.nextInt(10 * mirrors.size());
-		int index = random / 10;
-		float progress = 0F;
-		//Test for bad, down mirrors
-		for (int i = index; i < mirrors.size() + index; i++) {
-			int j = i;
-			if (j >= mirrors.size()) j-= mirrors.size();
-			String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
-			if (isAddressReachable(mirror)) {
-				System.out.println("Using mirror: " + mirror);
-				stateChanged("Contacting Mirrors...", 100F);
-				return mirror;
-			}
-			else {
-				progress += 100F / mirrors.size();
-				stateChanged("Contacting Mirrors...", progress);
-			}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		System.err.println("All mirrors failed, defaulting to jenkins");
 		return jenkinsURL;
