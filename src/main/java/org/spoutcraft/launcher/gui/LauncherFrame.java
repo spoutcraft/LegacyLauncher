@@ -22,13 +22,17 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+//import java.io.File;
+//import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.Launcher;
+//import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.PlatformUtils;
+//import org.spoutcraft.launcher.SettingsHandler;
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
 public class LauncherFrame extends Frame implements WindowListener{
@@ -42,6 +46,8 @@ public class LauncherFrame extends Frame implements WindowListener{
 	public static final int ERROR_IN_LAUNCH = 0;
 	public static final int SUCCESSFUL_LAUNCH = 1;
 	
+	//private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+
 	public LauncherFrame() {
 		super("Spoutcraft");
 		super.setVisible(true);
@@ -68,21 +74,30 @@ public class LauncherFrame extends Frame implements WindowListener{
 			applet = Launcher.getMinecraftApplet();
 		}
 		catch (CorruptedMinecraftJarException corruption) {
-			String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
+			/*String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
 			this.setVisible(false);
 			int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION);
 			int result = RETRYING_LAUNCH;
 			if (option == JOptionPane.YES_OPTION) {
-				loginForm.progressBar.setString("Deleting Corrupted Files...");
-				OptionDialog.clearCache();
-				loginForm.progressBar.setString("Retrying Login...");
-				loginForm.doLogin(true);
+				try {
+					LoginForm.clearCacheMarker.createNewFile();
+					Main.recursion.createNewFile();
+					int mem = 1024;
+					if (settings.checkProperty("memory")) {
+							mem = 1 << 9 + settings.getPropertyInteger("memory");
+					}
+					Main.reboot("-Xmx" + mem + "m");
+					return RETRYING_LAUNCH;
+				} catch (IOException e) {
+					result = ERROR_IN_LAUNCH;
+				}
 			}
 			else {
 				result = ERROR_IN_LAUNCH;
 			}
 			this.dispose();
-			return result;
+			return result;*/
+			errorInDownload = true;
 		}
 		if (applet == null || errorInDownload) {
 			String message = "Failed to launch Spoutcraft!";

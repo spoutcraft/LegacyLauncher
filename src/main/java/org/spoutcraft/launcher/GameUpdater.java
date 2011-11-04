@@ -37,7 +37,9 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
@@ -48,7 +50,6 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.exception.UnsupportedOSException;
@@ -343,11 +344,12 @@ public class GameUpdater implements DownloadListener {
 		
 		unzipArchive(new File(updateDir.getPath() + File.separator + "spoutcraft.zip"), new File(updateDir + File.separator + "spoutcraft"));
 
-		ArrayList<File> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"));
+		String rootDir = PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator;
+		Set<ClassFile> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"), rootDir);
 		
 		stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", 0F);
 
-		this.addFilesToExistingZip(updateMC, spoutMod, PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator, true);
+		this.addFilesToExistingZip(updateMC, spoutMod, rootDir, true);
 
 		File mcJar = new File(binDir, "minecraft.jar");
 		mcJar.delete();
@@ -477,11 +479,22 @@ public class GameUpdater implements DownloadListener {
 		OutputStream outputStream = new FileOutputStream(outputFile);
 
 		try {
-			IOUtils.copy(inputStream, outputStream);
+			copy(inputStream, outputStream);
 		} finally {
 			outputStream.close();
 			inputStream.close();
 		}
+	}
+	
+	public static long copy(InputStream input, OutputStream output) throws IOException {
+		byte[] buffer = new byte[1024 * 4];
+		long count = 0;
+		int n = 0;
+		while (-1 != (n = input.read(buffer))) {
+			output.write(buffer, 0, n);
+			count += n;
+		}
+		return count;
 	}
 	
 	public static void copy(File input, File output) throws IOException {
@@ -490,7 +503,7 @@ public class GameUpdater implements DownloadListener {
 		try {
 			inputStream = new FileInputStream(input);
 			outputStream = new FileOutputStream(output);
-			IOUtils.copy(inputStream, outputStream);
+			copy(inputStream, outputStream);
 		}
 		finally {
 			if (inputStream != null)
@@ -525,7 +538,8 @@ public class GameUpdater implements DownloadListener {
 		if (zip.exists())
 			return;
 
-		ArrayList<File> exclude = new ArrayList<File>();
+		String rootDir = PlatformUtils.getWorkingDirectory() + File.separator;
+		HashSet<File> exclude = new HashSet<File>();
 		exclude.add(GameUpdater.backupDir);
 		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
 			exclude.add(GameUpdater.savesDir);
@@ -535,7 +549,7 @@ public class GameUpdater implements DownloadListener {
 
 		zip.createNewFile();
 
-		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude), PlatformUtils.getWorkingDirectory() + File.separator, false);
+		addFilesToExistingZip(zip, getFiles(PlatformUtils.getWorkingDirectory(), exclude, rootDir), rootDir, false);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -566,7 +580,7 @@ public class GameUpdater implements DownloadListener {
 		return false;
 	}
 
-	public void addFilesToExistingZip(File zipFile, ArrayList<File> files, String rootDir, boolean progressBar) throws IOException {
+	public void addFilesToExistingZip(File zipFile, Set<ClassFile> files, String rootDir, boolean progressBar) throws IOException {
 		File tempFile = File.createTempFile(zipFile.getName(), null, zipFile.getParentFile());
 		tempFile.delete();
 
@@ -585,7 +599,8 @@ public class GameUpdater implements DownloadListener {
 		float progress = 0F;
 		float progressStep = 0F;
 		if (progressBar) {
-			progressStep = 100F / (files.size() + new JarFile(tempFile).size());
+			int jarSize = new JarFile(tempFile).size();
+			progressStep = 100F / (files.size() + jarSize);
 		}
 
 		ZipInputStream zin = new ZipInputStream(new BufferedInputStream(new FileInputStream(tempFile)));
@@ -593,17 +608,8 @@ public class GameUpdater implements DownloadListener {
 		ZipEntry entry = zin.getNextEntry();
 		while (entry != null) {
 			String name = entry.getName();
-			boolean notInFiles = true;
-			for (File f : files) {
-				String path = f.getPath();
-				path = path.replace(rootDir, "");
-				path = path.replaceAll("\\\\", "/");
-				if (path.equals(name) || name.contains("META-INF")) {
-					notInFiles = false;
-					break;
-				}
-			}
-			if (notInFiles) {
+			ClassFile entryFile = new ClassFile(name);
+			if (!name.contains("META-INF") && !files.contains(entryFile)) {
 				out.putNextEntry(new ZipEntry(name));
 				int len;
 				while ((len = zin.read(buf)) > 0) {
@@ -618,9 +624,9 @@ public class GameUpdater implements DownloadListener {
 			}
 		}
 		zin.close();
-		for (File file : files) {
+		for (ClassFile file : files) {
 			try {
-				InputStream in = new FileInputStream(file);
+				InputStream in = new FileInputStream(file.getFile());
 
 				String path = file.getPath();
 				path = path.replace(rootDir, "");
@@ -714,19 +720,19 @@ public class GameUpdater implements DownloadListener {
 		downloadFile(url, output, null);
 	}
 
-	public ArrayList<File> getFiles(File dir) {
-		return getFiles(dir, new ArrayList<File>());
+	public Set<ClassFile> getFiles(File dir, String rootDir) {
+		return getFiles(dir, new HashSet<File>(), rootDir);
 	}
 
-	public ArrayList<File> getFiles(File dir, ArrayList<File> exclude) {
-		ArrayList<File> result = new ArrayList<File>();
+	public Set<ClassFile> getFiles(File dir, Set<File> exclude, String rootDir) {
+		HashSet<ClassFile> result = new HashSet<ClassFile>();
 		for (File file : dir.listFiles()) {
 			if (!exclude.contains(dir)) {
 				if (file.isDirectory()) {
-					result.addAll(this.getFiles(file, exclude));
+					result.addAll(this.getFiles(file, exclude, rootDir));
 					continue;
 				}
-				result.add(file);
+				result.add(new ClassFile(file, rootDir));
 			}
 		}
 		return result;

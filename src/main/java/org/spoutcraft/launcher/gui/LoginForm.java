@@ -107,6 +107,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public static UpdateDialog updateDialog;
 	private static String pass = null;
 	public static String[] values = null;
+	public static File clearCacheMarker = new File(PlatformUtils.getWorkingDirectory(), "ctemp");
 
 	public static final GameUpdater gu = new GameUpdater();
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
@@ -205,6 +206,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
+		
+		final JLabel loadingEditor = new JLabel("Loading News Feed...");
+		loadingEditor.setBounds(422, 320, 10, 50);
+		loadingEditor.setVisible(false);
 
 		SwingWorker<Object, Object> newsThread = new SwingWorker<Object, Object>() {
 
@@ -213,11 +218,13 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					URL url = new URL("http://updates.getspout.org/");
 					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 					if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+						editorPane.setVisible(false);
+						loadingEditor.setVisible(true);
 						editorPane.setPage(url);
 						try {
-							Thread.sleep(1000); //page does not load instantly, need to wait for it
+							Thread.sleep(5000);
 						}
-						catch (InterruptedException e) {}
+						catch (InterruptedException e) { }
 						String text = editorPane.getText();
 						int index = text.indexOf("<!-- BEGIN TUMBLR CODE -->");
 						int endIndex = text.indexOf("<!-- END TUMBLR CODE -->") + "<!-- END TUMBLR CODE -->".length();
@@ -230,6 +237,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						text = text.replace("</p>", "<br/>");
 						text = text.replaceAll("</p>", "<br/><br/>");
 						editorPane.setText(text);
+						loadingEditor.setVisible(false);
+						editorPane.setVisible(true);
 					}
 					else {
 						editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
@@ -363,6 +372,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 		
 		loginButton.setEnabled(true); //enable once logins are read
+		
+		if (clearCacheMarker.exists()){
+			clearCacheMarker.delete();
+			OptionDialog.clearCache();
+			doLogin(true);
+		}
 	}
 
 	public void drawCharacter(String url, int x, int y, List<JButton> buttons) {
@@ -524,6 +539,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Read Passwords");
 		this.passwordField.setText(usernames.get(this.usernameField.getSelectedItem().toString()));
 		this.rememberCheckbox.setSelected(this.passwordField.getPassword().length > 0);
 	}
@@ -590,7 +606,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public void doLogin(final String user, final String pass, final boolean cmdLine, final boolean silentMode) {
 		if (user == null || pass == null) {
-			JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
+			//JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
 			return;
 		}
 

@@ -31,10 +31,10 @@ public class Main {
 	
 	static String[] args_temp;
 	public static int build = -1;
-	static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
-	static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
-	static File settingsFile = new File(settingsDir, "spoutcraft.properties");
-	static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
+	public static File recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
+	public static File settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+	public static File settingsFile = new File(settingsDir, "spoutcraft.properties");
+	public static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	public Main() throws Exception {
 		main(new String[0]);
