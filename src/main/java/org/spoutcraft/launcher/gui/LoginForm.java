@@ -396,7 +396,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			try {
 				originalImage = ImageIO.read(new URL(url));
 			} catch (Exception e) {
-				originalImage = ImageIO.read(new URL("https://www.minecraft.net/img/char.png"));
+				originalImage = ImageIO.read(new URL("http://s3.amazonaws.com/MinecraftSkins/char.png"));
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 			
