@@ -31,8 +31,9 @@ import javax.swing.JProgressBar;
 
 public class PlatformUtils {
 
-	private static boolean portable;
 	private static File workDir = null;
+	
+
 	public static File getWorkingDirectory() {
 		if (workDir == null)
 			workDir = getWorkingDirectory("spoutcraft");
@@ -40,7 +41,7 @@ public class PlatformUtils {
 	}
 
 	public static File getWorkingDirectory(String applicationName) {
-		if (portable) {
+		if (MinecraftUtils.getOptions().isPortable()) {
 			return new File("spoutcraft");
 		}
 		String userHome = System.getProperty("user.home", ".");
@@ -83,14 +84,6 @@ public class PlatformUtils {
 		if (osName.contains("unix"))
 			return OS.linux;
 		return OS.unknown;
-	}
-
-	public static boolean isPortable() {
-		return portable;
-	}
-
-	public static void setPortable(boolean portable) {
-		PlatformUtils.portable = portable;
 	}
 
 	public enum OS {
