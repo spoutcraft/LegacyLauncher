@@ -114,11 +114,15 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
-		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
-		if (MinecraftUtils.server != null) {
-			minecraft.addParameter("server", MinecraftUtils.server);
-			if (MinecraftUtils.port != null) {
-				minecraft.addParameter("port", MinecraftUtils.port);
+		minecraft.addParameter("portable", MinecraftUtils.getOptions().isPortable() + "");
+		
+		String server = MinecraftUtils.getOptions().getServer();
+		String port  = MinecraftUtils.getOptions().getPort();
+		
+		if (server != null) {
+			minecraft.addParameter("server", server);
+			if (port != null) {
+				minecraft.addParameter("port", port);
 			}
 		}
 		
