@@ -28,7 +28,7 @@ import org.spoutcraft.launcher.gui.LoginForm;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
 public class Main {
-	
+
 	static String[] args_temp;
 	public static int build = -1;
 	static File recursion;
@@ -58,26 +58,27 @@ public class Main {
 			}
 			ProcessBuilder pb = new ProcessBuilder(params);
 			Process process = pb.start();
-			if(process == null)
+			if (process == null)
 				throw new Exception("!");
 			System.exit(0);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
 			PlatformUtils.setPortable(true);
 		}
-		
+
 		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 		settingsDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
 		settingsFile = new File(settingsDir, "spoutcraft.properties");
 		settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
-		
+
 		args_temp = args;
 		boolean relaunch = false;
+
 		try {
 			if (!recursion.exists()) {
 				relaunch = true;
@@ -85,12 +86,14 @@ public class Main {
 				recursion.delete();
 			}
 		} catch (Exception e) {
-			//e.printStackTrace();
+			// e.printStackTrace();
 		}
+
 		if (!settingsFile.exists()) {
 			settingsDir.mkdirs();
 			settingsFile.createNewFile();
 		}
+
 		if (relaunch && settings.checkProperty("memory")) {
 			if (settings.getPropertyInteger("memory") > 5) {
 				settings.changeProperty("memory", "0");
@@ -99,6 +102,7 @@ public class Main {
 			recursion.createNewFile();
 			reboot("-Xmx" + mem + "m");
 		}
+
 		PlatformUtils.getWorkingDirectory().mkdirs();
 
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
@@ -106,7 +110,7 @@ public class Main {
 		SystemConsoleListener listener = new SystemConsoleListener();
 
 		listener.initialize();
-		
+
 		System.out.println("------------------------------------------");
 		System.out.println("Spoutcraft Launcher is starting....");
 		System.out.println("Spoutcraft Launcher Build: " + getBuild());
@@ -120,25 +124,25 @@ public class Main {
 		LoginForm login = new LoginForm();
 
 		switch (args.length) {
-		case 4:
-			login.doLogin(args[0], args[1]);
+			case 4:
+				login.doLogin(args[0], args[1]);
 
-			MinecraftUtils.setServer(args[2]);
-			break;
-
-		case 3:		
-			login.doLogin(args[0], args[1]);
-
-			MinecraftUtils.setServer(args[2]);
-			break;
-		case 2:
-			login.doLogin(args[0], args[1]);
-
-			break;
-		default:
-			if (args.length > 5) {
 				MinecraftUtils.setServer(args[2]);
-			}
+				break;
+
+			case 3:
+				login.doLogin(args[0], args[1]);
+
+				MinecraftUtils.setServer(args[2]);
+				break;
+			case 2:
+				login.doLogin(args[0], args[1]);
+
+				break;
+			default:
+				if (args.length > 5) {
+					MinecraftUtils.setServer(args[2]);
+				}
 		}
 
 		login.setVisible(true);
@@ -152,8 +156,7 @@ public class Main {
 					BufferedReader bf = new BufferedReader(new FileReader(buildInfo));
 					String version = bf.readLine();
 					build = Integer.parseInt(version);
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
