@@ -74,6 +74,11 @@
             <version>4.8.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+        	<groupId>com.beust</groupId>
+        	<artifactId>jcommander</artifactId>
+        	<version>1.19</version>
+        </dependency>
     </dependencies>
    
     <build>
@@ -140,6 +145,7 @@
                             <artifactSet>
                                 <includes>
                                     <include>commons-io:commons-io</include>
+                                    <include>com.beust:jcommander</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
