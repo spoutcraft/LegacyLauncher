@@ -19,7 +19,7 @@ public class Options {
 	@Parameter(names = { "-server" , "-host" , "-join" , "-server" , "-j" , "-h" , "-s" }, description = "Minecraft Server to join")
 	private String server = null;
 	
-	@Parameter(names = { "-portable" , "-pmode" , "-portable_mode" , "-pm" }, description = "Portable Mode")
+	@Parameter(names = { "-portable" , "--portable" , "-pmode" , "-portable_mode" , "-pm" }, description = "Portable Mode")
 	private boolean portable = false;
 	
 	@Parameter(names = { "-safe" , "-smode" , "-safe_mode" , "-sm" }, description = "Safe Mode - Prevents Addons from being loaded")
