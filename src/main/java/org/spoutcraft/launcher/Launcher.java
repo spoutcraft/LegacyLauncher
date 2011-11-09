@@ -23,15 +23,13 @@ import java.net.URL;
 
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
-
-
 public class Launcher {
-	
+
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException{
-			   
+	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException {
+
 		File mcBinFolder = new File(PlatformUtils.getWorkingDirectory(), "bin");
-		
+
 		File minecraftJar = new File(mcBinFolder, "minecraft.jar");
 		File jinputJar = new File(mcBinFolder, "jinput.jar");
 		File lwglJar = new File(mcBinFolder, "lwjgl.jar");
@@ -45,14 +43,14 @@ public class Launcher {
 			urls[3] = lwjgl_utilJar.toURI().toURL();
 
 			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader());
-			
+
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);
 			System.setProperty("net.java.games.input.librarypath", nativesPath);
-			
+
 			Class minecraftClass = classLoader.loadClass("net.minecraft.client.MinecraftApplet");
 			return (Applet) minecraftClass.newInstance();
-			
+
 		} catch (MalformedURLException ex) {
 			ex.printStackTrace();
 			return null;
@@ -64,5 +62,5 @@ public class Launcher {
 			throw new CorruptedMinecraftJarException(ex);
 		}
 	}
-	
+
 }

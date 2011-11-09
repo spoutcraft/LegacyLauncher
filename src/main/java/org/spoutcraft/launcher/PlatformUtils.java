@@ -32,7 +32,6 @@ import javax.swing.JProgressBar;
 public class PlatformUtils {
 
 	private static File workDir = null;
-	
 
 	public static File getWorkingDirectory() {
 		if (workDir == null)
@@ -108,7 +107,7 @@ public class PlatformUtils {
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			
+
 			connection.setConnectTimeout(10000);
 
 			connection.connect();

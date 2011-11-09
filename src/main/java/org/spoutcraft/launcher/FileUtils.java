@@ -24,8 +24,7 @@ public class FileUtils {
 		}
 
 		if (!directory.delete()) {
-			String message =
-				"Unable to delete directory " + directory + ".";
+			String message = "Unable to delete directory " + directory + ".";
 			throw new IOException(message);
 		}
 	}
@@ -81,7 +80,7 @@ public class FileUtils {
 		}
 
 		File[] files = directory.listFiles();
-		if (files == null) {  // null if security restricted
+		if (files == null) { // null if security restricted
 			throw new IOException("Failed to list contents of " + directory);
 		}
 
@@ -98,7 +97,7 @@ public class FileUtils {
 			throw exception;
 		}
 	}
-	
+
 	/**
 	 * Deletes a file. If file is a directory, delete it and all sub-directories.
 	 * <p>
@@ -120,11 +119,10 @@ public class FileUtils {
 		} else {
 			boolean filePresent = file.exists();
 			if (!file.delete()) {
-				if (!filePresent){
+				if (!filePresent) {
 					throw new FileNotFoundException("File does not exist: " + file);
 				}
-				String message =
-					"Unable to delete file: " + file;
+				String message = "Unable to delete file: " + file;
 				throw new IOException(message);
 			}
 		}
@@ -152,7 +150,7 @@ public class FileUtils {
 			File canonicalDir = file.getParentFile().getCanonicalFile();
 			fileInCanonicalDir = new File(canonicalDir, file.getName());
 		}
-		
+
 		if (fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile())) {
 			return false;
 		} else {

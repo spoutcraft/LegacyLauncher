@@ -77,8 +77,8 @@ public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://www.minedev.net/spout/lwjgl/";
-	//public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
-	//public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	// public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
+	// public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
 	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
 	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 	private DownloadListener listener;
@@ -99,8 +99,7 @@ public class GameUpdater implements DownloadListener {
 		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
 		if (mcCache.length() < 1000) {
 			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateDir + File.separator + "minecraft.jar", "minecraft_1.8.1.jar");
-		}
-		else {
+		} else {
 			copy(mcCache, new File(updateDir, "minecraft.jar"));
 		}
 
@@ -110,28 +109,25 @@ public class GameUpdater implements DownloadListener {
 		// Process other Downloads
 		mcCache = new File(binCacheDir, "jinput.jar");
 		if (!mcCache.exists()) {
-			downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
-		}
-		else {
+			downloadFile(getNativesUrl() + "jinput.jar", binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
+		} else {
 			copy(mcCache, new File(updateDir, "jinput.jar"));
 		}
-		
+
 		mcCache = new File(binCacheDir, "lwjgl.jar");
 		if (!mcCache.exists()) {
 			downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
-		}
-		else {
+		} else {
 			copy(mcCache, new File(updateDir, "lwjgl.jar"));
 		}
-		
+
 		mcCache = new File(binCacheDir, "lwjgl_util.jar");
 		if (!mcCache.exists()) {
 			downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
-		}
-		else {
+		} else {
 			copy(mcCache, new File(updateDir, "lwjgl_util.jar"));
 		}
-		
+
 		getNatives();
 
 		stateChanged("Extracting Files...", 0);
@@ -140,7 +136,7 @@ public class GameUpdater implements DownloadListener {
 
 		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
 	}
-	
+
 	public String getBuildUrl(String mirrorURI, String jenkinsURL) {
 		try {
 			if (mirrors.size() == 0) {
@@ -149,45 +145,44 @@ public class GameUpdater implements DownloadListener {
 			int random = rand.nextInt(10 * mirrors.size());
 			int index = random / 10;
 			float progress = 0F;
-			//Test for bad, down mirrors
+			// Test for bad, down mirrors
 			for (int i = index; i < mirrors.size() + index; i++) {
 				int j = i;
-				if (j >= mirrors.size()) j-= mirrors.size();
+				if (j >= mirrors.size())
+					j -= mirrors.size();
 				String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
 				if (isAddressReachable(mirror)) {
 					System.out.println("Using mirror: " + mirror);
 					stateChanged("Contacting Mirrors...", 100F);
 					return mirror;
-				}
-				else {
+				} else {
 					progress += 100F / mirrors.size();
 					stateChanged("Contacting Mirrors...", progress);
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		System.err.println("All mirrors failed, defaulting to jenkins");
 		return jenkinsURL;
 	}
-	
+
 	public boolean isAddressReachable(String url) {
 		try {
 			URL test = new URL(url);
 			HttpURLConnection.setFollowRedirects(false);
-			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
+			HttpURLConnection urlConnect = (HttpURLConnection) test.openConnection();
 			urlConnect.setRequestMethod("HEAD");
 			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
 		} catch (Exception e) {
 			return false;
 		}
 	}
-	
+
 	public void updateMirrors() throws IOException {
 		URL url = new URL("http://cdn.getspout.org/mirrors.html");
-		HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-		System.setProperty("http.agent", ""); //Spoofing the user agent is required to track stats
+		HttpURLConnection con = (HttpURLConnection) (url.openConnection());
+		System.setProperty("http.agent", ""); // Spoofing the user agent is required to track stats
 		con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
 		mirrors.clear();
@@ -258,10 +253,10 @@ public class GameUpdater implements DownloadListener {
 
 		JarFile jar = new JarFile(nativesJar);
 		Enumeration<JarEntry> entries = jar.entries();
-		
+
 		float progressStep = 100F / jar.size();
 		float progress = 0;
-		
+
 		while (entries.hasMoreElements()) {
 			JarEntry entry = entries.nextElement();
 			String name = entry.getName();
@@ -281,7 +276,7 @@ public class GameUpdater implements DownloadListener {
 			while ((read = inputStream.read(bytes)) != -1) {
 				out.write(bytes, 0, read);
 			}
-			
+
 			progress += progressStep;
 			stateChanged("Extracting Files...", progress);
 
@@ -325,7 +320,7 @@ public class GameUpdater implements DownloadListener {
 
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
-		
+
 		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {
@@ -341,12 +336,12 @@ public class GameUpdater implements DownloadListener {
 		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
 
 		stateChanged("Unzipping Spoutcraft Files...", 0F);
-		
+
 		unzipArchive(new File(updateDir.getPath() + File.separator + "spoutcraft.zip"), new File(updateDir + File.separator + "spoutcraft"));
 
 		String rootDir = PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator;
 		Set<ClassFile> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"), rootDir);
-		
+
 		stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", 0F);
 
 		this.addFilesToExistingZip(updateMC, spoutMod, rootDir, true);
@@ -446,21 +441,21 @@ public class GameUpdater implements DownloadListener {
 		}
 		return allowUpdates != 0;
 	}
-	
+
 	public void unzipArchive(File archive, File outputDir) throws ZipException, IOException {
 		ZipFile zipfile = new ZipFile(archive);
 		float progress = 0F;
 		float progressStep = 100F / zipfile.size();
-		for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements(); ) {
+		for (Enumeration<? extends ZipEntry> e = zipfile.entries(); e.hasMoreElements();) {
 			ZipEntry entry = (ZipEntry) e.nextElement();
 			unzipEntry(zipfile, entry, outputDir);
-			
+
 			progress += progressStep;
 			stateChanged("Unzipping Spoutcraft Files...", progress);
 		}
 		stateChanged("Unzipping Spoutcraft Files...", 100F);
 	}
-	
+
 	private void unzipEntry(ZipFile zipfile, ZipEntry entry, File outputDir) throws IOException {
 
 		if (entry.isDirectory()) {
@@ -469,7 +464,7 @@ public class GameUpdater implements DownloadListener {
 		}
 
 		File outputFile = new File(outputDir, entry.getName());
-		if (!outputFile.getParentFile().exists()){
+		if (!outputFile.getParentFile().exists()) {
 			(new File(outputDir, entry.getName())).mkdirs();
 		}
 		if (outputFile.isDirectory()) {
@@ -485,7 +480,7 @@ public class GameUpdater implements DownloadListener {
 			inputStream.close();
 		}
 	}
-	
+
 	public static long copy(InputStream input, OutputStream output) throws IOException {
 		byte[] buffer = new byte[1024 * 4];
 		long count = 0;
@@ -496,7 +491,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		return count;
 	}
-	
+
 	public static void copy(File input, File output) throws IOException {
 		FileInputStream inputStream = null;
 		FileOutputStream outputStream = null;
@@ -504,8 +499,7 @@ public class GameUpdater implements DownloadListener {
 			inputStream = new FileInputStream(input);
 			outputStream = new FileOutputStream(output);
 			copy(inputStream, outputStream);
-		}
-		finally {
+		} finally {
 			if (inputStream != null)
 				inputStream.close();
 			if (outputStream != null)
@@ -585,17 +579,17 @@ public class GameUpdater implements DownloadListener {
 		tempFile.delete();
 
 		copy(zipFile, tempFile);
-		boolean renameOk = zipFile.renameTo(tempFile);;
+		boolean renameOk = zipFile.renameTo(tempFile);
+		;
 		if (!renameOk) {
 			if (tempFile.exists()) {
 				zipFile.delete();
-			}
-			else {
+			} else {
 				throw new RuntimeException("could not rename the file " + zipFile.getAbsolutePath() + " to " + tempFile.getAbsolutePath());
 			}
 		}
 		byte[] buf = new byte[1024];
-		
+
 		float progress = 0F;
 		float progressStep = 0F;
 		if (progressBar) {
@@ -617,7 +611,7 @@ public class GameUpdater implements DownloadListener {
 				}
 			}
 			entry = zin.getNextEntry();
-			
+
 			progress += progressStep;
 			if (progressBar) {
 				stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", progress);
@@ -637,7 +631,7 @@ public class GameUpdater implements DownloadListener {
 				while ((len = in.read(buf)) > 0) {
 					out.write(buf, 0, len);
 				}
-				
+
 				progress += progressStep;
 				if (progressBar) {
 					stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", progress);
@@ -686,7 +680,7 @@ public class GameUpdater implements DownloadListener {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void downloadFile(String url, String output, String cacheName) throws IOException {
 		int tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
 		File outputFile = null;
@@ -702,8 +696,7 @@ public class GameUpdater implements DownloadListener {
 				}
 				System.err.println("Download of " + url + " Failed!");
 				stateChanged("Download Failed, retries remaining: " + tries, 0F);
-			}
-			else {
+			} else {
 				outputFile = download.getOutFile();
 				break;
 			}

@@ -94,6 +94,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			isHash = false;
 			password = pass;
 		}
+
 		public UserPasswordInformation(byte[] hash) {
 			isHash = true;
 			passwordHash = hash;
@@ -130,7 +131,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		LoginForm.updateDialog = new UpdateDialog(this);
 		settings.load();
 		gu.setListener(this);
-		
+
 		this.addWindowListener(this);
 
 		options.setVisible(false);
@@ -138,7 +139,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginButton.setBounds(272, 13, 86, 23);
 		loginButton.setOpaque(false);
 		loginButton.addActionListener(this);
-		loginButton.setEnabled(false); //disable until login info is read
+		loginButton.setEnabled(false); // disable until login info is read
 		optionsButton.setFont(new Font("Arial", Font.PLAIN, 11));
 		optionsButton.setOpaque(false);
 		optionsButton.addActionListener(this);
@@ -185,7 +186,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		loginSkin1.addActionListener(this);
 		loginSkin1.setVisible(false);
 		loginSkin1Image = new ArrayList<JButton>();
-		
+
 		loginSkin2 = new JButton("Login as Player");
 		loginSkin2.setFont(new Font("Arial", Font.PLAIN, 11));
 		loginSkin2.setBounds(261, 428, 119, 23);
@@ -216,7 +217,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
-		
+
 		final JLabel loadingEditor = new JLabel("Loading News Feed...");
 		loadingEditor.setBounds(422, 320, 10, 50);
 		loadingEditor.setVisible(false);
@@ -226,15 +227,15 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			protected Object doInBackground() throws Exception {
 				try {
 					URL url = new URL("http://updates.getspout.org/");
-					HttpURLConnection conn = (HttpURLConnection)url.openConnection();
+					HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 					if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
 						editorPane.setVisible(false);
 						loadingEditor.setVisible(true);
 						editorPane.setPage(url);
 						try {
 							Thread.sleep(5000);
+						} catch (InterruptedException e) {
 						}
-						catch (InterruptedException e) { }
 						String text = editorPane.getText();
 						int index = text.indexOf("<!-- BEGIN TUMBLR CODE -->");
 						int endIndex = text.indexOf("<!-- END TUMBLR CODE -->") + "<!-- END TUMBLR CODE -->".length();
@@ -249,8 +250,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						editorPane.setText(text);
 						loadingEditor.setVisible(false);
 						editorPane.setVisible(true);
-					}
-					else {
+					} else {
 						editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
 					}
 				} catch (MalformedURLException e1) {
@@ -380,10 +380,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		order.add(optionsButton);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
-		
-		loginButton.setEnabled(true); //enable once logins are read
-		
-		if (clearCacheMarker.exists()){
+
+		loginButton.setEnabled(true); // enable once logins are read
+
+		if (clearCacheMarker.exists()) {
 			clearCacheMarker.delete();
 			OptionDialog.clearCache();
 			doLogin(true);
@@ -398,8 +398,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			} catch (Exception e) {
 				originalImage = ImageIO.read(new URL("http://s3.amazonaws.com/MinecraftSkins/char.png"));
 			}
-			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-			
+			int type = BufferedImage.TYPE_INT_ARGB;// originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+
 			buttons.add(drawCropped(originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
 
 			buttons.add(drawCropped(originalImage, type, 8, 8, 16, 16, x, y, 7)); // HEAD
@@ -435,14 +435,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		tmp.setSelectedIcon(tmp.getIcon());
 		tmp.setDisabledIcon(tmp.getPressedIcon());
 		tmp.setPressedIcon(tmp.getIcon());
-		
+
 		tmp.setOpaque(false);
 		tmp.setFocusable(false);
-		
+
 		tmp.setContentAreaFilled(false);
 		tmp.setBorderPainted(false);
 		tmp.setRolloverEnabled(false);
-		
+
 		tmp.setBounds(x, y, (sx2 - sx1) * scale, (sy2 - sy1) * scale);
 		tmp.addActionListener(this);
 		contentPane.add(tmp);
@@ -557,10 +557,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		if (event.getSource() == loginSkin1 || event.getSource() == loginSkin2) {
 			eventId = "Login";
 			this.usernameField.setSelectedItem(((JButton) event.getSource()).getText());
-		} else if(loginSkin1Image.contains(event.getSource())) {
+		} else if (loginSkin1Image.contains(event.getSource())) {
 			eventId = "Login";
 			this.usernameField.setSelectedItem(loginSkin1.getText());
-		} else if(loginSkin2Image.contains(event.getSource())) {
+		} else if (loginSkin2Image.contains(event.getSource())) {
 			eventId = "Login";
 			this.usernameField.setSelectedItem(loginSkin2.getText());
 		}
@@ -575,7 +575,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	private void updatePasswordField() {
-		if (this.usernameField.getSelectedItem() != null){
+		if (this.usernameField.getSelectedItem() != null) {
 			UserPasswordInformation info = usernames.get(this.usernameField.getSelectedItem().toString());
 			if (info.isHash) {
 				this.passwordField.setText("");
@@ -590,7 +590,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public void doLogin() {
 		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false);
 	}
-	
+
 	public void doLogin(final boolean silentMode) {
 		doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()), false, silentMode);
 	}
@@ -598,14 +598,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public void doLogin(final String user, final String pass) {
 		doLogin(user, pass, true);
 	}
-	
+
 	public void doLogin(final String user, final String pass, final boolean cmdLine) {
 		doLogin(user, pass, cmdLine, false);
 	}
 
 	public void doLogin(final String user, final String pass, final boolean cmdLine, final boolean silentMode) {
 		if (user == null || pass == null) {
-			//JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
+			// JOptionPane.showMessageDialog(getParent(), "Incorrect username /password combination");
 			return;
 		}
 
@@ -626,8 +626,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 					this.cancel(true);
 					progressBar.setVisible(false);
-				} catch (MinecraftUserNotPremiumException e)
-				{
+				} catch (MinecraftUserNotPremiumException e) {
 					JOptionPane.showMessageDialog(getParent(), "The specified account is not premium");
 					this.cancel(true);
 					progressBar.setVisible(false);
@@ -652,8 +651,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 										break;
 									}
 								}
-							}
-							catch (NoSuchAlgorithmException ex) {
+							} catch (NoSuchAlgorithmException ex) {
 								authFailed = true;
 							}
 						} else {
@@ -710,12 +708,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					String password = new String(passwordField.getPassword());
 					if (rememberCheckbox.isSelected()) {
 						usernames.put(gu.user, new UserPasswordInformation(password));
-					}
-					else {
+					} else {
 						if (digest == null) {
 							usernames.put(gu.user, new UserPasswordInformation(""));
-						}
-						else {
+						} else {
 							usernames.put(gu.user, new UserPasswordInformation(digest.digest(password.getBytes())));
 						}
 					}
@@ -732,8 +728,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						}
 						if (silentMode) {
 							updateThread();
-						}
-						else if (mcUpdate || spoutUpdate) {
+						} else if (mcUpdate || spoutUpdate) {
 							LoginForm.updateDialog.setVisible(true);
 						} else {
 							runGame();
@@ -741,8 +736,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						this.cancel(true);
 					}
 
-					protected Boolean doInBackground() throws Exception
-					{
+					protected Boolean doInBackground() throws Exception {
 						publish("Checking for Minecraft Update...\n");
 						try {
 							mcUpdate = gu.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
@@ -773,9 +767,10 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public void updateThread() {
 		SwingWorker<Boolean, String> updateThread = new SwingWorker<Boolean, String>() {
 			boolean error = false;
+
 			protected void done() {
 				progressBar.setVisible(false);
-				if (!error){
+				if (!error) {
 					runGame();
 				}
 				this.cancel(true);
@@ -834,25 +829,24 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			LoginForm.updateDialog = null;
 			setVisible(false);
 			dispose();
-		}
-		else if (result == LauncherFrame.ERROR_IN_LAUNCH){
+		} else if (result == LauncherFrame.ERROR_IN_LAUNCH) {
 			loginButton.setEnabled(true);
 			optionsButton.setEnabled(true);
 			loginSkin1.setEnabled(true);
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
 		}
-		//Do nothing for retrying launch
+		// Do nothing for retrying launch
 	}
-	
+
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void windowClosing(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void windowClosed(WindowEvent e) {
@@ -864,21 +858,21 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

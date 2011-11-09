@@ -35,68 +35,47 @@ import org.spoutcraft.launcher.PlatformUtils;
 //import org.spoutcraft.launcher.SettingsHandler;
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
-public class LauncherFrame extends Frame implements WindowListener{
+public class LauncherFrame extends Frame implements WindowListener {
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
 	private LoginForm loginForm = null;
 	public static boolean errorInDownload = false;
 	public static boolean successfulGameLaunch = false;
-	
+
 	public static final int RETRYING_LAUNCH = -1;
 	public static final int ERROR_IN_LAUNCH = 0;
 	public static final int SUCCESSFUL_LAUNCH = 1;
-	
-	//private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+
+	// private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	public LauncherFrame() {
 		super("Spoutcraft");
 		super.setVisible(true);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((dim.width-870)/2, (dim.height-518)/2);
+		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
 		this.setSize(new Dimension(870, 518));
 		this.setResizable(true);
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
 	}
-	
+
 	public void setLoginForm(LoginForm form) {
 		loginForm = form;
 	}
-	
+
 	public LoginForm getLoginForm() {
 		return loginForm;
 	}
-	
+
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
 
 		Applet applet = null;
 		try {
 			applet = Launcher.getMinecraftApplet();
-		}
-		catch (CorruptedMinecraftJarException corruption) {
-			/*String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
-			this.setVisible(false);
-			int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION);
-			int result = RETRYING_LAUNCH;
-			if (option == JOptionPane.YES_OPTION) {
-				try {
-					LoginForm.clearCacheMarker.createNewFile();
-					Main.recursion.createNewFile();
-					int mem = 1024;
-					if (settings.checkProperty("memory")) {
-							mem = 1 << 9 + settings.getPropertyInteger("memory");
-					}
-					Main.reboot("-Xmx" + mem + "m");
-					return RETRYING_LAUNCH;
-				} catch (IOException e) {
-					result = ERROR_IN_LAUNCH;
-				}
-			}
-			else {
-				result = ERROR_IN_LAUNCH;
-			}
-			this.dispose();
-			return result;*/
+		} catch (CorruptedMinecraftJarException corruption) {
+			/*
+			 * String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?"; this.setVisible(false); int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION); int result = RETRYING_LAUNCH; if (option == JOptionPane.YES_OPTION) { try { LoginForm.clearCacheMarker.createNewFile(); Main.recursion.createNewFile(); int mem = 1024; if (settings.checkProperty("memory")) { mem = 1 << 9 + settings.getPropertyInteger("memory"); } Main.reboot("-Xmx" + mem + "m"); return RETRYING_LAUNCH; } catch (IOException e) { result = ERROR_IN_LAUNCH; } } else { result = ERROR_IN_LAUNCH; } this.dispose(); return result;
+			 */
 			errorInDownload = true;
 		}
 		if (applet == null || errorInDownload) {
@@ -115,17 +94,17 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", MinecraftUtils.getOptions().isPortable() + "");
-		
+
 		String server = MinecraftUtils.getOptions().getServer();
-		String port  = MinecraftUtils.getOptions().getPort();
-		
+		String port = MinecraftUtils.getOptions().getPort();
+
 		if (server != null) {
 			minecraft.addParameter("server", server);
 			if (port != null) {
 				minecraft.addParameter("port", port);
 			}
 		}
-		
+
 		applet.setStub(minecraft);
 
 		this.add(minecraft);
@@ -135,20 +114,18 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.setSize(getWidth(), getHeight());
 
 		minecraft.start();
-		
+
 		this.setVisible(true);
 		successfulGameLaunch = true;
 		return SUCCESSFUL_LAUNCH;
 	}
 
-	public void windowActivated(WindowEvent e) {		
+	public void windowActivated(WindowEvent e) {
 	}
 
-	
 	public void windowClosed(WindowEvent e) {
 	}
 
-	
 	public void windowClosing(WindowEvent e) {
 		if (LauncherFrame.this.minecraft != null) {
 			LauncherFrame.this.minecraft.stop();
@@ -163,19 +140,15 @@ public class LauncherFrame extends Frame implements WindowListener{
 		System.exit(0);
 	}
 
-	
 	public void windowDeactivated(WindowEvent e) {
 	}
 
-	
 	public void windowDeiconified(WindowEvent e) {
 	}
 
-	
 	public void windowIconified(WindowEvent e) {
 	}
 
-	
 	public void windowOpened(WindowEvent e) {
 	}
 }
