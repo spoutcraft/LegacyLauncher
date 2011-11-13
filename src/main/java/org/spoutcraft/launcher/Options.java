@@ -54,6 +54,7 @@ public class Options {
 	}
 
 	public String getServer() {
+		if (server == null) return null;
 		if (server.contains(":")) {
 			return server.substring(0, server.indexOf(":"));
 		}
@@ -61,6 +62,7 @@ public class Options {
 	}
 
 	public String getPort() {
+		if (server == null) return null;
 		if (server.contains(":")) {
 			return server.substring(server.indexOf(":") + 1);
 		}
