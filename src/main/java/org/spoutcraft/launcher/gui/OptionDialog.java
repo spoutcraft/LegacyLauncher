@@ -220,6 +220,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 				FileUtils.deleteDirectory(GameUpdater.updateDir);
 			} else {
 				FileUtils.deleteDirectory(new File(PlatformUtils.getWorkingDirectory().getPath()));
+				reboot("");
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
