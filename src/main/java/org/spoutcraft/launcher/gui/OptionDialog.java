@@ -200,7 +200,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 				}
 			}
 			if (clearCache) {
-				clearCache();
+				clearCache(false);
 
 			}
 			this.setVisible(false);
@@ -209,15 +209,19 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.setVisible(false);
 			this.dispose();
 		} else if (btnID.equals("Clear Cache")) {
-			clearCache();
+			clearCache(true);
 		}
 	}
 
-	public static void clearCache() {
+	public static void clearCache(boolean comeplete) {
 		try {
-			FileUtils.deleteDirectory(GameUpdater.binDir);
-			FileUtils.deleteDirectory(GameUpdater.updateDir);
-		} catch (IOException e) {
+			if(!compelete) {
+				FileUtils.deleteDirectory(GameUpdater.binDir);
+				FileUtils.deleteDirectory(GameUpdater.updateDir);
+			} else {
+				FileUtils.deleteDirectory(new File(PlatformUtils.getWorkingDirectory().getPath()));
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
