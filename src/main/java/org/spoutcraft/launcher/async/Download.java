@@ -47,6 +47,7 @@ public class Download implements Runnable {
 	public void run() {
 		try {
 			URLConnection conn = url.openConnection();
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			//conn.setRequestProperty("Range", "bytes=0-");
 			///((HttpURLConnection)conn).setRequestMethod("HEAD");
 			//((HttpURLConnection)conn).setRequestProperty("Cache-Control", "no-cache");
