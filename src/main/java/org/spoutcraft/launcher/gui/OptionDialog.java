@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -32,26 +31,28 @@ import javax.swing.border.EmptyBorder;
 import org.spoutcraft.launcher.FileUtils;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Main;
-import org.spoutcraft.launcher.PlatformUtils;
-import org.spoutcraft.launcher.SettingsHandler;
+import org.spoutcraft.launcher.MinecraftDownloadUtils;
+import org.spoutcraft.launcher.SettingsUtil;
+
+import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
+import javax.swing.JRadioButton;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 public class OptionDialog extends JDialog implements ActionListener {
-
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2453348055512665749L;
+	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
-	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
-	JCheckBox devCheckbox = new JCheckBox("Use latest dev build. Dangerous!");
+	JRadioButton devBuilds = new JRadioButton("Always use development builds");
+	
+	JRadioButton recBuilds = new JRadioButton("Always use recommended builds");
+	
+	JRadioButton customBuilds = new JRadioButton("Manual build selection");
 	
 	JCheckBox clipboardCheckbox = new JCheckBox("Allow access to your clipboard");
 	
@@ -66,7 +67,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JButton clearCache = new JButton("Clear Cache");
 	
 	JLabel buildInfo = new JLabel();
-
+		
+	JComboBox buildsCombo = new JComboBox();
 
 	/**
 	 * Create the dialog.
@@ -74,14 +76,25 @@ public class OptionDialog extends JDialog implements ActionListener {
 	public OptionDialog() {
 		setTitle("Spoutcraft Settings");
 		
-		settings.load();
+		new Thread() {
+			public void run() {
+				MinecraftDownloadUtils.updateSpoutcraftYMLCache();
+			}
+		}.start();
+		
+		ButtonGroup group = new ButtonGroup();
+		group.add(devBuilds);
+		group.add(recBuilds);
+		group.add(customBuilds);
 		
 		buildInfo.setText("Spoutcraft Launcher Build " + Main.build);
 		buildInfo.setOpaque(true);
 		buildInfo.setForeground(Color.DARK_GRAY);
 		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev" );
-				
-		devCheckbox.setToolTipText("Uses the latest development builds of Spoutcraft. They are often unstable!");
+		
+		customBuilds.setToolTipText("Only use if you know what you are doing!");
+		devBuilds.setToolTipText("Development builds are often unstable and buggy. Use at your own risk!");
+		recBuilds.setToolTipText("Recommended builds are (nearly) bug-free and well-tested.");
 		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
 		backupCheckbox.setToolTipText("Backs up your Spoutcraft SP worlds after each Spoutcraft update");
 		retryLoginCheckbox.setToolTipText("Retries logging into minecraft.net up to 3 times after a failure");
@@ -89,21 +102,31 @@ public class OptionDialog extends JDialog implements ActionListener {
 		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
 		memoryCombo.setToolTipText("Allows you to adjust the memory assigned to Spoutcraft. Assigning more memory than you have may cause crashes.");
 		
-		if (settings.checkProperty("devupdate")) {
-			devCheckbox.setSelected(settings.getPropertyBoolean("devupdate"));
+		if (SettingsUtil.isRecommendedBuild()) {
+			devBuilds.setSelected(false);
+			recBuilds.setSelected(true);
+			customBuilds.setSelected(false);
+			SettingsUtil.setDevelopmentBuild(false);
 		}
-		if (settings.checkProperty("clipboardaccess")) {
-			clipboardCheckbox.setSelected(settings.getPropertyBoolean("clipboardaccess"));
+		else if (SettingsUtil.isDevelopmentBuild()) {
+			devBuilds.setSelected(true);
+			recBuilds.setSelected(false);
+			customBuilds.setSelected(false);
 		}
-		if (settings.checkProperty("worldbackup")) {
-			backupCheckbox.setSelected(settings.getPropertyBoolean("worldbackup"));
+		else {
+			devBuilds.setSelected(false);
+			recBuilds.setSelected(false);
+			customBuilds.setSelected(true);
 		}
-		if (settings.checkProperty("retryLogins")) {
-			retryLoginCheckbox.setSelected(settings.getPropertyBoolean("retryLogins"));
-		}
-		if (settings.checkProperty("latestLWJGL")) {
-			latestLWJGLCheckbox.setSelected(settings.getPropertyBoolean("latestLWJGL"));
-		}
+		customBuilds.addActionListener(this);
+		recBuilds.addActionListener(this);
+		devBuilds.addActionListener(this);
+		buildsCombo.addActionListener(this);
+		
+		clipboardCheckbox.setSelected(SettingsUtil.isClipboardAccess());
+		backupCheckbox.setSelected(SettingsUtil.isWorldBackup());
+		retryLoginCheckbox.setSelected(SettingsUtil.getLoginTries() > 1);
+		latestLWJGLCheckbox.setSelected(SettingsUtil.isLatestLWJGL());
 		
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -117,11 +140,11 @@ public class OptionDialog extends JDialog implements ActionListener {
 		memoryCombo.addItem("8 GB");
 		memoryCombo.addItem("16 GB");
 		
-		if (settings.checkProperty("memory")) {
-			memoryCombo.setSelectedIndex(settings.getPropertyInteger("memory"));
-		}
+		memoryCombo.setSelectedIndex(SettingsUtil.getMemorySelection());
 		
-		JLabel lblMemoryToAllocate = new JLabel("Memory to allocate");
+		JLabel lblMemoryToAllocate = new JLabel("Memory to allocate: ");
+		
+		JLabel selectBuild = new JLabel("Select Spoutcraft build: ");
 		
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
@@ -129,7 +152,13 @@ public class OptionDialog extends JDialog implements ActionListener {
 				.addGroup(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(devCheckbox)
+						.addGroup(gl_contentPanel.createSequentialGroup()
+								.addComponent(selectBuild)
+								.addPreferredGap(ComponentPlacement.RELATED)
+								.addComponent(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addComponent(devBuilds)
+						.addComponent(recBuilds)
+						.addComponent(customBuilds)
 						.addComponent(clipboardCheckbox)
 						.addComponent(backupCheckbox)
 						.addComponent(retryLoginCheckbox)
@@ -142,10 +171,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 							.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(27, Short.MAX_VALUE))
 		);
+		
 		Font font = new Font("Arial", Font.PLAIN, 11);
 		backupCheckbox.setFont(font);
 		clipboardCheckbox.setFont(font);
-		devCheckbox.setFont(font);
+		devBuilds.setFont(font);
+		recBuilds.setFont(font);
 		retryLoginCheckbox.setFont(font);
 		clearCache.setFont(font);
 		clearCache.setActionCommand("Clear Cache");
@@ -153,7 +184,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 		gl_contentPanel.setVerticalGroup(
 			gl_contentPanel.createParallelGroup(Alignment.LEADING)
 				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addComponent(devCheckbox)
+					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
+							.addComponent(selectBuild)
+							.addComponent(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addComponent(devBuilds)
+					.addComponent(recBuilds)
+					.addComponent(customBuilds)
 					.addComponent(retryLoginCheckbox)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clipboardCheckbox)
@@ -191,68 +227,107 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 		}
 	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		if (buildsCombo.getItemCount() == 0 && visible) {
+			String[] buildList = MinecraftDownloadUtils.getSpoutcraftBuilds();
+			if (buildList != null) {
+				for (String item : buildList) {
+					buildsCombo.addItem(item);
+				}
+			}
+			else {
+				buildsCombo.addItem("No builds found");
+			}
+			updateBuildsCombo();
+		}
+		
+		super.setVisible(visible);
+	}
 
 	public void actionPerformed(ActionEvent evt) {
-		String btnID = evt.getActionCommand(); 
-		if (btnID.equals("OK")) {
-			if (settings.checkProperty("devupdate")) {
-				settings.changeProperty("devupdate", devCheckbox.isSelected());
-			} else {
-				settings.put("devupdate", devCheckbox.isSelected());
+		String id = evt.getActionCommand(); 
+		if (id.equals("OK")) {
+			SettingsUtil.setDevelopmentBuild(devBuilds.isSelected());
+			SettingsUtil.setRecommendedBuild(recBuilds.isSelected());
+			SettingsUtil.setClipboardAccess(clipboardCheckbox.isSelected());
+			SettingsUtil.setWorldBackup(backupCheckbox.isSelected());
+			SettingsUtil.setLoginTries(retryLoginCheckbox.isSelected());
+			if (SettingsUtil.getMemorySelection() > 5) {
+				SettingsUtil.setMemorySelection(0);
 			}
-			if (settings.checkProperty("clipboardaccess")) {
-				settings.changeProperty("clipboardaccess", clipboardCheckbox.isSelected());
-			} else {
-				settings.put("clipboardaccess", clipboardCheckbox.isSelected());
+			if (memoryCombo.getSelectedIndex() != SettingsUtil.getMemorySelection()) {
+				SettingsUtil.setMemorySelection(memoryCombo.getSelectedIndex());
+				int mem = 1 << 9 + memoryCombo.getSelectedIndex();
+				Main.reboot("-Xmx" + mem + "m");
 			}
-			if (settings.checkProperty("worldbackup")) {
-				settings.changeProperty("worldbackup", backupCheckbox.isSelected());
-			} else {
-				settings.put("worldbackup", backupCheckbox.isSelected());
-			}
-			if (settings.checkProperty("retryLogins")) {
-				settings.changeProperty("retryLogins", retryLoginCheckbox.isSelected());
-			} else {
-				settings.put("retryLogins", retryLoginCheckbox.isSelected());
-			}
-			if (settings.checkProperty("memory")) {
-				if (settings.getPropertyInteger("memory") > 3) {
-					settings.changeProperty("memory", "0");
-				}
-				if (settings.getPropertyInteger("memory") != memoryCombo.getSelectedIndex()) {
-					settings.changeProperty("memory", memoryCombo.getSelectedIndex());
-					int mem = 1 << 9 + OptionDialog.settings.getPropertyInteger("memory");
-					Main.reboot("-Xmx" + mem + "m");
-				}
-			} else {
-				settings.put("memory", memoryCombo.getSelectedIndex());
-			}
-			boolean clearCache = false;
-			if (settings.checkProperty("latestLWJGL")) {
-				if (settings.getPropertyBoolean("latestLWJGL") != latestLWJGLCheckbox.isSelected()){
-					clearCache = true;
-				}
-				settings.changeProperty("latestLWJGL", latestLWJGLCheckbox.isSelected());
-			} else {
-				settings.put("latestLWJGL", latestLWJGLCheckbox.isSelected());
-				if (latestLWJGLCheckbox.isSelected()) {
-					clearCache = true;
-				}
-			}
-			if (clearCache) {
+			if (latestLWJGLCheckbox.isSelected() != SettingsUtil.isLatestLWJGL()) {
+				SettingsUtil.setLatestLWJGL(latestLWJGLCheckbox.isSelected());
 				clearCache();
-				
 			}
+			
+			if (buildsCombo.isEnabled()) {
+				int build = -1;
+				try {
+					String item = ((String)buildsCombo.getSelectedItem());
+					if (item.contains("|")) {
+						item = item.split("\\|")[0];
+					}
+					item.trim();
+					build = Integer.parseInt(item);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+				if (build > -1) {
+					SettingsUtil.setSelectedBuild(build);
+				}
+			}
+			
 			this.setVisible(false);
 			this.dispose();
-		} else if (btnID.equals("Cancel")) {
+		} else if (id.equals("Cancel")) {
 			this.setVisible(false);
 			this.dispose();
 		}
-		else if (btnID.equals("Clear Cache")) {
+		else if (id.equals("Clear Cache")) {
 			clearCache();
 		}
+		else if (id.equals(customBuilds.getText()) || id.equals(devBuilds.getText()) || id.equals(recBuilds.getText())) {
+			updateBuildsCombo();
+		}
 	}
+	
+	public void updateBuildsCombo() {
+		buildsCombo.setEnabled(customBuilds.isSelected());
+		
+		if (customBuilds.isSelected()) {
+			if (SettingsUtil.getSelectedBuild() > -1) {
+				int build = SettingsUtil.getSelectedBuild();
+				for (int i = 0; i < buildsCombo.getItemCount(); i++) {
+					String item = (String) buildsCombo.getItemAt(i);
+					if (item.contains(String.valueOf(build))) {
+						buildsCombo.setSelectedIndex(i);
+						break;
+					}
+				}
+			}
+		}
+		else if (devBuilds.isSelected()) {
+			buildsCombo.setSelectedIndex(0);
+		}
+		else if (recBuilds.isSelected()) {
+			for (int i = 0; i < buildsCombo.getItemCount(); i++) {
+				String item = (String) buildsCombo.getItemAt(i);
+				if (item.contains("Rec. Build")) {
+					buildsCombo.setSelectedIndex(i);
+					break;
+				}
+			}
+		}
+	}
+
 	
 	public static void clearCache() {
 		try {

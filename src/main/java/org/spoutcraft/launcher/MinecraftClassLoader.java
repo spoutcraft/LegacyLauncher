@@ -16,18 +16,29 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class MinecraftClassLoader extends URLClassLoader{
+	File spoutcraftBinDir = new File(GameUpdater.binDir + File.separator + "spoutcraft");
+	private HashMap<String, String> spoutcraftClasses = new HashMap<String, String>();
 
 	public MinecraftClassLoader(URL[] urls, ClassLoader parent) {
 		super(urls, parent);
 	}
-
+	
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		String modifiedName = name.replace("//", "/");
+		
+		if (spoutcraftClasses.containsKey(modifiedName)) {
+			modifiedName = spoutcraftClasses.get(modifiedName);
+		}
+		
 		return super.findClass(modifiedName);
 	}
 }

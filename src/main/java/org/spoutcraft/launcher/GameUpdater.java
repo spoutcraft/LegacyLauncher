@@ -29,16 +29,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Random;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -63,9 +58,6 @@ public class GameUpdater implements DownloadListener {
 	public String user = "Player";
 	public String downloadTicket = "1";
 
-	/* General Updating Settings */
-	public boolean devmode = false;
-
 	/* Files */
 	public static final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin");
 	public static final File binCacheDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin" + File.separator + "cache");
@@ -80,12 +72,9 @@ public class GameUpdater implements DownloadListener {
 	//public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
 	//public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
 	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
-	private SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
+	
+	
 	private DownloadListener listener;
-	private byte allowUpdates = -1;
-	private ArrayList<String> mirrors = new ArrayList<String>();
-	private final Random rand = new Random();
-
 	public GameUpdater() {
 	}
 
@@ -94,11 +83,18 @@ public class GameUpdater implements DownloadListener {
 		binDir.mkdir();
 		binCacheDir.mkdir();
 		updateDir.mkdir();
+		
+		String minecraftMD5 = MD5Utils.getMD5(FileType.minecraft);
+		String jinputMD5 = MD5Utils.getMD5(FileType.jinput);
+		String lwjglMD5 = MD5Utils.getMD5(FileType.lwjgl);
+		String lwjgl_utilMD5 = MD5Utils.getMD5(FileType.lwjgl_util);
 
 		// Processs minecraft.jar \\
 		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
-		if (mcCache.length() < 1000) {
-			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateDir + File.separator + "minecraft.jar", "minecraft_1.8.1.jar");
+		if (!mcCache.exists() || !minecraftMD5.equals(MD5Utils.getMD5(mcCache))) {
+			String minecraftURL = baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket;
+			String output = updateDir + File.separator + "minecraft.jar";
+			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, listener);
 		}
 		else {
 			copy(mcCache, new File(updateDir, "minecraft.jar"));
@@ -109,7 +105,7 @@ public class GameUpdater implements DownloadListener {
 
 		// Process other Downloads
 		mcCache = new File(binCacheDir, "jinput.jar");
-		if (!mcCache.exists()) {
+		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
 		}
 		else {
@@ -117,7 +113,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		
 		mcCache = new File(binCacheDir, "lwjgl.jar");
-		if (!mcCache.exists()) {
+		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
 			downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		}
 		else {
@@ -125,7 +121,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		
 		mcCache = new File(binCacheDir, "lwjgl_util.jar");
-		if (!mcCache.exists()) {
+		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
 			downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		}
 		else {
@@ -141,88 +137,18 @@ public class GameUpdater implements DownloadListener {
 		writeVersionFile(new File(GameUpdater.binDir + File.separator + "version"), Long.toString(this.latestVersion));
 	}
 	
-	public String getBuildUrl(String mirrorURI, String jenkinsURL) {
-		try {
-			if (mirrors.size() == 0) {
-				updateMirrors();
-			}
-			int random = rand.nextInt(10 * mirrors.size());
-			int index = random / 10;
-			float progress = 0F;
-			//Test for bad, down mirrors
-			for (int i = index; i < mirrors.size() + index; i++) {
-				int j = i;
-				if (j >= mirrors.size()) j-= mirrors.size();
-				String mirror = "http://" + mirrors.get(j) + "/" + mirrorURI;
-				if (isAddressReachable(mirror)) {
-					System.out.println("Using mirror: " + mirror);
-					stateChanged("Contacting Mirrors...", 100F);
-					return mirror;
-				}
-				else {
-					progress += 100F / mirrors.size();
-					stateChanged("Contacting Mirrors...", progress);
-				}
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.err.println("All mirrors failed, defaulting to jenkins");
-		return jenkinsURL;
-	}
-	
-	public boolean isAddressReachable(String url) {
-		try {
-			URL test = new URL(url);
-			HttpURLConnection.setFollowRedirects(false);
-			HttpURLConnection urlConnect = (HttpURLConnection)test.openConnection();
-			urlConnect.setRequestMethod("HEAD");
-			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
-		} catch (Exception e) {
-			return false;
-		}
-	}
-	
-	public void updateMirrors() throws IOException {
-		URL url = new URL("http://cdn.getspout.org/mirrors.html");
-		HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-		System.setProperty("http.agent", ""); //Spoofing the user agent is required to track stats
-		con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-		BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-		mirrors.clear();
-		String data = "";
-		while ((data = in.readLine()) != null) {
-			mirrors.add(data);
-		}
-		in.close();
-	}
-
 	public String getNativesUrl() {
-		if (settings.checkProperty("latestLWJGL")) {
-			if (settings.getPropertyBoolean("latestLWJGL")) {
-				return latestLWJGLURL;
-			}
+		if (SettingsUtil.isLatestLWJGL()) {
+			return latestLWJGLURL;
 		}
 		return baseURL;
 	}
 
 	public String getNativesUrl(String fileName) {
-		if (settings.checkProperty("latestLWJGL")) {
-			if (settings.getPropertyBoolean("latestLWJGL")) {
-				return latestLWJGLURL + fileName + ".zip";
-			}
+		if (SettingsUtil.isLatestLWJGL()) {
+			return latestLWJGLURL + fileName + ".zip";
 		}
 		return baseURL + fileName + ".jar.lzma";
-	}
-
-	public boolean isLZMANatives() {
-		if (settings.checkProperty("latestLWJGL")) {
-			if (settings.getPropertyBoolean("latestLWJGL")) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public String readVersionFile(File file) throws Exception {
@@ -244,8 +170,6 @@ public class GameUpdater implements DownloadListener {
 		if (!new File(binDir, "natives").exists())
 			return true;
 		if (!versionFile.exists())
-			return true;
-		if ((new File(binDir, "minecraft.jar").length() < 1500))
 			return true;
 		long currentVersion = Long.parseLong(this.readVersionFile(versionFile));
 		return this.latestVersion > currentVersion;
@@ -311,9 +235,9 @@ public class GameUpdater implements DownloadListener {
 		if (!updateDir.exists())
 			updateDir.mkdir();
 
-		this.downloadFile(getNativesUrl(fname), updateDir.getPath() + File.separator + (isLZMANatives() ? "natives.jar.lzma" : "natives.zip"));
+		this.downloadFile(getNativesUrl(fname), updateDir.getPath() + File.separator + (!SettingsUtil.isLatestLWJGL() ? "natives.jar.lzma" : "natives.zip"));
 
-		if (isLZMANatives())
+		if (!SettingsUtil.isLatestLWJGL())
 			extractLZMA(GameUpdater.updateDir.getPath() + File.separator + "natives.jar.lzma", GameUpdater.updateDir.getPath() + File.separator + "natives.zip");
 
 		return new File(updateDir.getPath() + File.separator + "natives.jar.lzma");
@@ -321,77 +245,39 @@ public class GameUpdater implements DownloadListener {
 
 	public void updateSpout() throws Exception {
 		performBackup();
-		String newversion = getSpoutVersion();
+		SpoutcraftBuild build = MinecraftDownloadUtils.getSpoutcraftBuild();
 
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
+		spoutcraftDir.mkdirs();
+		File spoutcraftBinDir = new File(binDir + File.separator + "spoutcraft");
+		spoutcraftBinDir.mkdirs();
 		
-		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
+		File mcCache = new File(binCacheDir, "minecraft_" + build.getMinecraftVersion() + ".jar");
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {
 			copy(mcCache, updateMC);
 		}
 
-		if (!updateMC.exists())
-			downloadFile(baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket, updateMC.getPath(), "minecraft_1.8.1.jar");
-
-		File spout = new File(GameUpdater.updateDir.getPath() + File.separator + "spoutcraft.zip");
+		File spoutcraft = new File(GameUpdater.updateDir, "spoutcraft.jar");
 
 		stateChanged("Looking Up Mirrors...", 0F);
-		downloadFile(getBuildUrl("Spoutcraft/" + newversion + "/spoutcraft-dev-SNAPSHOT.zip", "http://ci.getspout.org/job/Spoutcraft/" + (devmode ? "lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip" : "promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip")), spout.getPath());
-
-		stateChanged("Unzipping Spoutcraft Files...", 0F);
+		build.setDownloadListener(this);
+		downloadFile(build.getSpoutcraftURL(), spoutcraft.getPath());
 		
-		unzipArchive(new File(updateDir.getPath() + File.separator + "spoutcraft.zip"), new File(updateDir + File.separator + "spoutcraft"));
+		File spoutcraftVersion = new File(GameUpdater.spoutcraftDir, "versionSpoutcraft");
+		if (spoutcraftVersion.exists())
+			spoutcraftVersion.delete();
 
-		String rootDir = PlatformUtils.getWorkingDirectory() + File.separator + "temp" + File.separator + "spoutcraft" + File.separator;
-		Set<ClassFile> spoutMod = this.getFiles(new File(updateDir.getPath() + File.separator + "spoutcraft"), rootDir);
-		
-		stateChanged("Merging Spoutcraft Files Into Minecraft Jar...", 0F);
-
-		this.addFilesToExistingZip(updateMC, spoutMod, rootDir, true);
-
-		File mcJar = new File(binDir, "minecraft.jar");
-		mcJar.delete();
-
-		// Move file
-		updateMC.renameTo(mcJar);
-
-		if (GameUpdater.spoutcraftDir.exists())
-			GameUpdater.spoutcraftDir.mkdir();
-
-		File spoutVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
-		if (spoutVersion.exists())
-			spoutVersion.delete();
-
-		this.writeFile(spoutVersion.getPath(), newversion);
+		this.writeFile(spoutcraftVersion.getPath(), String.valueOf(build.getBuild()));
 	}
 
-	public String getSpoutVersion() throws Exception {
-		String version;
-		URL url;
-		if (devmode) {
-			url = new URL("http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/buildNumber");
-		} else {
-			url = new URL("http://ci.getspout.org/job/Spoutcraft/Recommended/buildNumber");
-		}
-
-		BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-		String str = in.readLine();
-		if (str != null) {
-			version = str;
-			return version;
-		}
-		in.close();
-		return null;
-	}
-
-	public boolean checkSpoutUpdate() throws Exception {
+	public boolean isSpoutcraftUpdateAvailable() throws IOException {
 		if (!PlatformUtils.getWorkingDirectory().exists())
 			return true;
 		if (!GameUpdater.spoutcraftDir.exists())
 			return true;
-		File spoutcraftVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
+		File spoutcraftVersion = new File(GameUpdater.spoutcraftDir, "versionSpoutcraft");
 		if (!spoutcraftVersion.exists())
 			return true;
 		BufferedReader br = new BufferedReader(new FileReader(spoutcraftVersion));
@@ -400,51 +286,12 @@ public class GameUpdater implements DownloadListener {
 		if ((line = br.readLine()) != null) {
 			version = line;
 		}
+		
+		int build = MinecraftDownloadUtils.getSpoutcraftBuild().getBuild();
+		int current = Integer.parseInt(version);
 
-		String latest = this.getSpoutVersion();
+		return build != current;
 
-		if (latest == null)
-			return false;
-		if (version == null)
-			return true;
-		if (version.contains("."))
-			return true;
-
-		int c = Integer.parseInt(version);
-		int l = Integer.parseInt(latest);
-
-		return c < l || (c > l && !devmode);
-
-	}
-
-	public boolean allowUpdate() {
-		if (allowUpdates == -1) {
-			try {
-				String version = null;
-				URL url = new URL("http://dl.dropbox.com/u/27798409/AllowMC.txt");
-				BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-				String str = in.readLine();
-				if (str != null) {
-					version = str;
-				}
-				in.close();
-
-				if (version == null) {
-					allowUpdates = 0;
-					return false;
-				}
-
-				if (version.equalsIgnoreCase("true")) {
-					allowUpdates = 1;
-					return true;
-				}
-			} catch (Exception ex) {
-
-			}
-			allowUpdates = 0;
-			return false;
-		}
-		return allowUpdates != 0;
 	}
 	
 	public void unzipArchive(File archive, File outputDir) throws ZipException, IOException {
@@ -513,7 +360,7 @@ public class GameUpdater implements DownloadListener {
 		}
 	}
 
-	public void performBackup() throws Exception {
+	public void performBackup() throws IOException {
 		File spoutVersion = new File(GameUpdater.spoutcraftDir.getPath() + File.separator + "versionSpoutcraft");
 		if (!spoutVersion.exists())
 			return;
@@ -541,11 +388,14 @@ public class GameUpdater implements DownloadListener {
 		String rootDir = PlatformUtils.getWorkingDirectory() + File.separator;
 		HashSet<File> exclude = new HashSet<File>();
 		exclude.add(GameUpdater.backupDir);
-		if (!(settings.checkProperty("worldbackup") && settings.getPropertyBoolean("worldbackup"))) {
+		if (!SettingsUtil.isWorldBackup()) {
 			exclude.add(GameUpdater.savesDir);
 		}
 		exclude.add(GameUpdater.updateDir);
 		exclude.add(SystemConsoleListener.logDir);
+		
+		File[] existingBackups = backupDir.listFiles();
+		(new BackupCleanupThread(existingBackups)).start();
 
 		zip.createNewFile();
 
@@ -687,8 +537,8 @@ public class GameUpdater implements DownloadListener {
 		}
 	}
 	
-	private void downloadFile(String url, String output, String cacheName) throws IOException {
-		int tries = settings.getPropertyBoolean("retryLogins") ? 3 : 1;
+	private void downloadFile(String url, String output, String cacheName, String md5) throws IOException {
+		int tries = SettingsUtil.getLoginTries();
 		File outputFile = null;
 		while (tries > 0) {
 			System.out.println("Starting download of " + url + ", with " + tries + " tries remaining");
@@ -704,8 +554,18 @@ public class GameUpdater implements DownloadListener {
 				stateChanged("Download Failed, retries remaining: " + tries, 0F);
 			}
 			else {
-				outputFile = download.getOutFile();
-				break;
+				if (md5 != null) {
+					String resultMD5 = MD5Utils.getMD5(download.getOutFile());
+					System.out.println("Expected MD5: " + md5 + " Result MD5: " + resultMD5);
+					if (resultMD5.equals(md5)) {
+						outputFile = download.getOutFile();
+						break;
+					}
+				}
+				else {
+					outputFile = download.getOutFile();
+					break;
+				}
 			}
 		}
 		if (outputFile == null) {
@@ -714,6 +574,10 @@ public class GameUpdater implements DownloadListener {
 		if (cacheName != null) {
 			copy(outputFile, new File(binCacheDir, cacheName));
 		}
+	}
+	
+	private void downloadFile(String url, String output, String cacheName) throws IOException {
+		downloadFile(url, output, cacheName, null);
 	}
 
 	private void downloadFile(String url, String output) throws IOException {

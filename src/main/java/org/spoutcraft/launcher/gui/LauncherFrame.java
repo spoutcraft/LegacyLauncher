@@ -74,6 +74,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 			applet = Launcher.getMinecraftApplet();
 		}
 		catch (CorruptedMinecraftJarException corruption) {
+			corruption.printStackTrace();
 			/*String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
 			this.setVisible(false);
 			int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION);
