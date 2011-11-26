@@ -59,12 +59,12 @@ public class GameUpdater implements DownloadListener {
 	public String downloadTicket = "1";
 
 	/* Files */
-	public static final File binDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin");
-	public static final File binCacheDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "bin" + File.separator + "cache");
-	public static final File updateDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "temp");
-	public static final File backupDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "backups");
-	public static final File spoutcraftDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "spoutcraft");
-	public static final File savesDir = new File(PlatformUtils.getWorkingDirectory().getPath() + File.separator + "saves");
+	public static final File binDir = new File(PlatformUtils.getWorkingDirectory(), "bin");
+	public static final File binCacheDir = new File(binDir, "cache");
+	public static final File updateDir = new File(PlatformUtils.getWorkingDirectory(), "temp");
+	public static final File backupDir = new File(PlatformUtils.getWorkingDirectory(), "backups");
+	public static final File spoutcraftDir = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+	public static final File savesDir = new File(PlatformUtils.getWorkingDirectory(), "saves");
 
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
@@ -88,44 +88,44 @@ public class GameUpdater implements DownloadListener {
 		String jinputMD5 = MD5Utils.getMD5(FileType.jinput);
 		String lwjglMD5 = MD5Utils.getMD5(FileType.lwjgl);
 		String lwjgl_utilMD5 = MD5Utils.getMD5(FileType.lwjgl_util);
+		
+		SpoutcraftBuild build = MinecraftDownloadUtils.getSpoutcraftBuild();
 
 		// Processs minecraft.jar \\
-		File mcCache = new File(binCacheDir, "minecraft_1.8.1.jar");
+		File mcCache = new File(binCacheDir, "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || !minecraftMD5.equals(MD5Utils.getMD5(mcCache))) {
 			String minecraftURL = baseURL + "minecraft.jar?user=" + user + "&ticket=" + downloadTicket;
 			String output = updateDir + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, listener);
+			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, build, listener);
 		}
-		else {
-			copy(mcCache, new File(updateDir, "minecraft.jar"));
-		}
+		copy(mcCache, new File(binDir, "minecraft.jar"));
 
-		File nativesDir = new File(binDir.getPath() + File.separator + "natives");
+		File nativesDir = new File(binDir.getPath(), "natives");
 		nativesDir.mkdir();
 
 		// Process other Downloads
 		mcCache = new File(binCacheDir, "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
-			downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar",binDir.getPath() + File.separator + "jinput.jar", "jinput.jar");
 		}
 		else {
-			copy(mcCache, new File(updateDir, "jinput.jar"));
+			copy(mcCache, new File(binDir, "jinput.jar"));
 		}
 		
 		mcCache = new File(binCacheDir, "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
-			downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", binDir.getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		}
 		else {
-			copy(mcCache, new File(updateDir, "lwjgl.jar"));
+			copy(mcCache, new File(binDir, "lwjgl.jar"));
 		}
 		
 		mcCache = new File(binCacheDir, "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
-			downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", binDir.getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		}
 		else {
-			copy(mcCache, new File(updateDir, "lwjgl_util.jar"));
+			copy(mcCache, new File(binDir, "lwjgl_util.jar"));
 		}
 		
 		getNatives();
@@ -235,7 +235,7 @@ public class GameUpdater implements DownloadListener {
 		if (!updateDir.exists())
 			updateDir.mkdir();
 
-		this.downloadFile(getNativesUrl(fname), updateDir.getPath() + File.separator + (!SettingsUtil.isLatestLWJGL() ? "natives.jar.lzma" : "natives.zip"));
+		DownloadUtils.downloadFile(getNativesUrl(fname), updateDir.getPath() + File.separator + (!SettingsUtil.isLatestLWJGL() ? "natives.jar.lzma" : "natives.zip"));
 
 		if (!SettingsUtil.isLatestLWJGL())
 			extractLZMA(GameUpdater.updateDir.getPath() + File.separator + "natives.jar.lzma", GameUpdater.updateDir.getPath() + File.separator + "natives.zip");
@@ -250,8 +250,6 @@ public class GameUpdater implements DownloadListener {
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
 		spoutcraftDir.mkdirs();
-		File spoutcraftBinDir = new File(binDir + File.separator + "spoutcraft");
-		spoutcraftBinDir.mkdirs();
 		
 		File mcCache = new File(binCacheDir, "minecraft_" + build.getMinecraftVersion() + ".jar");
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
@@ -263,7 +261,10 @@ public class GameUpdater implements DownloadListener {
 
 		stateChanged("Looking Up Mirrors...", 0F);
 		build.setDownloadListener(this);
-		downloadFile(build.getSpoutcraftURL(), spoutcraft.getPath());
+		Download download = DownloadUtils.downloadFile(build.getSpoutcraftURL(), spoutcraft.getPath(), null, null, this);
+		if (download.isSuccess()) {
+			copy(download.getOutFile(), new File(binDir, "spoutcraft.jar"));
+		}
 		
 		File spoutcraftVersion = new File(GameUpdater.spoutcraftDir, "versionSpoutcraft");
 		if (spoutcraftVersion.exists())
@@ -535,53 +536,6 @@ public class GameUpdater implements DownloadListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	private void downloadFile(String url, String output, String cacheName, String md5) throws IOException {
-		int tries = SettingsUtil.getLoginTries();
-		File outputFile = null;
-		while (tries > 0) {
-			System.out.println("Starting download of " + url + ", with " + tries + " tries remaining");
-			tries--;
-			Download download = new Download(url, output);
-			download.setListener(this);
-			download.run();
-			if (!download.isSuccess()) {
-				if (download.getOutFile() != null) {
-					download.getOutFile().delete();
-				}
-				System.err.println("Download of " + url + " Failed!");
-				stateChanged("Download Failed, retries remaining: " + tries, 0F);
-			}
-			else {
-				if (md5 != null) {
-					String resultMD5 = MD5Utils.getMD5(download.getOutFile());
-					System.out.println("Expected MD5: " + md5 + " Result MD5: " + resultMD5);
-					if (resultMD5.equals(md5)) {
-						outputFile = download.getOutFile();
-						break;
-					}
-				}
-				else {
-					outputFile = download.getOutFile();
-					break;
-				}
-			}
-		}
-		if (outputFile == null) {
-			throw new IOException("Failed to download " + url);
-		}
-		if (cacheName != null) {
-			copy(outputFile, new File(binCacheDir, cacheName));
-		}
-	}
-	
-	private void downloadFile(String url, String output, String cacheName) throws IOException {
-		downloadFile(url, output, cacheName, null);
-	}
-
-	private void downloadFile(String url, String output) throws IOException {
-		downloadFile(url, output, null);
 	}
 
 	public Set<ClassFile> getFiles(File dir, String rootDir) {

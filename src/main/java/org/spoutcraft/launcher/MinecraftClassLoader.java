@@ -29,15 +29,16 @@ import java.util.jar.JarFile;
 public class MinecraftClassLoader extends URLClassLoader{
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(1000);
 	private File spoutcraft = null;
+	private File[] libraries;
 	
-	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft) {
+	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft, File[] libraries) {
 		super(urls, parent);
 		this.spoutcraft = spoutcraft;
+		this.libraries = libraries;
 	}
 	
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		byte classByte[];
 		Class<?> result = null;
 
 		result = loadedClasses.get(name); //checks in cached classes  
@@ -49,23 +50,44 @@ public class MinecraftClassLoader extends URLClassLoader{
 			return findSystemClass(name);  
 		} catch (Exception ignore) { }
 
-		try {
-			JarFile jar = new JarFile(spoutcraft);  
-			JarEntry entry = jar.getJarEntry(name + ".class");  
-			InputStream is = jar.getInputStream(entry);  
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			int next = is.read();
-			while (-1 != next) {
-				byteStream.write(next);
-				next = is.read();
-			}
-
-			classByte = byteStream.toByteArray();
-			result = defineClass(name, classByte, 0, classByte.length, (CodeSource)null);
-			loadedClasses.put(name, result);
+		result = findClassInjar(name, spoutcraft);
+		if (result != null) {
 			return result;
-		} catch (Exception e) {
-			return super.findClass(name);
 		}
+		
+		for (File file : libraries) {
+			result = findClassInjar(name, file);
+			if (result != null) {
+				return result;
+			}
+		}
+		return super.findClass(name);
+	}
+	
+	private Class<?> findClassInjar(String name, File file) throws ClassNotFoundException {
+		byte classByte[];
+		Class<?> result = null;
+		try {
+			JarFile jar = new JarFile(file);
+			JarEntry entry = jar.getJarEntry(name.replace(".", "/") + ".class");  
+			if (entry != null) {
+				InputStream is = jar.getInputStream(entry);  
+				ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+				int next = is.read();
+				while (-1 != next) {
+					byteStream.write(next);
+					next = is.read();
+				}
+	
+				classByte = byteStream.toByteArray();
+				result = defineClass(name, classByte, 0, classByte.length, (CodeSource)null);
+				loadedClasses.put(name, result);
+				return result;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

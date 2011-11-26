@@ -1,20 +1,23 @@
 package org.spoutcraft.launcher;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.bukkit.util.config.Configuration;
 
 public class MD5Utils {
-	private static List<String> cache = new ArrayList<String>(100);
+	private static boolean updated = false;
+	private static File minecraftYML = new File(PlatformUtils.getWorkingDirectory(), "minecraft.yml");
+	private static String latest = null;
+	@SuppressWarnings("unused")
+	private static String recommended = null;
 	
 	public static String getMD5(File file){
 		try {
@@ -28,68 +31,50 @@ public class MD5Utils {
 	}
 	
 	public static String getMD5(FileType type) {
-		return getMD5(type, "current");
+		updateMinecraftYMLCache();
+		return getMD5(type, latest);
 	}
 	
+	private static Configuration getMinecraftYML() {
+		updateMinecraftYMLCache();
+		Configuration config = new Configuration(minecraftYML);
+		config.load();
+		return config;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static String getMD5(FileType type, String version) {
-		updateMD5Cache();
-		version += ":";
-		int start = -1;
-		int end = cache.size();
-		for (int i = 0; i < cache.size(); i++) {
-			String line = cache.get(i);
-			if (line.equals(version)) {
-				start = i;
-			}
-			else if (start > -1 && !line.startsWith(" ")) {
-				end = i;
-				break;
-			}
+		Configuration config = getMinecraftYML();
+		Map<String, Map<String, String>> builds = (Map<String, Map<String, String>>) config.getProperty("versions");
+		if (builds.containsKey(version)) {
+			Map<String, String> files = builds.get(version);
+			return files.get(type.name());
 		}
-		
-		for (int i = start + 1; i < end; i++) {
-			String line = cache.get(i).trim();
-			String split[] = line.split(":");
-			if (split[0].equals(type.name())) {
-				return split[1].trim();
-			}
-		}
-		
 		return null;
 	}
 	
-	private static void updateMD5Cache() {
-		if (cache.size() > 0) {
-			return;
-		}
-		String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://mirror3.getspout.org/minecraft.yml", null);
-		if (urlName != null) {
-			BufferedReader in = null;
-			try {
-				URL url = new URL(urlName);
-				HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-				System.setProperty("http.agent", "");
-				con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-				in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-				cache.clear();
-				String data = "";
-				while ((data = in.readLine()) != null) {
-					cache.add(data);
+	public static void updateMinecraftYMLCache() {
+		if (!updated) {
+			String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://mirror3.getspout.org/minecraft.yml", null);
+			if (urlName != null) {
+				try {
+					URL url = new URL(urlName);
+					HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+					System.setProperty("http.agent", "");
+					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+					GameUpdater.copy(con.getInputStream(), new FileOutputStream(minecraftYML));
+					
+					Configuration config = new Configuration(minecraftYML);
+					config.load();
+					latest = config.getString("latest");
+					recommended = config.getString("recommended");
+				}
+				catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException ignore) {}
-				}
-			}
+			updated = true;
 		}
 	}
-	
-	
 
 }

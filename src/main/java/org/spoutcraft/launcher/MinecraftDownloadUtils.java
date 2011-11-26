@@ -15,10 +15,9 @@ import org.spoutcraft.launcher.async.DownloadListener;
 public class MinecraftDownloadUtils {
 	private static boolean updated = false;
 	private static File spoutcraftYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft.yml");
-	public static void downloadMinecraft(String user, String output, DownloadListener listener) throws IOException{
+	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException{
 		int tries = 3;
 		File outputFile = null;
-		SpoutcraftBuild build = getSpoutcraftBuild();
 		while (tries > 0) {
 			System.out.println("Starting download of minecraft, with " + tries + " tries remaining");
 			tries--;
@@ -40,12 +39,17 @@ public class MinecraftDownloadUtils {
 					if (!build.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
 						
 						File patch = new File(PlatformUtils.getWorkingDirectory(), "mc.patch");
-						Download patchDownload = new Download(build.getPatchURL(), patch.getPath());
-						patchDownload.setListener(listener);
-						patchDownload.run();
-						if (download.isSuccess()) {
+						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
+						if (patchDownload.isSuccess()) {
 							File patchedMinecraft = new File(GameUpdater.updateDir, "patched_minecraft.jar");
-							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
+							patchedMinecraft.delete();
+							try {
+								JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
+							}
+							catch (Exception e) {
+								String[] arguments = {download.getOutFile().getPath(), patchedMinecraft.getPath(), "C:\\Users\\Cameron\\workspace\\BinaryDiff\\mc181.patch"};
+								JBPatch.main(arguments);
+							}
 							String minecraft181MD5 = MD5Utils.getMD5(FileType.minecraft, build.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 							

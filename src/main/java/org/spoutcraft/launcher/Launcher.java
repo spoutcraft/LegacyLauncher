@@ -30,21 +30,26 @@ public class Launcher {
 			   
 		File mcBinFolder = new File(PlatformUtils.getWorkingDirectory(), "bin");
 		
-		File spoutcraftJar = new File(GameUpdater.updateDir, "spoutcraft.jar");
+		File spoutcraftJar = new File(mcBinFolder, "spoutcraft.jar");
 		File minecraftJar = new File(mcBinFolder, "minecraft.jar");
 		File jinputJar = new File(mcBinFolder, "jinput.jar");
 		File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 		File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
 
 		URL urls[] = new URL[5];
+		File[] files = new File[4];
 		try {
 			urls[0] = minecraftJar.toURI().toURL();
+			files[0] = minecraftJar;
 			urls[1] = jinputJar.toURI().toURL();
+			files[1] = jinputJar;
 			urls[2] = lwglJar.toURI().toURL();
+			files[2] = lwglJar;
 			urls[3] = lwjgl_utilJar.toURI().toURL();
+			files[3] = lwjgl_utilJar;
 			urls[4] = spoutcraftJar.toURI().toURL();
 
-			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar);
+			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
 			
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);

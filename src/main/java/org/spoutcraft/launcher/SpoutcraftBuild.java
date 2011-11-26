@@ -38,8 +38,12 @@ public class SpoutcraftBuild {
 	}
 	
 	public String getPatchURL() {
-		String mirrorURL = "/Patches/Minecraft/" + getMinecraftVersion() + "/downgrade_" + getLatestMinecraftVersion() + ".patch";
-		String fallbackURL = "http://mirror3.getspout.org/Patches/Minecraft/" + getMinecraftVersion() + "/downgrade_" + getLatestMinecraftVersion() + ".patch";
+		String mirrorURL = "/Patches/Minecraft/minecraft_";
+		mirrorURL += getLatestMinecraftVersion();
+		mirrorURL += "-" + getMinecraftVersion() + ".patch";
+		String fallbackURL = "http://mirror3.getspout.org/Patches/Minecraft/minecraft_";
+		fallbackURL += getLatestMinecraftVersion();
+		fallbackURL += "-" + getMinecraftVersion() + ".patch";
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, null);
 	}
 }
