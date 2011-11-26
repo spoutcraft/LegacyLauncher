@@ -86,7 +86,7 @@ public class Main {
 			if (SettingsUtil.getMemorySelection() < 6) {
 				int mem = 1 << (9 + SettingsUtil.getMemorySelection());
 				recursion.createNewFile();
-				//reboot("-Xmx" + mem + "m");
+				reboot("-Xmx" + mem + "m");
 			}
 		}
 		PlatformUtils.getWorkingDirectory().mkdirs();
