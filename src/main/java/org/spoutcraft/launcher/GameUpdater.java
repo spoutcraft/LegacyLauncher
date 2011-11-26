@@ -128,6 +128,8 @@ public class GameUpdater implements DownloadListener {
 			copy(mcCache, new File(binDir, "lwjgl_util.jar"));
 		}
 		
+		
+		
 		getNatives();
 
 		stateChanged("Extracting Files...", 0);
