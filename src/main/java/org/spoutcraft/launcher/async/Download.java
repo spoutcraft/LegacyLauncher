@@ -48,10 +48,6 @@ public class Download implements Runnable {
 		try {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-			//conn.setRequestProperty("Range", "bytes=0-");
-			///((HttpURLConnection)conn).setRequestMethod("HEAD");
-			//((HttpURLConnection)conn).setRequestProperty("Cache-Control", "no-cache");
-			//conn.setReadTimeout(20000);
 			InputStream in = getConnectionInputStream(conn);
 			
 			size = conn.getContentLength();
@@ -105,22 +101,6 @@ public class Download implements Runnable {
 			in.close();
 			rbc.close();
 			progress.interrupt();
-			
-			/*FileOutputStream fos = new FileOutputStream(outFile);
-			BufferedOutputStream bos = new BufferedOutputStream(fos);
-			
-			
-			int bytes;
-			stateChanged();
-			while ((bytes = bis.read(buffer, 0, buffer.length)) != -1) {
-				if (bytes > 0) {
-					bos.write(buffer, 0, bytes);
-					downloaded += bytes;
-					stateChanged();
-				}
-			}
-			in.close();
-			bos.close();*/
 			success = size > 0 ? (size == outFile.length()) : true;
 		}
 		catch (Exception e) {

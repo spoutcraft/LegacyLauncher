@@ -16,29 +16,56 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.security.CodeSource;
 import java.util.HashMap;
-import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class MinecraftClassLoader extends URLClassLoader{
-	File spoutcraftBinDir = new File(GameUpdater.binDir + File.separator + "spoutcraft");
-	private HashMap<String, String> spoutcraftClasses = new HashMap<String, String>();
-
-	public MinecraftClassLoader(URL[] urls, ClassLoader parent) {
+	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(1000);
+	private File spoutcraft = null;
+	
+	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft) {
 		super(urls, parent);
+		this.spoutcraft = spoutcraft;
 	}
 	
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
-		String modifiedName = name.replace("//", "/");
-		
-		if (spoutcraftClasses.containsKey(modifiedName)) {
-			modifiedName = spoutcraftClasses.get(modifiedName);
+		byte classByte[];
+		Class<?> result = null;
+
+		result = loadedClasses.get(name); //checks in cached classes  
+		if (result != null) {
+			return result;
 		}
-		
-		return super.findClass(modifiedName);
+
+		try {
+			return findSystemClass(name);  
+		} catch (Exception ignore) { }
+
+		try {
+			JarFile jar = new JarFile(spoutcraft);  
+			JarEntry entry = jar.getJarEntry(name + ".class");  
+			InputStream is = jar.getInputStream(entry);  
+			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+			int next = is.read();
+			while (-1 != next) {
+				byteStream.write(next);
+				next = is.read();
+			}
+
+			classByte = byteStream.toByteArray();
+			result = defineClass(name, classByte, 0, classByte.length, (CodeSource)null);
+			loadedClasses.put(name, result);
+			return result;
+		} catch (Exception e) {
+			return super.findClass(name);
+		}
 	}
 }

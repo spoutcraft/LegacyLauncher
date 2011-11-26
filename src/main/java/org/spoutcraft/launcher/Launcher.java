@@ -44,7 +44,7 @@ public class Launcher {
 			urls[3] = lwjgl_utilJar.toURI().toURL();
 			urls[4] = spoutcraftJar.toURI().toURL();
 
-			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader());
+			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar);
 			
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);

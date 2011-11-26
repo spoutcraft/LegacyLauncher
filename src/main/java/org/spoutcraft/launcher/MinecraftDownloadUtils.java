@@ -42,12 +42,10 @@ public class MinecraftDownloadUtils {
 						File patch = new File(PlatformUtils.getWorkingDirectory(), "mc.patch");
 						Download patchDownload = new Download(build.getPatchURL(), patch.getPath());
 						patchDownload.setListener(listener);
-						download.run();
+						patchDownload.run();
 						if (download.isSuccess()) {
 							File patchedMinecraft = new File(GameUpdater.updateDir, "patched_minecraft.jar");
-							GameUpdater.copy(MinecraftDownloadUtils.class.getResourceAsStream("/org/spoutcraft/launcher/mc181.patch"), new FileOutputStream(patch));
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
-							
 							String minecraft181MD5 = MD5Utils.getMD5(FileType.minecraft, build.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 							
