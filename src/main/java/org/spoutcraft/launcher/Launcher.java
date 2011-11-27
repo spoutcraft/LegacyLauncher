@@ -20,6 +20,9 @@ import java.applet.Applet;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
@@ -35,18 +38,36 @@ public class Launcher {
 		File jinputJar = new File(mcBinFolder, "jinput.jar");
 		File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 		File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
+		
+		
+		
+		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+		Map<String, Object> libraries = build.getLibraries();
+		
+		File[] files = new File[4 + libraries.size()];
+		
+		int index = 0;
+		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<String, Object> lib = i.next();
+			String version = String.valueOf(lib.getValue());
+			String name = lib.getKey() + "-" + version;
+			File libraryFile = new File(mcBinFolder, name + ".jar");
+			files[index] = libraryFile;
+			index++;
+		}
 
 		URL urls[] = new URL[5];
-		File[] files = new File[4];
+		
 		try {
 			urls[0] = minecraftJar.toURI().toURL();
-			files[0] = minecraftJar;
+			files[index+0] = minecraftJar;
 			urls[1] = jinputJar.toURI().toURL();
-			files[1] = jinputJar;
+			files[index+1] = jinputJar;
 			urls[2] = lwglJar.toURI().toURL();
-			files[2] = lwglJar;
+			files[index+2] = lwglJar;
 			urls[3] = lwjgl_utilJar.toURI().toURL();
-			files[3] = lwjgl_utilJar;
+			files[index+3] = lwjgl_utilJar;
 			urls[4] = spoutcraftJar.toURI().toURL();
 
 			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);

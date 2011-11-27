@@ -28,6 +28,9 @@ import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -60,10 +63,7 @@ public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://www.minedev.net/spout/lwjgl/";
-	//public final String spoutcraftDownloadURL = "http://ci.getspout.org/view/SpoutDev/job/Spoutcraft/promotion/latest/Recommended/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
-	//public final String spoutcraftDownloadDevURL = "http://ci.getspout.org/job/Spoutcraft/lastSuccessfulBuild/artifact/target/spoutcraft-dev-SNAPSHOT.zip";
 	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
-	
 	
 	private DownloadListener listener;
 	public GameUpdater() {
@@ -147,7 +147,7 @@ public class GameUpdater implements DownloadListener {
 			return true;
 		if (!new File(binDir, "natives").exists())
 			return true;
-		return MinecraftYML.getInstalledVersion().equals(MinecraftYML.getLatestMinecraftVersion());
+		return !MinecraftYML.getInstalledVersion().equals(MinecraftYML.getLatestMinecraftVersion());
 	}
 
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {
@@ -239,6 +239,30 @@ public class GameUpdater implements DownloadListener {
 		Download download = DownloadUtils.downloadFile(build.getSpoutcraftURL(), spoutcraft.getPath(), null, null, this);
 		if (download.isSuccess()) {
 			copy(download.getOutFile(), new File(binDir, "spoutcraft.jar"));
+		}
+		
+		Map<String, Object> libraries = build.getLibraries();
+		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<String, Object> lib = i.next();
+			String version = String.valueOf(lib.getValue());
+			String name = lib.getKey() + "-" + version;
+			File libraryFile = new File(binDir, name + ".jar");
+			String MD5 = LibrariesYML.getMD5(lib.getKey(), version);
+			
+			if (libraryFile.exists()) {
+				String computedMD5 = MD5Utils.getMD5(libraryFile);
+				if (!computedMD5.equals(MD5)) {
+					libraryFile.delete();
+				}
+			}
+			
+			if (!libraryFile.exists()) {
+				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String fallbackURL = "http://mirror3.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
+				download = DownloadUtils.downloadFile(url, libraryFile.getPath(), name, MD5, this);
+			}
 		}
 		
 		build.install();

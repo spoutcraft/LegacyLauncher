@@ -46,6 +46,7 @@ public class SpoutcraftYML {
 					config.load();
 					config.setProperty("current", selected);
 					config.setProperty("launcher", Main.build);
+					config.save();
 					
 				}
 				catch (IOException e) {

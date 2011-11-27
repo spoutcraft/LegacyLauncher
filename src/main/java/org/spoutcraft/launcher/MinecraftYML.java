@@ -34,6 +34,7 @@ public class MinecraftYML {
 	public static void setInstalledVersion(String version) {
 		Configuration config = getMinecraftYML();
 		config.setProperty("current", version);
+		config.save();
 	}
 	
 	public static String getInstalledVersion() {
@@ -71,7 +72,9 @@ public class MinecraftYML {
 					recommended = config.getString("recommended");
 					if (current != null) {
 						config.setProperty("current", current);
+						config.save();
 					}
+					
 				}
 				catch (IOException e) {
 					e.printStackTrace();
