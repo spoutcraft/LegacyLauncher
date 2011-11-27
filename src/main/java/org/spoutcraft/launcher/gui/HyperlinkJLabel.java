@@ -23,26 +23,24 @@ import java.net.URI;
 
 import javax.swing.JLabel;
 
-public class HyperlinkJLabel extends JLabel implements MouseListener{
-
-	/**
-	 * 
-	 */
+public class HyperlinkJLabel extends JLabel implements MouseListener {
 	private static final long serialVersionUID = -3801443131566852907L;
 	private String url;
+
 	public void mouseClicked(MouseEvent arg0) {
-		if (!Desktop.isDesktopSupported()) return;
+		if (!Desktop.isDesktopSupported())
+			return;
 		Desktop desktop = Desktop.getDesktop();
-		if (!desktop.isSupported( java.awt.Desktop.Action.BROWSE ) ) return;
+		if (!desktop.isSupported(java.awt.Desktop.Action.BROWSE))
+			return;
 		try {
-			URI uri = new java.net.URI( url );
-			desktop.browse( uri );
-		}
-		catch ( Exception e ) {
+			URI uri = new java.net.URI(url);
+			desktop.browse(uri);
+		} catch (Exception e) {
 			System.err.println("Unable to open browser to " + url);
 		}
 	}
-	
+
 	public HyperlinkJLabel(String text, String url) {
 		super(text);
 		this.url = url;

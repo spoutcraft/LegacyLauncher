@@ -1,250 +1,246 @@
-<!--
-  Maven build file for Spoutcraft Launcher
+<!-- Maven build file for Spoutcraft Launcher Copyright (c) 2011 SpoutDev 
+	<http://www.getspout.org> Spoutcraft Launcher is licensed under GNU LESSER 
+	GENERAL PUBLIC LICENSE Version 3 -->
 
-  Copyright (c) 2011 SpoutDev <http://www.getspout.org>
-  Spoutcraft Launcher is licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3
--->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+	<!-- Project information -->
+	<groupId>org.spoutcraft</groupId>
+	<artifactId>launcher</artifactId>
+	<version>dev-SNAPSHOT</version>
+	<name>Spoutcraft Launcher</name>
+	<url>http://www.spoutcraft.org</url>
+	<description></description>
 
-    <!-- Project information -->
-    <groupId>org.spoutcraft</groupId>
-    <artifactId>launcher</artifactId>
-    <version>dev-SNAPSHOT</version>
-    <name>Spoutcraft Launcher</name>
-    <url>http://www.spoutcraft.org</url>
-    <description></description>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.mainClass>${project.groupId}.${project.artifactId}.Main</project.mainClass>
+		<project.release.version>1.0.2</project.release.version>
+		<project.build.number>0</project.build.number>
+		<project.version.string>${release.version}.${build.number}</project.version.string>
+	</properties>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.mainClass>${project.groupId}.${project.artifactId}.Main</project.mainClass>
-        <project.release.version>1.0.2</project.release.version>
-        <project.build.number>0</project.build.number>
-        <project.version.string>${release.version}.${build.number}</project.version.string>
-    </properties>
+	<!-- License -->
+	<licenses>
+		<license>
+			<name>GNU LESSER GENERAL PUBLIC LICENSE Version 3</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 
-    <!-- License -->
-    <licenses>
-        <license>
-            <name>GNU LESSER GENERAL PUBLIC LICENSE Version 3</name>
-            <url>http://www.gnu.org/licenses/lgpl.html</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
+	<!-- Source code -->
+	<scm>
+		<developerConnection>scm:git:git@github.com:SpoutDev/${project.name}.git</developerConnection>
+		<connection>scm:git:git://github.com/SpoutDev/${project.name}.git</connection>
+		<url>https://github.com/SpoutDev/${project.name}</url>
+	</scm>
 
-    <!-- Source code -->
-    <scm>
-        <developerConnection>scm:git:git@github.com:SpoutDev/${project.name}.git</developerConnection>
-        <connection>scm:git:git://github.com/SpoutDev/${project.name}.git</connection>
-        <url>https://github.com/SpoutDev/${project.name}</url>
-    </scm>
+	<!-- Continuous integration -->
+	<ciManagement>
+		<system>jenkins</system>
+		<url>http://ci.getspout.org</url>
+	</ciManagement>
 
-    <!-- Continuous integration -->
-    <ciManagement>
-        <system>jenkins</system>
-        <url>http://ci.getspout.org</url>
-    </ciManagement>
+	<!-- Repository locations -->
+	<repositories>
+		<repository>
+			<id>spout-repo</id>
+			<url>http://repo.getspout.org</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>nuxeo-repo</id>
+			<name>Maven Nuxeo Repository</name>
+			<url>http://maven.nuxeo.org/nexus/content/groups/public/</url>
+		</repository>
+	</repositories>
 
-    <!-- Repository locations -->
-    <repositories>
-        <repository>
-            <id>spout-repo</id>
-            <url>http://repo.getspout.org</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-         <repository>
-            <id>nuxeo-repo</id>
-            <name>Maven Nuxeo Repository</name>
-            <url>http://maven.nuxeo.org/nexus/content/groups/public/</url>
-        </repository>
-    </repositories>
+	<!-- Dependencies -->
+	<dependencies>
+		<!-- Testing -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.19</version>
+			<scope>compile</scope>
+		</dependency>
+	</dependencies>
 
-    <!-- Dependencies -->
-    <dependencies>
-        <!-- Testing -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.8.2</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
-   
-    <build>
-        <defaultGoal>clean package</defaultGoal>
-        <sourceDirectory>${basedir}/src/main/java</sourceDirectory>
-        <!-- Resources -->
-        <resources>
-            <resource>
-                <targetPath>.</targetPath>
-                <filtering>false</filtering>
-                <directory>${basedir}/src</directory>
-                <includes>
-                    <include>LICENSE.txt</include>
-                </includes>
-            </resource>
-            <resource>
-                <targetPath>org/spoutcraft/launcher</targetPath>
-                <filtering>false</filtering>
-                <directory>${basedir}/src/main/resources</directory>
-                <includes>
-                    <include>*</include>
-                    <include>**/*</include>
-                </includes>
-                <excludes>
-                    <exclude>icon.icns</exclude>
-                    <exclude>Info.plist</exclude>
-                    <exclude>JavaApplicationStub</exclude>
-                </excludes>
-            </resource>
-        </resources>
-        <!-- Plugins -->
-        <plugins>
-            <!-- Compile plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.3.2</version>
-            </plugin>
-            <!-- JAR creation plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>${project.mainClass}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
-            </plugin>
-            <!-- JAR dependency addition plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>1.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <artifactSet>
-                                <includes>
-                                    <include>commons-io:commons-io</include>
-                                </includes>
-                            </artifactSet>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<defaultGoal>clean package</defaultGoal>
+		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<!-- Resources -->
+		<resources>
+			<resource>
+				<targetPath>.</targetPath>
+				<filtering>false</filtering>
+				<directory>${basedir}/src</directory>
+				<includes>
+					<include>LICENSE.txt</include>
+				</includes>
+			</resource>
+			<resource>
+				<targetPath>org/spoutcraft/launcher</targetPath>
+				<filtering>false</filtering>
+				<directory>${basedir}/src/main/resources</directory>
+				<includes>
+					<include>*</include>
+					<include>**/*</include>
+				</includes>
+				<excludes>
+					<exclude>icon.icns</exclude>
+					<exclude>Info.plist</exclude>
+					<exclude>JavaApplicationStub</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<!-- Plugins -->
+		<plugins>
+			<!-- Compile plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+			</plugin>
+			<!-- JAR creation plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>${project.mainClass}</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<!-- JAR dependency addition plugin -->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.4</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>com.beust:jcommander</include>
+								</includes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-    <!-- Profiles -->
-    <profiles>
-        <!-- Windows -->
-        <profile>
-            <id>package-win</id>
-            <!--<activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>-->
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.bluestemsoftware.open.maven.plugin</groupId>
-                        <artifactId>launch4j-plugin</artifactId>
-                        <version>1.5.0.0</version>
-                        <executions>
-                            <execution>
-                                <id>launch4j</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>launch4j</goal>
-                                </goals>
-                                <configuration>
-                                    <headerType>gui</headerType>
-  								<stayAlive>true</stayAlive>
-                                    <outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
-                                    <classPath>
-                                        <mainClass>${project.mainClass}</mainClass>
-                                        <addDependencies>false</addDependencies>
-                                        <preCp>anything</preCp>
-                                    </classPath>
-                                    <jre>
-                                        <minVersion>1.5.0</minVersion>
-                                    </jre>
-                                    <icon>${basedir}/src/main/resources/icon.ico</icon>
-                                    <versionInfo>
-                                        <fileVersion>1.0.2.${build.number}</fileVersion>
-                                        <txtFileVersion>1.0.2.${build.number}</txtFileVersion>
-                                        <fileDescription>${project.name}</fileDescription>
-                                        <copyright>SpoutDev</copyright>
-                                        <productVersion>1.0.2.${build.number}</productVersion>
-                                        <txtProductVersion>1.0.2.${build.number}</txtProductVersion>
-                                        <productName>${project.name}</productName>
-                                        <internalName>${project.artifactId}</internalName>
-                                        <originalFilename>${project.artifactId}.exe</originalFilename>
-                                    </versionInfo>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <!-- Mac OS X -->
-        <profile>
-            <id>package-mac</id>
-            <!--<activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>-->
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>osxappbundle-maven-plugin</artifactId>
-                        <version>1.0-alpha-1</version>
-                        <configuration>
-                            <mainClass>${project.mainClass}</mainClass>
-                            <bundleName>${project.name}</bundleName>
-                            <iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
-                            <dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
-                            <javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
-                            <additionalResources>
-                                <fileSet>
-                                    <directory>${basedir}</directory>
-                                    <includes>
-                                        <include>LICENSE.txt</include>
-                                    </includes>
-                                </fileSet>
-                            </additionalResources>
-                            <jvmVersion>1.5+</jvmVersion>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>bundle</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
+	<!-- Profiles -->
+	<profiles>
+		<!-- Windows -->
+		<profile>
+			<id>package-win</id>
+			<!--<activation> <os> <family>windows</family> </os> </activation> -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+						<artifactId>launch4j-plugin</artifactId>
+						<version>1.5.0.0</version>
+						<executions>
+							<execution>
+								<id>launch4j</id>
+								<phase>package</phase>
+								<goals>
+									<goal>launch4j</goal>
+								</goals>
+								<configuration>
+									<headerType>gui</headerType>
+									<stayAlive>true</stayAlive>
+									<outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
+									<classPath>
+										<mainClass>${project.mainClass}</mainClass>
+										<addDependencies>false</addDependencies>
+										<preCp>anything</preCp>
+									</classPath>
+									<jre>
+										<minVersion>1.5.0</minVersion>
+									</jre>
+									<icon>${basedir}/src/main/resources/icon.ico</icon>
+									<versionInfo>
+										<fileVersion>1.0.2.${build.number}</fileVersion>
+										<txtFileVersion>1.0.2.${build.number}</txtFileVersion>
+										<fileDescription>${project.name}</fileDescription>
+										<copyright>SpoutDev</copyright>
+										<productVersion>1.0.2.${build.number}</productVersion>
+										<txtProductVersion>1.0.2.${build.number}</txtProductVersion>
+										<productName>${project.name}</productName>
+										<internalName>${project.artifactId}</internalName>
+										<originalFilename>${project.artifactId}.exe</originalFilename>
+									</versionInfo>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<!-- Mac OS X -->
+		<profile>
+			<id>package-mac</id>
+			<!--<activation> <os> <family>mac</family> </os> </activation> -->
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>osxappbundle-maven-plugin</artifactId>
+						<version>1.0-alpha-1</version>
+						<configuration>
+							<mainClass>${project.mainClass}</mainClass>
+							<bundleName>${project.name}</bundleName>
+							<iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
+							<dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
+							<javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
+							<additionalResources>
+								<fileSet>
+									<directory>${basedir}</directory>
+									<includes>
+										<include>LICENSE.txt</include>
+									</includes>
+								</fileSet>
+							</additionalResources>
+							<jvmVersion>1.5+</jvmVersion>
+						</configuration>
+						<executions>
+							<execution>
+								<phase>package</phase>
+								<goals>
+									<goal>bundle</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 
 </project>

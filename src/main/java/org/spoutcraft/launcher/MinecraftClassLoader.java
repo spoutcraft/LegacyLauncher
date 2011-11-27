@@ -19,7 +19,7 @@ package org.spoutcraft.launcher;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public class MinecraftClassLoader extends URLClassLoader{
+public class MinecraftClassLoader extends URLClassLoader {
 
 	public MinecraftClassLoader(URL[] urls, ClassLoader parent) {
 		super(urls, parent);

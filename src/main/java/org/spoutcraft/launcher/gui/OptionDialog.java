@@ -43,44 +43,39 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
 public class OptionDialog extends JDialog implements ActionListener {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -2453348055512665749L;
 	private final JPanel contentPanel = new JPanel();
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	JCheckBox devCheckbox = new JCheckBox("Use latest dev build. Dangerous!");
-	
-	JCheckBox clipboardCheckbox = new JCheckBox("Allow access to your clipboard");
-	
-	JCheckBox backupCheckbox = new JCheckBox("Include worlds when doing automated backup");
-	
-	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
-	
-	JCheckBox latestLWJGLCheckbox = new JCheckBox("Use latest LWJGL binaries");
-	
-	JComboBox memoryCombo = new JComboBox();
-	
-	JButton clearCache = new JButton("Clear Cache");
-	
-	JLabel buildInfo = new JLabel();
 
+	JCheckBox clipboardCheckbox = new JCheckBox("Allow access to your clipboard");
+
+	JCheckBox backupCheckbox = new JCheckBox("Include worlds when doing automated backup");
+
+	JCheckBox retryLoginCheckbox = new JCheckBox("Retry after connection timeout");
+
+	JCheckBox latestLWJGLCheckbox = new JCheckBox("Use latest LWJGL binaries");
+
+	JComboBox memoryCombo = new JComboBox();
+
+	JButton clearCache = new JButton("Clear Cache");
+
+	JLabel buildInfo = new JLabel();
 
 	/**
 	 * Create the dialog.
 	 */
 	public OptionDialog() {
 		setTitle("Spoutcraft Settings");
-		
+
 		settings.load();
-		
+
 		buildInfo.setText("Spoutcraft Launcher Build " + Main.build);
 		buildInfo.setOpaque(true);
 		buildInfo.setForeground(Color.DARK_GRAY);
-		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev" );
-				
+		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev");
+
 		devCheckbox.setToolTipText("Uses the latest development builds of Spoutcraft. They are often unstable!");
 		clipboardCheckbox.setToolTipText("Allows server mods to see the contents of your clipboard.");
 		backupCheckbox.setToolTipText("Backs up your Spoutcraft SP worlds after each Spoutcraft update");
@@ -88,7 +83,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		latestLWJGLCheckbox.setToolTipText("Minecraft normally uses older, more compatible versions of LWJGL, but the latest may improve performance or fix audio issues");
 		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
 		memoryCombo.setToolTipText("Allows you to adjust the memory assigned to Spoutcraft. Assigning more memory than you have may cause crashes.");
-		
+
 		if (settings.checkProperty("devupdate")) {
 			devCheckbox.setSelected(settings.getPropertyBoolean("devupdate"));
 		}
@@ -104,44 +99,27 @@ public class OptionDialog extends JDialog implements ActionListener {
 		if (settings.checkProperty("latestLWJGL")) {
 			latestLWJGLCheckbox.setSelected(settings.getPropertyBoolean("latestLWJGL"));
 		}
-		
+
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
-		
+
 		memoryCombo.addItem("512 MB");
 		memoryCombo.addItem("1 GB");
 		memoryCombo.addItem("2 GB");
 		memoryCombo.addItem("4 GB");
 		memoryCombo.addItem("8 GB");
 		memoryCombo.addItem("16 GB");
-		
+
 		if (settings.checkProperty("memory")) {
 			memoryCombo.setSelectedIndex(settings.getPropertyInteger("memory"));
 		}
-		
+
 		JLabel lblMemoryToAllocate = new JLabel("Memory to allocate");
-		
+
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
-		gl_contentPanel.setHorizontalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addContainerGap()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addComponent(devCheckbox)
-						.addComponent(clipboardCheckbox)
-						.addComponent(backupCheckbox)
-						.addComponent(retryLoginCheckbox)
-						.addComponent(latestLWJGLCheckbox)
-						.addComponent(clearCache)
-						.addComponent(buildInfo)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(lblMemoryToAllocate)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
-					.addContainerGap(27, Short.MAX_VALUE))
-		);
+		gl_contentPanel.setHorizontalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPanel.createSequentialGroup().addContainerGap().addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addComponent(devCheckbox).addComponent(clipboardCheckbox).addComponent(backupCheckbox).addComponent(retryLoginCheckbox).addComponent(latestLWJGLCheckbox).addComponent(clearCache).addComponent(buildInfo).addGroup(gl_contentPanel.createSequentialGroup().addComponent(lblMemoryToAllocate).addPreferredGap(ComponentPlacement.RELATED).addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))).addContainerGap(27, Short.MAX_VALUE)));
 		Font font = new Font("Arial", Font.PLAIN, 11);
 		backupCheckbox.setFont(font);
 		clipboardCheckbox.setFont(font);
@@ -150,25 +128,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		clearCache.setFont(font);
 		clearCache.setActionCommand("Clear Cache");
 		clearCache.addActionListener(this);
-		gl_contentPanel.setVerticalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addComponent(devCheckbox)
-					.addComponent(retryLoginCheckbox)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(clipboardCheckbox)
-					.addComponent(backupCheckbox)
-					.addComponent(latestLWJGLCheckbox)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMemoryToAllocate))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(clearCache)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buildInfo)
-					.addContainerGap(316, Short.MAX_VALUE))
-		);
+		gl_contentPanel.setVerticalGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING).addGroup(gl_contentPanel.createSequentialGroup().addComponent(devCheckbox).addComponent(retryLoginCheckbox).addPreferredGap(ComponentPlacement.RELATED).addComponent(clipboardCheckbox).addComponent(backupCheckbox).addComponent(latestLWJGLCheckbox).addPreferredGap(ComponentPlacement.RELATED).addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE).addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE).addComponent(lblMemoryToAllocate)).addPreferredGap(ComponentPlacement.RELATED).addComponent(clearCache).addPreferredGap(ComponentPlacement.RELATED).addComponent(buildInfo).addContainerGap(316, Short.MAX_VALUE)));
 		contentPanel.setLayout(gl_contentPanel);
 		{
 			JPanel buttonPane = new JPanel();
@@ -193,7 +153,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent evt) {
-		String btnID = evt.getActionCommand(); 
+		String btnID = evt.getActionCommand();
 		if (btnID.equals("OK")) {
 			if (settings.checkProperty("devupdate")) {
 				settings.changeProperty("devupdate", devCheckbox.isSelected());
@@ -229,7 +189,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			boolean clearCache = false;
 			if (settings.checkProperty("latestLWJGL")) {
-				if (settings.getPropertyBoolean("latestLWJGL") != latestLWJGLCheckbox.isSelected()){
+				if (settings.getPropertyBoolean("latestLWJGL") != latestLWJGLCheckbox.isSelected()) {
 					clearCache = true;
 				}
 				settings.changeProperty("latestLWJGL", latestLWJGLCheckbox.isSelected());
@@ -240,25 +200,29 @@ public class OptionDialog extends JDialog implements ActionListener {
 				}
 			}
 			if (clearCache) {
-				clearCache();
-				
+				clearCache(false);
+
 			}
 			this.setVisible(false);
 			this.dispose();
 		} else if (btnID.equals("Cancel")) {
 			this.setVisible(false);
 			this.dispose();
-		}
-		else if (btnID.equals("Clear Cache")) {
-			clearCache();
+		} else if (btnID.equals("Clear Cache")) {
+			clearCache(true);
 		}
 	}
-	
-	public static void clearCache() {
+
+	public static void clearCache(boolean comeplete) {
 		try {
-			FileUtils.deleteDirectory(GameUpdater.binDir);
-			FileUtils.deleteDirectory(GameUpdater.updateDir);
-		} catch (IOException e) {
+			if(!compelete) {
+				FileUtils.deleteDirectory(GameUpdater.binDir);
+				FileUtils.deleteDirectory(GameUpdater.updateDir);
+			} else {
+				FileUtils.deleteDirectory(new File(PlatformUtils.getWorkingDirectory().getPath()));
+				reboot("");
+			}
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

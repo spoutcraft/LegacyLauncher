@@ -16,7 +16,6 @@
  */
 package org.spoutcraft.launcher;
 
-
 import java.applet.Applet;
 import java.applet.AppletStub;
 import java.awt.Dimension;
@@ -73,7 +72,7 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
-		
+
 		this.add(minecraftApplet, gridBagConstraints);
 		this.minecraftApplet = minecraftApplet;
 	}
@@ -85,14 +84,15 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 	@Override
 	public String getParameter(String name) {
 		String custom = this.customParameters.get(name);
-		if (custom != null) return custom; try
-		{
-		  return super.getParameter(name);
+		if (custom != null)
+			return custom;
+		try {
+			return super.getParameter(name);
 		} catch (Exception e) {
-		  this.customParameters.put(name, null);
+			this.customParameters.put(name, null);
 		}
 		return null;
-	  }
+	}
 
 	@Override
 	public boolean isActive() {
@@ -158,4 +158,3 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 		minecraftApplet.setVisible(b);
 	}
 }
-
