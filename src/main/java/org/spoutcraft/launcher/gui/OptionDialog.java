@@ -76,12 +76,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 	public OptionDialog() {
 		setTitle("Spoutcraft Settings");
 		
-		new Thread() {
-			public void run() {
-				MinecraftDownloadUtils.updateSpoutcraftYMLCache();
-			}
-		}.start();
-		
 		ButtonGroup group = new ButtonGroup();
 		group.add(devBuilds);
 		group.add(recBuilds);

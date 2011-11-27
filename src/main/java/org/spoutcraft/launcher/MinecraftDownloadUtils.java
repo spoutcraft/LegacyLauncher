@@ -1,10 +1,7 @@
 package org.spoutcraft.launcher;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
 
 import org.bukkit.util.config.Configuration;
@@ -13,8 +10,6 @@ import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
 
 public class MinecraftDownloadUtils {
-	private static boolean updated = false;
-	private static File spoutcraftYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft.yml");
 	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException{
 		int tries = 3;
 		File outputFile = null;
@@ -68,36 +63,10 @@ public class MinecraftDownloadUtils {
 		}
 		GameUpdater.copy(outputFile, new File(GameUpdater.binCacheDir, "minecraft_" + build.getMinecraftVersion() + ".jar"));
 	}
-	
-	private static Configuration getSpoutcraftYML() {
-		updateSpoutcraftYMLCache();
-		Configuration config = new Configuration(spoutcraftYML);
-		config.load();
-		return config;
-	}
-	
-	public static void updateSpoutcraftYMLCache() {
-		if (!updated) {
-			String urlName = MirrorUtils.getMirrorUrl("spoutcraft.yml", "http://mirror3.getspout.org/spoutcraft.yml", null);
-			if (urlName != null) {
-				try {
-					URL url = new URL(urlName);
-					HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-					System.setProperty("http.agent", "");
-					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-					GameUpdater.copy(con.getInputStream(), new FileOutputStream(spoutcraftYML));
-				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			updated = true;
-		}
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static String[] getSpoutcraftBuilds() {
-		Configuration config = getSpoutcraftYML();
+		Configuration config = SpoutcraftYML.getSpoutcraftYML();
 		Map<Integer, String> builds = (Map<Integer, String>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);
@@ -119,25 +88,4 @@ public class MinecraftDownloadUtils {
 		}
 		return null;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static SpoutcraftBuild getSpoutcraftBuild() {
-		Configuration config = getSpoutcraftYML();
-		Map<Integer, String> builds = (Map<Integer, String>) config.getProperty("builds");
-		int latest = config.getInt("latest", -1);
-		int recommended = config.getInt("recommended", -1);
-		int selected = SettingsUtil.getSelectedBuild();
-		if (SettingsUtil.isRecommendedBuild()) {
-			return new SpoutcraftBuild(builds.get(recommended), "1.0.0", recommended);
-		}
-		else if (SettingsUtil.isDevelopmentBuild()) {
-			return new SpoutcraftBuild(builds.get(latest), "1.0.0", latest);
-		}
-		return new SpoutcraftBuild(builds.get(selected), "1.0.0", selected);
-	}
-	
-	public static void getPatch() {
-		
-	}
-
 }

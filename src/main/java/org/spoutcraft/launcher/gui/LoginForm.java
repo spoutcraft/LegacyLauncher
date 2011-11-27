@@ -56,8 +56,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private List<JButton> loginSkin2Image;
 	public final JProgressBar progressBar;
 	HashMap<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
-	public Boolean mcUpdate = false;
-	public Boolean spoutUpdate = false;
+	public boolean mcUpdate = false;
+	public boolean spoutUpdate = false;
 	public static UpdateDialog updateDialog;
 	private static String pass = null;
 	public static String[] values = null;
@@ -243,8 +243,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		background.setHorizontalAlignment(SwingConstants.CENTER);
 		background.setBounds(0, 0, 854, 480);
 		contentPane.add(background);
-
-		(new BackgroundImageWorker(new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg"), background)).execute();
+		
+		//TODO: remove this after next release
+		(new File(PlatformUtils.getWorkingDirectory(), "launcher_cache.jpg")).delete();
+		
+		File cacheDir = new File(PlatformUtils.getWorkingDirectory(), "cache");
+		cacheDir.mkdir();
+		File backgroundImage = new File(cacheDir, "launcher_background.jpg");
+		(new BackgroundImageWorker(backgroundImage, background)).execute();
 
 		Vector<Component> order = new Vector<Component>(5);
 		order.add(usernameField.getEditor().getEditorComponent());
@@ -504,7 +510,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 				gameUpdater.user = values[2].trim();
 				gameUpdater.downloadTicket = values[1].trim();
-				gameUpdater.latestVersion = Long.parseLong(values[0].trim());
 				if (cmdLine == false) {
 					String password = new String(passwordField.getPassword());
 					if (rememberCheckbox.isSelected()) {
@@ -526,7 +531,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					protected Boolean doInBackground() throws Exception {
 						publish("Checking for Minecraft Update...\n");
 						try {
-							mcUpdate = gameUpdater.checkMCUpdate(new File(GameUpdater.binDir + File.separator + "version"));
+							mcUpdate = gameUpdater.checkMCUpdate();
 						} catch (Exception e) {
 							mcUpdate = false;
 						}
