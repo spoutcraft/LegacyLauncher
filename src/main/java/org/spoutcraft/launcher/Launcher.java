@@ -50,9 +50,7 @@ public class Launcher {
 		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
 		while (i.hasNext()) {
 			Entry<String, Object> lib = i.next();
-			String version = String.valueOf(lib.getValue());
-			String name = lib.getKey() + "-" + version;
-			File libraryFile = new File(mcBinFolder, name + ".jar");
+			File libraryFile = new File(mcBinFolder, "lib" + File.separator + lib.getKey() + ".jar");
 			files[index] = libraryFile;
 			index++;
 		}

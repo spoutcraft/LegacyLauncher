@@ -241,13 +241,17 @@ public class GameUpdater implements DownloadListener {
 			copy(download.getOutFile(), new File(binDir, "spoutcraft.jar"));
 		}
 		
+		File libDir = new File(binDir, "lib");
+		libDir.mkdir();
+		
 		Map<String, Object> libraries = build.getLibraries();
 		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
 		while (i.hasNext()) {
 			Entry<String, Object> lib = i.next();
 			String version = String.valueOf(lib.getValue());
 			String name = lib.getKey() + "-" + version;
-			File libraryFile = new File(binDir, name + ".jar");
+						
+			File libraryFile = new File(libDir, lib.getKey() + ".jar");
 			String MD5 = LibrariesYML.getMD5(lib.getKey(), version);
 			
 			if (libraryFile.exists()) {
@@ -261,7 +265,7 @@ public class GameUpdater implements DownloadListener {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				String fallbackURL = "http://mirror3.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				String url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
-				download = DownloadUtils.downloadFile(url, libraryFile.getPath(), name, MD5, this);
+				download = DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
 			}
 		}
 		

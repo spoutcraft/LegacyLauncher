@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.gui.OptionDialog;
 
 public class SpoutcraftYML {
 	private static boolean updated = false;
@@ -30,6 +31,11 @@ public class SpoutcraftYML {
 							Configuration config = new Configuration(spoutcraftYML);
 							config.load();
 							selected = config.getInt("current", -1);
+							
+							int launcher = config.getInt("launcher", 203);
+							if (launcher < 203) {
+								OptionDialog.clearCache();
+							}
 						}
 						catch (Exception ex){
 							ex.printStackTrace();
