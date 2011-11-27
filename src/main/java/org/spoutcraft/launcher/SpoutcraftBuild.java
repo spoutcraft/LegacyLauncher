@@ -71,12 +71,12 @@ public class SpoutcraftBuild {
 		int selected = SettingsUtil.getSelectedBuild();
 		if (SettingsUtil.isRecommendedBuild()) {
 			Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
-			return new SpoutcraftBuild((String)build.get("minecraft"), "1.0.0", recommended);
+			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), recommended);
 		} else if (SettingsUtil.isDevelopmentBuild()) {
 			Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
-			return new SpoutcraftBuild((String)build.get("minecraft"), "1.0.0", latest);
+			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), latest);
 		}
 		Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
-		return new SpoutcraftBuild((String)build.get("minecraft"), "1.0.0", selected);
+		return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), selected);
 	}
 }
