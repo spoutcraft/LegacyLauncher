@@ -536,7 +536,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							mcUpdate = false;
 						}
 
-						publish("Checking for Spout update...\n");
+						publish("Checking for Spoutcraft update...\n");
 						try {
 							spoutUpdate = mcUpdate || gameUpdater.isSpoutcraftUpdateAvailable();
 						} catch (Exception e) {
