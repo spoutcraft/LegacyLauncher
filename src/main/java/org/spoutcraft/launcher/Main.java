@@ -20,12 +20,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.gui.LoginForm;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
+
+import com.beust.jcommander.JCommander;
 
 public class Main {
 	
@@ -64,9 +65,13 @@ public class Main {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		if (Arrays.asList(args).contains("--portable") || new File("spoutcraft-portable").exists()) {
-			PlatformUtils.setPortable(true);
+		Options options = new Options();
+		try {
+			new JCommander(options, args);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
+		MinecraftUtils.setOptions(options);
 		
 		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 		
@@ -86,7 +91,7 @@ public class Main {
 			if (SettingsUtil.getMemorySelection() < 6) {
 				int mem = 1 << (9 + SettingsUtil.getMemorySelection());
 				recursion.createNewFile();
-				//reboot("-Xmx" + mem + "m");
+				reboot("-Xmx" + mem + "m");
 			}
 		}
 		PlatformUtils.getWorkingDirectory().mkdirs();
@@ -108,28 +113,6 @@ public class Main {
 		}
 
 		LoginForm login = new LoginForm();
-
-		switch (args.length) {
-		case 4:
-			login.doLogin(args[0], args[1]);
-
-			MinecraftUtils.setServer(args[2]);
-			break;
-
-		case 3:		
-			login.doLogin(args[0], args[1]);
-
-			MinecraftUtils.setServer(args[2]);
-			break;
-		case 2:
-			login.doLogin(args[0], args[1]);
-
-			break;
-		default:
-			if (args.length > 5) {
-				MinecraftUtils.setServer(args[2]);
-			}
-		}
 
 		login.setVisible(true);
 	}

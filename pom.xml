@@ -88,6 +88,12 @@
             <type>jar</type>
             <scope>compile</scope>
         </dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.19</version>
+			<scope>compile</scope>
+		</dependency>
     </dependencies>
    
     <build>
@@ -155,6 +161,7 @@
                                 <includes>
                                     <include>commons-codec:commons-codec</include>
                                     <include>org.yaml:snakeyaml</include>
+                                    <include>com.beust:jcommander</include>
                                 </includes>
                             </artifactSet>
                         </configuration>

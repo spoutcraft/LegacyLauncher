@@ -22,17 +22,12 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-//import java.io.File;
-//import java.io.IOException;
 
 import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.Launcher;
-//import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
-import org.spoutcraft.launcher.PlatformUtils;
-//import org.spoutcraft.launcher.SettingsHandler;
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
 
 public class LauncherFrame extends Frame implements WindowListener{
@@ -115,11 +110,11 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
-		minecraft.addParameter("portable", PlatformUtils.isPortable() + "");
-		if (MinecraftUtils.server != null) {
-			minecraft.addParameter("server", MinecraftUtils.server);
-			if (MinecraftUtils.port != null) {
-				minecraft.addParameter("port", MinecraftUtils.port);
+		minecraft.addParameter("portable", MinecraftUtils.getOptions().isPortable() + "");
+		if (MinecraftUtils.getOptions().getServer() != null) {
+			minecraft.addParameter("server", MinecraftUtils.getOptions().getServer());
+			if (MinecraftUtils.getOptions().getPort() != null) {
+				minecraft.addParameter("port", MinecraftUtils.getOptions().getPort());
 			}
 		}
 		

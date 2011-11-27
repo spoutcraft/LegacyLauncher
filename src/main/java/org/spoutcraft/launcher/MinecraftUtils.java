@@ -28,8 +28,16 @@ import org.spoutcraft.launcher.exception.MinecraftUserNotPremiumException;
 
 
 public class MinecraftUtils {
-	public static String server = null;
-	public static String port = null;
+	
+	private static Options options = null;
+
+	public static Options getOptions() {
+		return options;
+	}
+
+	public static void setOptions(Options options) {
+		MinecraftUtils.options = options;
+	}
 	
 	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException {
 			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
@@ -49,15 +57,7 @@ public class MinecraftUtils {
 				}
 				throw new MCNetworkException();
 			}
-			return result.split(":");
-	}
-	
-	public static void setServer(String server) {
-		if (server.contains(":")) {
-			String[] serv = server.split(":");
-			MinecraftUtils.server = serv[0];
-			MinecraftUtils.port = serv[1];
-		}
+		return result.split(":");
 	}
 	
 }
