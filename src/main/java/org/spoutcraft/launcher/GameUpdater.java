@@ -73,6 +73,8 @@ public class GameUpdater implements DownloadListener {
 
 		binDir.mkdir();
 		binCacheDir.mkdir();
+		if (updateDir.exists())
+			FileUtils.deleteDirectory(updateDir);
 		updateDir.mkdir();
 		
 		String minecraftMD5 = MD5Utils.getMD5(FileType.minecraft);
