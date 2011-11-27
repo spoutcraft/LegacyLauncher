@@ -588,7 +588,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 
 					if (spoutUpdate) {
-						gameUpdater.updateSpout();
+						gameUpdater.updateSpoutcraft();
 					}
 				} catch (Exception e) {
 					e.printStackTrace();

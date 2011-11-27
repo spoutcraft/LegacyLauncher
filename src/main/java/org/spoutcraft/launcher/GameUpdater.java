@@ -218,7 +218,7 @@ public class GameUpdater implements DownloadListener {
 		return new File(updateDir.getPath() + File.separator + "natives.jar.lzma");
 	}
 
-	public void updateSpout() throws Exception {
+	public void updateSpoutcraft() throws Exception {
 		performBackup();
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 
