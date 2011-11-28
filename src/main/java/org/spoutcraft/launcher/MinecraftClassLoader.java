@@ -19,6 +19,7 @@ package org.spoutcraft.launcher;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -35,6 +36,13 @@ public class MinecraftClassLoader extends URLClassLoader{
 		super(urls, parent);
 		this.spoutcraft = spoutcraft;
 		this.libraries = libraries;
+		for (File f : libraries) {
+			try {
+				this.addURL(f.toURI().toURL());
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	@Override

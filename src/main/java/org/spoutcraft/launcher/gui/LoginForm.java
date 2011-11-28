@@ -590,7 +590,11 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					if (spoutUpdate) {
 						gameUpdater.updateSpoutcraft();
 					}
-				} catch (Exception e) {
+				}
+				catch (NoMirrorsAvailableException e) {
+					JOptionPane.showMessageDialog(getParent(), "No Mirrors Are Available to download from!\nTry again later.");
+				}
+				catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(getParent(), "Download Interrupted!");
 					LauncherFrame.errorInDownload = true;

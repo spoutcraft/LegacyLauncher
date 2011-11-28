@@ -42,6 +42,7 @@ import java.util.zip.ZipOutputStream;
 
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
+import org.spoutcraft.launcher.exception.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.exception.UnsupportedOSException;
 import org.spoutcraft.launcher.logs.SystemConsoleListener;
 
@@ -256,7 +257,14 @@ public class GameUpdater implements DownloadListener {
 
 		stateChanged("Looking Up Mirrors...", 0F);
 		build.setDownloadListener(this);
-		Download download = DownloadUtils.downloadFile(build.getSpoutcraftURL(), spoutcraft.getPath(), null, null, this);
+		
+		String url = build.getSpoutcraftURL();
+		
+		if (url == null) {
+			throw new NoMirrorsAvailableException();
+		}
+		
+		Download download = DownloadUtils.downloadFile(url, spoutcraft.getPath(), null, null, this);
 		if (download.isSuccess()) {
 			copy(download.getOutFile(), new File(binDir, "spoutcraft.jar"));
 		}
@@ -284,7 +292,7 @@ public class GameUpdater implements DownloadListener {
 			if (!libraryFile.exists()) {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				String fallbackURL = "http://mirror3.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
-				String url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
+				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
 				download = DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
 			}
 		}
