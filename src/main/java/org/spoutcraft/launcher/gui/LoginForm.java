@@ -142,7 +142,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 
-		readUsedUsernames();
+		
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -161,6 +161,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 
 		tumblerFeed = new TumblerFeedParsingWorker(editorPane);
 		tumblerFeed.execute();
+		
+		readUsedUsernames();
 
 		editorPane.setEditable(false);
 		editorPane.setOpaque(false);
@@ -395,12 +397,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private void updatePasswordField() {
 		if (this.usernameField.getSelectedItem() != null){
 			UserPasswordInformation info = usernames.get(this.usernameField.getSelectedItem().toString());
-			if (info == null || info.isHash) {
-				this.passwordField.setText("");
-				this.rememberCheckbox.setSelected(false);
-			} else {
-				this.passwordField.setText(info.password);
-				this.rememberCheckbox.setSelected(true);
+			if (info != null) {
+				if (info.isHash) {
+					this.passwordField.setText("");
+					this.rememberCheckbox.setSelected(false);
+				} else {
+					this.passwordField.setText(info.password);
+					this.rememberCheckbox.setSelected(true);
+				}
 			}
 		}
 	}
