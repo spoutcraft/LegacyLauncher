@@ -54,6 +54,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private List<JButton> loginSkin1Image;
 	private JButton loginSkin2;
 	private List<JButton> loginSkin2Image;
+	private TumblerFeedParsingWorker tumblerFeed;
 	public final JProgressBar progressBar;
 	HashMap<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	public boolean mcUpdate = false;
@@ -158,7 +159,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
 
-		(new TumblerFeedParsingWorker(editorPane)).execute();
+		tumblerFeed = new TumblerFeedParsingWorker(editorPane);
+		tumblerFeed.execute();
 
 		editorPane.setEditable(false);
 		editorPane.setOpaque(false);
@@ -316,6 +318,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						if (!pass.isEmpty()) {
 							i++;
 							if (i == 1) {
+								tumblerFeed.setUser(user);
 								loginSkin1.setText(user);
 								loginSkin1.setVisible(true);
 								ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
