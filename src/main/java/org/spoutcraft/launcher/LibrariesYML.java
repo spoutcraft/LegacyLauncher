@@ -22,7 +22,7 @@ public class LibrariesYML {
 	
 	public static void updateLibrariesYMLCache() {
 		if (!updated) {
-			String urlName = MirrorUtils.getMirrorUrl("slibraries.yml", "http://mirror3.getspout.org/libraries.yml", null);
+			String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://mirror3.getspout.org/libraries.yml", null);
 			if (urlName != null) {
 
 				try {

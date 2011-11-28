@@ -149,7 +149,25 @@ public class GameUpdater implements DownloadListener {
 			return true;
 		if (!new File(binDir, "natives").exists())
 			return true;
-		return !MinecraftYML.getInstalledVersion().equals(MinecraftYML.getLatestMinecraftVersion());
+		if (!MinecraftYML.getInstalledVersion().equals(MinecraftYML.getLatestMinecraftVersion())) 
+			return true;
+		File minecraft = new File(binDir, "minecraft.jar");
+		if (!minecraft.exists())
+			return true;
+		
+		File lib = new File(binDir, "jinput.jar");
+		if (!lib.exists())
+			return true;
+		
+		lib = new File(binDir, "lwjgl.jar");
+		if (!lib.exists())
+			return true;
+		
+		lib = new File(binDir, "lwjgl_util.jar");
+		if (!lib.exists())
+			return true;
+		
+		return false;
 	}
 
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {
@@ -286,8 +304,27 @@ public class GameUpdater implements DownloadListener {
 		
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 
-		return build.getBuild() != build.getInstalledBuild();
-
+		if (build.getBuild() != build.getInstalledBuild()) 
+			return true;
+		
+		File spoutcraft = new File(binDir, "spoutcraft.jar");
+		if (!spoutcraft.exists())
+			return true;
+		
+		File libDir = new File(binDir, "lib");
+		libDir.mkdir();
+		
+		Map<String, Object> libraries = build.getLibraries();
+		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<String, Object> lib = i.next();						
+			File libraryFile = new File(libDir, lib.getKey() + ".jar");
+			if (!libraryFile.exists()) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 
 	public static long copy(InputStream input, OutputStream output) throws IOException {
