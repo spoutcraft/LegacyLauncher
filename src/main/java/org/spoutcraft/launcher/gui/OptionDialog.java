@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
@@ -32,7 +33,9 @@ import org.spoutcraft.launcher.FileUtils;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MinecraftDownloadUtils;
+import org.spoutcraft.launcher.MinecraftYML;
 import org.spoutcraft.launcher.SettingsUtil;
+import org.spoutcraft.launcher.SpoutcraftYML;
 
 import javax.swing.ButtonGroup;
 import javax.swing.GroupLayout;
@@ -286,7 +289,12 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}
 		else if (id.equals("Clear Cache")) {
-			clearCache();
+			if (clearCache()) {
+				JOptionPane.showMessageDialog(getParent(), "Successfully cleared the cache.");
+			}
+			else {
+				JOptionPane.showMessageDialog(getParent(), "Failed to clear the cache! Ensure spoutcraft files are open.\nIf all else fails, close the launcher, restart it, and try again.");
+			}
 		}
 		else if (id.equals(customBuilds.getText()) || id.equals(devBuilds.getText()) || id.equals(recBuilds.getText())) {
 			updateBuildsCombo();
@@ -323,12 +331,18 @@ public class OptionDialog extends JDialog implements ActionListener {
 	}
 
 	
-	public static void clearCache() {
+	public static boolean clearCache() {
 		try {
 			FileUtils.deleteDirectory(GameUpdater.binDir);
 			FileUtils.deleteDirectory(GameUpdater.updateDir);
+			return true;
 		} catch (IOException e) {
 			e.printStackTrace();
+			return false;
+		}
+		finally {
+			SpoutcraftYML.getSpoutcraftYML().setProperty("current", "");
+			MinecraftYML.setInstalledVersion("");
 		}
 	}
 }
