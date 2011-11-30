@@ -20,6 +20,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -126,9 +127,17 @@ public class GameUpdater implements DownloadListener {
 
 		stateChanged("Extracting Files...", 0);
 		// Extract Natives
-		extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
+		try {
+			extractNatives(nativesDir, new File(GameUpdater.updateDir.getPath() + File.separator + "natives.zip"));
+		}
+		catch (FileNotFoundException inUse) {
+			//If we previously loaded this dll with a failed launch, we will be unable to access the files
+			//This is because the previous classloader opened them with the parent classloader, and while the mc classloader
+			//has been gc'd, the parent classloader is still around, holding the file open. In that case, we have to assume
+			//the files are good, since they got loaded last time...
+		}
 		
-		MinecraftYML.setInstalledVersion(build.getLatestMinecraftVersion());
+		MinecraftYML.setInstalledVersion(build.getMinecraftVersion());
 	}
 	
 	public String getNativesUrl() {
@@ -150,8 +159,6 @@ public class GameUpdater implements DownloadListener {
 			return true;
 		if (!new File(binDir, "natives").exists())
 			return true;
-		if (!MinecraftYML.getInstalledVersion().equals(MinecraftYML.getLatestMinecraftVersion())) 
-			return true;
 		File minecraft = new File(binDir, "minecraft.jar");
 		if (!minecraft.exists())
 			return true;
@@ -168,7 +175,10 @@ public class GameUpdater implements DownloadListener {
 		if (!lib.exists())
 			return true;
 		
-		return false;
+		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+		String installed = MinecraftYML.getInstalledVersion();
+		String required = build.getMinecraftVersion();
+		return !installed.equals(required);
 	}
 
 	private void extractNatives(File nativesDir, File nativesJar) throws Exception {

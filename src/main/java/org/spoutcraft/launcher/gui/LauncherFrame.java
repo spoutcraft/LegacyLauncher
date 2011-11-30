@@ -34,8 +34,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
 	private LoginForm loginForm = null;
-	public static boolean errorInDownload = false;
-	public static boolean successfulGameLaunch = false;
 	
 	public static final int RETRYING_LAUNCH = -1;
 	public static final int ERROR_IN_LAUNCH = 0;
@@ -63,7 +61,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 	}
 	
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
-
 		Applet applet = null;
 		try {
 			applet = Launcher.getMinecraftApplet();
@@ -93,9 +90,8 @@ public class LauncherFrame extends Frame implements WindowListener{
 			}
 			this.dispose();
 			return result;*/
-			errorInDownload = true;
 		}
-		if (applet == null || errorInDownload) {
+		if (applet == null) {
 			String message = "Failed to launch Spoutcraft!";
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
@@ -129,7 +125,6 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.start();
 		
 		this.setVisible(true);
-		successfulGameLaunch = true;
 		return SUCCESSFUL_LAUNCH;
 	}
 

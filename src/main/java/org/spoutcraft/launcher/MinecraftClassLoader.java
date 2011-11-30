@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
@@ -45,18 +46,15 @@ public class MinecraftClassLoader extends URLClassLoader{
 		}
 	}
 	
+	//NOTE: VerifyException is due to multiple classes of the same type in jars, need to override all classloader methods to fix...
+	
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> result = null;
-
 		result = loadedClasses.get(name); //checks in cached classes  
 		if (result != null) {
 			return result;
 		}
-
-		try {
-			return findSystemClass(name);  
-		} catch (Exception ignore) { }
 
 		result = findClassInjar(name, spoutcraft);
 		if (result != null) {
@@ -88,7 +86,7 @@ public class MinecraftClassLoader extends URLClassLoader{
 				}
 	
 				classByte = byteStream.toByteArray();
-				result = defineClass(name, classByte, 0, classByte.length, (CodeSource)null);
+				result = defineClass(name, classByte, 0, classByte.length, new CodeSource(file.toURI().toURL(), (CodeSigner[])null));
 				loadedClasses.put(name, result);
 				return result;
 			}

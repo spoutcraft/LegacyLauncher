@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
+import org.spoutcraft.launcher.exception.UnknownMinecraftException;
 
 public class Launcher {
 	
@@ -76,16 +77,22 @@ public class Launcher {
 						
 			Class minecraftClass = classLoader.loadClass("net.minecraft.client.MinecraftApplet");
 			return (Applet) minecraftClass.newInstance();
-			
-		} catch (MalformedURLException ex) {
+		}
+		catch (MalformedURLException ex) {
 			ex.printStackTrace();
 			return null;
-		} catch (ClassNotFoundException ex) {
+		} 
+		catch (ClassNotFoundException ex) {
 			throw new CorruptedMinecraftJarException(ex);
-		} catch (IllegalAccessException ex) {
+		}
+		catch (IllegalAccessException ex) {
 			throw new CorruptedMinecraftJarException(ex);
-		} catch (InstantiationException ex) {
+		}
+		catch (InstantiationException ex) {
 			throw new CorruptedMinecraftJarException(ex);
+		}
+		catch (Throwable t) {
+			throw new UnknownMinecraftException(t);
 		}
 	}
 	

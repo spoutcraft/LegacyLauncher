@@ -62,6 +62,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public static UpdateDialog updateDialog;
 	private static String pass = null;
 	public static String[] values = null;
+	private int success = LauncherFrame.ERROR_IN_LAUNCH;
 
 	public static final GameUpdater gameUpdater = new GameUpdater();
 	OptionDialog options = new OptionDialog();
@@ -604,7 +605,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				catch (Exception e) {
 					e.printStackTrace();
 					JOptionPane.showMessageDialog(getParent(), "Download Interrupted!");
-					LauncherFrame.errorInDownload = true;
 					error = true;
 					loginButton.setEnabled(true);
 					optionsButton.setEnabled(true);
@@ -653,6 +653,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
 		}
+		
+		this.success = result;
 		//Do nothing for retrying launch
 	}
 	
@@ -663,7 +665,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	}
 
 	public void windowClosed(WindowEvent e) {
-		if (!LauncherFrame.successfulGameLaunch) {
+		if (success == LauncherFrame.ERROR_IN_LAUNCH) {
 			System.out.println("Exiting the Spoutcraft Launcher");
 			System.exit(0);
 		}
