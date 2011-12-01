@@ -330,7 +330,6 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 	}
 
-	
 	public static boolean clearCache() {
 		try {
 			FileUtils.deleteDirectory(GameUpdater.binDir);

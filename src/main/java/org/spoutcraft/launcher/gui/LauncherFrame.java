@@ -29,6 +29,7 @@ import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.MinecraftUtils;
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
+import org.spoutcraft.launcher.exception.MinecraftVerifyException;
 
 public class LauncherFrame extends Frame implements WindowListener{
 	private static final long serialVersionUID = 4524937541564722358L;
@@ -67,29 +68,13 @@ public class LauncherFrame extends Frame implements WindowListener{
 		}
 		catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
-			/*String message = "The Spoutcraft Files Are Corrupted. Attempt to Resolve?";
+		}
+		catch (MinecraftVerifyException verify) {
+			OptionDialog.clearCache();
+			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
-			int option = JOptionPane.showConfirmDialog(getParent(), message, "An Error Has Occured!", JOptionPane.YES_NO_OPTION);
-			int result = RETRYING_LAUNCH;
-			if (option == JOptionPane.YES_OPTION) {
-				try {
-					LoginForm.clearCacheMarker.createNewFile();
-					Main.recursion.createNewFile();
-					int mem = 1024;
-					if (settings.checkProperty("memory")) {
-							mem = 1 << 9 + settings.getPropertyInteger("memory");
-					}
-					Main.reboot("-Xmx" + mem + "m");
-					return RETRYING_LAUNCH;
-				} catch (IOException e) {
-					result = ERROR_IN_LAUNCH;
-				}
-			}
-			else {
-				result = ERROR_IN_LAUNCH;
-			}
 			this.dispose();
-			return result;*/
+			return ERROR_IN_LAUNCH;
 		}
 		if (applet == null) {
 			String message = "Failed to launch Spoutcraft!";

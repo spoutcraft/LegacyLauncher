@@ -25,12 +25,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.spoutcraft.launcher.exception.CorruptedMinecraftJarException;
+import org.spoutcraft.launcher.exception.MinecraftVerifyException;
 import org.spoutcraft.launcher.exception.UnknownMinecraftException;
 
 public class Launcher {
 	
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException{
+	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException, MinecraftVerifyException{
 			   
 		File mcBinFolder = new File(PlatformUtils.getWorkingDirectory(), "bin");
 		
@@ -74,7 +75,7 @@ public class Launcher {
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);
 			System.setProperty("net.java.games.input.librarypath", nativesPath);
-						
+			
 			Class minecraftClass = classLoader.loadClass("net.minecraft.client.MinecraftApplet");
 			return (Applet) minecraftClass.newInstance();
 		}
@@ -90,6 +91,9 @@ public class Launcher {
 		}
 		catch (InstantiationException ex) {
 			throw new CorruptedMinecraftJarException(ex);
+		}
+		catch (VerifyError ex) {
+			throw new MinecraftVerifyException(ex);
 		}
 		catch (Throwable t) {
 			throw new UnknownMinecraftException(t);

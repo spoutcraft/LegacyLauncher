@@ -1,23 +1,22 @@
 package org.spoutcraft.launcher.exception;
 
-import java.io.IOException;
-
-public class NoMirrorsAvailableException extends IOException{
+public class MinecraftVerifyException extends Exception{
 	private static final long serialVersionUID = 1L;
 	private final Throwable cause;
 	private final String message;
 	
-	public NoMirrorsAvailableException(String message) {
+	public MinecraftVerifyException(String message) {
 		this(null, message);
 	}
 
-	public NoMirrorsAvailableException(Throwable throwable, String message) {
+	public MinecraftVerifyException(Throwable throwable, String message) {
 		this.cause = throwable;
 		this.message = message;
 	}
-
-	public NoMirrorsAvailableException() {
-		this(null, "No Mirrors Are Available");
+	
+	public MinecraftVerifyException(Throwable throwable) {
+		this.cause = throwable;
+		this.message = null;
 	}
 
 	public Throwable getCause() {
