@@ -18,6 +18,7 @@ package org.spoutcraft.launcher;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
 
@@ -56,6 +57,13 @@ public class Main {
 			}
 			if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
 				params.add("-Xdock:name=\"Spoutcraft\"");
+				
+				try {
+					File icon = new File(PlatformUtils.getWorkingDirectory(), "icon.icns");
+					GameUpdater.copy(Main.class.getResourceAsStream("res/icon.icns"), new FileOutputStream(icon));
+					params.add("-Xdock:icon=" + icon.getAbsolutePath());
+				}
+				catch (Exception ignore) { }
 			}
 			ProcessBuilder pb = new ProcessBuilder(params);
 			Process process = pb.start();
