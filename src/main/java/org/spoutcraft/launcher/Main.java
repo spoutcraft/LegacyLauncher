@@ -60,7 +60,7 @@ public class Main {
 				
 				try {
 					File icon = new File(PlatformUtils.getWorkingDirectory(), "icon.icns");
-					GameUpdater.copy(Main.class.getResourceAsStream("res/icon.icns"), new FileOutputStream(icon));
+					GameUpdater.copy(Main.class.getResourceAsStream("/org/spoutcraft/launcher/icon.icns"), new FileOutputStream(icon));
 					params.add("-Xdock:icon=" + icon.getAbsolutePath());
 				}
 				catch (Exception ignore) { }
