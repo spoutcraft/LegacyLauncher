@@ -54,6 +54,9 @@ public class Main {
 			for (String arg : args_temp) {
 				params.add(arg);
 			}
+			if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
+				params.add("-Xdock:name=\"Spoutcraft\"");
+			}
 			ProcessBuilder pb = new ProcessBuilder(params);
 			Process process = pb.start();
 			if(process == null)
