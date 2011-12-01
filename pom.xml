@@ -118,7 +118,6 @@
                     <include>**/*</include>
                 </includes>
                 <excludes>
-                    <exclude>icon.icns</exclude>
                     <exclude>Info.plist</exclude>
                     <exclude>JavaApplicationStub</exclude>
                 </excludes>
