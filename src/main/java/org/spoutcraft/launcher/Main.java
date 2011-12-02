@@ -105,6 +105,13 @@ public class Main {
 				reboot("-Xmx" + mem + "m");
 			}
 		}
+		if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
+			try{
+				System.setProperty("apple.laf.useScreenMenuBar", "true");
+				System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception ignore) { }
+		}
 		PlatformUtils.getWorkingDirectory().mkdirs();
 
 		new File(PlatformUtils.getWorkingDirectory(), "spoutcraft").mkdir();
