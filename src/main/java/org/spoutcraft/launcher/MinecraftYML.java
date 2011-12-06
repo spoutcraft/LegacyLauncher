@@ -9,10 +9,11 @@ import java.net.URL;
 import org.bukkit.util.config.Configuration;
 
 public class MinecraftYML {
-	private static boolean updated = false;
+	private static volatile boolean updated = false;
 	private static File minecraftYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "minecraft.yml");
 	private static String latest = null;
 	private static String recommended = null;
+	private static Object key = new Object();
 	
 	public static Configuration getMinecraftYML() {
 		updateMinecraftYMLCache();
@@ -44,43 +45,45 @@ public class MinecraftYML {
 	
 	public static void updateMinecraftYMLCache() {
 		if (!updated) {
-			String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://mirror3.getspout.org/minecraft.yml", null);
-			if (urlName != null) {
-				try {
-					
-					String current = null;
-					if (minecraftYML.exists()) {
-						try {
-							Configuration config = new Configuration(minecraftYML);
-							config.load();
-							current = config.getString("current");
+			synchronized(key) {
+				String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://mirror3.getspout.org/minecraft.yml", null);
+				if (urlName != null) {
+					try {
+						
+						String current = null;
+						if (minecraftYML.exists()) {
+							try {
+								Configuration config = new Configuration(minecraftYML);
+								config.load();
+								current = config.getString("current");
+							}
+							catch (Exception ex){
+								ex.printStackTrace();
+							}
 						}
-						catch (Exception ex){
-							ex.printStackTrace();
+						
+						URL url = new URL(urlName);
+						HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+						System.setProperty("http.agent", "");
+						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+						GameUpdater.copy(con.getInputStream(), new FileOutputStream(minecraftYML));
+						
+						Configuration config = new Configuration(minecraftYML);
+						config.load();
+						latest = config.getString("latest");
+						recommended = config.getString("recommended");
+						if (current != null) {
+							config.setProperty("current", current);
+							config.save();
 						}
+						
 					}
-					
-					URL url = new URL(urlName);
-					HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-					System.setProperty("http.agent", "");
-					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-					GameUpdater.copy(con.getInputStream(), new FileOutputStream(minecraftYML));
-					
-					Configuration config = new Configuration(minecraftYML);
-					config.load();
-					latest = config.getString("latest");
-					recommended = config.getString("recommended");
-					if (current != null) {
-						config.setProperty("current", current);
-						config.save();
+					catch (IOException e) {
+						e.printStackTrace();
 					}
-					
 				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
+				updated = true;
 			}
-			updated = true;
 		}
 	}
 }

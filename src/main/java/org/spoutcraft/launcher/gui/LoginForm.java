@@ -75,6 +75,20 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		gameUpdater.setListener(this);
 		
 		this.addWindowListener(this);
+		
+		SwingWorker<Object, Object> updateThread = new SwingWorker<Object, Object>() {
+			protected Object doInBackground() throws Exception {
+				MinecraftYML.updateMinecraftYMLCache();
+				SpoutcraftYML.updateSpoutcraftYMLCache();
+				LibrariesYML.updateLibrariesYMLCache();
+				return null;
+			}
+			
+			protected void done() {
+				options.updateBuildsList();
+			}
+		};
+		updateThread.execute();
 
 		options.setVisible(false);
 		loginButton.setFont(new Font("Arial", Font.PLAIN, 11));

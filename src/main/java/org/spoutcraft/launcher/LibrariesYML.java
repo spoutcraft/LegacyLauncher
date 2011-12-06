@@ -10,8 +10,9 @@ import java.util.Map;
 import org.bukkit.util.config.Configuration;
 
 public class LibrariesYML {
-	private static boolean updated = false;
+	private static volatile boolean updated = false;
 	private static File librariesYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "libraries.yml");
+	private static Object key = new Object();
 
 	public static Configuration getLibrariesYML() {
 		updateLibrariesYMLCache();
@@ -22,21 +23,23 @@ public class LibrariesYML {
 	
 	public static void updateLibrariesYMLCache() {
 		if (!updated) {
-			String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://mirror3.getspout.org/libraries.yml", null);
-			if (urlName != null) {
-
-				try {
-					URL url = new URL(urlName);
-					HttpURLConnection con = (HttpURLConnection)(url.openConnection());
-					System.setProperty("http.agent", "");
-					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-					GameUpdater.copy(con.getInputStream(), new FileOutputStream(librariesYML));
+			synchronized(key) {
+				String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://mirror3.getspout.org/libraries.yml", null);
+				if (urlName != null) {
+	
+					try {
+						URL url = new URL(urlName);
+						HttpURLConnection con = (HttpURLConnection)(url.openConnection());
+						System.setProperty("http.agent", "");
+						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+						GameUpdater.copy(con.getInputStream(), new FileOutputStream(librariesYML));
+					}
+					catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-				catch (IOException e) {
-					e.printStackTrace();
-				}
+				updated = true;
 			}
-			updated = true;
 		}
 	}
 	

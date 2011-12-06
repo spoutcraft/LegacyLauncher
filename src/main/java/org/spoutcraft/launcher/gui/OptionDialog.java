@@ -225,9 +225,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		}
 	}
 	
-	@Override
-	public void setVisible(boolean visible) {
-		if (buildsCombo.getItemCount() == 0 && visible) {
+	public void updateBuildsList() {
+		if (buildsCombo.getItemCount() == 0) {
 			String[] buildList = MinecraftDownloadUtils.getSpoutcraftBuilds();
 			if (buildList != null) {
 				for (String item : buildList) {
@@ -239,7 +238,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			updateBuildsCombo();
 		}
-		
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 	}
 
