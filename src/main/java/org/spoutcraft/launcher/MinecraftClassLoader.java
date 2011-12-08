@@ -27,6 +27,7 @@ import java.security.CodeSource;
 import java.util.HashMap;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipException;
 
 public class MinecraftClassLoader extends URLClassLoader{
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(1000);
@@ -45,9 +46,7 @@ public class MinecraftClassLoader extends URLClassLoader{
 			}
 		}
 	}
-	
-	//NOTE: VerifyException is due to multiple classes of the same type in jars, need to override all classloader methods to fix...
-	
+		
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> result = null;
@@ -90,6 +89,10 @@ public class MinecraftClassLoader extends URLClassLoader{
 				loadedClasses.put(name, result);
 				return result;
 			}
+		}
+		catch (ZipException zipEx) {
+			System.out.println("Failed to open " + name + " from " + file.getPath());
+			zipEx.printStackTrace();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
