@@ -49,7 +49,7 @@
 	<repositories>
 		<repository>
 			<id>spout-repo</id>
-			<url>http://repo.getspout.org/content/repositories/snapshots</url>
+			<url>http://repo.getspout.org</url>
 		</repository>
 	</repositories>
 
