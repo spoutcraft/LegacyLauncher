@@ -48,22 +48,22 @@ public class Main {
 			} else {
 				params.add("java"); // Linux/Mac/whatever
 			}
+			if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
+				params.add("-Xdock:name=Spoutcraft");
+				
+				try {
+					File icon = new File(PlatformUtils.getWorkingDirectory(), "icon.icns");
+					GameUpdater.copy(Main.class.getResourceAsStream("/org/spoutcraft/launcher/icon.icns"), new FileOutputStream(icon));
+					params.add("-Xdock:icon=" + icon.getAbsolutePath());
+				}
+				catch (Exception ignore) { }
+			}
 			params.add(memory);
 			params.add("-classpath");
 			params.add(pathToJar);
 			params.add("org.spoutcraft.launcher.Main");
 			for (String arg : args_temp) {
 				params.add(arg);
-			}
-			if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
-				params.add("-Xdock:name=\"Spoutcraft\"");
-				
-				try {
-					File icon = new File(PlatformUtils.getWorkingDirectory(), "icon.icns");
-					GameUpdater.copy(Main.class.getResourceAsStream("/org/spoutcraft/launcher/icon.icns"), new FileOutputStream(icon));
-					params.add("-Xdock:icon=" + icon.getCanonicalPath());
-				}
-				catch (Exception ignore) { }
 			}
 			ProcessBuilder pb = new ProcessBuilder(params);
 			Process process = pb.start();

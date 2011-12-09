@@ -402,8 +402,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		if ((eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) && loginButton.isEnabled()) {
 			doLogin();
 		} else if (eventId.equals("Options")) {
+			options.setBounds((int) getBounds().getCenterX() - 150, (int) getBounds().getCenterY() - 163, 300, 326);
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 325);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
 		}
@@ -440,6 +440,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		this.optionsButton.setEnabled(false);
 		this.loginSkin1.setEnabled(false);
 		this.loginSkin2.setEnabled(false);
+		for(JButton b : loginSkin1Image) b.setEnabled(false);
+		for(JButton b : loginSkin2Image) b.setEnabled(false);
 		options.setVisible(false);
 		SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
 
@@ -514,6 +516,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				optionsButton.setEnabled(true);
 				loginSkin1.setEnabled(true);
 				loginSkin2.setEnabled(true);
+				for(JButton b : loginSkin1Image) b.setEnabled(true);
+				for(JButton b : loginSkin2Image) b.setEnabled(true);
 				this.cancel(true);
 				return false;
 			}

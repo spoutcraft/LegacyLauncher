@@ -56,7 +56,7 @@ public class ImageUtils {
 
 		JButton tmp = new JButton(new ImageIcon(resizedImage));
 		tmp.setSelectedIcon(tmp.getIcon());
-		tmp.setDisabledIcon(tmp.getPressedIcon());
+		tmp.setDisabledIcon(tmp.getIcon());
 		tmp.setPressedIcon(tmp.getIcon());
 		
 		tmp.setOpaque(false);
