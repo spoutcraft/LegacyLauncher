@@ -68,7 +68,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	JCheckBox alwaysUpdateCheckbox = new JCheckBox("Always install updates");
 	
-	JCheckBox fastLoginCheckbox = new JCheckBox("Fast Login");
+	JCheckBox fastLoginCheckbox = new JCheckBox("Fast login");
 	
 	JComboBox memoryCombo = new JComboBox();
 	
