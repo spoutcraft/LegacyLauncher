@@ -256,6 +256,8 @@ public class GameUpdater implements DownloadListener {
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
 		spoutcraftDir.mkdirs();
+		File cacheDir = new File(binDir, "cache");
+		cacheDir.mkdir();
 		
 		File mcCache = new File(binCacheDir, "minecraft_" + build.getMinecraftVersion() + ".jar");
 		File updateMC = new File(updateDir.getPath() + File.separator + "minecraft.jar");
@@ -263,7 +265,20 @@ public class GameUpdater implements DownloadListener {
 			copy(mcCache, updateMC);
 		}
 
-		File spoutcraft = new File(GameUpdater.updateDir, "spoutcraft.jar");
+		File spoutcraft = new File(binDir, "spoutcraft.jar");
+		if (spoutcraft.exists() && build.getInstalledBuild() > 0) {
+			//Save our installed copy
+			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
+			if (!spoutcraftCache.exists()) {
+				copy(spoutcraft, spoutcraftCache);
+			}
+			spoutcraft.delete();
+			//Check for an old copy of this build if it is already saved
+			spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getBuild() + ".jar");
+			if (spoutcraftCache.exists()) {
+				copy(spoutcraftCache, spoutcraft);
+			}
+		}
 
 		stateChanged("Looking Up Mirrors...", 0F);
 		build.setDownloadListener(this);
@@ -274,9 +289,11 @@ public class GameUpdater implements DownloadListener {
 			throw new NoMirrorsAvailableException();
 		}
 		
-		Download download = DownloadUtils.downloadFile(url, spoutcraft.getPath(), null, null, this);
-		if (download.isSuccess()) {
-			copy(download.getOutFile(), new File(binDir, "spoutcraft.jar"));
+		if (!spoutcraft.exists()) {
+			Download download = DownloadUtils.downloadFile(url, updateDir + File.separator + "spoutcraft.jar", null, null, this);
+			if (download.isSuccess()) {
+				copy(download.getOutFile(), spoutcraft);
+			}
 		}
 		
 		File libDir = new File(binDir, "lib");
@@ -303,7 +320,7 @@ public class GameUpdater implements DownloadListener {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				String fallbackURL = "http://mirror3.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
-				download = DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
+				DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
 			}
 		}
 		

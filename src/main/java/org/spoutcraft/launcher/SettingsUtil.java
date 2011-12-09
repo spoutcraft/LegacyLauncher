@@ -9,6 +9,22 @@ public class SettingsUtil {
 		settings.load();
 	}
 	
+	public static boolean isFastLogin() {
+		return isProperty("fastLogin");
+	}
+	
+	public static void setFastLogin(boolean fast) {
+		setProperty("fastLogin", fast);
+	}
+	
+	public static boolean isAcceptUpdates() {
+		return isProperty("acceptUpdates");
+	}
+	
+	public static void setAcceptUpdates(boolean accept) {
+		setProperty("acceptUpdates", accept);
+	}
+	
 	public static boolean isLatestLWJGL() {
 		return isProperty("latestLWJGL");
 	}
@@ -77,7 +93,9 @@ public class SettingsUtil {
 		if (settings.checkProperty(s)) {
 			settings.changeProperty(s, value);
 		}
-		settings.put(s, value);
+		else {
+			settings.put(s, value);
+		}
 	}
 	
 	private static boolean isProperty(String s) {

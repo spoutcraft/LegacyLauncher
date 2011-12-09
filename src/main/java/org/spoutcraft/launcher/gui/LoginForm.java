@@ -348,6 +348,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						usernames.put(user, new UserPasswordInformation(pass));
 					}
 					this.usernameField.addItem(user);
+					
+					if (SettingsUtil.isFastLogin()) {
+						if (!usernameField.getSelectedItem().toString().trim().isEmpty() && !passwordField.getPassword().toString().trim().isEmpty()) {
+							doLogin();
+						}
+					}
 				}
 			} catch (EOFException ignored) {
 			}
@@ -403,7 +409,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 325);
+			options.setBounds((int) getBounds().getCenterX() - 250, (int) getBounds().getCenterY() - 75, 300, 365);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
 		}
@@ -574,7 +580,12 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 							updateDialog.setToUpdate("Spoutcraft");
 						}
 						if (mcUpdate || spoutUpdate) {
-							LoginForm.updateDialog.setVisible(true);
+							if (SettingsUtil.isAcceptUpdates()) {
+								updateThread();
+							}
+							else {
+								LoginForm.updateDialog.setVisible(true);
+							}
 						} else {
 							runGame();
 						}

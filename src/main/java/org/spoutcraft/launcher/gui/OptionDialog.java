@@ -35,6 +35,7 @@ import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.MinecraftDownloadUtils;
 import org.spoutcraft.launcher.MinecraftYML;
 import org.spoutcraft.launcher.SettingsUtil;
+import org.spoutcraft.launcher.SpoutcraftBuild;
 import org.spoutcraft.launcher.SpoutcraftYML;
 
 import javax.swing.ButtonGroup;
@@ -65,6 +66,10 @@ public class OptionDialog extends JDialog implements ActionListener {
 	
 	JCheckBox latestLWJGLCheckbox = new JCheckBox("Use latest LWJGL binaries");
 	
+	JCheckBox alwaysUpdateCheckbox = new JCheckBox("Always install updates");
+	
+	JCheckBox fastLoginCheckbox = new JCheckBox("Fast Login");
+	
 	JComboBox memoryCombo = new JComboBox();
 	
 	JButton clearCache = new JButton("Clear Cache");
@@ -72,6 +77,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JLabel buildInfo = new JLabel();
 		
 	JComboBox buildsCombo = new JComboBox();
+	
+	int MINIMUM_FAST_LOGIN_BUILD = 9001;
 
 	/**
 	 * Create the dialog.
@@ -89,6 +96,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		buildInfo.setForeground(Color.DARK_GRAY);
 		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev" );
 		
+		fastLoginCheckbox.setToolTipText("Automatically logs in with the last used username and password, and launches the game immediately. This can be disabled in game");
+		alwaysUpdateCheckbox.setToolTipText("Automatically accept all updates instead of prompting you. Use at your own risk!");
 		customBuilds.setToolTipText("Only use if you know what you are doing!");
 		devBuilds.setToolTipText("Development builds are often unstable and buggy. Use at your own risk!");
 		recBuilds.setToolTipText("Recommended builds are (nearly) bug-free and well-tested.");
@@ -98,6 +107,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		latestLWJGLCheckbox.setToolTipText("Minecraft normally uses older, more compatible versions of LWJGL, but the latest may improve performance or fix audio issues");
 		clearCache.setToolTipText("Clears the cached minecraft and spoutcraft files, forcing a redownload on your next login");
 		memoryCombo.setToolTipText("Allows you to adjust the memory assigned to Spoutcraft. Assigning more memory than you have may cause crashes.");
+		fastLoginCheckbox.setEnabled(SpoutcraftBuild.getSpoutcraftBuild().getBuild() > MINIMUM_FAST_LOGIN_BUILD);
+		SettingsUtil.setFastLogin(SettingsUtil.isFastLogin() && fastLoginCheckbox.isEnabled());
 		
 		if (SettingsUtil.isRecommendedBuild()) {
 			devBuilds.setSelected(false);
@@ -124,6 +135,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		backupCheckbox.setSelected(SettingsUtil.isWorldBackup());
 		retryLoginCheckbox.setSelected(SettingsUtil.getLoginTries() > 1);
 		latestLWJGLCheckbox.setSelected(SettingsUtil.isLatestLWJGL());
+		fastLoginCheckbox.setSelected(SettingsUtil.isFastLogin());
+		alwaysUpdateCheckbox.setSelected(SettingsUtil.isAcceptUpdates());
 		
 		setResizable(false);
 		getContentPane().setLayout(new BorderLayout());
@@ -156,6 +169,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 						.addComponent(devBuilds)
 						.addComponent(recBuilds)
 						.addComponent(customBuilds)
+						.addComponent(fastLoginCheckbox)
+						.addComponent(alwaysUpdateCheckbox)
 						.addComponent(clipboardCheckbox)
 						.addComponent(backupCheckbox)
 						.addComponent(retryLoginCheckbox)
@@ -187,6 +202,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 					.addComponent(devBuilds)
 					.addComponent(recBuilds)
 					.addComponent(customBuilds)
+					.addComponent(fastLoginCheckbox)
+					.addComponent(alwaysUpdateCheckbox)
 					.addComponent(retryLoginCheckbox)
 					.addPreferredGap(ComponentPlacement.RELATED)
 					.addComponent(clipboardCheckbox)
@@ -253,6 +270,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 			SettingsUtil.setClipboardAccess(clipboardCheckbox.isSelected());
 			SettingsUtil.setWorldBackup(backupCheckbox.isSelected());
 			SettingsUtil.setLoginTries(retryLoginCheckbox.isSelected());
+			SettingsUtil.setAcceptUpdates(alwaysUpdateCheckbox.isSelected());
+			SettingsUtil.setFastLogin(fastLoginCheckbox.isSelected());
 			if (SettingsUtil.getMemorySelection() > 5) {
 				SettingsUtil.setMemorySelection(0);
 			}
@@ -301,6 +320,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		else if (id.equals(customBuilds.getText()) || id.equals(devBuilds.getText()) || id.equals(recBuilds.getText())) {
 			updateBuildsCombo();
 		}
+		fastLoginCheckbox.setEnabled(SpoutcraftBuild.getSpoutcraftBuild().getBuild() > MINIMUM_FAST_LOGIN_BUILD);
+		SettingsUtil.setFastLogin(SettingsUtil.isFastLogin() && fastLoginCheckbox.isEnabled());
 	}
 	
 	public void updateBuildsCombo() {
