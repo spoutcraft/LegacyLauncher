@@ -78,7 +78,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 	JComboBox buildsCombo = new JComboBox();
 	
-	int MINIMUM_FAST_LOGIN_BUILD = 9001;
+	int MINIMUM_FAST_LOGIN_BUILD = 905;
 
 	/**
 	 * Create the dialog.
