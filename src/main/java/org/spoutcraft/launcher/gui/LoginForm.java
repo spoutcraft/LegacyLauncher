@@ -402,7 +402,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		if ((eventId.equals("Login") || eventId.equals(usernameField.getSelectedItem())) && loginButton.isEnabled()) {
 			doLogin();
 		} else if (eventId.equals("Options")) {
-			options.setBounds((int) getBounds().getCenterX() - 150, (int) getBounds().getCenterY() - 163, 300, 326);
+			options.setSize(300, 326);
+			options.setLocationRelativeTo(this); //options.setBounds((int) getBounds().getCenterX() - 150, (int) getBounds().getCenterY() - 163, 300, 326);
 			options.setVisible(true);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
@@ -628,6 +629,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					optionsButton.setEnabled(true);
 					loginSkin1.setEnabled(true);
 					loginSkin2.setEnabled(true);
+					for(JButton b : loginSkin1Image) b.setEnabled(true);
+					for(JButton b : loginSkin2Image) b.setEnabled(true);
 					this.cancel(true);
 					return false;
 				}
@@ -657,6 +660,8 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	public void runGame() {
 		LauncherFrame launcher = new LauncherFrame();
 		launcher.setLoginForm(this);
+		launcher.setLocationRelativeTo(this);
+		setVisible(false);
 		int result = launcher.runGame(values[2].trim(), values[3].trim(), values[1].trim(), pass);
 		if (result == LauncherFrame.SUCCESSFUL_LAUNCH) {
 			LoginForm.updateDialog.dispose();
@@ -665,13 +670,18 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			dispose();
 		}
 		else if (result == LauncherFrame.ERROR_IN_LAUNCH){
+			setVisible(true);
 			loginButton.setEnabled(true);
 			optionsButton.setEnabled(true);
 			loginSkin1.setEnabled(true);
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
+			for(JButton b : loginSkin1Image) b.setEnabled(true);
+			for(JButton b : loginSkin2Image) b.setEnabled(true);
 		}
-		
+		else {
+			setVisible(true);
+		}
 		this.success = result;
 		//Do nothing for retrying launch
 	}
