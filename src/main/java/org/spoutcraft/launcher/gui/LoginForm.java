@@ -409,7 +409,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) getBounds().getCenterX() - (300/2), (int) getBounds().getCenterY() - (365/2), 300, 365);
+			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (300/2)), (int) Math.max(1, getBounds().getCenterY() - (365/2)), 300, 365);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
 		}
