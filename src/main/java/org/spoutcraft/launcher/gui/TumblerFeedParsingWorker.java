@@ -5,6 +5,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
+import java.util.Random;
 
 import javax.swing.JTextPane;
 import javax.swing.SwingWorker;
@@ -12,6 +13,7 @@ import javax.swing.SwingWorker;
 public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 	JTextPane editorPane;
 	private String username = null;
+	private Random rand = new Random();
 	public TumblerFeedParsingWorker(JTextPane editorPane) {
 		this.editorPane = editorPane;
 	}
@@ -51,7 +53,7 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 				editorPane.setVisible(true);
 			}
 			else {
-				editorPane.setText("Oh Noes! Our Tumblr Feed is Down!");
+				editorPane.setText(getErrorMessage());
 			}
 		} catch (MalformedURLException e1) {
 			e1.printStackTrace();
@@ -62,8 +64,33 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 		return null;
 	}
 	
+	private String getErrorMessage() {
+		String[] errors = {
+			"Oh dear, I'm out of tea and crumpets again. I'll have to go make some more.",
+			"I'm sorry, where you looking for something here? I couldn't find it.",
+			"This isn't the tumbler news feed you are looking for. Move along now.", 
+			"What do you mean the website is down...Hey! What's that over there!",
+			"Looks like the %mob%s got into the servers again...", 
+			"Oh Noes! Our Tumblr Feed is Down!"
+			
+		};
+		return errors[rand.nextInt(errors.length)].replaceAll("%mob%", getRandomMob());
+	}
+	
 	private String getUsername() {
 		return username != null ? username : "Player";
+	}
+	
+	private String getRandomMob() {
+		int mob = rand.nextInt(5);
+		switch(mob) {
+			case 0: return "Spider";
+			case 1: return "Zombie";
+			case 2: return "Creeper";
+			case 3: return "Skeleton";
+			case 4: return "Ghast";
+			default: return "";
+		}
 	}
 	
 	private String getTimeOfDay() {

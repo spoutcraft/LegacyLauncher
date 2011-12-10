@@ -447,6 +447,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 		this.loginSkin1.setEnabled(false);
 		this.loginSkin2.setEnabled(false);
 		options.setVisible(false);
+		passwordField.setEnabled(false);
+		rememberCheckbox.setEnabled(false);
+		usernameField.setEnabled(false);
 		SwingWorker<Boolean, Boolean> loginThread = new SwingWorker<Boolean, Boolean>() {
 
 			protected Boolean doInBackground() throws Exception {
@@ -520,6 +523,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				optionsButton.setEnabled(true);
 				loginSkin1.setEnabled(true);
 				loginSkin2.setEnabled(true);
+				passwordField.setEnabled(true);
+				rememberCheckbox.setEnabled(true);
+				usernameField.setEnabled(true);
 				this.cancel(true);
 				return false;
 			}
@@ -635,6 +641,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					optionsButton.setEnabled(true);
 					loginSkin1.setEnabled(true);
 					loginSkin2.setEnabled(true);
+					passwordField.setEnabled(true);
+					rememberCheckbox.setEnabled(true);
+					usernameField.setEnabled(true);
 					this.cancel(true);
 					return false;
 				}
@@ -677,6 +686,9 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			loginSkin1.setEnabled(true);
 			loginSkin2.setEnabled(true);
 			progressBar.setVisible(false);
+			passwordField.setEnabled(true);
+			rememberCheckbox.setEnabled(true);
+			usernameField.setEnabled(true);
 		}
 		
 		this.success = result;
