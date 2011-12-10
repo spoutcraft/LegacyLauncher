@@ -79,6 +79,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 	JComboBox buildsCombo = new JComboBox();
 	
 	int MINIMUM_FAST_LOGIN_BUILD = 905;
+	
+	String fastLoginTooltip;
 
 	/**
 	 * Create the dialog.
@@ -97,7 +99,8 @@ public class OptionDialog extends JDialog implements ActionListener {
 		buildInfo.setForeground(Color.DARK_GRAY);
 		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev" );
 		
-		fastLoginCheckbox.setToolTipText("Automatically logs in with the last used username and password, and launches the game immediately. This can be disabled in game");
+		fastLoginTooltip = "Automatically logs in with the last used username and password, and launches the game immediately. This can be disabled in game";
+		fastLoginCheckbox.setToolTipText(fastLoginTooltip);
 		alwaysUpdateCheckbox.setToolTipText("Automatically accept all updates instead of prompting you. Use at your own risk!");
 		customBuilds.setToolTipText("Only use if you know what you are doing!");
 		devBuilds.setToolTipText("Development builds are often unstable and buggy. Use at your own risk!");
@@ -287,18 +290,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 			}
 			
 			if (buildsCombo.isEnabled()) {
-				int build = -1;
-				try {
-					String item = ((String)buildsCombo.getSelectedItem());
-					if (item.contains("|")) {
-						item = item.split("\\|")[0];
-					}
-					item.trim();
-					build = Integer.parseInt(item);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-				}
+				int build = getSelectedBuild();
 				if (build > -1) {
 					SettingsUtil.setSelectedBuild(build);
 				}
@@ -321,10 +313,32 @@ public class OptionDialog extends JDialog implements ActionListener {
 		else if (id.equals(customBuilds.getText()) || id.equals(devBuilds.getText()) || id.equals(recBuilds.getText())) {
 			updateBuildsCombo();
 		}
-		fastLoginCheckbox.setEnabled(SpoutcraftBuild.getSpoutcraftBuild().getBuild() > MINIMUM_FAST_LOGIN_BUILD);
+		fastLoginCheckbox.setEnabled(getSelectedBuild() > MINIMUM_FAST_LOGIN_BUILD);
 		SettingsUtil.setFastLogin(SettingsUtil.isFastLogin() && fastLoginCheckbox.isEnabled());
+		if (!fastLoginCheckbox.isEnabled()) {
+			fastLoginCheckbox.setToolTipText("Requires Spoutcraft build " + MINIMUM_FAST_LOGIN_BUILD + " or higher");
+		}
+		else {
+			fastLoginCheckbox.setToolTipText(fastLoginTooltip);
+		}
 	}
 	
+	public int getSelectedBuild() {
+		int build = -1;
+		try {
+			String item = ((String)buildsCombo.getSelectedItem());
+			if (item.contains("|")) {
+				item = item.split("\\|")[0];
+			}
+			item.trim();
+			build = Integer.parseInt(item);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return build;
+	}
+
 	public void updateBuildsCombo() {
 		buildsCombo.setEnabled(customBuilds.isSelected());
 		
