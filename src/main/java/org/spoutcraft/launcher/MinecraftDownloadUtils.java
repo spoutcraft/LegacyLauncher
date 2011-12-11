@@ -54,6 +54,7 @@ public class MinecraftDownloadUtils {
 					}
 					else {
 						outputFile = download.getOutFile();
+						break;
 					}
 				}
 			}
