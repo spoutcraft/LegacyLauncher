@@ -631,7 +631,17 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					}
 				}
 				catch (NoMirrorsAvailableException e) {
-					JOptionPane.showMessageDialog(getParent(), "No Mirrors Are Available to download from!\nTry again later.");
+					JOptionPane.showMessageDialog(getParent(), "No mirrors available to download from!\nTry again later.");
+					error = true;
+					loginButton.setEnabled(true);
+					optionsButton.setEnabled(true);
+					loginSkin1.setEnabled(true);
+					loginSkin2.setEnabled(true);
+					passwordField.setEnabled(true);
+					rememberCheckbox.setEnabled(true);
+					usernameField.setEnabled(true);
+					this.cancel(true);
+					return false;
 				}
 				catch (Exception e) {
 					e.printStackTrace();
