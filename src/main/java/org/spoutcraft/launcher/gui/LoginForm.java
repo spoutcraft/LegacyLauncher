@@ -65,7 +65,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private int success = LauncherFrame.ERROR_IN_LAUNCH;
 
 	public static final GameUpdater gameUpdater = new GameUpdater();
-	OptionDialog options = new OptionDialog();
+	//OptionDialog options = new OptionDialog();
 
 	Container loginPane = new Container();
 	Container offlinePane = new Container();
@@ -409,7 +409,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setVisible(true);
-			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (300/2)), (int) Math.max(1, getBounds().getCenterY() - (365/2)), 300, 365);
+			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (320/2)), (int) Math.max(1, getBounds().getCenterY() - (365/2)), 320, 365);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
 		}
