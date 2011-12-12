@@ -65,7 +65,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private int success = LauncherFrame.ERROR_IN_LAUNCH;
 
 	public static final GameUpdater gameUpdater = new GameUpdater();
-	//OptionDialog options = new OptionDialog();
+	OptionDialog options = new OptionDialog();
 
 	Container loginPane = new Container();
 	Container offlinePane = new Container();
