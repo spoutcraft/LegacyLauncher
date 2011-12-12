@@ -154,29 +154,33 @@ public class GameUpdater implements DownloadListener {
 		return baseURL + fileName + ".jar.lzma";
 	}
 
-	public boolean checkMCUpdate() throws Exception {
+	public boolean checkMCUpdate(String message) throws Exception {
+		int steps = 7;
 		if (!GameUpdater.binDir.exists())
 			return true;
+		stateChanged(message, 100F / steps);
 		if (!new File(binDir, "natives").exists())
 			return true;
+		stateChanged(message, 200F / steps);
 		File minecraft = new File(binDir, "minecraft.jar");
 		if (!minecraft.exists())
 			return true;
-		
+		stateChanged(message, 300F / steps);
 		File lib = new File(binDir, "jinput.jar");
 		if (!lib.exists())
 			return true;
-		
+		stateChanged(message, 400F / steps);
 		lib = new File(binDir, "lwjgl.jar");
 		if (!lib.exists())
 			return true;
-		
+		stateChanged(message, 500F / steps);
 		lib = new File(binDir, "lwjgl_util.jar");
 		if (!lib.exists())
 			return true;
-		
+		stateChanged(message, 600F / steps);
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		String installed = MinecraftYML.getInstalledVersion();
+		stateChanged(message, 700F / steps);
 		String required = build.getMinecraftVersion();
 		return !installed.equals(required);
 	}
@@ -331,25 +335,30 @@ public class GameUpdater implements DownloadListener {
 		spoutcraftVersion.delete();
 	}
 
-	public boolean isSpoutcraftUpdateAvailable() throws IOException {
+	public boolean isSpoutcraftUpdateAvailable(String message) throws IOException {
 		if (!PlatformUtils.getWorkingDirectory().exists())
 			return true;
 		if (!GameUpdater.spoutcraftDir.exists())
 			return true;
 		
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+		Map<String, Object> libraries = build.getLibraries();
+		int steps = libraries.size() + 2;
+		float progress = 100F;
 
 		if (build.getBuild() != build.getInstalledBuild()) 
 			return true;
-		
+		stateChanged(message, progress / steps);
+		progress += 100F;
 		File spoutcraft = new File(binDir, "spoutcraft.jar");
 		if (!spoutcraft.exists())
 			return true;
-		
+		stateChanged(message, progress / steps);
+		progress += 100F;
 		File libDir = new File(binDir, "lib");
 		libDir.mkdir();
 		
-		Map<String, Object> libraries = build.getLibraries();
+		
 		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
 		while (i.hasNext()) {
 			Entry<String, Object> lib = i.next();						
@@ -357,6 +366,8 @@ public class GameUpdater implements DownloadListener {
 			if (!libraryFile.exists()) {
 				return true;
 			}
+			stateChanged(message, progress / steps);
+			progress += 100F;
 		}
 		
 		return false;

@@ -565,14 +565,14 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					protected Boolean doInBackground() throws Exception {
 						publish("Checking for Minecraft Update...\n");
 						try {
-							mcUpdate = gameUpdater.checkMCUpdate();
+							mcUpdate = gameUpdater.checkMCUpdate("Checking for Minecraft Update...\n");
 						} catch (Exception e) {
 							mcUpdate = false;
 						}
 
 						publish("Checking for Spoutcraft update...\n");
 						try {
-							spoutUpdate = mcUpdate || gameUpdater.isSpoutcraftUpdateAvailable();
+							spoutUpdate = mcUpdate || gameUpdater.isSpoutcraftUpdateAvailable("Checking for Spoutcraft update...\n");
 						} catch (Exception e) {
 							spoutUpdate = false;
 						}
