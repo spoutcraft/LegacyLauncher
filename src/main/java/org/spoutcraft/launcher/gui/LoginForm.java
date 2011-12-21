@@ -403,7 +403,6 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 			doLogin();
 		} else if (eventId.equals("Options")) {
 			options.setSize(300, 326);
-			options.setLocationRelativeTo(this); //options.setBounds((int) getBounds().getCenterX() - 150, (int) getBounds().getCenterY() - 163, 300, 326);
 			options.setVisible(true);
 		} else if (eventId.equals("comboBoxChanged")) {
 			updatePasswordField();
