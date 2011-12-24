@@ -322,7 +322,7 @@ public class GameUpdater implements DownloadListener {
 			
 			if (!libraryFile.exists()) {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
-				String fallbackURL = "http://mirror3.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String fallbackURL = "http://dl.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
 				DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
 			}

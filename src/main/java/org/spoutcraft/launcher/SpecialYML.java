@@ -23,7 +23,7 @@ public class SpecialYML {
 	public static void updateSpecialYMLCache() {
 		if (!updated) {
 			synchronized(key) {
-				String urlName = MirrorUtils.getMirrorUrl("special.yml", "http://mirror3.getspout.org/special.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("special.yml", "http://dl.getspout.org/yml/special.yml", null);
 				if (urlName != null) {
 					try {
 						

@@ -22,7 +22,7 @@ public class SpoutcraftYML {
 	public static void updateSpoutcraftYMLCache() {
 		if (!updated) {
 			synchronized(key) {
-				String urlName = MirrorUtils.getMirrorUrl("spoutcraft.yml", "http://mirror3.getspout.org/spoutcraft.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("spoutcraft.yml", "http://dl.getspout.org/yml/spoutcraft.yml", null);
 				if (urlName != null) {
 	
 					try {
