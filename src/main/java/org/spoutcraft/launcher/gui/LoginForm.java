@@ -22,8 +22,19 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -32,7 +43,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.Vector;
 
-import javax.crypto.*;
+import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.*;
@@ -81,6 +96,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				MinecraftYML.updateMinecraftYMLCache();
 				SpoutcraftYML.updateSpoutcraftYMLCache();
 				LibrariesYML.updateLibrariesYMLCache();
+				SpecialYML.updateMinecraftYMLCache();
 				return null;
 			}
 			
