@@ -97,6 +97,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 				SpoutcraftYML.updateSpoutcraftYMLCache();
 				LibrariesYML.updateLibrariesYMLCache();
 				SpecialYML.updateSpecialYMLCache();
+				VipYML.updateVipYMLCache();
 				return null;
 			}
 			
