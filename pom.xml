@@ -14,13 +14,12 @@
 	<version>dev-SNAPSHOT</version>
 	<name>Spoutcraft Launcher</name>
 	<url>http://www.spoutcraft.org</url>
-	<description></description>
+	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.mainClass>${project.groupId}.${project.artifactId}.Main</project.mainClass>
-		<project.build.number>0</project.build.number>
-		<project.version.string>${release.version}.${build.number}</project.version.string>
+		<mainClass>${project.groupId}.${project.artifactId}.Main</mainClass>
+		<build.number>Unknown</build.number>
 	</properties>
 
 	<!-- License -->
@@ -56,16 +55,16 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.10</version>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
 			<version>1.5</version>
 			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.beust</groupId>
+			<artifactId>jcommander</artifactId>
+			<version>1.20</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -76,10 +75,10 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.beust</groupId>
-			<artifactId>jcommander</artifactId>
-			<version>1.20</version>
-			<scope>compile</scope>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
    
@@ -117,6 +116,10 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
 			</plugin>
 			<!-- JAR creation plugin -->
 			<plugin>
@@ -126,7 +129,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>${project.mainClass}</mainClass>
+							<mainClass>${mainClass}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -144,11 +147,9 @@
 						</goals>
 						<configuration>
 							<artifactSet>
-								<includes>
-									<include>commons-codec:commons-codec</include>
-									<include>org.yaml:snakeyaml</include>
-									<include>com.beust:jcommander</include>
-								</includes>
+								<excludes>
+									<exclude>junit:junit</exclude>
+								</excludes>
 							</artifactSet>
 						</configuration>
 					</execution>
@@ -185,7 +186,7 @@
   								<stayAlive>true</stayAlive>
 									<outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
 									<classPath>
-										<mainClass>${project.mainClass}</mainClass>
+										<mainClass>${mainClass}</mainClass>
 										<addDependencies>false</addDependencies>
 										<preCp>anything</preCp>
 									</classPath>
@@ -226,7 +227,7 @@
 						<artifactId>osxappbundle-maven-plugin</artifactId>
 						<version>1.0-alpha-1</version>
 						<configuration>
-							<mainClass>${project.mainClass}</mainClass>
+							<mainClass>${mainClass}</mainClass>
 							<bundleName>${project.name}</bundleName>
 							<iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
 							<dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
