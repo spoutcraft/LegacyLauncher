@@ -67,8 +67,8 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 	private String getErrorMessage() {
 		String[] errors = {
 			"Oh dear, I'm out of tea and crumpets again. I'll have to go make some more.",
-			"I'm sorry, where you looking for something here? I couldn't find it.",
-			"This isn't the tumbler news feed you are looking for. Move along now.", 
+			"I'm sorry, were you looking for something here? I couldn't find it.",
+			"This isn't the Tumblr news feed you are looking for. Move along now.", 
 			"What do you mean the website is down...Hey! What's that over there!",
 			"Looks like the %mob%s got into the servers again...", 
 			"Oh Noes! Our Tumblr Feed is Down!"
