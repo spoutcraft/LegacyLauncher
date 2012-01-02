@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class MinecraftYML {
 	private static volatile boolean updated = false;
@@ -15,10 +15,14 @@ public class MinecraftYML {
 	private static String recommended = null;
 	private static Object key = new Object();
 	
-	public static Configuration getMinecraftYML() {
+	public static YAMLProcessor getMinecraftYML() {
 		updateMinecraftYMLCache();
-		Configuration config = new Configuration(minecraftYML);
-		config.load();
+		YAMLProcessor config = new YAMLProcessor(minecraftYML, false);
+		try {
+			config.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return config;
 	}
 	
@@ -33,13 +37,13 @@ public class MinecraftYML {
 	}
 	
 	public static void setInstalledVersion(String version) {
-		Configuration config = getMinecraftYML();
+		YAMLProcessor config = getMinecraftYML();
 		config.setProperty("current", version);
 		config.save();
 	}
 	
 	public static String getInstalledVersion() {
-		Configuration config = getMinecraftYML();
+		YAMLProcessor config = getMinecraftYML();
 		return config.getString("current");
 	}
 	
@@ -53,7 +57,7 @@ public class MinecraftYML {
 						String current = null;
 						if (minecraftYML.exists()) {
 							try {
-								Configuration config = new Configuration(minecraftYML);
+								YAMLProcessor config = new YAMLProcessor(minecraftYML, false);
 								config.load();
 								current = config.getString("current");
 							}
@@ -68,7 +72,7 @@ public class MinecraftYML {
 						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 						GameUpdater.copy(con.getInputStream(), new FileOutputStream(minecraftYML));
 						
-						Configuration config = new Configuration(minecraftYML);
+						YAMLProcessor config = new YAMLProcessor(minecraftYML, false);
 						config.load();
 						latest = config.getString("latest");
 						recommended = config.getString("recommended");

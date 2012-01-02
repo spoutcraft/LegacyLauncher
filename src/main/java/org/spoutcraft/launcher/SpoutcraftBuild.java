@@ -1,7 +1,9 @@
 package org.spoutcraft.launcher;
 
 import java.util.Map;
-import org.bukkit.util.config.Configuration;
+
+import org.spoutcraft.launcher.config.YAMLProcessor;
+
 import org.spoutcraft.launcher.async.DownloadListener;
 
 public class SpoutcraftBuild {
@@ -43,13 +45,13 @@ public class SpoutcraftBuild {
 	}
 
 	public void install() {
-		Configuration config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
 		config.setProperty("current", getBuild());
 		config.save();
 	}
 
 	public int getInstalledBuild() {
-		Configuration config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
 		return config.getInt("current", -1);
 	}
 
@@ -69,7 +71,7 @@ public class SpoutcraftBuild {
 
 	@SuppressWarnings("unchecked")
 	public static SpoutcraftBuild getSpoutcraftBuild() {
-		Configuration config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
 		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);

@@ -4,10 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
-import org.bukkit.util.config.Configuration;
 import org.spoutcraft.diff.JBPatch;
 import org.spoutcraft.launcher.async.Download;
 import org.spoutcraft.launcher.async.DownloadListener;
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class MinecraftDownloadUtils {
 	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException{
@@ -67,7 +67,7 @@ public class MinecraftDownloadUtils {
 
 	@SuppressWarnings("unchecked")
 	public static String[] getSpoutcraftBuilds() {
-		Configuration config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
 		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);

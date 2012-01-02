@@ -6,17 +6,21 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class VipYML {
 	private static volatile boolean updated = false;
 	private static File vipYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "vip.yml");
 	private static Object key = new Object();
 	
-	public static Configuration getVipYML() {
+	public static YAMLProcessor getVipYML() {
 		updateVipYMLCache();
-		Configuration config = new Configuration(vipYML);
-		config.load();
+		YAMLProcessor config = new YAMLProcessor(vipYML, false);
+		try {
+			config.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return config;
 	}
 	
@@ -30,7 +34,7 @@ public class VipYML {
 						String current = null;
 						if (vipYML.exists()) {
 							try {
-								Configuration config = new Configuration(vipYML);
+								YAMLProcessor config = new YAMLProcessor(vipYML, false);
 								config.load();
 								current = config.getString("current");
 							}
@@ -45,7 +49,7 @@ public class VipYML {
 						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 						GameUpdater.copy(con.getInputStream(), new FileOutputStream(vipYML));
 						
-						Configuration config = new Configuration(vipYML);
+						YAMLProcessor config = new YAMLProcessor(vipYML, false);
 						config.load();
 						if (current != null) {
 							config.setProperty("current", current);

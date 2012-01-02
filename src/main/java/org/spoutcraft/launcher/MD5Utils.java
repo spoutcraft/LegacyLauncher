@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class MD5Utils {
 	public static String getMD5(File file){
@@ -27,7 +27,7 @@ public class MD5Utils {
 
 	@SuppressWarnings("unchecked")
 	public static String getMD5(FileType type, String version) {
-		Configuration config = MinecraftYML.getMinecraftYML();
+		YAMLProcessor config = MinecraftYML.getMinecraftYML();
 		Map<String, Map<String, String>> builds = (Map<String, Map<String, String>>) config.getProperty("versions");
 		if (builds.containsKey(version)) {
 			Map<String, String> files = builds.get(version);

@@ -1,35 +1,24 @@
-package org.bukkit.util.config;
+package org.spoutcraft.launcher.config;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.HashMap;
-import java.util.Map;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
-import org.yaml.snakeyaml.introspector.Property;
-import org.yaml.snakeyaml.nodes.CollectionNode;
-import org.yaml.snakeyaml.nodes.MappingNode;
-import org.yaml.snakeyaml.nodes.Node;
-import org.yaml.snakeyaml.nodes.NodeTuple;
-import org.yaml.snakeyaml.nodes.SequenceNode;
-import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.UnicodeReader;
-import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * YAML configuration loader. To use this class, construct it with path to
  * a file and call its load() method. For specifying node paths in the
  * various get*() methods, they support SK's path notation, allowing you to
  * select child nodes by delimiting node names with periods.
- *
+ * 
  * <p>
  * For example, given the following configuration file:</p>
- *
+ * 
  * <pre>members:
  *     - Hollie
  *     - Jason
@@ -44,52 +33,60 @@ import org.yaml.snakeyaml.representer.Representer;
  *     cool: false
  *     eats:
  *         babies: true</pre>
- *
+ * 
  * <p>Calling code could access sturmeh's baby eating state by using
  * <code>getBoolean("sturmeh.eats.babies", false)</code>. For lists, there are
  * methods such as <code>getStringList</code> that will return a type safe list.
- *
+ * 
  * <p>This class is currently incomplete. It is not yet possible to get a node.
  * </p>
- *
+ * 
+ * @author sk89q
  */
-public class Configuration extends ConfigurationNode {
+public class YAMLProcessor extends YAMLNode {
     private Yaml yaml;
     private File file;
     private String header = null;
 
-    public Configuration(File file) {
-        super(new HashMap<String, Object>());
+    public YAMLProcessor(File file, boolean writeDefaults, YAMLFormat format) {
+        super(new HashMap<String, Object>(), writeDefaults);
 
         DumperOptions options = new DumperOptions();
-
         options.setIndent(4);
-        options.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
+        options.setDefaultFlowStyle(format.getStyle());
+        Representer representer = new Representer();
+        representer.setDefaultFlowStyle(format.getStyle());
 
-        yaml = new Yaml(new SafeConstructor(), new EmptyNullRepresenter(), options);
+        yaml = new Yaml(new SafeConstructor(), representer, options);
 
         this.file = file;
     }
 
+    public YAMLProcessor(File file, boolean writeDefaults) {
+        this(file, writeDefaults, YAMLFormat.COMPACT);
+    }
+
     /**
-     * Loads the configuration file. All errors are thrown away.
+     * Loads the configuration file.
+     * 
+     * @throws java.io.IOException
      */
-    public void load() {
-        FileInputStream stream = null;
+    public void load() throws IOException {
+        InputStream stream = null;
 
         try {
-            stream = new FileInputStream(file);
+            stream = getInputStream();
+            if (stream == null) throw new IOException("Stream is null!");
             read(yaml.load(new UnicodeReader(stream)));
-        } catch (IOException e) {
-            root = new HashMap<String, Object>();
-        } catch (ConfigurationException e) {
+        } catch (YAMLProcessorException e) {
             root = new HashMap<String, Object>();
         } finally {
             try {
                 if (stream != null) {
                     stream.close();
                 }
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
         }
     }
 
@@ -127,7 +124,7 @@ public class Configuration extends ConfigurationNode {
     /**
      * Return the set header.
      *
-     * @return The header comment.
+     * @return
      */
     public String getHeader() {
         return header;
@@ -139,7 +136,7 @@ public class Configuration extends ConfigurationNode {
      * @return true if it was successful
      */
     public boolean save() {
-        FileOutputStream stream = null;
+        OutputStream stream = null;
 
         File parent = file.getParentFile();
 
@@ -148,7 +145,8 @@ public class Configuration extends ConfigurationNode {
         }
 
         try {
-            stream = new FileOutputStream(file);
+            stream = getOutputStream();
+            if (stream == null) return false;
             OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
             if (header != null) {
                 writer.append(header);
@@ -156,7 +154,8 @@ public class Configuration extends ConfigurationNode {
             }
             yaml.dump(root, writer);
             return true;
-        } catch (IOException e) {} finally {
+        } catch (IOException e) {
+        } finally {
             try {
                 if (stream != null) {
                     stream.close();
@@ -168,7 +167,7 @@ public class Configuration extends ConfigurationNode {
     }
 
     @SuppressWarnings("unchecked")
-    private void read(Object input) throws ConfigurationException {
+    private void read(Object input) throws YAMLProcessorException {
         try {
             if (null == input) {
                 root = new HashMap<String, Object>();
@@ -176,54 +175,24 @@ public class Configuration extends ConfigurationNode {
                 root = (Map<String, Object>) input;
             }
         } catch (ClassCastException e) {
-            throw new ConfigurationException("Root document must be an key-value structure");
+            throw new YAMLProcessorException("Root document must be an key-value structure");
         }
+    }
+
+    public InputStream getInputStream() throws IOException {
+        return new FileInputStream(file);
+    }
+
+    public OutputStream getOutputStream() throws IOException {
+        return new FileOutputStream(file);
     }
 
     /**
-     * This method returns an empty ConfigurationNode for using as a
+     * This method returns an empty ConfigurationNode for using as a 
      * default in methods that select a node from a node list.
-     * @return The empty node.
+     * @return
      */
-    public static ConfigurationNode getEmptyNode() {
-        return new ConfigurationNode(new HashMap<String, Object>());
+    public static YAMLNode getEmptyNode(boolean writeDefaults) {
+        return new YAMLNode(new HashMap<String, Object>(), writeDefaults);
     }
-}
-
-class EmptyNullRepresenter extends Representer {
-
-    public EmptyNullRepresenter() {
-        super();
-        this.nullRepresenter = new EmptyRepresentNull();
-    }
-
-    protected class EmptyRepresentNull implements Represent {
-        public Node representData(Object data) {
-            return representScalar(Tag.NULL, ""); // Changed "null" to "" so as to avoid writing nulls
-        }
-    }
-
-    // Code borrowed from snakeyaml (http://code.google.com/p/snakeyaml/source/browse/src/test/java/org/yaml/snakeyaml/issues/issue60/SkipBeanTest.java)
-    @Override
-    protected NodeTuple representJavaBeanProperty(Object javaBean, Property property, Object propertyValue, Tag customTag) {
-        NodeTuple tuple = super.representJavaBeanProperty(javaBean, property, propertyValue, customTag);
-        Node valueNode = tuple.getValueNode();
-        if (valueNode instanceof CollectionNode) {
-            // Removed null check
-            if (Tag.SEQ.equals(valueNode.getTag())) {
-                SequenceNode seq = (SequenceNode) valueNode;
-                if (seq.getValue().isEmpty()) {
-                    return null; // skip empty lists
-                }
-            }
-            if (Tag.MAP.equals(valueNode.getTag())) {
-                MappingNode seq = (MappingNode) valueNode;
-                if (seq.getValue().isEmpty()) {
-                    return null; // skip empty maps
-                }
-            }
-        }
-        return tuple;
-    }
-    // End of borrowed code
 }

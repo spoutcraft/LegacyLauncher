@@ -12,7 +12,8 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.config.YAMLProcessor;
+
 import org.spoutcraft.launcher.async.DownloadListener;
 
 public class MirrorUtils {
@@ -76,7 +77,7 @@ public class MirrorUtils {
 	
 	@SuppressWarnings("unchecked")
 	public static Map<String, Integer> getMirrors() {
-		Configuration config = getMirrorsYML();
+		YAMLProcessor config = getMirrorsYML();
 		return (Map<String, Integer>) config.getProperty("mirrors");
 	}
 	
@@ -92,10 +93,14 @@ public class MirrorUtils {
 		}
 	}
 	
-	public static Configuration getMirrorsYML() {
+	public static YAMLProcessor getMirrorsYML() {
 		updateMirrorsYMLCache();
-		Configuration config = new Configuration(mirrorsYML);
-		config.load();
+		YAMLProcessor config = new YAMLProcessor(mirrorsYML, false);
+		try {
+			config.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return config;
 	}
 	

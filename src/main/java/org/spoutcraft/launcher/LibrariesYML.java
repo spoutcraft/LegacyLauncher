@@ -7,17 +7,21 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import org.bukkit.util.config.Configuration;
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class LibrariesYML {
 	private static volatile boolean updated = false;
 	private static File librariesYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "libraries.yml");
 	private static Object key = new Object();
 
-	public static Configuration getLibrariesYML() {
+	public static YAMLProcessor getLibrariesYML() {
 		updateLibrariesYMLCache();
-		Configuration config = new Configuration(librariesYML);
-		config.load();
+		YAMLProcessor config = new YAMLProcessor(librariesYML, false);
+		try {
+			config.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return config;
 	}
 	
@@ -45,7 +49,7 @@ public class LibrariesYML {
 	
 	@SuppressWarnings("unchecked")
 	public static String getMD5(String library, String version) {
-		Configuration config = getLibrariesYML();
+		YAMLProcessor config = getLibrariesYML();
 		Map<String, Object> libraries = (Map<String, Object>) config.getProperty(library);
 		Map<String, String> versions = (Map<String, String>) libraries.get("versions");
 		String result = versions.get(version);

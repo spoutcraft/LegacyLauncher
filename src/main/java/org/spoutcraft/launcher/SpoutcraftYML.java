@@ -5,17 +5,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import org.bukkit.util.config.Configuration;
+
+import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class SpoutcraftYML {
 	private static volatile boolean updated = false;
 	private static File spoutcraftYML = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.yml");
 	private static Object key = new Object();
 
-	public static Configuration getSpoutcraftYML() {
+	public static YAMLProcessor getSpoutcraftYML() {
 		updateSpoutcraftYMLCache();
-		Configuration config = new Configuration(spoutcraftYML);
-		config.load();
+		YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
+		try {
+			config.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		return config;
 	}
 	
@@ -29,7 +34,7 @@ public class SpoutcraftYML {
 						int selected = -1;
 						if (spoutcraftYML.exists()) {
 							try {
-								Configuration config = new Configuration(spoutcraftYML);
+								YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
 								config.load();
 								selected = config.getInt("current", -1);
 							}
@@ -44,7 +49,7 @@ public class SpoutcraftYML {
 						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 						GameUpdater.copy(con.getInputStream(), new FileOutputStream(spoutcraftYML));
 	
-						Configuration config = new Configuration(spoutcraftYML);
+						YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
 						config.load();
 						config.setProperty("current", selected);
 						config.setProperty("launcher", Main.build);
