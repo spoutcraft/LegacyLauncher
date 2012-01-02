@@ -4,8 +4,8 @@ import java.io.File;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.async.Download;
 
 public class BackgroundImageWorker extends SwingWorker<Object, Object>{

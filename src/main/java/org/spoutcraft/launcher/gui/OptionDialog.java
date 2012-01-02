@@ -39,14 +39,13 @@ import org.spoutcraft.launcher.SpoutcraftBuild;
 import org.spoutcraft.launcher.SpoutcraftYML;
 
 import javax.swing.ButtonGroup;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
 import javax.swing.JCheckBox;
 import javax.swing.JRadioButton;
-import javax.swing.LayoutStyle.ComponentPlacement;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+
+import org.jdesktop.layout.*;
 
 public class OptionDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -162,29 +161,29 @@ public class OptionDialog extends JDialog implements ActionListener {
 		
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
+			gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+				.add(gl_contentPanel.createSequentialGroup()
 					.addContainerGap()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.LEADING)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-								.addComponent(selectBuild)
-								.addPreferredGap(ComponentPlacement.RELATED)
-								.addComponent(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-						.addComponent(devBuilds)
-						.addComponent(recBuilds)
-						.addComponent(customBuilds)
-						.addComponent(fastLoginCheckbox)
-						.addComponent(alwaysUpdateCheckbox)
-						.addComponent(clipboardCheckbox)
-						.addComponent(backupCheckbox)
-						.addComponent(retryLoginCheckbox)
-						.addComponent(latestLWJGLCheckbox)
-						.addComponent(clearCache)
-						.addComponent(buildInfo)
-						.addGroup(gl_contentPanel.createSequentialGroup()
-							.addComponent(lblMemoryToAllocate)
-							.addPreferredGap(ComponentPlacement.RELATED)
-							.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
+					.add(gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+						.add(gl_contentPanel.createSequentialGroup()
+								.add(selectBuild)
+								.addPreferredGap(LayoutStyle.RELATED)
+								.add(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.add(devBuilds)
+						.add(recBuilds)
+						.add(customBuilds)
+						.add(fastLoginCheckbox)
+						.add(alwaysUpdateCheckbox)
+						.add(clipboardCheckbox)
+						.add(backupCheckbox)
+						.add(retryLoginCheckbox)
+						.add(latestLWJGLCheckbox)
+						.add(clearCache)
+						.add(buildInfo)
+						.add(gl_contentPanel.createSequentialGroup()
+							.add(lblMemoryToAllocate)
+							.addPreferredGap(LayoutStyle.RELATED)
+							.add(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(27, Short.MAX_VALUE))
 		);
 		
@@ -198,29 +197,29 @@ public class OptionDialog extends JDialog implements ActionListener {
 		clearCache.setActionCommand("Clear Cache");
 		clearCache.addActionListener(this);
 		gl_contentPanel.setVerticalGroup(
-			gl_contentPanel.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_contentPanel.createSequentialGroup()
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-							.addComponent(selectBuild)
-							.addComponent(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addComponent(devBuilds)
-					.addComponent(recBuilds)
-					.addComponent(customBuilds)
-					.addComponent(fastLoginCheckbox)
-					.addComponent(alwaysUpdateCheckbox)
-					.addComponent(retryLoginCheckbox)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(clipboardCheckbox)
-					.addComponent(backupCheckbox)
-					.addComponent(latestLWJGLCheckbox)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addGroup(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
-						.addComponent(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-						.addComponent(lblMemoryToAllocate))
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(clearCache)
-					.addPreferredGap(ComponentPlacement.RELATED)
-					.addComponent(buildInfo)
+			gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+				.add(gl_contentPanel.createSequentialGroup()
+					.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE.index())
+							.add(selectBuild)
+							.add(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.add(devBuilds)
+					.add(recBuilds)
+					.add(customBuilds)
+					.add(fastLoginCheckbox)
+					.add(alwaysUpdateCheckbox)
+					.add(retryLoginCheckbox)
+					.addPreferredGap(LayoutStyle.RELATED)
+					.add(clipboardCheckbox)
+					.add(backupCheckbox)
+					.add(latestLWJGLCheckbox)
+					.addPreferredGap(LayoutStyle.RELATED)
+					.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE.index())
+						.add(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
+						.add(lblMemoryToAllocate))
+					.addPreferredGap(LayoutStyle.RELATED)
+					.add(clearCache)
+					.addPreferredGap(LayoutStyle.RELATED)
+					.add(buildInfo)
 					.addContainerGap(316, Short.MAX_VALUE))
 		);
 		contentPanel.setLayout(gl_contentPanel);

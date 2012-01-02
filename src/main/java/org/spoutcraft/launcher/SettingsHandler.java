@@ -196,7 +196,7 @@ public class SettingsHandler {
 			String line;
 			
 			while((line = br.readLine()) != null) {
-				if ((line.isEmpty()) || (line.startsWith("#")) || (!line.contains(": "))) continue;
+				if ((isEmpty(line)) || (line.startsWith("#")) || (!line.contains(": "))) continue;
 				String[] args = line.split(": ");
 				if (args.length < 2) {
 					result.put(args[0], null);
@@ -395,7 +395,7 @@ public class SettingsHandler {
 			String line;
 			
 			while((line = br.readLine()) != null) {
-				if (line.isEmpty()) {
+				if (isEmpty(line)) {
 					result.put(i, null);
 					i ++;
 					continue;
@@ -502,6 +502,10 @@ public class SettingsHandler {
 		HashMap<Integer,String> contents = this.getAllFileContents();
 		return contents.size();
 	}
+	
+	public static boolean isEmpty(String str) {
+        return str == null || str.length() == 0;
+    }
 }
 
 

@@ -8,7 +8,8 @@ import java.util.Calendar;
 import java.util.Random;
 
 import javax.swing.JTextPane;
-import javax.swing.SwingWorker;
+
+import org.jdesktop.swingworker.SwingWorker;
 
 public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 	JTextPane editorPane;

@@ -50,9 +50,23 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextPane;
+import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.*;
 import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.exception.*;
@@ -349,7 +363,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 						usernames.put(user, new UserPasswordInformation(hash));
 					} else {
 						String pass = dis.readUTF();
-						if (!pass.isEmpty()) {
+						if (!SettingsHandler.isEmpty(pass)) {
 							i++;
 							if (i == 1) {
 								tumblerFeed.setUser(user);
@@ -367,7 +381,7 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 					this.usernameField.addItem(user);
 					
 					if (SettingsUtil.isFastLogin()) {
-						if (!usernameField.getSelectedItem().toString().trim().isEmpty() && !passwordField.getPassword().toString().trim().isEmpty()) {
+						if (!SettingsHandler.isEmpty(usernameField.getSelectedItem().toString().trim()) && !SettingsHandler.isEmpty(passwordField.getPassword().toString().trim())) {
 							doLogin();
 						}
 					}
