@@ -12,7 +12,10 @@ import org.spoutcraft.launcher.config.YAMLProcessor;
 public class MD5Utils {
 	public static String getMD5(File file){
 		try {
-			return DigestUtils.md5Hex(new FileInputStream(file));
+			FileInputStream fis = new FileInputStream(file);
+			String md5 = DigestUtils.md5Hex(fis);
+			fis.close();
+			return md5;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
