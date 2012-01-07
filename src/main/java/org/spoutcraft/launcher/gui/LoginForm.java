@@ -94,12 +94,26 @@ public class LoginForm extends JFrame implements ActionListener, DownloadListene
 	private int success = LauncherFrame.ERROR_IN_LAUNCH;
 
 	public static final GameUpdater gameUpdater = new GameUpdater();
-	OptionDialog options = new OptionDialog();
+	OptionDialog options;
 
 	Container loginPane = new Container();
 	Container offlinePane = new Container();
 
 	public LoginForm() {
+		try {
+			SpoutcraftBuild.getSpoutcraftBuild();
+		}
+		catch (Throwable t) {
+			String error = "Critical Error!\nUnable to read Spoutcraft build information.\n\nError Message:\n";
+			for (StackTraceElement e : t.getStackTrace()) {
+				error += e.toString() + '\n';
+			}
+			JOptionPane.showMessageDialog(getParent(), error);
+			throw new RuntimeException(t);
+		}
+		
+		options = new OptionDialog();
+		
 		LoginForm.updateDialog = new UpdateDialog(this);
 		gameUpdater.setListener(this);
 		
