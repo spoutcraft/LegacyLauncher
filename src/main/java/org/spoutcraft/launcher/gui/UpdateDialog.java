@@ -29,7 +29,6 @@ public class UpdateDialog extends JDialog implements ActionListener {
 		setBounds((Toolkit.getDefaultToolkit().getScreenSize().width - 450) / 2, (Toolkit.getDefaultToolkit().getScreenSize().height - 136) / 2, 450, 136);
 		this.toFront();
 		this.setAlwaysOnTop(true);
-		this.setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setLayout(new FlowLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
