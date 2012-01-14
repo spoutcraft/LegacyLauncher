@@ -87,7 +87,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	public OptionDialog() {
 		setTitle("Spoutcraft Options");
 		this.setAlwaysOnTop(true);
-		
+		this.setModalityType(ModalityType.APPLICATION_MODAL);
 		ButtonGroup group = new ButtonGroup();
 		group.add(devBuilds);
 		group.add(recBuilds);
