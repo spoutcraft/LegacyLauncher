@@ -294,7 +294,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		
 		if (!spoutcraft.exists()) {
-			Download download = DownloadUtils.downloadFile(url, updateDir + File.separator + "spoutcraft.jar", null, null, this);
+			Download download = DownloadUtils.downloadFile(url, updateDir + File.separator + "spoutcraft.jar", null, build.getMD5(), this);
 			if (download.isSuccess()) {
 				copy(download.getOutFile(), spoutcraft);
 			}
