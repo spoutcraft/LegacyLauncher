@@ -12,12 +12,18 @@ public class SpoutcraftBuild {
 	private int build;
 	Map<String, Object> libraries;
 	private DownloadListener listener = null;
+	private String hash;
 
-	private SpoutcraftBuild(String minecraft, String latest, int build, Map<String, Object> libraries) {
+	private SpoutcraftBuild(String minecraft, String latest, int build, Map<String, Object> libraries, String hash) {
 		this.minecraftVersion = minecraft;
 		this.latestVersion = latest;
 		this.build = build;
 		this.libraries = libraries;
+		this.hash = hash;
+	}
+    
+	public String getMD5() {
+		return hash;
 	}
 
 	public int getBuild() {
@@ -77,17 +83,14 @@ public class SpoutcraftBuild {
 		int recommended = config.getInt("recommended", -1);
 		int selected = SettingsUtil.getSelectedBuild();
 		if (SettingsUtil.isRecommendedBuild()) {
-			Map<String, Object> build = (Map<String, Object>) builds.get(recommended);
-			Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
-			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), recommended, libs);
+			selected = recommended;
 		} else if (SettingsUtil.isDevelopmentBuild()) {
-			Map<String, Object> build = (Map<String, Object>) builds.get(latest);
-			Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
-			return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), latest, libs);
+			selected = latest;
 		}
 
-		Map<String, Object> build = (Map<String, Object>) builds.get(selected);
+		Map<Object, Object> build = (Map<Object, Object>) builds.get(selected);
 		Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
-		return new SpoutcraftBuild((String)build.get("minecraft"), MinecraftYML.getLatestMinecraftVersion(), selected, libs);
+		String hash = String.valueOf(build.get("hash"));
+		return new SpoutcraftBuild(String.valueOf(build.get("minecraft")), MinecraftYML.getLatestMinecraftVersion(), selected, libs, hash);
 	}
 }

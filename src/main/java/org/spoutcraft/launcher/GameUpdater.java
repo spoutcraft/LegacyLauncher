@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.AccessController;
 import java.security.PrivilegedExceptionAction;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -253,9 +254,43 @@ public class GameUpdater implements DownloadListener {
 		return new File(updateDir.getPath() + File.separator + "natives.jar.lzma");
 	}
 
+	private String removeExtension(File file) {
+		String name = file.getName();
+		int ind = name.lastIndexOf('.');
+		if(ind <= 0) return name;
+		return name.substring(0, ind);
+	}
+
+	public void cleanupBinFoldersFor(SpoutcraftBuild build) {
+		try {
+			if(!binDir.exists()) return;
+
+			HashSet<String> neededBinFiles = new HashSet<String>(Arrays.asList(new String[]{"spoutcraft.jar", "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar"}));
+			for(File file : binDir.listFiles()) {
+				if(!file.isFile()) continue;
+				if(neededBinFiles.contains(file.getName())) continue;
+				file.delete();
+			}
+
+			File libDir = new File(binDir, "lib");
+			if(libDir.exists()) {
+				for(File file : libDir.listFiles()) {
+					if(!file.isFile()) continue;
+					if(build.getLibraries().containsKey(removeExtension(file))) continue;
+					file.delete();
+				}
+			}
+		}
+		catch(Exception e) {
+			System.out.println("Error while cleaning unnecessary junk... :c");
+			e.printStackTrace();
+		}
+	}
+
 	public void updateSpoutcraft() throws Exception {
 		performBackup();
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+		cleanupBinFoldersFor(build);
 
 		updateDir.mkdirs();
 		binCacheDir.mkdirs();
@@ -294,7 +329,7 @@ public class GameUpdater implements DownloadListener {
 		}
 		
 		if (!spoutcraft.exists()) {
-			Download download = DownloadUtils.downloadFile(url, updateDir + File.separator + "spoutcraft.jar", null, null, this);
+			Download download = DownloadUtils.downloadFile(url, updateDir + File.separator + "spoutcraft.jar", null, build.getMD5(), this);
 			if (download.isSuccess()) {
 				copy(download.getOutFile(), spoutcraft);
 			}
@@ -324,7 +359,7 @@ public class GameUpdater implements DownloadListener {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				String fallbackURL = "http://dl.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
-				DownloadUtils.downloadFile(url, libraryFile.getPath(), lib.getKey() + ".jar", MD5, this);
+				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, this);
 			}
 		}
 		

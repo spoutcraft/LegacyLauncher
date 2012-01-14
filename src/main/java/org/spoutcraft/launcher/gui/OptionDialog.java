@@ -21,6 +21,7 @@ import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dialog.ModalityType;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -87,7 +88,7 @@ public class OptionDialog extends JDialog implements ActionListener {
 	public OptionDialog() {
 		setTitle("Spoutcraft Options");
 		this.setAlwaysOnTop(true);
-		
+		this.setModalityType(java.awt.Dialog.ModalityType.APPLICATION_MODAL);
 		ButtonGroup group = new ButtonGroup();
 		group.add(devBuilds);
 		group.add(recBuilds);
