@@ -302,12 +302,14 @@ public class OptionDialog extends JDialog implements ActionListener {
 			this.dispose();
 		}
 		else if (id.equals("Clear Cache")) {
+			this.setAlwaysOnTop(false);
 			if (clearCache()) {
 				JOptionPane.showMessageDialog(getParent(), "Successfully cleared the cache.");
 			}
 			else {
 				JOptionPane.showMessageDialog(getParent(), "Failed to clear the cache! Ensure spoutcraft files are open.\nIf all else fails, close the launcher, restart it, and try again.");
 			}
+			this.setAlwaysOnTop(true);
 		}
 		else if (id.equals(customBuilds.getText()) || id.equals(devBuilds.getText()) || id.equals(recBuilds.getText())) {
 			updateBuildsCombo();
