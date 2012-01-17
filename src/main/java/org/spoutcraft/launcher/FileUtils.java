@@ -1,3 +1,28 @@
+/*
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
+ */
 package org.spoutcraft.launcher;
 
 import java.io.File;
@@ -9,7 +34,7 @@ import java.io.IOException;
  */
 public class FileUtils {
 	/**
-	 * Deletes a directory recursively. 
+	 * Deletes a directory recursively.
 	 *
 	 * @param directory  directory to delete
 	 * @throws IOException in case deletion is unsuccessful
@@ -24,8 +49,7 @@ public class FileUtils {
 		}
 
 		if (!directory.delete()) {
-			String message =
-				"Unable to delete directory " + directory + ".";
+			String message = "Unable to delete directory " + directory + ".";
 			throw new IOException(message);
 		}
 	}
@@ -81,7 +105,7 @@ public class FileUtils {
 		}
 
 		File[] files = directory.listFiles();
-		if (files == null) {  // null if security restricted
+		if (files == null) { // null if security restricted
 			throw new IOException("Failed to list contents of " + directory);
 		}
 
@@ -98,7 +122,7 @@ public class FileUtils {
 			throw exception;
 		}
 	}
-	
+
 	/**
 	 * Deletes a file. If file is a directory, delete it and all sub-directories.
 	 * <p>
@@ -120,11 +144,10 @@ public class FileUtils {
 		} else {
 			boolean filePresent = file.exists();
 			if (!file.delete()) {
-				if (!filePresent){
+				if (!filePresent) {
 					throw new FileNotFoundException("File does not exist: " + file);
 				}
-				String message =
-					"Unable to delete file: " + file;
+				String message = "Unable to delete file: " + file;
 				throw new IOException(message);
 			}
 		}
@@ -152,7 +175,7 @@ public class FileUtils {
 			File canonicalDir = file.getParentFile().getCanonicalFile();
 			fileInCanonicalDir = new File(canonicalDir, file.getName());
 		}
-		
+
 		if (fileInCanonicalDir.getCanonicalFile().equals(fileInCanonicalDir.getAbsoluteFile())) {
 			return false;
 		} else {

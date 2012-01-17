@@ -1,18 +1,27 @@
 /*
- * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
- * 
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
  * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
  *
  * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.launcher;
 
@@ -30,21 +39,18 @@ import java.util.HashMap;
 /**
  * <b>Settings Handler</b><br>
  * A new better way of handling settings/configs without the complexity of
- * YAML or using Bukkit's Configuration Class (If this is for a Bukkit plugin). 
+ * YAML or using Bukkit's Configuration Class (If this is for a Bukkit plugin).
  * @author alta189
  * @version 1.4
- * @see <a href="http://www.alta189.com">www.alta189.com - My incomplete web site :P</a>
- *
  */
-
 public class SettingsHandler {
-	
+
 	private File out;
 	private Boolean cached = false;
 	private String resource = null;
 	private HashMap<String,String> cache;
 	private InputStream input = null;
-	
+
 	/**
 	 * Constructor for the Settings/Config file.
 	 * Note: The resource must be in the same package or sub package
@@ -57,7 +63,7 @@ public class SettingsHandler {
 		this.resource = resource;
 		this.out = new File(out);
 	}
-	
+
 	/**
 	 * Constructor for the Settings/Config file.
 	 * Note: The resource must be in the same package or sub package
@@ -70,7 +76,7 @@ public class SettingsHandler {
 		this.resource = resource;
 		this.out = out;
 	}
-	
+
 	/**
 	 * Constructor for the Settings/Config file.
 	 * Note: I discourage the use of this constructor, as it is not a fully tested as it should be.
@@ -81,7 +87,7 @@ public class SettingsHandler {
 		this.input = input;
 		this.out = out;
 	}
-	
+
 	/**
 	 * Constructor for the Settings/Config file.
 	 * Note: This file must exist.
@@ -92,7 +98,7 @@ public class SettingsHandler {
 		if (!out.exists()) throw new FileNotFoundException("The out does not exist.");
 		this.out = out;
 	}
-	
+
 	/**
 	 * Returns whether caching is enabled. <br>
 	 * See {@link #setCached(Boolean) setCached(Boolean)} for more info on caching
@@ -101,16 +107,16 @@ public class SettingsHandler {
 	public Boolean isCached() {
 		return this.cached;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param Boolean cached
 	 */
 	public void setCached(Boolean cached) {
 		this.cached = cached;
 		if (this.cached = false) this.cache = null;
 	}
-	
+
 	/**
 	 * Private method that takes the resource and writes it to the File out.
 	 * @param String name
@@ -119,8 +125,7 @@ public class SettingsHandler {
 		InputStream input = getClass().getResourceAsStream(resource);
 		if (input != null) {
 			FileOutputStream output = null;
-			try
-			{
+			try {
 				//noinspection ResultOfMethodCallIgnored
 				out.getParentFile().mkdirs();
 				output = new FileOutputStream(out);
@@ -139,16 +144,15 @@ public class SettingsHandler {
 				} catch (Exception ignored) {
 				}
 				try {
-					if (output != null)
+					if (output != null) {
 						output.close();
-				}
-				catch (Exception ignored)
-				{
+					}
+				} catch (Exception ignored) {
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Private method that takes the InputStream and it writes it to the File out
 	 * @param InputStream input
@@ -156,8 +160,7 @@ public class SettingsHandler {
 	private void create(InputStream input) {
 		if (input != null) {
 			FileOutputStream output = null;
-			try
-			{
+			try {
 				output = new FileOutputStream(out);
 				byte[] buf = new byte[8192];
 				int length;
@@ -174,27 +177,27 @@ public class SettingsHandler {
 				} catch (Exception ignored) {
 				}
 				try {
-					if (output != null)
+					if (output != null) {
 						output.close();
-				}
-				catch (Exception ignored)
+					}
+				} catch (Exception ignored)
 				{
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * Private method that loads the properties in a HashMap.
 	 * @return HashMap result
 	 */
 	private HashMap<String, String> loadHashMap() {
 		HashMap<String,String> result = new HashMap<String,String>();
-		
+
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
 			String line;
-			
+
 			while((line = br.readLine()) != null) {
 				if ((isEmpty(line)) || (line.startsWith("#")) || (!line.contains(": "))) continue;
 				String[] args = line.split(": ");
@@ -204,16 +207,16 @@ public class SettingsHandler {
 				}
 				result.put(args[0], args[1]);
 			}
-			
+
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
-	 * Call this method before doing anything else with SettingsHandler. 
+	 * Call this method before doing anything else with SettingsHandler.
 	 * The only exception to this is {@link #setCached(Boolean) setCanced(Boolean)}.
 	 * If caching is enabled then it will load the Properties into the cache.
 	 */
@@ -227,9 +230,8 @@ public class SettingsHandler {
 		if (this.cached) {
 			this.cache = this.loadHashMap();
 		}
-		
 	}
-	
+
 	/**
 	 * Returns the value of a property as a String
 	 * @param String property
@@ -248,7 +250,7 @@ public class SettingsHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the value of a property as a Integer
 	 * @param String property
@@ -267,7 +269,7 @@ public class SettingsHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the value of a property as a Boolean
 	 * @param String property
@@ -292,7 +294,7 @@ public class SettingsHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the value of a property as a Double
 	 * @param String property
@@ -314,7 +316,7 @@ public class SettingsHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns true if a property exists
 	 * @param String property
@@ -333,18 +335,17 @@ public class SettingsHandler {
 		} catch (Exception e) {
 			return false;
 		}
-		
+
 		return false;
 	}
-	
-	
+
 	// Editing the Settings/Config File Methods \\
-	
+
 	/**
-	 * Private method that writes out the new Settings/Config file after changes are made. 
-	 * If caching is enabled, it will call the 
+	 * Private method that writes out the new Settings/Config file after changes are made.
+	 * If caching is enabled, it will call the
 	 * {@link #load() load()} method.
-	 * 
+	 *
 	 * @param HashMap newContents
 	 */
 	private void flush(HashMap<Integer,String> newContents) {
@@ -357,19 +358,21 @@ public class SettingsHandler {
 				String line = newContents.get(i);
 				if (line == null) {
 					writer.append("\n");
-					continue; 
+					continue;
 				}
 				writer.append(line);
 				writer.append("\n");
 			}
 			writer.flush();
 			writer.close();
-			if (cached) this.load();
+			if (cached) {
+				this.load();
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Private method used by {@link #flush(HashMap) flush(HashMap)} to delete the old
 	 * Settings/Config file.
@@ -381,7 +384,7 @@ public class SettingsHandler {
 			file.delete();
 		}
 	}
-	
+
 	/**
 	 * Private method to get a HashMap of the contents of the Settings/Contents file.
 	 * They are stored as lines indexed by the line number.
@@ -393,24 +396,24 @@ public class SettingsHandler {
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(out));
 			String line;
-			
+
 			while((line = br.readLine()) != null) {
 				if (isEmpty(line)) {
 					result.put(i, null);
 					i ++;
 					continue;
 				}
-				
+
 				result.put(i, line);
 				i ++;
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
+
 	/**
 	 * Allows you to add a comment to the end of the end of the file.
 	 * @param String comment
@@ -420,7 +423,7 @@ public class SettingsHandler {
 		contents.put(contents.size() + 1, "#" + comment);
 		this.flush(contents);
 	}
-	
+
 	/**
 	 * Allows to add a comment at the line that you specify.
 	 * @param String comment
@@ -439,7 +442,7 @@ public class SettingsHandler {
 		}
 		this.flush(newContents);
 	}
-	
+
 	/**
 	 * Allows you to add a property at the end of the file.
 	 * @param String property
@@ -450,7 +453,7 @@ public class SettingsHandler {
 		contents.put(contents.size() + 1, property + ": " + obj.toString());
 		this.flush(contents);
 	}
-	
+
 	/**
 	 * Allows you to add a property at the line that you specify
 	 * @param String property
@@ -470,7 +473,7 @@ public class SettingsHandler {
 		}
 		this.flush(newContents);
 	}
-	
+
 	/**
 	 * Allows you to change the value of a property.
 	 * @param String property
@@ -493,7 +496,7 @@ public class SettingsHandler {
 		}
 		this.flush(contents);
 	}
-	
+
 	/**
 	 * Returns the amount of the lines in the file. It ignores the last line if it is empty.
 	 * @return Integer lineCount
@@ -502,10 +505,8 @@ public class SettingsHandler {
 		HashMap<Integer,String> contents = this.getAllFileContents();
 		return contents.size();
 	}
-	
+
 	public static boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
-    }
+		return str == null || str.length() == 0;
+	}
 }
-
-

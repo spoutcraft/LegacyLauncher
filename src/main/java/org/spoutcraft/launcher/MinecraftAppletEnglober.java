@@ -1,21 +1,29 @@
 /*
- * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
- * 
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
  * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
  *
  * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.launcher;
-
 
 import java.applet.Applet;
 import java.applet.AppletStub;
@@ -32,10 +40,6 @@ import java.util.Map;
  * @author creadri
  */
 public class MinecraftAppletEnglober extends Applet implements AppletStub {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -4815977474500388254L;
 	private Applet minecraftApplet;
 	private URL minecraftDocumentBase;
@@ -73,7 +77,7 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		gridBagConstraints.insets = new java.awt.Insets(0, 0, 0, 0);
-		
+
 		this.add(minecraftApplet, gridBagConstraints);
 		this.minecraftApplet = minecraftApplet;
 	}
@@ -85,14 +89,16 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 	@Override
 	public String getParameter(String name) {
 		String custom = this.customParameters.get(name);
-		if (custom != null) return custom; try
-		{
-		  return super.getParameter(name);
+		if (custom != null) {
+			return custom;
+		}
+		try {
+			return super.getParameter(name);
 		} catch (Exception e) {
-		  this.customParameters.put(name, null);
+			this.customParameters.put(name, null);
 		}
 		return null;
-	  }
+	}
 
 	@Override
 	public boolean isActive() {
@@ -158,4 +164,3 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 		minecraftApplet.setVisible(b);
 	}
 }
-

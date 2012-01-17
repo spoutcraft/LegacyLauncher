@@ -1,18 +1,27 @@
 /*
- * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
- * 
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
  * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
  *
  * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.launcher;
 
@@ -25,12 +34,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
 
 public class PlatformUtils {
-
 	private static File workDir = null;
 	public static File getWorkingDirectory() {
 		if (workDir == null)
@@ -51,10 +58,11 @@ public class PlatformUtils {
 				break;
 			case windows:
 				String applicationData = System.getenv("APPDATA");
-				if (applicationData != null)
+				if (applicationData != null) {
 					workingDirectory = new File(applicationData, "." + applicationName + '/');
-				else
+				} else {
 					workingDirectory = new File(userHome, '.' + applicationName + '/');
+				}
 				break;
 			case macos:
 				workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
@@ -62,25 +70,32 @@ public class PlatformUtils {
 			default:
 				workingDirectory = new File(userHome, applicationName + '/');
 		}
-		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs()))
+		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
 			throw new RuntimeException("The working directory could not be created: " + workingDirectory);
+		}
 		return workingDirectory;
 	}
 
 	public static OS getPlatform() {
 		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win"))
+		if (osName.contains("win")) {
 			return OS.windows;
-		if (osName.contains("mac"))
+		}
+		if (osName.contains("mac")) {
 			return OS.macos;
-		if (osName.contains("solaris"))
+		}
+		if (osName.contains("solaris")) {
 			return OS.solaris;
-		if (osName.contains("sunos"))
+		}
+		if (osName.contains("sunos")) {
 			return OS.solaris;
-		if (osName.contains("linux"))
+		}
+		if (osName.contains("linux")) {
 			return OS.linux;
-		if (osName.contains("unix"))
+		}
+		if (osName.contains("unix")) {
 			return OS.linux;
+		}
 		return OS.unknown;
 	}
 
@@ -106,14 +121,14 @@ public class PlatformUtils {
 			connection.setUseCaches(false);
 			connection.setDoInput(true);
 			connection.setDoOutput(true);
-			
+
 			connection.setConnectTimeout(10000);
 
 			connection.connect();
 			Certificate[] certs = connection.getServerCertificates();
 
 			byte[] bytes = new byte[294];
-			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("minecraft.key"));
+			DataInputStream dis = new DataInputStream(PlatformUtils.class.getResourceAsStream("/resources/minecraft.key"));
 			dis.readFully(bytes);
 			dis.close();
 
@@ -122,8 +137,9 @@ public class PlatformUtils {
 			byte[] data = pk.getEncoded();
 
 			for (int j = 0; j < data.length; j++) {
-				if (data[j] == bytes[j])
+				if (data[j] == bytes[j]) {
 					continue;
+				}
 				throw new RuntimeException("Public key mismatch");
 			}
 

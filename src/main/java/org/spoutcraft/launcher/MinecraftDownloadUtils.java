@@ -1,3 +1,28 @@
+/*
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
+ */
 package org.spoutcraft.launcher;
 
 import java.io.File;
@@ -10,7 +35,7 @@ import org.spoutcraft.launcher.async.DownloadListener;
 import org.spoutcraft.launcher.config.YAMLProcessor;
 
 public class MinecraftDownloadUtils {
-	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException{
+	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException {
 		int tries = 3;
 		File outputFile = null;
 		while (tries > 0) {
@@ -25,14 +50,13 @@ public class MinecraftDownloadUtils {
 				}
 				System.err.println("Download of minecraft failed!");
 				listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
-			}
-			else {
+			} else {
 				String minecraftMD5 = MD5Utils.getMD5(FileType.minecraft, build.getLatestMinecraftVersion());
 				String resultMD5 = MD5Utils.getMD5(download.getOutFile());
 				System.out.println("Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
 				if (resultMD5.equals(minecraftMD5)) {
 					if (!build.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
-						
+
 						File patch = new File(PlatformUtils.getWorkingDirectory(), "mc.patch");
 						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
 						if (patchDownload.isSuccess()) {
@@ -41,7 +65,7 @@ public class MinecraftDownloadUtils {
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
 							String minecraft181MD5 = MD5Utils.getMD5(FileType.minecraft, build.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
-							
+
 							if (minecraft181MD5.equals(resultMD5)) {
 								outputFile = download.getOutFile();
 								download.getOutFile().delete();
@@ -51,8 +75,7 @@ public class MinecraftDownloadUtils {
 								break;
 							}
 						}
-					}
-					else {
+					} else {
 						outputFile = download.getOutFile();
 						break;
 					}
@@ -71,7 +94,7 @@ public class MinecraftDownloadUtils {
 		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);
-		
+
 		if (builds != null) {
 			String[] results = new String[builds.size()];
 			int index = 0;

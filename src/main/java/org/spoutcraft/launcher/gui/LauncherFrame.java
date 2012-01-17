@@ -1,18 +1,27 @@
 /*
- * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
- * 
+ * This file is part of Spoutcraft Launcher (http://www.spout.org/).
+ *
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
  * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
  *
  * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev license version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.launcher.gui;
 
@@ -22,7 +31,6 @@ import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-
 import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.Launcher;
@@ -35,11 +43,11 @@ public class LauncherFrame extends Frame implements WindowListener{
 	private static final long serialVersionUID = 4524937541564722358L;
 	private MinecraftAppletEnglober minecraft;
 	private LoginForm loginForm = null;
-	
+
 	public static final int RETRYING_LAUNCH = -1;
 	public static final int ERROR_IN_LAUNCH = 0;
 	public static final int SUCCESSFUL_LAUNCH = 1;
-	
+
 	//private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", new File(PlatformUtils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.properties"));
 
 	public LauncherFrame() {
@@ -50,17 +58,17 @@ public class LauncherFrame extends Frame implements WindowListener{
 		this.setSize(new Dimension(870, 518));
 		this.setResizable(true);
 		this.addWindowListener(this);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/org/spoutcraft/launcher/favicon.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/resources/favicon.png")));
 	}
-	
+
 	public void setLoginForm(LoginForm form) {
 		loginForm = form;
 	}
-	
+
 	public LoginForm getLoginForm() {
 		return loginForm;
 	}
-	
+
 	public int runGame(String user, String session, String downloadTicket, String mcpass) {
 		Applet applet = null;
 		try {
@@ -98,7 +106,7 @@ public class LauncherFrame extends Frame implements WindowListener{
 				minecraft.addParameter("port", MinecraftUtils.getOptions().getPort());
 			}
 		}
-		
+
 		applet.setStub(minecraft);
 
 		this.add(minecraft);
@@ -108,19 +116,17 @@ public class LauncherFrame extends Frame implements WindowListener{
 		minecraft.setSize(getWidth(), getHeight());
 
 		minecraft.start();
-		
+
 		this.setVisible(true);
 		return SUCCESSFUL_LAUNCH;
 	}
 
-	public void windowActivated(WindowEvent e) {		
+	public void windowActivated(WindowEvent e) {
 	}
 
-	
 	public void windowClosed(WindowEvent e) {
 	}
 
-	
 	public void windowClosing(WindowEvent e) {
 		if (LauncherFrame.this.minecraft != null) {
 			LauncherFrame.this.minecraft.stop();
@@ -135,19 +141,15 @@ public class LauncherFrame extends Frame implements WindowListener{
 		System.exit(0);
 	}
 
-	
 	public void windowDeactivated(WindowEvent e) {
 	}
 
-	
 	public void windowDeiconified(WindowEvent e) {
 	}
 
-	
 	public void windowIconified(WindowEvent e) {
 	}
 
-	
 	public void windowOpened(WindowEvent e) {
 	}
 }
