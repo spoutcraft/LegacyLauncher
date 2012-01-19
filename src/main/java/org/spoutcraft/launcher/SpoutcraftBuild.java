@@ -111,6 +111,10 @@ public class SpoutcraftBuild {
 		} else if (SettingsUtil.isDevelopmentBuild()) {
 			selected = latest;
 		}
+		
+		if (selected < 0 || !builds.containsKey(selected)) {
+			selected = recommended;	
+		}
 
 		Map<Object, Object> build = (Map<Object, Object>) builds.get(selected);
 		Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
