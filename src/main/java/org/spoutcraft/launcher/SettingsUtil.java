@@ -29,7 +29,7 @@ import java.io.File;
 
 public class SettingsUtil {
 	private static File settingsFolder = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
-	private static File settingsFile = new File(settingsFolder, "spoutcraft.properties"));
+	private static File settingsFile = new File(settingsFolder, "spoutcraft.properties");
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	static {
