@@ -33,13 +33,18 @@ public class SettingsUtil {
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	static {
-		if (!settingsFolder.exists()) {
-			settingsFolder.mkdir();
+		try {
+			if (!settingsFolder.exists()) {
+				settingsFolder.mkdir();
+			}
+			if (!settingsFile.exists()) {
+				settingsFile.createNewFile();
+			}
+			settings.load();
 		}
-		if (!settingsFile.exists()) {
-			settingsFile.createNewFile();
+		catch(IOException e) {
+			throw new RuntimeException(e);
 		}
-		settings.load();
 	}
 
 	public static boolean isFastLogin() {
