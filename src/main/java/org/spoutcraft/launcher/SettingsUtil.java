@@ -28,8 +28,8 @@ package org.spoutcraft.launcher;
 import java.io.File;
 
 public class SettingsUtil {
-	private static File settingsFolder = new File(PlatformUtils.getWorkingDirectory());
-	private static File settingsFile = new File(settingsFolder, new File("spoutcraft", "spoutcraft.properties"));
+	private static File settingsFolder = new File(PlatformUtils.getWorkingDirectory(), "spoutcraft");
+	private static File settingsFile = new File(settingsFolder, "spoutcraft.properties"));
 	private static SettingsHandler settings = new SettingsHandler("defaults/spoutcraft.properties", settingsFile);
 
 	static {
