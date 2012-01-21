@@ -42,7 +42,7 @@ public class SettingsUtil {
 			}
 			settings.load();
 		}
-		catch(IOException e) {
+		catch(Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
