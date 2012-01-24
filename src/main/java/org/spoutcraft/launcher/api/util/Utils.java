@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
 
@@ -18,6 +20,10 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
 
 import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.exceptions.BadLoginException;
+import org.spoutcraft.launcher.exceptions.MCNetworkException;
+import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
+import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 
 public class Utils {
 
@@ -190,5 +196,30 @@ public class Utils {
 			count += n;
 		}
 		return count;
+	}
+
+	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException {
+			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
+			String result = excutePost("https://login.minecraft.net/", parameters, progress);
+			if (result == null) {
+				throw new MCNetworkException();
+			}
+			if (!result.contains(":")) {
+				if (result.trim().equals("Bad login")) {
+					throw new BadLoginException();
+                } else if (result.trim().equals("User not premium")) {
+                    throw new MinecraftUserNotPremiumException();
+				} else if (result.trim().equals("Old version")) {
+					throw new OutdatedMCLauncherException();
+				} else {
+					System.err.print("Unknown login result: " + result);
+				}
+				throw new MCNetworkException();
+			}
+		return result.split(":");
+	}
+
+	public static boolean isEmpty(String str) {
+		return str == null || str.length() == 0;
 	}
 }

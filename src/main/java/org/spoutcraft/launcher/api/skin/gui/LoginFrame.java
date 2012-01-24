@@ -20,14 +20,16 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JFrame;
+import javax.swing.JProgressBar;
 
+import org.spoutcraft.launcher.api.events.Event;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public abstract class LoginFrame extends JFrame {
 
 	private static final long serialVersionUID = -2105611446626766230L;
-	private Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
+	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	private final Skin parent;
 
 	public LoginFrame(Skin parent) {
@@ -35,29 +37,29 @@ public abstract class LoginFrame extends JFrame {
 		readSavedUsernames();
 	}
 
-	public List<String> getSavedUsernames() {
+	public final List<String> getSavedUsernames() {
 		return new ArrayList<String>(usernames.keySet());
 	}
 
 	public final boolean hasSavedPassword(String user) {
-		return true;
+		return (usernames.containsKey(user) && usernames.get(user) != null);
 	}
 
-	public Skin getParentSkin() {
+	public final Skin getParentSkin() {
 		return parent;
 	}
 
-	public void doLogin(String user) {
+	public final void doLogin(String user) {
 		if (!hasSavedPassword(user))
 			throw new NullPointerException("There is no saved password for the user '" + user + "'");
 		doLogin(user, null);
 	}
 
-	public void doLogin(String user, String pass) {
+	public final void doLogin(String user, String pass) {
 
 	}
 
-	private void readSavedUsernames() {
+	private final void readSavedUsernames() {
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
 			if (!lastLogin.exists())
@@ -93,7 +95,8 @@ public abstract class LoginFrame extends JFrame {
 		}
 	}
 
-	private void writeUsernameList() {
+	@SuppressWarnings("unused")
+	private final void writeUsernameList() {
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
 
@@ -121,7 +124,7 @@ public abstract class LoginFrame extends JFrame {
 		}
 	}
 
-	private static Cipher getCipher(int mode, String password) throws Exception {
+	private final static Cipher getCipher(int mode, String password) throws Exception {
 		Random random = new Random(43287234L);
 		byte[] salt = new byte[8];
 		random.nextBytes(salt);
@@ -134,8 +137,12 @@ public abstract class LoginFrame extends JFrame {
 	}
 
 	public abstract void init();
+	
+	public abstract JProgressBar getProgressBar();
+	
+	public abstract void onEvent(Event event);
 
-	private static final class UserPasswordInformation {
+	protected static final class UserPasswordInformation {
 		public boolean isHash;
 		public byte[] passwordHash = null;
 		public String password = null;

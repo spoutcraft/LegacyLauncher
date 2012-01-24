@@ -30,6 +30,11 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.api.events.BadLoginEvent;
+import org.spoutcraft.launcher.api.events.Event;
+import org.spoutcraft.launcher.api.events.MinecraftNetworkDownEvent;
+import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
+import org.spoutcraft.launcher.api.events.UserNotPremiumEvent;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
@@ -271,6 +276,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	public void init() {
 	}
+	
+	public void onException() {
+	}
+
+	public JProgressBar getProgressBar() {
+		return progressBar;
+	}
 
 	public void actionPerformed(ActionEvent e) {
 
@@ -286,6 +298,19 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	public void keyReleased(KeyEvent e) {
 
+	}
+
+	@Override
+	public void onEvent(Event event) {
+		if (event instanceof BadLoginEvent) {
+			
+		} else if (event instanceof UserNotPremiumEvent) {
+			
+		} else if (event instanceof MinecraftNetworkDownEvent) {
+			
+		} else if (event instanceof SuccessfulLoginEvent) {
+			
+		}
 	}
 
 }
