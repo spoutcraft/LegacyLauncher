@@ -56,7 +56,10 @@ public abstract class LoginFrame extends JFrame {
 	}
 
 	public final void doLogin(String user, String pass) {
-
+		LoginWorker loginThread = new LoginWorker(this);
+		loginThread.setUser(user);
+		loginThread.setPass(pass);
+		loginThread.execute();
 	}
 
 	private final void readSavedUsernames() {
