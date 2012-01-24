@@ -22,6 +22,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
@@ -285,7 +286,9 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	}
 
 	public void actionPerformed(ActionEvent e) {
-
+		if (e.getActionCommand().equalsIgnoreCase("login")) {
+			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+		}
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -303,13 +306,22 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	@Override
 	public void onEvent(Event event) {
 		if (event instanceof BadLoginEvent) {
-			
+			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");			
 		} else if (event instanceof UserNotPremiumEvent) {
-			
+			JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
 		} else if (event instanceof MinecraftNetworkDownEvent) {
-			
+			MinecraftNetworkDownEvent e = (MinecraftNetworkDownEvent)event;
+			if (!e.canPlayOffline()) {
+				JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
+			} else {
+				int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
+				if (result == JOptionPane.YES_OPTION) {
+					//TODO Implement Offline Mode call
+				}
+			}
 		} else if (event instanceof SuccessfulLoginEvent) {
-			
+			SuccessfulLoginEvent e = (SuccessfulLoginEvent)event;
+			System.out.println("Logged in as: " + e.getUser());			
 		}
 	}
 

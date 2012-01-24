@@ -52,7 +52,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 		loginFrame.getProgressBar().setString("Connecting to www.minecraft.net...");
 		try {
 			values = Utils.doLogin(user, pass, loginFrame.getProgressBar());
-			loginFrame.onEvent(new SuccessfulLoginEvent());
+			loginFrame.onEvent(new SuccessfulLoginEvent(user));
 			return true;
 		} catch (BadLoginException e) {
 			loginFrame.onEvent(new BadLoginEvent());
