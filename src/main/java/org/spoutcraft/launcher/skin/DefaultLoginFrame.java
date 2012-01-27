@@ -142,6 +142,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					for (JButton button : loginSkin1Image) {
 						button.setActionCommand("LoginSkin1");
 					}
+					passwordField.setText(getSavedPassword(user));
 				} else if (loginid == 2) {
 					loginSkin2.setText(user);
 					loginSkin2.setVisible(true);
@@ -150,9 +151,10 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					for (JButton button : loginSkin2Image) {
 						button.setActionCommand("LoginSkin2");
 					}
-				} else {
-					break;
 				}
+					usernameField.addItem(user);
+				
+				
 			}
 		}
 
