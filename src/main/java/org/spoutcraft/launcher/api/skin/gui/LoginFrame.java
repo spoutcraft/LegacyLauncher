@@ -45,6 +45,14 @@ public abstract class LoginFrame extends JFrame {
 		return (usernames.containsKey(user) && usernames.get(user) != null);
 	}
 
+	public final String getSavedPassword(String user) {
+		UserPasswordInformation pass = usernames.get(user);
+		if (!pass.isHash) {
+			return pass.password;
+		}
+		return null;
+	}
+
 	public final Skin getParentSkin() {
 		return parent;
 	}
@@ -52,10 +60,13 @@ public abstract class LoginFrame extends JFrame {
 	public final void doLogin(String user) {
 		if (!hasSavedPassword(user))
 			throw new NullPointerException("There is no saved password for the user '" + user + "'");
-		doLogin(user, null);
+		doLogin(user, getSavedPassword(user));
 	}
 
 	public final void doLogin(String user, String pass) {
+		if (pass == null)
+			throw new NullPointerException("The password was null when logining in as user: '" + user + "'");
+
 		LoginWorker loginThread = new LoginWorker(this);
 		loginThread.setUser(user);
 		loginThread.setPass(pass);
@@ -140,10 +151,14 @@ public abstract class LoginFrame extends JFrame {
 	}
 
 	public abstract void init();
-	
+
 	public abstract JProgressBar getProgressBar();
-	
+
 	public abstract void onEvent(Event event);
+
+	public final void onRawEvent(Event event) {
+
+	}
 
 	protected static final class UserPasswordInformation {
 		public boolean isHash;

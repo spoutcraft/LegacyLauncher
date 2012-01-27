@@ -138,10 +138,18 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					loginSkin1.setText(user);
 					loginSkin1.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
+					loginSkin1.setActionCommand("LoginSkin1");
+					for (JButton button : loginSkin1Image) {
+						button.setActionCommand("LoginSkin1");
+					}
 				} else if (loginid == 2) {
 					loginSkin2.setText(user);
 					loginSkin2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
+					loginSkin2.setActionCommand("LoginSkin2");
+					for (JButton button : loginSkin2Image) {
+						button.setActionCommand("LoginSkin2");
+					}
 				} else {
 					break;
 				}
@@ -277,7 +285,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	public void init() {
 	}
-	
+
 	public void onException() {
 	}
 
@@ -288,6 +296,10 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
+			doLogin(loginSkin1.getText());
+		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
+			doLogin(loginSkin2.getText());
 		}
 	}
 
@@ -306,22 +318,22 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	@Override
 	public void onEvent(Event event) {
 		if (event instanceof BadLoginEvent) {
-			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");			
+			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 		} else if (event instanceof UserNotPremiumEvent) {
 			JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
 		} else if (event instanceof MinecraftNetworkDownEvent) {
-			MinecraftNetworkDownEvent e = (MinecraftNetworkDownEvent)event;
+			MinecraftNetworkDownEvent e = (MinecraftNetworkDownEvent) event;
 			if (!e.canPlayOffline()) {
 				JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
 			} else {
 				int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
 				if (result == JOptionPane.YES_OPTION) {
-					//TODO Implement Offline Mode call
+					// TODO Implement Offline Mode call
 				}
 			}
 		} else if (event instanceof SuccessfulLoginEvent) {
-			SuccessfulLoginEvent e = (SuccessfulLoginEvent)event;
-			System.out.println("Logged in as: " + e.getUser());			
+			SuccessfulLoginEvent e = (SuccessfulLoginEvent) event;
+			System.out.println("Logged in as: " + e.getUser());
 		}
 	}
 
