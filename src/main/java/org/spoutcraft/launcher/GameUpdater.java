@@ -147,9 +147,9 @@ public class GameUpdater implements DownloadListener {
 	}
 
 	public String getNativesUrl() {
-		if (SettingsUtil.isLatestLWJGL()) {
-			return latestLWJGLURL;
-		}
+		//if (SettingsUtil.isLatestLWJGL()) {
+		//	return latestLWJGLURL;
+		//}
 		return baseURL;
 	}
 
