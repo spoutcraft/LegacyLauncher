@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.events.BadLoginEvent;
 import org.spoutcraft.launcher.api.events.MinecraftNetworkDownEvent;
 import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
@@ -52,7 +53,12 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 		loginFrame.getProgressBar().setString("Connecting to www.minecraft.net...");
 		try {
 			values = Utils.doLogin(user, pass, loginFrame.getProgressBar());
-			loginFrame.onEvent(new SuccessfulLoginEvent(user));
+			Launcher.getGameUpdater().setMinecraftUser(values[2].trim());
+			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
+			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
+			Launcher.getGameUpdater().setMinecraftPass(pass);
+			
+			loginFrame.onRawEvent(new SuccessfulLoginEvent(user));
 			return true;
 		} catch (BadLoginException e) {
 			loginFrame.onEvent(new BadLoginEvent());

@@ -1,14 +1,14 @@
 package org.spoutcraft.launcher.api.util;
 
+import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Representer;
-
-import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * YAML configuration loader. To use this class, construct it with path to
@@ -63,7 +63,7 @@ public class YAMLProcessor extends YAMLNode {
     }
 
     public YAMLProcessor(File file, boolean writeDefaults) {
-        this(file, writeDefaults, YAMLFormat.COMPACT);
+        this(file, writeDefaults, YAMLFormat.EXTENDED);
     }
 
     /**

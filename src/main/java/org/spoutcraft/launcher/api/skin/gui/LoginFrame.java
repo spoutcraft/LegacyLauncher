@@ -22,18 +22,26 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.events.Event;
+import org.spoutcraft.launcher.api.events.FinishedUpdateCheckEvent;
+import org.spoutcraft.launcher.api.events.RunGameEvent;
+import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
+import org.spoutcraft.launcher.api.events.UpdateFinishedEvent;
 import org.spoutcraft.launcher.api.skin.Skin;
+import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.Utils;
 
-public abstract class LoginFrame extends JFrame {
+public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	private static final long serialVersionUID = -2105611446626766230L;
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	private final Skin parent;
+	private boolean mcUpdate, scUpdate;
 
 	public LoginFrame(Skin parent) {
 		this.parent = parent;
+		Launcher.getGameUpdater().setDownloadListener(this);
 		readSavedUsernames();
 	}
 
@@ -157,7 +165,34 @@ public abstract class LoginFrame extends JFrame {
 	public abstract void onEvent(Event event);
 
 	public final void onRawEvent(Event event) {
+		if (event instanceof SuccessfulLoginEvent) {
+			CheckUpdatesWorker check = new CheckUpdatesWorker(this);
+			check.execute();
+		} else if (event instanceof FinishedUpdateCheckEvent) {
+			UpdateWorker updater = new UpdateWorker(this);
+			updater.execute();
+		} else if (event instanceof UpdateFinishedEvent) {
+			Launcher.getGameUpdater().runValidator();
+		} else if (event instanceof RunGameEvent) {
+			setVisible(false);
+		}
+		onEvent(event);
+	}
 
+	public boolean isSpoutcraftUpdateaAvailable() {
+		return scUpdate;
+	}
+
+	public void setSpoutcraftUpdateAvailable(boolean scUpdate) {
+		this.scUpdate = scUpdate;
+	}
+
+	public boolean isMinecraftUpdateaAvailable() {
+		return mcUpdate;
+	}
+
+	public void setMinecraftUpdateAvailable(boolean mcUpdate) {
+		this.mcUpdate = mcUpdate;
 	}
 
 	protected static final class UserPasswordInformation {

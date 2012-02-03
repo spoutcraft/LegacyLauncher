@@ -80,11 +80,12 @@ public class CommonSkinManager implements SkinManager {
 		if (enabledSkin != null)
 			disableSkin(enabledSkin);
 		
-		if (skin.isEnabled()) {
+		if (!skin.isEnabled()) {
 			boolean locked = manager.lock(key);
 
 			try {
 				skin.getSkinLoader().enableSkin(skin);
+				enabledSkin = skin;
 			} catch (Exception e) {
 				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the Skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
 			}
@@ -121,6 +122,11 @@ public class CommonSkinManager implements SkinManager {
 
 	public Skin getEnabledSkin() {
 		return enabledSkin;
+	}
+
+	public void addSkin(Skin skin) {
+		names.put(skin.getDescription().getName(), skin);
+		skins.add(skin);
 	}
 
 	private void safelyLog(Level level, String message, Throwable ex) {

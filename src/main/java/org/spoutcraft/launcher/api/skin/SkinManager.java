@@ -22,5 +22,7 @@ public interface SkinManager {
 	public void clearSkins();
 	
 	public Skin getEnabledSkin();
+	
+	public void addSkin(Skin skin);
 
 }

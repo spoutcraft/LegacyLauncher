@@ -4,49 +4,46 @@ import java.io.File;
 
 public abstract class JavaSkin implements Skin {
 	private SkinDescriptionFile desc = null;
+	private File file;
 	private File dataFolder;
+	private boolean enabled;
+	private JavaSkinLoader loader;
+	private CommonClassLoader classLoader;
 	
 	
-	public SkinDescriptionFile getDescription() {
+	public final SkinDescriptionFile getDescription() {
 		return desc;
 	}
 
-	public File getDataFolder() {		
+	public final File getDataFolder() {
 		return dataFolder;
 	}
 
-	public void initialize(JavaSkinLoader javaSkinLoader, SkinDescriptionFile desc2, File dataFolder, File paramFile, CommonClassLoader loader) {
-		// TODO Auto-generated method stub
+	public final void initialize(JavaSkinLoader loader, SkinDescriptionFile desc, File dataFolder, File file, CommonClassLoader classLoader) {
+		this.loader = loader;
+		this.desc = desc;
+		this.dataFolder = dataFolder;
+		this.file = file;
+		this.classLoader = classLoader;
 		
 	}
 
-	protected CommonClassLoader getClassLoader() {
-		// TODO Auto-generated method stub
-		return null;
+	protected final CommonClassLoader getClassLoader() {
+		return classLoader;
 	}
 
-	public void setEnabled(boolean b) {
-		// TODO Auto-generated method stub
-		
+	public final void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}
 
-	public void onDisable() {
-		// TODO Auto-generated method stub
-		
+	public final boolean isEnabled() {
+		return enabled;
 	}
-
-	public boolean isEnabled() {
-		// TODO Auto-generated method stub
-		return false;
+	public final SkinLoader getSkinLoader() {
+		return loader;
 	}
-
-	public void onEnable() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public CommonSkinManager getSkinLoader() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public final File getFile() {
+		return file;
 	}
 }

@@ -310,7 +310,9 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	}
 
 	public void keyPressed(KeyEvent e) {
-
+		if (loginButton.isEnabled() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+		}
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -335,8 +337,17 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			}
 		} else if (event instanceof SuccessfulLoginEvent) {
 			SuccessfulLoginEvent e = (SuccessfulLoginEvent) event;
-			System.out.println("Logged in as: " + e.getUser());
 		}
+	}
+
+	public void stateChanged(String status, float progress) {
+		int intProgress = Math.round(progress);
+
+		progressBar.setValue(intProgress);
+		if (status.length() > 60) {
+			status = status.substring(0, 60) + "...";
+		}
+		progressBar.setString(intProgress + "% " + status);
 	}
 
 }

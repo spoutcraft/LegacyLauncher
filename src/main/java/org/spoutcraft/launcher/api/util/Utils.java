@@ -1,5 +1,7 @@
 package org.spoutcraft.launcher.api.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -15,6 +17,11 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
@@ -170,7 +177,7 @@ public class Utils {
 
 		return file.substring(file.lastIndexOf(".") + 1, file.length());
 	}
-	
+
 	public static void copy(File input, File output) throws IOException {
 		FileInputStream inputStream = null;
 		FileOutputStream outputStream = null;
@@ -178,8 +185,7 @@ public class Utils {
 			inputStream = new FileInputStream(input);
 			outputStream = new FileOutputStream(output);
 			copy(inputStream, outputStream);
-		}
-		finally {
+		} finally {
 			if (inputStream != null)
 				inputStream.close();
 			if (outputStream != null)
@@ -199,27 +205,85 @@ public class Utils {
 	}
 
 	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException {
-			String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
-			String result = excutePost("https://login.minecraft.net/", parameters, progress);
-			if (result == null) {
-				throw new MCNetworkException();
+		String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
+		String result = excutePost("https://login.minecraft.net/", parameters, progress);
+		if (result == null) {
+			throw new MCNetworkException();
+		}
+		if (!result.contains(":")) {
+			if (result.trim().equals("Bad login")) {
+				throw new BadLoginException();
+			} else if (result.trim().equals("User not premium")) {
+				throw new MinecraftUserNotPremiumException();
+			} else if (result.trim().equals("Old version")) {
+				throw new OutdatedMCLauncherException();
+			} else {
+				System.err.print("Unknown login result: " + result);
 			}
-			if (!result.contains(":")) {
-				if (result.trim().equals("Bad login")) {
-					throw new BadLoginException();
-                } else if (result.trim().equals("User not premium")) {
-                    throw new MinecraftUserNotPremiumException();
-				} else if (result.trim().equals("Old version")) {
-					throw new OutdatedMCLauncherException();
-				} else {
-					System.err.print("Unknown login result: " + result);
-				}
-				throw new MCNetworkException();
-			}
+			throw new MCNetworkException();
+		}
 		return result.split(":");
 	}
 
 	public static boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
+	}
+
+	public static void extractJar(JarFile jar, File dest) throws IOException {
+		extractJar(jar, dest, null);
+	}
+
+	public static void extractJar(JarFile jar, File dest, List<String> ignores) throws IOException {
+		if (!dest.exists()) {
+			dest.mkdirs();
+		} else {
+			if (!dest.isDirectory())
+				throw new IllegalArgumentException("The destination was not a directory");
+			FileUtils.cleanDirectory(dest);
+		}
+		Enumeration<JarEntry> entries = jar.entries();
+
+		while (entries.hasMoreElements()) {
+			JarEntry entry = entries.nextElement();
+			File file = new File(dest, entry.getName());
+			if (ignores != null) {
+				boolean skip = false;
+				for (String path : ignores) {
+					if (entry.getName().startsWith(path)) {
+						skip = true;
+						break;
+					}
+				}
+				if (skip)
+					continue;
+			}
+
+			if (entry.getName().endsWith("/")) {
+				if (!file.mkdir()) {
+					if (ignores == null)
+						ignores = new ArrayList<String>();
+					ignores.add(entry.getName());
+				}
+				continue;
+			}
+
+			if (file.exists())
+				file.delete();
+
+			file.createNewFile();
+
+			InputStream in = new BufferedInputStream(jar.getInputStream(entry));
+			OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
+
+			byte buffer[] = new byte[1024];
+			int len;
+			while ((len = in.read(buffer)) > 0) {
+				out.write(buffer, 0, len);
+			}
+			out.close();
+			in.close();
+
+		}
+
 	}
 }

@@ -24,6 +24,8 @@ public class SkinDescriptionFile {
 		this.name = name;
 		this.version = version;
 		this.main = main;
+
+		this.fullname = new StringBuilder().append(name).append(" v").append(version).toString();
 	}
 	
 	@SuppressWarnings("unchecked")

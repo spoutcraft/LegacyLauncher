@@ -1,5 +1,7 @@
 package org.spoutcraft.launcher.api.skin;
 
+import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
+
 import java.io.File;
 
 public interface Skin {
@@ -10,10 +12,14 @@ public interface Skin {
 
 	public boolean isEnabled();
 
-	public CommonSkinManager getSkinLoader();
+	public SkinLoader getSkinLoader();
 	
 	public void onEnable();
 	
 	public void onDisable();
+
+	public LoginFrame getLoginFrame();
+	
+	public File getFile();
 	
 }
