@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.events.FinishedUpdateCheckEvent;
 
 public class CheckUpdatesWorker extends SwingWorker<Boolean, String> {
 	

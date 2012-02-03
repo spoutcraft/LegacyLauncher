@@ -1,8 +1,8 @@
 package org.spoutcraft.launcher.api.skin.gui;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.events.UpdateFinishedEvent;
 
 public class UpdateWorker extends SwingWorker<Object, Object> {
 
@@ -20,7 +20,7 @@ public class UpdateWorker extends SwingWorker<Object, Object> {
 		} else if (loginFrame.isSpoutcraftUpdateaAvailable()) {
 			Launcher.getGameUpdater().updateSpoutcraft();
 		}
-		loginFrame.onRawEvent(new UpdateFinishedEvent());
+		loginFrame.onRawEvent(Event.UPDATE_FINISHED);
 		return null;
 	}
 	

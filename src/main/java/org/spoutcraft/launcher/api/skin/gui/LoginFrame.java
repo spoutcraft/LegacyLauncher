@@ -6,6 +6,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,22 +23,22 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.events.Event;
-import org.spoutcraft.launcher.api.events.FinishedUpdateCheckEvent;
-import org.spoutcraft.launcher.api.events.RunGameEvent;
-import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
-import org.spoutcraft.launcher.api.events.UpdateFinishedEvent;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.util.DownloadListener;
+import org.spoutcraft.launcher.api.util.FileUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	private static final long serialVersionUID = -2105611446626766230L;
-	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	private final Skin parent;
-	private boolean mcUpdate, scUpdate;
+	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
+	private boolean mcUpdate = false, scUpdate = false;
+	protected boolean offline = false;
+	private int updateTries = 0;
 
 	public LoginFrame(Skin parent) {
 		this.parent = parent;
@@ -63,6 +64,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	public final Skin getParentSkin() {
 		return parent;
+	}
+	
+	protected final boolean canPlayOffline() {
+		return offline;
 	}
 
 	public final void doLogin(String user) {
@@ -165,16 +170,45 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public abstract void onEvent(Event event);
 
 	public final void onRawEvent(Event event) {
-		if (event instanceof SuccessfulLoginEvent) {
-			CheckUpdatesWorker check = new CheckUpdatesWorker(this);
-			check.execute();
-		} else if (event instanceof FinishedUpdateCheckEvent) {
-			UpdateWorker updater = new UpdateWorker(this);
-			updater.execute();
-		} else if (event instanceof UpdateFinishedEvent) {
-			Launcher.getGameUpdater().runValidator();
-		} else if (event instanceof RunGameEvent) {
-			setVisible(false);
+		switch (event) {
+			case BAD_LOGIN:
+				break;
+			case FINISHED_UPDATE_CHECK:
+				break;
+			case MINECRAFT_NETWORK_DOWN:
+				break;
+			case RUN_GAME:
+				setVisible(false);
+				break;
+			case SUCESSFUL_LOGIN:
+				CheckUpdatesWorker check = new CheckUpdatesWorker(this);
+				check.execute();
+				break;
+			case UPDATE_FINISHED:
+				UpdateWorker updater = new UpdateWorker(this);
+				updater.execute();
+				break;
+			case USER_NOT_PREMIUM:
+				Launcher.getGameUpdater().runValidator();
+				break;
+			case VALIDATION_FAILED:
+				if (updateTries <= Settings.getLoginTries()) {
+					try {
+						FileUtils.cleanDirectory(Launcher.getGameUpdater().getBinDir());
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					mcUpdate = true;
+					scUpdate = true;
+					UpdateWorker updateWorker = new UpdateWorker(this);
+					updateTries ++;
+					return;
+				} else {
+					onEvent(Event.UPDATE_FAILED);
+					return;
+				}
+			case VALIDATION_PASSED:
+
 		}
 		onEvent(event);
 	}

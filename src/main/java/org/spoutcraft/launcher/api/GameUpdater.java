@@ -74,6 +74,8 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public abstract void updateSpoutcraft() throws Exception;
 
 	public abstract void runValidator();
+
+	public abstract void setStartValidationTime(long validationTime);
 	
 	public void runGame() {
 		Launcher.getGameLauncher().runGame(user,  minecraftSession, downloadTicket, minecraftPass);

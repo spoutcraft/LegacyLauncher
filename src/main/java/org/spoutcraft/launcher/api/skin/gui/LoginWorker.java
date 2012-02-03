@@ -7,11 +7,8 @@ import java.security.NoSuchAlgorithmException;
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.events.BadLoginEvent;
-import org.spoutcraft.launcher.api.events.MinecraftNetworkDownEvent;
-import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
-import org.spoutcraft.launcher.api.events.UserNotPremiumEvent;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame.UserPasswordInformation;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
@@ -58,12 +55,12 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
 			Launcher.getGameUpdater().setMinecraftPass(pass);
 			
-			loginFrame.onRawEvent(new SuccessfulLoginEvent(user));
+			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
 			return true;
 		} catch (BadLoginException e) {
-			loginFrame.onEvent(new BadLoginEvent());
+			loginFrame.onRawEvent(Event.BAD_LOGIN);
 		} catch (MinecraftUserNotPremiumException e) {
-			loginFrame.onEvent(new UserNotPremiumEvent());
+			loginFrame.onRawEvent(Event.USER_NOT_PREMIUM);
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (MCNetworkException e) {
 			UserPasswordInformation info = null;
@@ -97,9 +94,11 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			}
 
 			if (authFailed) {
-				loginFrame.onEvent(new MinecraftNetworkDownEvent(false));
+				loginFrame.offline = false;
+				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
 			} else {
-				loginFrame.onEvent(new MinecraftNetworkDownEvent(true));
+				loginFrame.offline = true;
+				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
 			}
 			this.cancel(true);
 			loginFrame.getProgressBar().setVisible(false);

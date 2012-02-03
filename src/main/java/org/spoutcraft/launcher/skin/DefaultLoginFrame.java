@@ -31,11 +31,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.spoutcraft.launcher.api.events.BadLoginEvent;
-import org.spoutcraft.launcher.api.events.Event;
-import org.spoutcraft.launcher.api.events.MinecraftNetworkDownEvent;
-import org.spoutcraft.launcher.api.events.SuccessfulLoginEvent;
-import org.spoutcraft.launcher.api.events.UserNotPremiumEvent;
+import org.spoutcraft.launcher.api.Event;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
@@ -53,7 +50,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	private JPasswordField passwordField;
 	private JComboBox usernameField = new JComboBox();
 	private JButton loginButton = new JButton("Login");
-	JButton optionsButton = new JButton("Options");
+	private JButton optionsButton = new JButton("Options");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
 	private List<JButton> loginSkin1Image;
@@ -321,22 +318,39 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	@Override
 	public void onEvent(Event event) {
-		if (event instanceof BadLoginEvent) {
-			JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
-		} else if (event instanceof UserNotPremiumEvent) {
-			JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
-		} else if (event instanceof MinecraftNetworkDownEvent) {
-			MinecraftNetworkDownEvent e = (MinecraftNetworkDownEvent) event;
-			if (!e.canPlayOffline()) {
-				JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
-			} else {
-				int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
-				if (result == JOptionPane.YES_OPTION) {
-					// TODO Implement Offline Mode call
+		switch (event) {
+			case BAD_LOGIN:
+				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
+				break;
+			case FINISHED_UPDATE_CHECK:
+				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
+				break;
+			case MINECRAFT_NETWORK_DOWN:
+				if (!canPlayOffline()) {
+					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
+				} else {
+					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						Launcher.getGameLauncher().runGame("Player", "", "", "");
+					}
 				}
-			}
-		} else if (event instanceof SuccessfulLoginEvent) {
-			SuccessfulLoginEvent e = (SuccessfulLoginEvent) event;
+				break;
+			case RUN_GAME:
+				break;
+			case SUCESSFUL_LOGIN:
+				break;
+			case UPDATE_FINISHED:
+				break;
+			case USER_NOT_PREMIUM:
+				break;
+			case UPDATE_FAILED:
+				JOptionPane.showMessageDialog(getParent(), new StringBuilder().append("Oh no! The ").append(isMinecraftUpdateaAvailable() && isSpoutcraftUpdateaAvailable() ? "Minecraft and Spoutcraft" : isSpoutcraftUpdateaAvailable() ? "Spoutcraft" : "Minecraft").append(" update failed!").toString());
+				break;
+			case VALIDATION_PASSED:
+				Launcher.getGameUpdater().runGame();
+				break;
+			case VALIDATION_FAILED:
+				break;
 		}
 	}
 
@@ -349,5 +363,8 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		}
 		progressBar.setString(intProgress + "% " + status);
 	}
+
+
+
 
 }
