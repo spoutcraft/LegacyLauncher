@@ -80,7 +80,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
 			Launcher.getGameUpdater().setMinecraftPass(pass);
-			
+
 			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
 			return true;
 		} catch (BadLoginException e) {

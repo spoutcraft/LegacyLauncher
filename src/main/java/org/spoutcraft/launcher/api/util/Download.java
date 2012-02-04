@@ -32,7 +32,7 @@ import java.nio.channels.ReadableByteChannel;
 
 public class Download implements Runnable {
 	private static final long TIMEOUT = 30000;
-	
+
 	private URL url;
 	private long size = -1;
 	private long downloaded = 0;
@@ -40,7 +40,7 @@ public class Download implements Runnable {
 	private DownloadListener listener;
 	private boolean success = false;
 	private File outFile = null;
-	
+
 	public Download(String url, String outPath) throws MalformedURLException {
 		this.url = new URL(url);
 		this.outPath = outPath;
@@ -55,26 +55,27 @@ public class Download implements Runnable {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			InputStream in = getConnectionInputStream(conn);
-			
+
 			size = conn.getContentLength();
 			outFile = new File(outPath);
 			outFile.delete();
-			
+
 			final ReadableByteChannel rbc = Channels.newChannel(in);
 			final FileOutputStream fos = new FileOutputStream(outFile);
-			
+
 			stateChanged();
-			
+
 
 			final Thread instance = Thread.currentThread();
 			Thread progress = new Thread() {
 				long last = System.currentTimeMillis();
+
 				public void run() {
-					while(!this.isInterrupted()) {
-						
+					while (!this.isInterrupted()) {
+
 						long diff = outFile.length() - downloaded;
 						downloaded = outFile.length();
-						
+
 						if (diff == 0) {
 							if ((System.currentTimeMillis() - last) > TIMEOUT) {
 								if (listener != null) {
@@ -88,32 +89,32 @@ public class Download implements Runnable {
 								}
 								return;
 							}
-						}
-						else {
+						} else {
 							last = System.currentTimeMillis();
 						}
-						
+
 						stateChanged();
 						try {
 							sleep(100);
-						} catch (InterruptedException ignore) {break;}
+						} catch (InterruptedException ignore) {
+							break;
+						}
 					}
 				}
 			};
 			progress.start();
-			
-			
+
+
 			fos.getChannel().transferFrom(rbc, 0, size > 0 ? size : Integer.MAX_VALUE);
 			in.close();
 			rbc.close();
 			progress.interrupt();
 			success = size > 0 ? (size == outFile.length()) : true;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
 	protected InputStream getConnectionInputStream(final URLConnection urlconnection) throws Exception {
 		final InputStream[] is = new InputStream[1];
 
@@ -122,7 +123,8 @@ public class Download implements Runnable {
 				public void run() {
 					try {
 						is[0] = urlconnection.getInputStream();
-					} catch (IOException ignore) { }
+					} catch (IOException ignore) {
+					}
 				}
 			};
 			stream.start();
@@ -130,15 +132,15 @@ public class Download implements Runnable {
 			while ((is[0] == null) && (iterationCount++ < 5)) {
 				try {
 					stream.join(1000L);
+				} catch (InterruptedException ignore) {
 				}
-				catch (InterruptedException ignore) { }
 			}
 			if (is[0] != null) continue;
 			try {
 				stream.interrupt();
 				stream.join();
+			} catch (InterruptedException ignore) {
 			}
-			catch (InterruptedException ignore) { }
 		}
 
 		if (is[0] == null) {

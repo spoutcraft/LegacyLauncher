@@ -27,6 +27,7 @@ package org.spoutcraft.launcher.api.skin.exceptions;
 
 public class UnknownMinecraftException extends RuntimeException {
 	private final Throwable cause;
+
 	public UnknownMinecraftException(Throwable ex) {
 		cause = ex;
 	}

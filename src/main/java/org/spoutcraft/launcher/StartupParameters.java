@@ -36,22 +36,22 @@ public class StartupParameters {
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
-	@Parameter(names = { "-username", "-user", "-u" }, description = "Minecraft Username")
+	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft Username")
 	private String user = null;
 
-	@Parameter(names = { "-password", "-pass", "-p" }, description = "Minecraft Password")
+	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft Password")
 	private String pass = null;
 
-	@Parameter(names = { "-server", "-host", "-join", "-j", "-h", "-s" }, description = "Minecraft Server to join")
+	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft Server to join")
 	private String server = null;
 
-	@Parameter(names = { "-portable", "--portable", "-pmode", "-portable_mode", "-pm" }, description = "Portable Mode")
+	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
 	private boolean portable = false;
 
-	@Parameter(names = { "-safe", "-smode", "-safe_mode", "-sm" }, description = "Safe Mode")
+	@Parameter(names = {"-safe", "-smode", "-safe_mode", "-sm"}, description = "Safe Mode")
 	private boolean safe_mode = false;
-	
-	@Parameter(names = {"-debug" , "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
+
+	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
 
 	public List<String> getParameters() {
@@ -91,7 +91,7 @@ public class StartupParameters {
 	public boolean isSafeMode() {
 		return safe_mode;
 	}
-	
+
 	public boolean isDebugMode() {
 		return debug;
 	}

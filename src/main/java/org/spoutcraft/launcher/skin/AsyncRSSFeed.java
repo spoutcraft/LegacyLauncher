@@ -76,7 +76,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 					SyndEntry entry = (SyndEntry) entries.next();
 					sb.append("<h1>").append(entry.getTitle()).append("</h1>").append("<br />").append(entry.getDescription().getValue()).append("<br /><br />");
 				}
-				
+
 				if (sb.toString() != null) {
 					editorPane.setText(format(sb.toString()));
 				} else {
@@ -95,7 +95,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 	}
 
 	private String getErrorMessage() {
-		String[] errors = { "Oh dear, I'm out of tea and crumpets again. I'll have to go make some more.", "I'm sorry, were you looking for something here? I couldn't find it.", "This isn't the Tumblr news feed you are looking for. Move along now.", "What do you mean the website is down...Hey! What's that over there!", "Looks like the %mob%s got into the servers again...", "Oh Noes! Our Tumblr Feed is Down!"};
+		String[] errors = {"Oh dear, I'm out of tea and crumpets again. I'll have to go make some more.", "I'm sorry, were you looking for something here? I couldn't find it.", "This isn't the Tumblr news feed you are looking for. Move along now.", "What do you mean the website is down...Hey! What's that over there!", "Looks like the %mob%s got into the servers again...", "Oh Noes! Our Tumblr Feed is Down!"};
 		return errors[rand.nextInt(errors.length)].replaceAll("%mob%", getRandomMob());
 	}
 

@@ -33,13 +33,14 @@ import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 
 public class CheckUpdatesWorker extends SwingWorker<Boolean, String> {
-	
+
 	private final LoginFrame loginFrame;
 	private boolean mcUpdate = false, scUpdate = false;
+
 	public CheckUpdatesWorker(LoginFrame loginFrame) {
 		this.loginFrame = loginFrame;
 	}
-	
+
 	protected Boolean doInBackground() throws Exception {
 		publish("Checking for Minecraft Update...\n");
 		try {
@@ -57,7 +58,7 @@ public class CheckUpdatesWorker extends SwingWorker<Boolean, String> {
 		return true;
 	}
 
-	protected void done() {		
+	protected void done() {
 		loginFrame.setSpoutcraftUpdateAvailable(scUpdate);
 		loginFrame.setMinecraftUpdateAvailable(mcUpdate);
 		loginFrame.onRawEvent(Event.FINISHED_UPDATE_CHECK);

@@ -35,7 +35,7 @@ import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
 public class SkinDescriptionFile {
-	
+
 	private static final Yaml yaml = new Yaml(new SafeConstructor());
 	private String name;
 	private String version;
@@ -53,7 +53,7 @@ public class SkinDescriptionFile {
 
 		this.fullname = new StringBuilder().append(name).append(" v").append(version).toString();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public SkinDescriptionFile(InputStream stream) throws InvalidDescriptionFileException {
 		load((Map<String, Object>) yaml.load(stream));
@@ -97,7 +97,7 @@ public class SkinDescriptionFile {
 		} catch (ClassCastException ex) {
 			throw new InvalidDescriptionFileException(ex, "The field 'version' is of the wrong type in the skin.yml!");
 		}
-		
+
 		this.fullname = new StringBuilder().append(name).append(" v").append(version).toString();
 
 		if (map.containsKey("author")) {
@@ -133,8 +133,8 @@ public class SkinDescriptionFile {
 		}
 
 	}
-	
-	
+
+
 	public String getMain() {
 		return main;
 	}

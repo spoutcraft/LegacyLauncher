@@ -69,11 +69,11 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public String getMinecraftSession() {
 		return minecraftSession;
 	}
-	
+
 	public void setMinecraftPass(String minecraftPass) {
 		this.minecraftPass = minecraftPass;
 	}
-	
+
 	public void setMinecraftSession(String minecraftSession) {
 		this.minecraftSession = minecraftSession;
 	}
@@ -102,9 +102,9 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public abstract void runValidator();
 
 	public abstract void setStartValidationTime(long validationTime);
-	
+
 	public void runGame() {
-		Launcher.getGameLauncher().runGame(user,  minecraftSession, downloadTicket, minecraftPass);
+		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, minecraftPass);
 
 	}
 }

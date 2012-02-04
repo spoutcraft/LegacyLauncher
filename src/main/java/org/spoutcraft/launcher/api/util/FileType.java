@@ -56,7 +56,7 @@ public enum FileType {
 	LWJGL,
 	LWJGL_UTIL,
 	MINECRAFT;
-	
+
 	@Override
 	public String toString() {
 		return super.name().toLowerCase();

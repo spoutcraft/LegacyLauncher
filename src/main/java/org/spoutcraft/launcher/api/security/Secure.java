@@ -26,10 +26,10 @@
 package org.spoutcraft.launcher.api.security;
 
 public interface Secure {
-	
+
 	/**
 	 * Returns true if it is locked
-	 * 
+	 *
 	 * @return locked
 	 */
 	public boolean isLocked();
@@ -37,7 +37,7 @@ public interface Secure {
 	/**
 	 * Locks when given the correct key.
 	 * Returns true if it was previously locked
-	 * 
+	 *
 	 * @param key
 	 * @return true if it was locked
 	 */
@@ -45,7 +45,7 @@ public interface Secure {
 
 	/**
 	 * Unlocks when given the correct key
-	 * 
+	 *
 	 * @param key
 	 */
 	public void unlock(double key);

@@ -35,8 +35,8 @@ public abstract class JavaSkin implements Skin {
 	private boolean enabled;
 	private JavaSkinLoader loader;
 	private CommonClassLoader classLoader;
-	
-	
+
+
 	public final SkinDescriptionFile getDescription() {
 		return desc;
 	}
@@ -51,7 +51,7 @@ public abstract class JavaSkin implements Skin {
 		this.dataFolder = dataFolder;
 		this.file = file;
 		this.classLoader = classLoader;
-		
+
 	}
 
 	protected final CommonClassLoader getClassLoader() {
@@ -65,10 +65,11 @@ public abstract class JavaSkin implements Skin {
 	public final boolean isEnabled() {
 		return enabled;
 	}
+
 	public final SkinLoader getSkinLoader() {
 		return loader;
 	}
-	
+
 	public final File getFile() {
 		return file;
 	}

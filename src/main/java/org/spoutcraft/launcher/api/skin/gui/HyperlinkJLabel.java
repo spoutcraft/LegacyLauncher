@@ -33,10 +33,10 @@ import java.net.URI;
 import javax.swing.JLabel;
 
 public class HyperlinkJLabel extends JLabel implements MouseListener {
-	
+
 	private static final long serialVersionUID = -3801443131566852907L;
 	private String url;
-	
+
 	public HyperlinkJLabel() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 	}
@@ -57,7 +57,7 @@ public class HyperlinkJLabel extends JLabel implements MouseListener {
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		
+
 	}
 
 	public void mouseExited(MouseEvent e) {
@@ -72,7 +72,7 @@ public class HyperlinkJLabel extends JLabel implements MouseListener {
 	public static void browse(URI uri) {
 		try {
 			Object o = Class.forName("java.awt.Desktop").getMethod("getDesktop", new Class[0]).invoke(null, new Object[0]);
-			o.getClass().getMethod("browse", new Class[] { URI.class }).invoke(o, new Object[] { uri });
+			o.getClass().getMethod("browse", new Class[]{URI.class}).invoke(o, new Object[]{uri});
 		} catch (Throwable e) {
 			System.out.println("Failed to open link " + uri.toString());
 		}

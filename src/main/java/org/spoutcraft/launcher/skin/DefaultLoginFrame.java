@@ -175,9 +175,9 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 						button.setActionCommand("LoginSkin2");
 					}
 				}
-					usernameField.addItem(user);
-				
-				
+				usernameField.addItem(user);
+
+
 			}
 		}
 

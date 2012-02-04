@@ -33,11 +33,11 @@ import org.spoutcraft.launcher.api.Launcher;
 public class UpdateWorker extends SwingWorker<Object, Object> {
 
 	private final LoginFrame loginFrame;
-	
+
 	public UpdateWorker(LoginFrame loginFrame) {
 		this.loginFrame = loginFrame;
 	}
-	
+
 	@Override
 	protected Object doInBackground() throws Exception {
 		if (loginFrame.isMinecraftUpdateaAvailable()) {
@@ -49,7 +49,7 @@ public class UpdateWorker extends SwingWorker<Object, Object> {
 		loginFrame.onRawEvent(Event.UPDATE_FINISHED);
 		return null;
 	}
-	
+
 	@Override
 	protected void done() {
 	}

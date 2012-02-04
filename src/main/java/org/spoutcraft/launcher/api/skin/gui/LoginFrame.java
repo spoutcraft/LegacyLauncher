@@ -91,7 +91,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public final Skin getParentSkin() {
 		return parent;
 	}
-	
+
 	protected final boolean canPlayOffline() {
 		return offline;
 	}
@@ -227,7 +227,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					mcUpdate = true;
 					scUpdate = true;
 					UpdateWorker updateWorker = new UpdateWorker(this);
-					updateTries ++;
+					updateTries++;
 					return;
 				} else {
 					onEvent(Event.UPDATE_FAILED);

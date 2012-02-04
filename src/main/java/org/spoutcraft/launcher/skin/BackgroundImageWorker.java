@@ -35,10 +35,11 @@ import javax.swing.SwingConstants;
 import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.api.util.Download;
 
-public class BackgroundImageWorker extends SwingWorker<Object, Object>{
+public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 	private static final int IMAGE_CYCLE_TIME = 24 * 60 * 60 * 1000;
 	private File backgroundImage;
 	private JLabel background;
+
 	public BackgroundImageWorker(File backgroundImage, JLabel background) {
 		this.backgroundImage = backgroundImage;
 		this.background = background;
@@ -47,7 +48,7 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object>{
 	@Override
 	protected Object doInBackground() {
 		try {
-			if (!backgroundImage.exists() || backgroundImage.length() < 10*1024 || System.currentTimeMillis() - backgroundImage.lastModified() > IMAGE_CYCLE_TIME) {
+			if (!backgroundImage.exists() || backgroundImage.length() < 10 * 1024 || System.currentTimeMillis() - backgroundImage.lastModified() > IMAGE_CYCLE_TIME) {
 				Download download = new Download("http://www.spoutcraft.org/splash/random.png", backgroundImage.getPath());
 				download.run();
 			}

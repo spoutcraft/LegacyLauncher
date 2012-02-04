@@ -39,25 +39,25 @@ public class Launcher {
 	private static Launcher instance;
 	private final Logger logger = Logger.getLogger("org.spoutcraft.launcher.Main");
 	private final SkinManager skinManager;
-	private final double key =(new Random()).nextDouble();
+	private final double key = (new Random()).nextDouble();
 	private final CommonSecurityManager security = new CommonSecurityManager(key);
 	private final DownloadManager downloads = new DownloadManager(key);
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
-	
+
 	public Launcher(final GameUpdater updater, final GameLauncher launcher) {
 		if (Launcher.instance != null)
 			throw new IllegalArgumentException("You can have a duplicate Launcher");
 		this.updater = updater;
 		this.launcher = launcher;
 		logger.addHandler(new ConsoleHandler());
-		
+
 		System.setSecurityManager(security);
-		
+
 		skinManager = new CommonSkinManager(security, key);
 		instance = this;
 	}
-	
+
 	public static GameUpdater getGameUpdater() {
 		if (instance == null) {
 			System.out.println("instance is null");

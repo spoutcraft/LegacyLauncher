@@ -37,7 +37,7 @@ public class FileUtils {
 	/**
 	 * Deletes a directory recursively.
 	 *
-	 * @param directory  directory to delete
+	 * @param directory directory to delete
 	 * @throws IOException in case deletion is unsuccessful
 	 */
 	public static void deleteDirectory(File directory) throws IOException {
@@ -57,17 +57,16 @@ public class FileUtils {
 
 	/**
 	 * Deletes a file, never throwing an exception. If file is a directory, delete it and all sub-directories.
-	 * <p>
+	 * <p/>
 	 * The difference between File.delete() and this method are:
 	 * <ul>
 	 * <li>A directory to be deleted does not have to be empty.</li>
 	 * <li>No exceptions are thrown when a file or directory cannot be deleted.</li>
 	 * </ul>
 	 *
-	 * @param file  file or directory to delete, can be <code>null</code>
+	 * @param file file or directory to delete, can be <code>null</code>
 	 * @return <code>true</code> if the file or directory was deleted, otherwise
-	 * <code>false</code>
-	 *
+	 *         <code>false</code>
 	 * @since Commons IO 1.4
 	 */
 	public static boolean deleteQuietly(File file) {
@@ -126,18 +125,18 @@ public class FileUtils {
 
 	/**
 	 * Deletes a file. If file is a directory, delete it and all sub-directories.
-	 * <p>
+	 * <p/>
 	 * The difference between File.delete() and this method are:
 	 * <ul>
 	 * <li>A directory to be deleted does not have to be empty.</li>
 	 * <li>You get exceptions when a file or directory cannot be deleted.
-	 *	  (java.io.File methods returns a boolean)</li>
+	 * (java.io.File methods returns a boolean)</li>
 	 * </ul>
 	 *
-	 * @param file  file or directory to delete, must not be <code>null</code>
-	 * @throws NullPointerException if the directory is <code>null</code>
+	 * @param file file or directory to delete, must not be <code>null</code>
+	 * @throws NullPointerException  if the directory is <code>null</code>
 	 * @throws FileNotFoundException if the file was not found
-	 * @throws IOException in case deletion is unsuccessful
+	 * @throws IOException           in case deletion is unsuccessful
 	 */
 	public static void forceDelete(File file) throws IOException {
 		if (file.isDirectory()) {
@@ -156,7 +155,7 @@ public class FileUtils {
 
 	/**
 	 * Determines whether the specified file is a Symbolic Link rather than an actual file.
-	 * <p>
+	 * <p/>
 	 * Will not return true if there is a Symbolic Link anywhere in the path,
 	 * only if the specific file is.
 	 *

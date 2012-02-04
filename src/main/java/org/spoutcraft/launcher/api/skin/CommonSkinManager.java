@@ -48,8 +48,8 @@ public class CommonSkinManager implements SkinManager {
 	public final SkinLoader javaLoader;
 	public final SkinLoader yamlLoader;
 	public Skin enabledSkin = null;
-	
-	
+
+
 	public CommonSkinManager(final CommonSecurityManager manager, final double key) {
 		this.manager = manager;
 		this.key = key;
@@ -86,26 +86,26 @@ public class CommonSkinManager implements SkinManager {
 	public Skin loadSkin(File file) throws InvalidSkinException, InvalidDescriptionFileException {
 		boolean locked = manager.lock(key);
 		Skin result = null;
-		
+
 		String ext = Utils.getFileExtention(file.getPath());
-		
+
 		if (ext != null && ext.equalsIgnoreCase("jar")) {
 			javaLoader.loadSkin(file);
 		} else if (ext != null && ext.equalsIgnoreCase("yml")) {
 			// TODO Yaml Skin
 		}
-		
+
 
 		if (!locked)
 			manager.unlock(key);
-		
+
 		return result;
 	}
 
 	public void enableSkin(Skin skin) {
 		if (enabledSkin != null)
 			disableSkin(enabledSkin);
-		
+
 		if (!skin.isEnabled()) {
 			boolean locked = manager.lock(key);
 
@@ -161,9 +161,9 @@ public class CommonSkinManager implements SkinManager {
 			relock = true;
 			manager.unlock(key);
 		}
-		
+
 		Launcher.getLogger().log(level, message, ex);
-		
+
 		if (relock) {
 			manager.lock(key);
 		}

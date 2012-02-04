@@ -38,7 +38,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class ImageUtils {
-	
+
 	public static void drawCharacter(JPanel contentPane, ActionListener listener, String url, int x, int y, List<JButton> buttons) {
 		BufferedImage originalImage;
 		try {
@@ -48,7 +48,7 @@ public class ImageUtils {
 				originalImage = ImageIO.read(new URL("http://s3.amazonaws.com/MinecraftSkins/char.png"));
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
-			
+
 			buttons.add(drawCropped(contentPane, listener, originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
 
 			buttons.add(drawCropped(contentPane, listener, originalImage, type, 8, 8, 16, 16, x, y, 7)); // HEAD
@@ -84,14 +84,14 @@ public class ImageUtils {
 		tmp.setSelectedIcon(tmp.getIcon());
 		tmp.setDisabledIcon(tmp.getPressedIcon());
 		tmp.setPressedIcon(tmp.getIcon());
-		
+
 		tmp.setOpaque(false);
 		tmp.setFocusable(false);
-		
+
 		tmp.setContentAreaFilled(false);
 		tmp.setBorderPainted(false);
 		tmp.setRolloverEnabled(false);
-		
+
 		tmp.setBounds(x, y, (sx2 - sx1) * scale, (sy2 - sy1) * scale);
 		tmp.addActionListener(listener);
 		contentPane.add(tmp);

@@ -32,7 +32,7 @@ import org.spoutcraft.launcher.api.skin.exceptions.InvalidDescriptionFileExcepti
 import org.spoutcraft.launcher.api.skin.exceptions.InvalidSkinException;
 
 public interface SkinLoader {
-	
+
 	/**
 	 * Enables the skin
 	 *
@@ -54,7 +54,8 @@ public interface SkinLoader {
 	 * @return instance of the skin
 	 * @throws InvalidSkinException
 	 * @throws InvalidDescriptionFileException
+	 *
 	 */
 	public abstract Skin loadSkin(File paramFile) throws InvalidSkinException, InvalidDescriptionFileException;
-	
+
 }

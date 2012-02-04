@@ -28,6 +28,7 @@ package org.spoutcraft.launcher.api.skin.exceptions;
 
 public class CorruptedMinecraftJarException extends RuntimeException {
 	private final Throwable cause;
+
 	public CorruptedMinecraftJarException(Throwable ex) {
 		cause = ex;
 	}
