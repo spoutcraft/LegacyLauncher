@@ -26,6 +26,7 @@
 
 package org.spoutcraft.launcher.api;
 
+import java.io.IOException;
 import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
@@ -34,6 +35,7 @@ import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.CommonSkinManager;
 import org.spoutcraft.launcher.api.skin.GameLauncher;
 import org.spoutcraft.launcher.api.skin.SkinManager;
+import org.spoutcraft.launcher.api.util.FileUtils;
 
 public class Launcher {
 	private static Launcher instance;
@@ -84,8 +86,15 @@ public class Launcher {
 		return instance.launcher;
 	}
 
-	public static void clearCache() {
-
+	public static boolean clearCache() {
+		try {
+			FileUtils.deleteDirectory(instance.updater.getUpdateDir());
+			FileUtils.deleteDirectory(instance.updater.getBinDir());
+			return true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }
