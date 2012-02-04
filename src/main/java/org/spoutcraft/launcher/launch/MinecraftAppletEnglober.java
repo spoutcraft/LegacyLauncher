@@ -34,7 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
  * @author creadri
  */
 public class MinecraftAppletEnglober extends Applet implements AppletStub {

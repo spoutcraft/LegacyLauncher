@@ -182,7 +182,6 @@ public class SimpleGameUpdater extends GameUpdater {
 		}
 
 
-
 		mcCache = new File(getBinCacheDir(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
@@ -388,7 +387,7 @@ public class SimpleGameUpdater extends GameUpdater {
 	protected void validationFinished(boolean result) {
 		long end = System.currentTimeMillis();
 		System.out.println("------------------ Validation Finished  ------------------");
-		System.out.println("Finished in " + (end - validationTime) +  "ms");
+		System.out.println("Finished in " + (end - validationTime) + "ms");
 		System.out.println("Result: " + result);
 
 		if (result) {

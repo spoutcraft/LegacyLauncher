@@ -52,7 +52,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	public SimpleGameLauncher() {
 		super("Spoutcraft");
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((dim.width-870)/2, (dim.height-518)/2);
+		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
 		this.setSize(new Dimension(870, 518));
 		this.setResizable(true);
 		this.addWindowListener(this);
@@ -65,11 +65,9 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		Applet applet = null;
 		try {
 			applet = MinecraftLauncher.getMinecraftApplet();
-		}
-		catch (CorruptedMinecraftJarException corruption) {
+		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
-		}
-		catch (MinecraftVerifyException verify) {
+		} catch (MinecraftVerifyException verify) {
 			Launcher.clearCache();
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
@@ -93,7 +91,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", Utils.getStartupParameters().isPortable() + "");
 		if (Utils.getStartupParameters().getServer() != null) {
-			minecraft.addParameter("server",Utils.getStartupParameters().getServer());
+			minecraft.addParameter("server", Utils.getStartupParameters().getServer());
 			if (Utils.getStartupParameters().getPort() != null) {
 				minecraft.addParameter("port", Utils.getStartupParameters().getPort());
 			}

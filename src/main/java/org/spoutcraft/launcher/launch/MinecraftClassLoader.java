@@ -94,7 +94,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 				}
 
 				classByte = byteStream.toByteArray();
-				result = defineClass(name, classByte, 0, classByte.length, new CodeSource(file.toURI().toURL(), (CodeSigner[])null));
+				result = defineClass(name, classByte, 0, classByte.length, new CodeSource(file.toURI().toURL(), (CodeSigner[]) null));
 				loadedClasses.put(name, result);
 				return result;
 			}

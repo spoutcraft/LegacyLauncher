@@ -68,13 +68,13 @@ public class MinecraftLauncher {
 
 		try {
 			urls[0] = minecraftJar.toURI().toURL();
-			files[index+0] = minecraftJar;
+			files[index + 0] = minecraftJar;
 			urls[1] = jinputJar.toURI().toURL();
-			files[index+1] = jinputJar;
+			files[index + 1] = jinputJar;
 			urls[2] = lwglJar.toURI().toURL();
-			files[index+2] = lwglJar;
+			files[index + 2] = lwglJar;
 			urls[3] = lwjgl_utilJar.toURI().toURL();
-			files[index+3] = lwjgl_utilJar;
+			files[index + 3] = lwjgl_utilJar;
 			urls[4] = spoutcraftJar.toURI().toURL();
 
 			ClassLoader classLoader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);

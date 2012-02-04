@@ -86,7 +86,7 @@ public class Main {
 		JavaSkin defaultSkin = new DefaultSkin();
 
 		SkinDescriptionFile desc = new SkinDescriptionFile("default", "1.0", "org.spoutcraft.launcher.skin.DefaultSkin");
-		defaultSkin.initialize(new DefaultSkinLoader((CommonSecurityManager)System.getSecurityManager(), (new Random()).nextDouble()), desc, null, null, null);
+		defaultSkin.initialize(new DefaultSkinLoader((CommonSecurityManager) System.getSecurityManager(), (new Random()).nextDouble()), desc, null, null, null);
 		skinManager.addSkin(defaultSkin);
 
 		// Load Selected Skin \\

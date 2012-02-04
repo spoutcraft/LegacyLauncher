@@ -73,8 +73,8 @@ public class LauncherYML {
 	@SuppressWarnings("unchecked")
 	public static String getMD5(int build, String type) {
 		YAMLProcessor config = getLauncherYML();
-		Map<Integer, YAMLNode> builds = (Map<Integer, YAMLNode>)config.getProperty("builds");
-		return((Map<String, String>) builds.get(build)).get(type);
+		Map<Integer, YAMLNode> builds = (Map<Integer, YAMLNode>) config.getProperty("builds");
+		return ((Map<String, String>) builds.get(build)).get(type);
 	}
 
 	public static void updateLauncherYMLCache() {
