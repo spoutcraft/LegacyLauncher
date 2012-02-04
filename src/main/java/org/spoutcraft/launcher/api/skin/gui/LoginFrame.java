@@ -219,14 +219,11 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				break;
 			case VALIDATION_FAILED:
 				if (updateTries <= Settings.getLoginTries()) {
-					try {
-						FileUtils.cleanDirectory(Launcher.getGameUpdater().getBinDir());
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					Launcher.clearCache();
 					mcUpdate = true;
 					scUpdate = true;
 					UpdateWorker updateWorker = new UpdateWorker(this);
+					updateWorker.execute();
 					updateTries++;
 					return;
 				} else {
