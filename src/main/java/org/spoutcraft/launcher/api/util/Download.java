@@ -1,18 +1,27 @@
 /*
- * This file is part of Spoutcraft Launcher (http://wiki.getspout.org/).
- * 
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * This file is part of LauncherAPI (http://www.spout.org/).
+ *
+ * LauncherAPI is licensed under the SpoutDev License Version 1.
+ *
+ * LauncherAPI is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * LauncherAPI is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.launcher.api.util;
 
@@ -21,10 +30,6 @@ import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
-/**
- * Downloads stuff asynchroniously.
- * In fact, it's a modified version of StackOverflow sample ;)
- */
 public class Download implements Runnable {
 	private static final long TIMEOUT = 30000;
 	
@@ -60,7 +65,7 @@ public class Download implements Runnable {
 			
 			stateChanged();
 			
-			//Create a thread to monitor progress
+
 			final Thread instance = Thread.currentThread();
 			Thread progress = new Thread() {
 				long last = System.currentTimeMillis();
@@ -70,9 +75,9 @@ public class Download implements Runnable {
 						long diff = outFile.length() - downloaded;
 						downloaded = outFile.length();
 						
-						if (diff == 0) { //nothing downloaded
-							if ((System.currentTimeMillis() - last) > TIMEOUT) { //waited too long
-								if (listener != null) { //alert ui
+						if (diff == 0) {
+							if ((System.currentTimeMillis() - last) > TIMEOUT) {
+								if (listener != null) {
 									listener.stateChanged("Download Failed", getProgress());
 								}
 								try {
