@@ -92,7 +92,7 @@ public class LauncherYML {
 
 						YAMLProcessor config = new YAMLProcessor(launcherYML, false, YAMLFormat.EXTENDED);
 						config.load();
-						config.setProperty("current", Main.getBuild("version-launcher"));
+						config.setProperty("current", Main.getBuild("launcher-version"));
 						// TODO REMOVE COMMENT current = config.getInt("current");
 						recommened = config.getInt("recommended");
 						latest = config.getInt("latest");
