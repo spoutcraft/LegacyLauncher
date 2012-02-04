@@ -57,6 +57,7 @@ import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
 import org.spoutcraft.launcher.yml.LibrariesYML;
 import org.spoutcraft.launcher.yml.MinecraftYML;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
+import org.spoutcraft.launcher.yml.SpoutcraftYML;
 
 public class SimpleGameUpdater extends GameUpdater {
 
@@ -367,6 +368,12 @@ public class SimpleGameUpdater extends GameUpdater {
 			System.out.println("Error while cleaning unnecessary junk... :c");
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void clearVersionsInYMLs() {
+		SpoutcraftYML.getSpoutcraftYML().setProperty("current", "");
+		MinecraftYML.setInstalledVersion("");
 	}
 
 	@Override
