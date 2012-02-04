@@ -13,13 +13,13 @@
 	<artifactId>launcher</artifactId>
 	<version>dev-SNAPSHOT</version>
 	<name>Spoutcraft Launcher</name>
-	<url>http://www.spoutcraft.org</url>
+	<url>http://www.spout.org</url>
 	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mainClass>${project.groupId}.${project.artifactId}.Main</mainClass>
-		<build.number>Unknown</build.number>
+		<build.number>0</build.number>
 	</properties>
 
 	<!-- License -->
@@ -55,8 +55,8 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>org.spoutcraft.launcher</groupId>
-			<artifactId>api</artifactId>
+			<groupId>org.spoutcraft</groupId>
+			<artifactId>launcherapi</artifactId>
 			<version>dev-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
@@ -203,59 +203,17 @@
 									</jre>
 									<icon>${basedir}/src/main/resources/icon.ico</icon>
 									<versionInfo>
-										<fileVersion>1.0.0.${build.number}</fileVersion>
-										<txtFileVersion>1.0.0.${build.number}</txtFileVersion>
+										<fileVersion>2.0.0.${build.number}</fileVersion>
+										<txtFileVersion>2.0.0.${build.number}</txtFileVersion>
 										<fileDescription>${project.name}</fileDescription>
-										<copyright>SpoutDev</copyright>
-										<productVersion>1.0.0.${build.number}</productVersion>
-										<txtProductVersion>1.0.0.${build.number}</txtProductVersion>
+										<copyright>Copyright (c) 2011-2012 SpoutDev</copyright>
+										<productVersion>2.0.0.${build.number}</productVersion>
+										<txtProductVersion>2.0.0.${build.number}</txtProductVersion>
 										<productName>${project.name}</productName>
 										<internalName>${project.artifactId}</internalName>
 										<originalFilename>${project.artifactId}.exe</originalFilename>
 									</versionInfo>
 								</configuration>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<!-- Mac OS X -->
-		<profile>
-			<id>package-mac</id>
-			<!--<activation>
-			 <os>
-				 <family>mac</family>
-			 </os>
-		 </activation>-->
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>osxappbundle-maven-plugin</artifactId>
-						<version>1.0-alpha-1</version>
-						<configuration>
-							<mainClass>${mainClass}</mainClass>
-							<bundleName>${project.name}</bundleName>
-							<iconFile>${basedir}/src/main/resources/icon.icns</iconFile>
-							<dictionaryFile>src/main/resources/Info.plist</dictionaryFile>
-							<javaApplicationStub>${basedir}/src/main/resources/JavaApplicationStub</javaApplicationStub>
-							<additionalResources>
-								<fileSet>
-									<directory>${basedir}</directory>
-									<includes>
-										<include>LICENSE.txt</include>
-									</includes>
-								</fileSet>
-							</additionalResources>
-							<jvmVersion>1.5+</jvmVersion>
-						</configuration>
-						<executions>
-							<execution>
-								<phase>package</phase>
-								<goals>
-									<goal>bundle</goal>
-								</goals>
 							</execution>
 						</executions>
 					</plugin>
