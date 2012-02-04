@@ -23,16 +23,13 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.LauncherUpdater;
 
 public class SimpleLauncherUpdater extends LauncherUpdater {
-
 	@Override
 	public void isLauncherUpdateAvailible() {
-
 	}
 
 	@Override

@@ -28,9 +28,8 @@ package org.spoutcraft.launcher.yml;
 import java.util.Map;
 
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
-
 import org.spoutcraft.launcher.api.util.DownloadListener;
+import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class SpoutcraftBuild {

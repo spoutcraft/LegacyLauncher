@@ -23,14 +23,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.launch;
-
-import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
-import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
-import org.spoutcraft.launcher.api.skin.exceptions.UnknownMinecraftException;
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 import java.applet.Applet;
 import java.io.File;
@@ -39,6 +32,12 @@ import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
+import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
+import org.spoutcraft.launcher.api.skin.exceptions.UnknownMinecraftException;
+import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class Launcher {
 	@SuppressWarnings("rawtypes")

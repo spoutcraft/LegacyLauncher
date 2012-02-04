@@ -23,15 +23,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.yml;
-
-import org.spoutcraft.launcher.Main;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.api.util.YAMLFormat;
-import org.spoutcraft.launcher.api.util.YAMLNode;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,6 +31,13 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+
+import org.spoutcraft.launcher.Main;
+import org.spoutcraft.launcher.api.util.MirrorUtils;
+import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.api.util.YAMLFormat;
+import org.spoutcraft.launcher.api.util.YAMLNode;
+import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class LauncherYML {
 	private static volatile boolean updated = false;
@@ -58,7 +57,7 @@ public class LauncherYML {
 		}
 		return config;
 	}
-	
+
 	public static String getJarMD5(int build) {
 		return getMD5(build, "jar");
 	}
@@ -106,5 +105,4 @@ public class LauncherYML {
 			}
 		}
 	}
-
 }

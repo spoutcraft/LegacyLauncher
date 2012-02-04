@@ -23,7 +23,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
 import java.io.File;
@@ -60,10 +59,9 @@ import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 import org.spoutcraft.launcher.yml.SpoutcraftYML;
 
 public class SimpleGameUpdater extends GameUpdater {
-
 	// Debug variables \\
 	private long validationTime;
-	
+
 	public SimpleGameUpdater() {
 		super();
 	}
@@ -205,11 +203,9 @@ public class SimpleGameUpdater extends GameUpdater {
 			e.printStackTrace();
 		}
 
-
 		stateChanged("Extracting Files...", 0);
 
 		MinecraftYML.setInstalledVersion(build.getMinecraftVersion());
-
 	}
 
 	public String getNativesUrl() {
@@ -394,7 +390,7 @@ public class SimpleGameUpdater extends GameUpdater {
 		System.out.println("------------------ Validation Finished  ------------------");
 		System.out.println("Finished in " + (end - validationTime) +  "ms");
 		System.out.println("Result: " + result);
-		
+
 		if (result) {
 			Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.VALIDATION_PASSED);
 		} else {

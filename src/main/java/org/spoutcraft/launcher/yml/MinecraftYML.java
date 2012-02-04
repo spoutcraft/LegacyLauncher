@@ -23,7 +23,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.yml;
 
 import java.io.File;
@@ -32,9 +31,9 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
 
 public class MinecraftYML {
 	private static volatile boolean updated = false;

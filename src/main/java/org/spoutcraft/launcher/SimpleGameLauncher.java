@@ -23,8 +23,14 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
+
+import javax.swing.JOptionPane;
+import java.applet.Applet;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.GameLauncher;
@@ -35,15 +41,7 @@ import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 
-import javax.swing.JOptionPane;
-import java.applet.Applet;
-import java.awt.Dimension;
-import java.awt.Toolkit;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-
 public class SimpleGameLauncher extends GameLauncher implements WindowListener {
-
 	private static final long serialVersionUID = 454654568463524665L;
 	private MinecraftAppletEnglober minecraft;
 

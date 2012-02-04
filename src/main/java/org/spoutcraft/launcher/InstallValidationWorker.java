@@ -23,29 +23,28 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+
 import org.jdesktop.swingworker.SwingWorker;
+
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.yml.LibrariesYML;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
-import java.io.File;
-import java.util.Iterator;
-import java.util.Map;
-
 public class InstallValidationWorker extends SwingWorker<Object, Object> {
-
 	private boolean passed = false;
 	private SimpleGameUpdater updater;
-	
+
 	public InstallValidationWorker(SimpleGameUpdater updater) {
 		this.updater = updater;
 	}
-	
+
 	@Override
 	protected Object doInBackground() throws Exception {
 		Launcher.getGameUpdater().setStartValidationTime(System.currentTimeMillis());

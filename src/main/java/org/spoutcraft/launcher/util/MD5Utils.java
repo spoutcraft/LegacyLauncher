@@ -23,7 +23,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.util;
 
 import java.io.File;
@@ -33,6 +32,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.codec.digest.DigestUtils;
+
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.yml.MinecraftYML;

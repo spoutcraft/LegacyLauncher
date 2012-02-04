@@ -23,17 +23,17 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Random;
-
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
+import com.beust.jcommander.JCommander;
+
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
@@ -44,13 +44,10 @@ import org.spoutcraft.launcher.api.skin.SkinManager;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
-
-import com.beust.jcommander.JCommander;
 import org.spoutcraft.launcher.skin.DefaultSkin;
 import org.spoutcraft.launcher.skin.DefaultSkinLoader;
 
 public class Main {
-
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		StartupParameters params = new StartupParameters();
@@ -76,8 +73,9 @@ public class Main {
 		setLookAndFeel();
 
 		YAMLProcessor settings = setupSettings();
-		if (settings == null)
+		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
+		}
 
 		// Set up the Launcher and load skins \\
 		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
@@ -95,19 +93,20 @@ public class Main {
 		Skin skin = skinManager.getSkin(settings.getString("skin", "default"));
 		if (skin == null) {
 			skin = skinManager.getSkin("skin");
-			if (skin == null)
+			if (skin == null) {
 				throw new RuntimeException("The default skin object could not be found. Shutting down");
+			}
 		}
 		skinManager.enableSkin(skin);
-		if (skinManager.getEnabledSkin() == null)
+		if (skinManager.getEnabledSkin() == null) {
 			System.exit(-9);
+		}
 
 		System.out.println("Using Skin '" + skin.getDescription().getFullName() + "'");
-		
+
 		skin.getLoginFrame().setVisible(true);
 
 		System.out.println("The Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
-
 	}
 
 	public static void setLookAndFeel() {
@@ -171,7 +170,5 @@ public class Main {
 		}
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
-
 	}
-
 }
