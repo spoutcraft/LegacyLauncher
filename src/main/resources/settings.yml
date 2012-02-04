@@ -1,0 +1,57 @@
+launcher:
+   latestLWJGL: false
+   memory: 0
+   acceptUpdates: false
+   retryLogin: true
+   
+   spoutcraft:
+      build: RECOMMENDED
+      buildNumber: 0
+   launcher:
+      build: RECOMMENDED
+      buildNumber: 0
+spoutcaft:
+   highlightMentions: true
+   chatGrabsMouse: true
+   clipboardaccess: false
+   fastLogin: false
+   advancedOpenGL: 1
+   anaglyph3D: false
+   autosave: 0
+   betterGrass: 0
+   fancyBiomeColors: true
+   waterBiomeColors: true
+   brightnessSlider: 1.0
+   clearWater: false
+   fancyClouds: false
+   fancyFog: true
+   fancyGraphics: false
+   fancyGrass: true
+   fancyTrees: false
+   fancyWater: true
+   fancyWeather: false
+   farView: false
+   fancyLight: false
+   fancyParticles: true
+   fastDebug: 0
+   guiScale: 0
+   performance: 0
+   preloadedChunks: 0
+   renderDistance: 2
+   signDistance: 8
+   sky: true
+   smoothFPS: false
+   smoothLighting: 1.0
+   stars: true
+   time: 0
+   viewBobbing: false
+   voidFog: true
+   weather: true
+   delayedTooltips: false
+   mipmapsPercent: 0.0
+   automatePerformance: true
+   automateMode: 0
+   showChatColors: true
+   showJoinMessages: true
+   showDamageAlerts: true
+	
