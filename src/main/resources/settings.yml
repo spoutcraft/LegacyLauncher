@@ -3,7 +3,6 @@ launcher:
    memory: 0
    acceptUpdates: false
    retryLogin: true
-   
    client:
       build: RECOMMENDED
       buildNumber: 0
@@ -11,46 +10,46 @@ launcher:
       build: RECOMMENDED
       buildNumber: 0
 client:
-   advancedOpenGL 1
-   anaglyph3D false
-   automateMode 0
-   automatePerformance true
-   autosave 0
-   betterGrass 0
-   brightnessSlider 1 0
-   chatGrabsMouse true
-   clearWater false
-   clipboardaccess false
-   delayedTooltips false
-   fancyBiomeColors true
-   fancyClouds false
-   fancyFog true
-   fancyGraphics false
-   fancyGrass true
-   fancyLight false
-   fancyParticles true
-   fancyTrees false
-   fancyWater true
-   fancyWeather false
-   farView false
-   fastDebug 0
-   fastLogin false
-   guiScale 0
-   highlightMentions true
-   mipmapsPercent 0 0
-   performance 0
-   preloadedChunks 0
-   renderDistance 2
-   showChatColors true
-   showDamageAlerts true
-   showJoinMessages true
-   signDistance 8
-   sky true
-   smoothFPS false
-   smoothLighting 1 0
-   stars true
-   time 0
-   viewBobbing false
-   voidFog true
-   waterBiomeColors true
-   weather true
+   advancedOpenGL: 1
+   anaglyph3D: false
+   automateMode: 0
+   automatePerformance: true
+   autosave: 0
+   betterGrass: 0
+   brightnessSlider: 1.0
+   chatGrabsMouse: true
+   clearWater: false
+   clipboardaccess: false
+   delayedTooltips: false
+   fancyBiomeColors: true
+   fancyClouds: false
+   fancyFog: true
+   fancyGraphics: false
+   fancyGrass: true
+   fancyLight: false
+   fancyParticles: true
+   fancyTrees: false
+   fancyWater: true
+   fancyWeather: false
+   farView: false
+   fastDebug: 0
+   fastLogin: false
+   guiScale: 0
+   highlightMentions: true
+   mipmapsPercent: 0.0
+   performance: 0
+   preloadedChunks: 0
+   renderDistance: 2
+   showChatColors: true
+   showDamageAlerts: true
+   showJoinMessages: true
+   signDistance: 8
+   sky: true
+   smoothFPS: false
+   smoothLighting: 1 0
+   stars: true
+   time: 0
+   viewBobbing: false
+   voidFog: true
+   waterBiomeColors: true
+   weather: true

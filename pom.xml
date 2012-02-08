@@ -55,8 +55,8 @@
 	<!-- Dependencies -->
 	<dependencies>
 		<dependency>
-			<groupId>org.spoutcraft</groupId>
-			<artifactId>launcherapi</artifactId>
+			<groupId>org.spoutcraft.launcher</groupId>
+			<artifactId>api</artifactId>
 			<version>dev-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
