@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Random;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
@@ -46,6 +47,11 @@ import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.skin.DefaultSkin;
 import org.spoutcraft.launcher.skin.DefaultSkinLoader;
+import org.spoutcraft.launcher.yml.LauncherYML;
+import org.spoutcraft.launcher.yml.LibrariesYML;
+import org.spoutcraft.launcher.yml.MinecraftYML;
+import org.spoutcraft.launcher.yml.SpecialYML;
+import org.spoutcraft.launcher.yml.SpoutcraftYML;
 
 public class Main {
 	public static void main(String[] args) {
@@ -76,9 +82,29 @@ public class Main {
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
+		Settings.setSettings(settings);
+
+		final SimpleOptionsDialog options = new SimpleOptionsDialog();
+
+		SwingWorker<Object, Object> updateThread = new SwingWorker<Object, Object>() {
+			protected Object doInBackground() throws Exception {
+				MinecraftYML.updateMinecraftYMLCache();
+				SpoutcraftYML.updateSpoutcraftYMLCache();
+				LibrariesYML.updateLibrariesYMLCache();
+				SpecialYML.updateSpecialYMLCache();
+				LauncherYML.updateLauncherYMLCache();
+				return null;
+			}
+
+			protected void done() {
+				options.updateBuildsList();
+			}
+		};
+		updateThread.execute();
+
 
 		// Set up the Launcher and load skins \\
-		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
+		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher(), options);
 		SkinManager skinManager = Launcher.getSkinManager();
 		skinManager.loadSkins(skinDir);
 

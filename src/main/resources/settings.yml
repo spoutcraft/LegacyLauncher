@@ -3,6 +3,8 @@ launcher:
    memory: 0
    acceptUpdates: false
    retryLogin: true
+   loginRetries: 3
+   acceptUpdates: false
    client:
       build: RECOMMENDED
       buildNumber: 0
@@ -33,7 +35,6 @@ client:
    fancyWeather: false
    farView: false
    fastDebug: 0
-   fastLogin: false
    guiScale: 0
    highlightMentions: true
    mipmapsPercent: 0.0

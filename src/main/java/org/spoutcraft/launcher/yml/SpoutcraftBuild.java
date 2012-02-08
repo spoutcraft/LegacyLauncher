@@ -28,6 +28,7 @@ package org.spoutcraft.launcher.yml;
 import java.util.Map;
 
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
@@ -107,10 +108,10 @@ public class SpoutcraftBuild {
 		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);
-		int selected = Settings.getSelectedBuild();
-		if (Settings.isRecommendedBuild()) {
+		int selected = Settings.getSpoutcraftSelectedBuild();
+		if (Settings.getSpoutcraftBuild() == Build.RECOMMENDED) {
 			selected = recommended;
-		} else if (Settings.isDevelopmentBuild()) {
+		} else if (Settings.getSpoutcraftBuild() == Build.DEV) {
 			selected = latest;
 		}
 
