@@ -46,12 +46,14 @@ public class Launcher {
 	private final DownloadManager downloads = new DownloadManager(key);
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
+	private final OptionsDialog optionsDialog;
 
-	public Launcher(final GameUpdater updater, final GameLauncher launcher) {
+	public Launcher(final GameUpdater updater, final GameLauncher launcher, final OptionsDialog optionsDialog) {
 		if (Launcher.instance != null)
 			throw new IllegalArgumentException("You can have a duplicate Launcher");
 		this.updater = updater;
 		this.launcher = launcher;
+		this.optionsDialog = optionsDialog;
 		logger.addHandler(new ConsoleHandler());
 
 		System.setSecurityManager(security);
@@ -84,6 +86,10 @@ public class Launcher {
 
 	public static GameLauncher getGameLauncher() {
 		return instance.launcher;
+	}
+
+	public static OptionsDialog getOptionsDialog() {
+		return instance.optionsDialog;
 	}
 
 	public static boolean clearCache() {

@@ -3,11 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.spoutcraft.launcher</groupId>
     <artifactId>api</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>SkinAPI</name>
+    <version>dev-SNAPSHOT</version>
+    <name>LauncherAPI</name>
     <description>Launcher Skin API for the Spoutcraft Launcher</description>
     <dependencies>
-
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
@@ -79,5 +78,17 @@
                 </excludes>
             </resource>
         </resources>
+        <plugins>
+            <!-- Compile plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.3.2</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>

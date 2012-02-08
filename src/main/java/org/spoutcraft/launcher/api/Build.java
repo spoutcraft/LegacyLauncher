@@ -28,5 +28,17 @@ package org.spoutcraft.launcher.api;
 
 public enum Build {
 	RECOMMENDED,
+	CUSTOM,
 	DEV;
+	
+	public static Build getValue(String name) {
+		Build result;
+		try {
+			result = Build.valueOf(name.toUpperCase());
+			return result;
+		} catch (Exception e) {
+			// IGNORED
+		}
+		return RECOMMENDED;
+	}
 }
