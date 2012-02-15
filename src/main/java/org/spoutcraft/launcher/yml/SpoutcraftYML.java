@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Map;
 
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
@@ -50,6 +51,34 @@ public class SpoutcraftYML {
 			e.printStackTrace();
 		}
 		return config;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String[] getSpoutcraftBuilds() {
+		YAMLProcessor config = getSpoutcraftYML();
+		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
+		int latest = config.getInt("latest", -1);
+		int recommended = config.getInt("recommended", -1);
+
+		if (builds != null) {
+			String[] results = new String[builds.size()];
+			int index = 0;
+			for (Integer i : builds.keySet()) {
+				results[index] = i.toString();
+				Map<String, Object> map = (Map<String, Object>) builds.get(i);
+				String version = String.valueOf(map.get("minecraft"));
+				results[index] += " | " + version;
+				if (i.intValue() == latest) {
+					results[index] += " | Latest";
+				}
+				if (i.intValue() == recommended) {
+					results[index] += " | Rec. Build";
+				}
+				index++;
+			}
+			return results;
+		}
+		return null;
 	}
 
 	public static void updateSpoutcraftYMLCache() {

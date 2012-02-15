@@ -40,7 +40,6 @@ import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.SkinDescriptionFile;
-import org.spoutcraft.launcher.api.skin.SkinLoader;
 import org.spoutcraft.launcher.api.skin.SkinManager;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLFormat;
@@ -78,35 +77,20 @@ public class Main {
 
 		setLookAndFeel();
 
+		final double key = (new Random()).nextDouble();
 		YAMLProcessor settings = setupSettings();
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
 		Settings.setSettings(settings);
 
-		final SimpleOptionsDialog options = new SimpleOptionsDialog();
-
-		SwingWorker<Object, Object> updateThread = new SwingWorker<Object, Object>() {
-			protected Object doInBackground() throws Exception {
-				MinecraftYML.updateMinecraftYMLCache();
-				SpoutcraftYML.updateSpoutcraftYMLCache();
-				LibrariesYML.updateLibrariesYMLCache();
-				SpecialYML.updateSpecialYMLCache();
-				LauncherYML.updateLauncherYMLCache();
-				return null;
-			}
-
-			protected void done() {
-				options.updateBuildsList();
-			}
-		};
-		updateThread.execute();
-
-
 		// Set up the Launcher and load skins \\
-		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher(), options);
+		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher(), key);
 		SkinManager skinManager = Launcher.getSkinManager();
 		skinManager.loadSkins(skinDir);
+
+		SimpleOptionsFrame optionsFrame = new SimpleOptionsFrame();
+		Launcher.setOptionsFrame(optionsFrame, key);
 
 		// Register the default skin with the SkinManager \\
 		JavaSkin defaultSkin = new DefaultSkin();

@@ -30,7 +30,6 @@ import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.OptionsDialog;
 import org.spoutcraft.launcher.api.skin.gui.Alignment;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
 
@@ -51,7 +50,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-public class SimpleOptionsDialog extends OptionsDialog implements ActionListener {
+public class SimpleOptionsDialog extends JDialog implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPanel = new JPanel();
 
@@ -73,6 +72,7 @@ public class SimpleOptionsDialog extends OptionsDialog implements ActionListener
 	 * Create the dialog.
 	 */
 	public SimpleOptionsDialog() {
+		super(Launcher.getSkinManager().getEnabledSkin().getLoginFrame());
 		setTitle("Spoutcraft Options");
 		this.setAlwaysOnTop(true);
 		ButtonGroup group = new ButtonGroup();
@@ -137,10 +137,10 @@ public class SimpleOptionsDialog extends OptionsDialog implements ActionListener
 
 		GroupLayout gl_contentPanel = new GroupLayout(contentPanel);
 		gl_contentPanel.setHorizontalGroup(
-				gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+				gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.add(gl_contentPanel.createSequentialGroup()
 								.addContainerGap()
-								.add(gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+								.add(gl_contentPanel.createParallelGroup(Alignment.LEADING)
 										.add(gl_contentPanel.createSequentialGroup()
 												.add(selectBuild)
 												.addPreferredGap(LayoutStyle.RELATED)
@@ -170,9 +170,9 @@ public class SimpleOptionsDialog extends OptionsDialog implements ActionListener
 		clearCache.setActionCommand("Clear Cache");
 		clearCache.addActionListener(this);
 		gl_contentPanel.setVerticalGroup(
-				gl_contentPanel.createParallelGroup(Alignment.LEADING.index())
+				gl_contentPanel.createParallelGroup(Alignment.LEADING)
 						.add(gl_contentPanel.createSequentialGroup()
-								.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE.index())
+								.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 										.add(selectBuild)
 										.add(buildsCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 								.add(devBuilds)
@@ -184,7 +184,7 @@ public class SimpleOptionsDialog extends OptionsDialog implements ActionListener
 								.add(clipboardCheckbox)
 								.add(latestLWJGLCheckbox)
 								.addPreferredGap(LayoutStyle.RELATED)
-								.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE.index())
+								.add(gl_contentPanel.createParallelGroup(Alignment.BASELINE)
 										.add(memoryCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 										.add(lblMemoryToAllocate))
 								.addPreferredGap(LayoutStyle.RELATED)
