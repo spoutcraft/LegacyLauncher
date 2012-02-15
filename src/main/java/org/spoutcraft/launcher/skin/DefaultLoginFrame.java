@@ -36,6 +36,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +69,7 @@ import org.spoutcraft.launcher.api.util.ImageUtils;
 import org.spoutcraft.launcher.api.util.Resources;
 import org.spoutcraft.launcher.api.util.Utils;
 
-public class DefaultLoginFrame extends LoginFrame implements ActionListener, KeyListener {
+public class DefaultLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
 
 	private static final long serialVersionUID = 1797546961340465149L;
 	private JPanel contentPane = new JPanel();
@@ -306,13 +308,12 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
+		addWindowListener(this);
+		
 		loginButton.setEnabled(true);
 	}
 
 	public void init() {
-	}
-
-	public void onException() {
 	}
 
 	public JProgressBar getProgressBar() {
@@ -393,5 +394,27 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			status = status.substring(0, 60) + "...";
 		}
 		progressBar.setString(intProgress + "% " + status);
+	}
+
+	public void windowOpened(WindowEvent e) {
+	}
+
+	public void windowClosing(WindowEvent e) {
+	}
+
+	public void windowClosed(WindowEvent e) {
+		Launcher.getOptionsDialog().exit();
+	}
+
+	public void windowIconified(WindowEvent e) {
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+	}
+
+	public void windowActivated(WindowEvent e) {
+	}
+
+	public void windowDeactivated(WindowEvent e) {
 	}
 }
