@@ -200,19 +200,23 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			case BAD_LOGIN:
 				break;
 			case FINISHED_UPDATE_CHECK:
+				UpdateWorker updater = new UpdateWorker(this);
+				updater.execute();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				break;
-			case RUN_GAME:
+			case GAME_LAUNCH_SUCCESS:
 				setVisible(false);
+				dispose();
+				break;
+			case GAME_LAUNCH_FAILED:
 				break;
 			case SUCESSFUL_LOGIN:
 				CheckUpdatesWorker check = new CheckUpdatesWorker(this);
 				check.execute();
 				break;
 			case UPDATE_FINISHED:
-				UpdateWorker updater = new UpdateWorker(this);
-				updater.execute();
+				Launcher.getGameUpdater().runValidator();
 				break;
 			case USER_NOT_PREMIUM:
 				Launcher.getGameUpdater().runValidator();
@@ -250,6 +254,11 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	public void setMinecraftUpdateAvailable(boolean mcUpdate) {
 		this.mcUpdate = mcUpdate;
+	}
+
+	public void runUpdater() {
+		UpdateWorker updater = new UpdateWorker(this);
+		updater.execute();
 	}
 
 	protected static final class UserPasswordInformation {

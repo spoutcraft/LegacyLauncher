@@ -45,7 +45,7 @@ public class Settings {
 		
 	}
 
-	private static YAMLProcessor getSettigns() {
+	public static YAMLProcessor getSettings() {
 		return settings;
 	}
 

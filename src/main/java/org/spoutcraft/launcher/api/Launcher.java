@@ -27,13 +27,11 @@
 package org.spoutcraft.launcher.api;
 
 import java.io.IOException;
-import java.util.Random;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.CommonSkinManager;
-import org.spoutcraft.launcher.api.skin.GameLauncher;
 import org.spoutcraft.launcher.api.skin.SkinManager;
 import org.spoutcraft.launcher.api.util.FileUtils;
 

@@ -59,6 +59,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.OptionsFrame;
@@ -355,7 +356,20 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 				break;
 			case FINISHED_UPDATE_CHECK:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
+				if (Launcher.getGameUpdater().isInitialInstall() || Settings.isAcceptUpdates()) {
+					runUpdater();
+				} else if (isMinecraftUpdateaAvailable()) {
+					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Minecraft. Would you like to update?", "Minecraft Update", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						runUpdater();
+					}
+				} else if (isSpoutcraftUpdateaAvailable()) {
+					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Spoutcraft. Would you like to update?", "Spoutcraft Update", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						runUpdater();
+					}
+				}
+				
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
@@ -367,13 +381,16 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					}
 				}
 				break;
-			case RUN_GAME:
+			case GAME_LAUNCH_SUCCESS:
+				break;
+			case GAME_LAUNCH_FAILED:
 				break;
 			case SUCESSFUL_LOGIN:
 				break;
 			case UPDATE_FINISHED:
 				break;
 			case USER_NOT_PREMIUM:
+				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
 				break;
 			case UPDATE_FAILED:
 				JOptionPane.showMessageDialog(getParent(), new StringBuilder().append("Oh no! The ").append(isMinecraftUpdateaAvailable() && isSpoutcraftUpdateaAvailable() ? "Minecraft and Spoutcraft" : isSpoutcraftUpdateaAvailable() ? "Spoutcraft" : "Minecraft").append(" update failed!").toString());

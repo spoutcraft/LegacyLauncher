@@ -43,6 +43,8 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
 	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
+	
+	private boolean initialInstall = false;
 
 	private DownloadListener listener;
 
@@ -85,6 +87,14 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public void setDownloadListener(DownloadListener listener) {
 		this.listener = listener;
 	}
+	
+	public boolean isInitialInstall() {
+		return initialInstall;
+	}
+	
+	public void setInitialInstall(boolean initialInstall) {
+		this.initialInstall = initialInstall;
+	}
 
 	public void stateChanged(String message, float progress) {
 		if (listener != null)
@@ -107,6 +117,5 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 
 	public void runGame() {
 		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, minecraftPass);
-
 	}
 }
