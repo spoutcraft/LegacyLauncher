@@ -52,20 +52,10 @@
 package org.spoutcraft.launcher.api.skin.gui;
 
 // Alignment for GroupLayout \\
-public enum Alignment {
-	NO_ALIGNMENT(0),
-	LEADING(1),
-	TRAILING(2),
-	BASELINE(3),
-	CENTER(4);
-
-	private final int index;
-
-	Alignment(int index) {
-		this.index = index;
-	}
-
-	public int index() {
-		return index;
-	}
+public class Alignment {
+	public final static int NO_ALIGNMENT = 0;
+	public final static int LEADING = 1;
+	public final static int TRAILING = 2;
+	public final static int BASELINE = 3;
+	public final static int CENTER = 4;
 }

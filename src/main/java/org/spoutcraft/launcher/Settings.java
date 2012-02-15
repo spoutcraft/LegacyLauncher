@@ -64,6 +64,10 @@ public class Settings {
 	public static void setLauncherBuild(String build) {
 		settings.setProperty("launcher.launcher.build", build);
 	}
+	
+	public static void setLauncherBuild(Build build) {
+		setLauncherBuild(build.name());
+	}
 
 	public static int getSpoutcraftSelectedBuild() {
 		return settings.getInt("launcher.client.buildNumber", 5);
@@ -79,6 +83,10 @@ public class Settings {
 
 	public static void setSpoutcraftBuild(String build) {
 		settings.setProperty("client.launcher.build", build);
+	}
+	
+	public static void setSpoutcraftBuild(Build build) {
+		setSpoutcraftBuild(build.name());
 	}
 
 	public static int getLoginTries() {

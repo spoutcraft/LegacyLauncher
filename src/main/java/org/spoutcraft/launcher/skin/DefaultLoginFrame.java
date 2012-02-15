@@ -59,7 +59,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.OptionsDialog;
+import org.spoutcraft.launcher.api.OptionsFrame;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
@@ -327,7 +327,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
 			doLogin(loginSkin2.getText());
 		} else if (e.getActionCommand().equals(optionsButton.getActionCommand())) {
-			OptionsDialog options = Launcher.getOptionsDialog();
+			OptionsFrame options = Launcher.getOptionsDialog();
 			options.setVisible(true);
 			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (320/2)), (int) Math.max(1, getBounds().getCenterY() - (365/2)), 320, 365);
 		}

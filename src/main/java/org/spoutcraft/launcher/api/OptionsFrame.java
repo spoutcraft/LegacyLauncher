@@ -26,7 +26,8 @@
 
 package org.spoutcraft.launcher.api;
 
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 
-public abstract class OptionsDialog extends JDialog {
+public abstract class OptionsFrame extends JFrame {
+
 }
