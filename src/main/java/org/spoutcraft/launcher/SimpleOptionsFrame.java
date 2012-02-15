@@ -45,6 +45,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -95,6 +96,34 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		launcherUpdateSettings.add(launcherRecBuild);
 		launcherUpdateSettings.add(launcherDevBuild);
 		launcherUpdateSettings.add(launcherCustomBuild);
+		
+		// Set ActionListeners \\
+		scRecBuild.addActionListener(this);
+		scDevBuild.addActionListener(this);
+		scCustomBuild.addActionListener(this);
+		
+		launcherRecBuild.addActionListener(this);
+		launcherDevBuild.addActionListener(this);
+		launcherCustomBuild.addActionListener(this);
+
+		worker = new SwingWorker<Object, Object>() {
+			protected Object doInBackground() throws Exception {
+				MirrorUtils.updateMirrorsYMLCache();
+				SpoutcraftYML.updateSpoutcraftYMLCache();
+				//LauncherYML.updateLauncherYMLCache();
+
+				buildSpoutcraftBuildList();
+
+				MinecraftYML.updateMinecraftYMLCache();
+				LibrariesYML.updateLibrariesYMLCache();
+				return null;
+			}
+		};
+
+		worker.execute();
+
+		save.addActionListener(this);
+		cancel.addActionListener(this);
 
 		scBuildsList.addItem("Loading...");
 		launcherBuildsList.addItem("Loading...");
@@ -139,7 +168,6 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		clibboardAccess.setSelected(Settings.allowClipboardAccess());
 		useLatestLWGJL.setSelected(Settings.isLatestLWJGL());
 		retryLogin.setSelected(Settings.retryLogin());
-
 
 		// Layout \\
 		GroupLayout layout = new GroupLayout(contentPane);
@@ -220,19 +248,8 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		getContentPane().setLayout(new BorderLayout());
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPane, BorderLayout.CENTER);
+		
 
-		worker = new SwingWorker<Object, Object>() {
-			protected Object doInBackground() throws Exception {
-				MirrorUtils.updateMirrorsYMLCache();
-				SpoutcraftYML.updateSpoutcraftYMLCache();
-				//LauncherYML.updateLauncherYMLCache();
-
-				buildSpoutcraftBuildList();
-				return null;
-			}
-		};
-
-		worker.execute();
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		pack();
@@ -247,13 +264,63 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 				Settings.setSpoutcraftBuild(Build.DEV);
 			} else if (scCustomBuild.isSelected()) {
 				Settings.setSpoutcraftBuild(Build.CUSTOM);
-				Settings.setSpoutcraftSelectedBuild(234);
+				Settings.setSpoutcraftSelectedBuild(getSpoutcraftSelectedBuild());
 			}
+			if (launcherRecBuild.isSelected()) {
+				Settings.setLauncherBuild(Build.RECOMMENDED);
+			} else if (scDevBuild.isSelected()) {
+				Settings.setLauncherBuild(Build.DEV);
+			} else if (scCustomBuild.isSelected()) {
+				Settings.setLauncherBuild(Build.CUSTOM);
+				Settings.setLauncherSelectedBuild(254);
+			}
+			Settings.setAcceptUpdates(alwaysUptdate.isSelected());
+			Settings.setLatestLWJGL(useLatestLWGJL.isSelected());
+			Settings.setClipboardAccess(clibboardAccess.isSelected());
+			Settings.setRetryLogin(retryLogin.isSelected());
+			Settings.getSettings().save();
+			try {
+			    Settings.getSettings().load();
+			} catch (Exception ex) {
+			}
+			setVisible(false);
 		} else if (e.getActionCommand().equals(scRecBuild.getActionCommand()) || e.getActionCommand().equals(scDevBuild.getActionCommand()) || e.getActionCommand().equals(scCustomBuild.getActionCommand())) {
 			refreshSpoutcraftBuildList();
 		} else if (e.getActionCommand().equals(launcherRecBuild.getActionCommand()) || e.getActionCommand().equals(launcherDevBuild.getActionCommand()) || e.getActionCommand().equals(launcherCustomBuild.getActionCommand())) {
 			refreshLauncherBuildList();
+		} else if (e.getActionCommand().equals(cancel.getActionCommand())) {
+			setVisible(false);
 		}
+	}
+
+	public int getSpoutcraftSelectedBuild() {
+		int build = -1;
+		try {
+			String item = ((String) scBuildsList.getSelectedItem());
+			if (item.contains("|")) {
+				item = item.split("\\|")[0].replaceAll(" ", "");
+			}
+			item.trim();
+			build = Integer.parseInt(item);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return build;
+	}
+
+	public int getLauncherSelectedBuild() {
+		int build = -1;
+		try {
+			String item = ((String) launcherBuildsList.getSelectedItem());
+			if (item.contains("|")) {
+				item = item.split("\\|")[0].replaceAll(" ", "");
+			}
+			item.trim();
+			build = Integer.parseInt(item);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return build;
 	}
 
 	public void buildSpoutcraftBuildList() {
@@ -267,7 +334,7 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 			scBuildsList.addItem("No builds found");
 		}
 		pack();
-		setBounds(getX(), getY(), getWidth() + 10, getHeight());
+		setBounds(getX(), getY(), getWidth() + 5, getHeight());
 		refreshSpoutcraftBuildList();
 	}
 

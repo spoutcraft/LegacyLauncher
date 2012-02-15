@@ -110,30 +110,36 @@ public class SimpleGameUpdater extends GameUpdater {
 	public boolean isMinecraftUpdateAvailible() {
 		int steps = 7;
 		if (!getBinDir().exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 100F / steps);
 		if (!new File(getBinDir(), "natives").exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 200F / steps);
 		File minecraft = new File(getBinDir(), "minecraft.jar");
 		if (!minecraft.exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 300F / steps);
 		File lib = new File(getBinDir(), "jinput.jar");
 		if (!lib.exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 400F / steps);
 		lib = new File(getBinDir(), "lwjgl.jar");
 		if (!lib.exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 500F / steps);
 		lib = new File(getBinDir(), "lwjgl_util.jar");
 		if (!lib.exists()) {
+			setInitialInstall(true);
 			return true;
 		}
 		stateChanged("Checking for Minecraft Update...", 600F / steps);

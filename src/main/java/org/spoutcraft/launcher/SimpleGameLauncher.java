@@ -32,8 +32,9 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
+import org.spoutcraft.launcher.api.Event;
+import org.spoutcraft.launcher.api.GameLauncher;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.skin.GameLauncher;
 import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.api.util.Resources;
@@ -60,7 +61,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	}
 
 	@Override
-	public int runGame(String user, String session, String downloadTicket, String mcpass) {
+	public void runGame(String user, String session, String downloadTicket, String mcpass) {
 		super.setVisible(true);
 		Applet applet = null;
 		try {
@@ -72,14 +73,16 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
 			this.dispose();
-			return ERROR_IN_LAUNCH;
+			Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_FAILED);
+			return;
 		}
 		if (applet == null) {
 			String message = "Failed to launch Spoutcraft!";
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
-			return ERROR_IN_LAUNCH;
+			Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_FAILED);
+			return;
 		}
 
 		minecraft = new MinecraftAppletEnglober(applet);
@@ -108,7 +111,8 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		minecraft.start();
 
 		this.setVisible(true);
-		return SUCCESSFUL_LAUNCH;
+		Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_SUCCESS);
+		return;
 	}
 
 	public void windowOpened(WindowEvent e) {
