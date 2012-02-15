@@ -30,6 +30,7 @@ import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.api.Build;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.OptionsFrame;
 import org.spoutcraft.launcher.api.skin.gui.Alignment;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
@@ -52,6 +53,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 
@@ -61,13 +64,13 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 	private JRadioButton scRecBuild = new JRadioButton("Always use recommended builds");
 	private JRadioButton scDevBuild = new JRadioButton("Always use development builds");
 	private JRadioButton scCustomBuild = new JRadioButton("Manual build selection");
-	private JComboBox<String> scBuildsList = new JComboBox<String>();
+	private JComboBox scBuildsList = new JComboBox();
 
 	private JLabel launcherLbl = new JLabel("Launcher Update Setttings");
 	private JRadioButton launcherRecBuild = new JRadioButton("Always use recommended builds");
 	private JRadioButton launcherDevBuild = new JRadioButton("Always use development builds");
 	private JRadioButton launcherCustomBuild = new JRadioButton("Manual build selection");
-	private JComboBox<String> launcherBuildsList = new JComboBox<String>();
+	private JComboBox launcherBuildsList = new JComboBox();
 
 	private JCheckBox alwaysUptdate = new JCheckBox("Always install updates");
 	private JCheckBox retryLogin = new JCheckBox("Retry after connection timeout");
@@ -77,6 +80,7 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 	private JButton save = new JButton("Save");
 	private JButton cancel = new JButton("Cancel");
 
+	private SwingWorker worker = null;
 
 	public SimpleOptionsFrame() {
 
@@ -217,17 +221,13 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPane, BorderLayout.CENTER);
 
-		SwingWorker worker = new SwingWorker<Object, Object>() {
+		worker = new SwingWorker<Object, Object>() {
 			protected Object doInBackground() throws Exception {
 				MirrorUtils.updateMirrorsYMLCache();
 				SpoutcraftYML.updateSpoutcraftYMLCache();
 				//LauncherYML.updateLauncherYMLCache();
 
 				buildSpoutcraftBuildList();
-
-				MinecraftYML.updateMinecraftYMLCache();
-				LibrariesYML.updateLibrariesYMLCache();
-				SpecialYML.updateSpecialYMLCache();
 				return null;
 			}
 		};
@@ -300,5 +300,10 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 
 	public void refreshLauncherBuildList() {
 
+	}
+
+	public void exit() {
+		worker.cancel(true);
+		super.exit();
 	}
 }
