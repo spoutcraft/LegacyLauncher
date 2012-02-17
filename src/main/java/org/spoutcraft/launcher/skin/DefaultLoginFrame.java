@@ -324,6 +324,8 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+			if (rememberCheckbox.isSelected())
+				saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
 			doLogin(loginSkin1.getText());
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
@@ -362,12 +364,18 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Minecraft. Would you like to update?", "Minecraft Update", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
 						runUpdater();
+					} else {
+						Launcher.getGameUpdater().runValidator();
 					}
 				} else if (isSpoutcraftUpdateaAvailable()) {
 					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Spoutcraft. Would you like to update?", "Spoutcraft Update", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
 						runUpdater();
+					} else {
+						Launcher.getGameUpdater().runValidator();
 					}
+				} else {
+					Launcher.getGameUpdater().runValidator();
 				}
 				
 				break;
