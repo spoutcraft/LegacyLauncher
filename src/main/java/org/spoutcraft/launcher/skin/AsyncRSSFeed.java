@@ -62,7 +62,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			URL url = new URL("http://updates.getspout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
-
+				conn.disconnect();
 				StringBuilder sb = new StringBuilder();
 				SyndFeedInput input = new SyndFeedInput();
 				URL feedUrl;
