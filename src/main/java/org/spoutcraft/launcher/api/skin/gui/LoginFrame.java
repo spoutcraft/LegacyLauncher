@@ -200,8 +200,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			case BAD_LOGIN:
 				break;
 			case FINISHED_UPDATE_CHECK:
-				UpdateWorker updater = new UpdateWorker(this);
-				updater.execute();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				break;
