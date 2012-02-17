@@ -170,6 +170,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 						button.setActionCommand("LoginSkin1");
 					}
 					passwordField.setText(getSavedPassword(user));
+					rememberCheckbox.setSelected(true);
 				} else if (loginid == 2) {
 					loginSkin2.setText(user);
 					loginSkin2.setVisible(true);
