@@ -265,7 +265,6 @@ public class SimpleOptionsDialog extends JDialog implements ActionListener {
 				clearCache();
 			}
 
-			
 
 			this.setVisible(false);
 			this.dispose();

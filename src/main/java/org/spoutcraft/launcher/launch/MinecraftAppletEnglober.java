@@ -33,9 +33,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * @author creadri
- */
 public class MinecraftAppletEnglober extends Applet implements AppletStub {
 	private static final long serialVersionUID = -4815977474500388254L;
 	private Applet minecraftApplet;

@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Random;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
@@ -46,11 +45,6 @@ import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.skin.DefaultSkin;
 import org.spoutcraft.launcher.skin.DefaultSkinLoader;
-import org.spoutcraft.launcher.yml.LauncherYML;
-import org.spoutcraft.launcher.yml.LibrariesYML;
-import org.spoutcraft.launcher.yml.MinecraftYML;
-import org.spoutcraft.launcher.yml.SpecialYML;
-import org.spoutcraft.launcher.yml.SpoutcraftYML;
 
 public class Main {
 	public static void main(String[] args) {

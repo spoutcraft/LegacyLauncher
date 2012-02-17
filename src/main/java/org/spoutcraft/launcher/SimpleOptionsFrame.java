@@ -96,12 +96,12 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		launcherUpdateSettings.add(launcherRecBuild);
 		launcherUpdateSettings.add(launcherDevBuild);
 		launcherUpdateSettings.add(launcherCustomBuild);
-		
+
 		// Set ActionListeners \\
 		scRecBuild.addActionListener(this);
 		scDevBuild.addActionListener(this);
 		scCustomBuild.addActionListener(this);
-		
+
 		launcherRecBuild.addActionListener(this);
 		launcherDevBuild.addActionListener(this);
 		launcherCustomBuild.addActionListener(this);
@@ -248,7 +248,6 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 		getContentPane().setLayout(new BorderLayout());
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPane, BorderLayout.CENTER);
-		
 
 
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
