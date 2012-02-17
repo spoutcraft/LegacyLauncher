@@ -58,8 +58,8 @@ public class Main {
 		Utils.setStartupParameters(params);
 
 		System.out.println("------------------------------------------");
-		System.out.println("The Spoutcraft Launcher is starting....");
-		System.out.println("Spoutcraft Launcher Build: " + getBuild("launcher-version"));
+		System.out.println("Spoutcraft Launcher is starting....");
+		System.out.println("Launcher Build: " + getBuild("launcher-version"));
 		System.out.println("Launcher API Build: " + getBuild("api-version"));
 
 		// Set up the directories \\
@@ -98,7 +98,7 @@ public class Main {
 		if (skin == null) {
 			skin = skinManager.getSkin("skin");
 			if (skin == null) {
-				throw new RuntimeException("The default skin object could not be found. Shutting down");
+				throw new RuntimeException("Default skin object could not be found. Shutting down");
 			}
 		}
 		skinManager.enableSkin(skin);
@@ -110,7 +110,7 @@ public class Main {
 
 		skin.getLoginFrame().setVisible(true);
 
-		System.out.println("The Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
+		System.out.println("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
 	}
 
 	public static void setLookAndFeel() {

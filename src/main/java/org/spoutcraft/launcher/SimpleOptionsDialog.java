@@ -80,7 +80,7 @@ public class SimpleOptionsDialog extends JDialog implements ActionListener {
 		group.add(recBuilds);
 		group.add(customBuilds);
 
-		buildInfo.setText("Spoutcraft Launcher Build " + Main.getBuild("launcher-version"));
+		buildInfo.setText("Launcher Build " + Main.getBuild("launcher-version"));
 		buildInfo.setOpaque(true);
 		buildInfo.setForeground(Color.DARK_GRAY);
 		buildInfo.setToolTipText("Created by the Spout Development Team. Licensed under the LGPL. Source code is available at www.github.com/SpoutDev");
