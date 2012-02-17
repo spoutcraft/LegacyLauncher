@@ -26,14 +26,27 @@
 
 package org.spoutcraft.launcher.api.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
+import org.yaml.snakeyaml.emitter.ScalarAnalysis;
+import org.yaml.snakeyaml.nodes.Node;
+import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.UnicodeReader;
+import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
 
 /**
@@ -41,10 +54,10 @@ import org.yaml.snakeyaml.representer.Representer;
  * a file and call its load() method. For specifying node paths in the
  * various get*() methods, they support SK's path notation, allowing you to
  * select child nodes by delimiting node names with periods.
- * <p/>
+ *
  * <p>
  * For example, given the following configuration file:</p>
- * <p/>
+ *
  * <pre>members:
  *     - Hollie
  *     - Jason
@@ -59,28 +72,37 @@ import org.yaml.snakeyaml.representer.Representer;
  *     cool: false
  *     eats:
  *         babies: true</pre>
- * <p/>
+ *
  * <p>Calling code could access sturmeh's baby eating state by using
  * <code>getBoolean("sturmeh.eats.babies", false)</code>. For lists, there are
  * methods such as <code>getStringList</code> that will return a type safe list.
- * <p/>
- * <p>This class is currently incomplete. It is not yet possible to get a node.
- * </p>
+ *
  *
  * @author sk89q
  */
 public class YAMLProcessor extends YAMLNode {
-	private Yaml yaml;
-	private File file;
-	private String header = null;
+	public static final String LINE_BREAK = DumperOptions.LineBreak.getPlatformLineBreak().getString();
+	public static final char COMMENT_CHAR = '#';
+	protected final Yaml yaml;
+	protected final File file;
+	protected String header = null;
+	protected YAMLFormat format;
+
+	/*
+		 * Map from property key to comment. Comment may have multiple lines that are newline-separated.
+		 * Comments support based on ZerothAngel's AnnotatedYAMLConfiguration
+		 * Comments are only supported with YAMLFormat.EXTENDED
+		 */
+	private final Map<String, String> comments = new HashMap<String, String>();
 
 	public YAMLProcessor(File file, boolean writeDefaults, YAMLFormat format) {
-		super(new HashMap<String, Object>(), writeDefaults);
+		super(new LinkedHashMap<String, Object>(), writeDefaults);
+		this.format = format;
 
-		DumperOptions options = new DumperOptions();
+		DumperOptions options = new FancyDumperOptions();
 		options.setIndent(4);
 		options.setDefaultFlowStyle(format.getStyle());
-		Representer representer = new Representer();
+		Representer representer = new FancyRepresenter();
 		representer.setDefaultFlowStyle(format.getStyle());
 
 		yaml = new Yaml(new SafeConstructor(), representer, options);
@@ -89,7 +111,7 @@ public class YAMLProcessor extends YAMLNode {
 	}
 
 	public YAMLProcessor(File file, boolean writeDefaults) {
-		this(file, writeDefaults, YAMLFormat.EXTENDED);
+		this(file, writeDefaults, YAMLFormat.COMPACT);
 	}
 
 	/**
@@ -105,7 +127,7 @@ public class YAMLProcessor extends YAMLNode {
 			if (stream == null) throw new IOException("Stream is null!");
 			read(yaml.load(new UnicodeReader(stream)));
 		} catch (YAMLProcessorException e) {
-			root = new HashMap<String, Object>();
+			root = new LinkedHashMap<String, Object>();
 		} finally {
 			try {
 				if (stream != null) {
@@ -127,7 +149,7 @@ public class YAMLProcessor extends YAMLNode {
 
 		for (String line : headerLines) {
 			if (header.length() > 0) {
-				header.append("\r\n");
+				header.append(LINE_BREAK);
 			}
 			header.append(line);
 		}
@@ -176,9 +198,27 @@ public class YAMLProcessor extends YAMLNode {
 			OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
 			if (header != null) {
 				writer.append(header);
-				writer.append("\r\n");
+				writer.append(LINE_BREAK);
 			}
-			yaml.dump(root, writer);
+			if (comments.size() == 0 || format != YAMLFormat.EXTENDED) {
+				yaml.dump(root, writer);
+			} else {
+				// Iterate over each root-level property and dump
+				for (Iterator<Map.Entry<String, Object>> i = root.entrySet().iterator(); i.hasNext(); ) {
+					Map.Entry<String, Object> entry = i.next();
+
+					// Output comment, if present
+					String comment = comments.get(entry.getKey());
+					if (comment != null) {
+						writer.append(LINE_BREAK);
+						writer.append(comment);
+						writer.append(LINE_BREAK);
+					}
+
+					// Dump property
+					yaml.dump(Collections.singletonMap(entry.getKey(), entry.getValue()), writer);
+				}
+			}
 			return true;
 		} catch (IOException e) {
 		} finally {
@@ -186,8 +226,7 @@ public class YAMLProcessor extends YAMLNode {
 				if (stream != null) {
 					stream.close();
 				}
-			} catch (IOException e) {
-			}
+			} catch (IOException e) {}
 		}
 
 		return false;
@@ -197,9 +236,9 @@ public class YAMLProcessor extends YAMLNode {
 	private void read(Object input) throws YAMLProcessorException {
 		try {
 			if (null == input) {
-				root = new HashMap<String, Object>();
+				root = new LinkedHashMap<String, Object>();
 			} else {
-				root = (Map<String, Object>) input;
+				root = new LinkedHashMap<String, Object>((Map<String, Object>) input);
 			}
 		} catch (ClassCastException e) {
 			throw new YAMLProcessorException("Root document must be an key-value structure");
@@ -215,12 +254,94 @@ public class YAMLProcessor extends YAMLNode {
 	}
 
 	/**
+	 * Returns a root-level comment.
+	 *
+	 * @param key the property key
+	 * @return the comment or <code>null</code>
+	 */
+	public String getComment(String key) {
+		return comments.get(key);
+	}
+
+	public void setComment(String key, String comment) {
+		if (comment != null) {
+			setComment(key, comment.split("\\r?\\n"));
+		} else {
+			comments.remove(key);
+		}
+	}
+
+	/**
+	 * Set a root-level comment.
+	 *
+	 * @param key the property key
+	 * @param comment the comment. May be <code>null</code>, in which case the comment
+	 *   is removed.
+	 */
+	public void setComment(String key, String... comment) {
+		if (comment != null && comment.length > 0) {
+			for (int i = 0; i < comment.length; ++i) {
+				if (!comment[i].matches("^" + COMMENT_CHAR + " ?")) {
+					comment[i] = COMMENT_CHAR + " " + comment[i];
+				}
+			}
+			String s = StringUtil.joinString(comment, LINE_BREAK);
+			comments.put(key, s);
+		} else {
+			comments.remove(key);
+		}
+	}
+
+	/**
+	 * Returns root-level comments.
+	 *
+	 * @return map of root-level comments
+	 */
+	public Map<String, String> getComments() {
+		return Collections.unmodifiableMap(comments);
+	}
+
+	/**
+	 * Set root-level comments from a map.
+	 *
+	 * @param comments comment map
+	 */
+	public void setComments(Map<String, String> comments) {
+		this.comments.clear();
+		if (comments != null) {
+			this.comments.putAll(comments);
+		}
+	}
+
+	/**
 	 * This method returns an empty ConfigurationNode for using as a
 	 * default in methods that select a node from a node list.
-	 *
 	 * @return
 	 */
 	public static YAMLNode getEmptyNode(boolean writeDefaults) {
-		return new YAMLNode(new HashMap<String, Object>(), writeDefaults);
+		return new YAMLNode(new LinkedHashMap<String, Object>(), writeDefaults);
+	}
+
+	// This will be included in snakeyaml 1.10, but until then we have to do it manually.
+	private class FancyDumperOptions extends DumperOptions {
+		@Override
+		public DumperOptions.ScalarStyle calculateScalarStyle(ScalarAnalysis analysis, DumperOptions.ScalarStyle style) {
+			if (format == YAMLFormat.EXTENDED
+					&& (analysis.scalar.contains("\n") || analysis.scalar.contains("\r"))) {
+				return ScalarStyle.LITERAL;
+			} else {
+				return super.calculateScalarStyle(analysis, style);
+			}
+		}
+	}
+
+	private static class FancyRepresenter extends Representer {
+		public FancyRepresenter() {
+			this.nullRepresenter = new Represent() {
+				public Node representData(Object o) {
+					return representScalar(Tag.NULL, "");
+				}
+			};
+		}
 	}
 }

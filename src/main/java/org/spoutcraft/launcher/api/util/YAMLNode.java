@@ -27,7 +27,7 @@
 package org.spoutcraft.launcher.api.util;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,7 +65,7 @@ public class YAMLNode {
 	 * Gets a property at a location. This will either return an Object
 	 * or null, with null meaning that no configuration value exists at
 	 * that location. This could potentially return a default value (not yet
-	 * implemented) as defined by a skin, if this is a skin-tied
+	 * implemented) as defined by a plugin, if this is a plugin-tied
 	 * configuration.
 	 *
 	 * @param path path to node (dot notation)
@@ -106,17 +106,6 @@ public class YAMLNode {
 	}
 
 	/**
-	 * Prepare a value for serialization, in case it's not a native type
-	 * (and we don't want to serialize objects as YAML objects).
-	 *
-	 * @param value
-	 * @return
-	 */
-	private Object prepareSerialization(Object value) {
-		return value;
-	}
-
-	/**
 	 * Set the property at a location. This will override existing
 	 * configuration data to have it conform to key/value mappings.
 	 *
@@ -125,7 +114,6 @@ public class YAMLNode {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setProperty(String path, Object value) {
-		value = prepareSerialization(value);
 
 		if (!path.contains(".")) {
 			root.put(path, value);
@@ -146,7 +134,7 @@ public class YAMLNode {
 
 			if (o == null || !(o instanceof Map)) {
 				// This will override existing configuration data!
-				o = new HashMap<String, Object>();
+				o = new LinkedHashMap<String, Object>();
 				node.put(parts[i], o);
 			}
 
@@ -163,7 +151,7 @@ public class YAMLNode {
 	 * @return
 	 */
 	public YAMLNode addNode(String path) {
-		Map<String, Object> map = new HashMap<String, Object>();
+		Map<String, Object> map = new LinkedHashMap<String, Object>();
 		YAMLNode node = new YAMLNode(map, writeDefaults);
 		setProperty(path, map);
 		return node;
@@ -192,7 +180,7 @@ public class YAMLNode {
 	 * actually a string, it will be converted to its string representation.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value
+	 * @param def default value
 	 * @return string or default
 	 */
 	public String getString(String path, String def) {
@@ -229,7 +217,7 @@ public class YAMLNode {
 	 * number types will be casted to an integer.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value
+	 * @param def default value
 	 * @return int or default
 	 */
 	public int getInt(String path, int def) {
@@ -267,7 +255,7 @@ public class YAMLNode {
 	 * number types will be casted to an double.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value
+	 * @param def default value
 	 * @return double or default
 	 */
 	public double getDouble(String path, double def) {
@@ -303,7 +291,7 @@ public class YAMLNode {
 	 * actually a boolean, the default value will be returned.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value
+	 * @param def default value
 	 * @return boolean or default
 	 */
 	public boolean getBoolean(String path, boolean def) {
@@ -364,7 +352,7 @@ public class YAMLNode {
 	 * an actual list and not just a string.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value or null for an empty list as default
+	 * @param def default value or null for an empty list as default
 	 * @return list of strings
 	 */
 	public List<String> getStringList(String path, List<String> def) {
@@ -393,7 +381,7 @@ public class YAMLNode {
 	 * an actual list and not just an integer.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value or null for an empty list as default
+	 * @param def default value or null for an empty list as default
 	 * @return list of integers
 	 */
 	public List<Integer> getIntList(String path, List<Integer> def) {
@@ -421,7 +409,7 @@ public class YAMLNode {
 	 * an actual list and cannot be just a double.
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value or null for an empty list as default
+	 * @param def default value or null for an empty list as default
 	 * @return list of integers
 	 */
 	public List<Double> getDoubleList(String path, List<Double> def) {
@@ -449,7 +437,7 @@ public class YAMLNode {
 	 * an actual list and cannot be just a boolean,
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value or null for an empty list as default
+	 * @param def default value or null for an empty list as default
 	 * @return list of integers
 	 */
 	public List<Boolean> getBooleanList(String path, List<Boolean> def) {
@@ -477,7 +465,7 @@ public class YAMLNode {
 	 * an actual node and cannot be just a boolean,
 	 *
 	 * @param path path to node (dot notation)
-	 * @param def  default value or null for an empty list as default
+	 * @param def default value or null for an empty list as default
 	 * @return list of integers
 	 */
 	@SuppressWarnings("unchecked")
@@ -529,7 +517,7 @@ public class YAMLNode {
 			return null;
 		} else if (o instanceof Map) {
 			Map<String, YAMLNode> nodes =
-					new HashMap<String, YAMLNode>();
+					new LinkedHashMap<String, YAMLNode>();
 
 			for (Map.Entry<String, Object> entry : ((Map<String, Object>) o).entrySet()) {
 				if (entry.getValue() instanceof Map) {
