@@ -279,10 +279,6 @@ public class SimpleOptionsFrame extends OptionsFrame implements ActionListener {
 			Settings.setClipboardAccess(clibboardAccess.isSelected());
 			Settings.setRetryLogin(retryLogin.isSelected());
 			Settings.getSettings().save();
-			try {
-			    Settings.getSettings().load();
-			} catch (Exception ex) {
-			}
 			setVisible(false);
 		} else if (e.getActionCommand().equals(scRecBuild.getActionCommand()) || e.getActionCommand().equals(scDevBuild.getActionCommand()) || e.getActionCommand().equals(scCustomBuild.getActionCommand())) {
 			refreshSpoutcraftBuildList();
