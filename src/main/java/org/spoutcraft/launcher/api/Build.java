@@ -30,7 +30,7 @@ public enum Build {
 	RECOMMENDED,
 	CUSTOM,
 	DEV;
-	
+
 	public static Build getValue(String name) {
 		Build result;
 		try {

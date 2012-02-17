@@ -61,6 +61,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 		try {
 			URL url = new URL("http://updates.getspout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(7500);
 			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
 				conn.disconnect();
 				StringBuilder sb = new StringBuilder();

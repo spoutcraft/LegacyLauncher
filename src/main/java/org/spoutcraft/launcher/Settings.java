@@ -32,17 +32,17 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 public class Settings {
 
 	private static YAMLProcessor settings;
-	
+
 	public static void setSettings(YAMLProcessor settings) {
-		if (Settings.settings != null) 
+		if (Settings.settings != null)
 			throw new IllegalArgumentException("settings is already set!");
 		Settings.settings = settings;
 		try {
-		    Settings.settings.load();
+			Settings.settings.load();
 		} catch (Exception e) {
-		    e.printStackTrace();
+			e.printStackTrace();
 		}
-		
+
 	}
 
 	public static YAMLProcessor getSettings() {
@@ -52,19 +52,19 @@ public class Settings {
 	public static int getLauncherSelectedBuild() {
 		return settings.getInt("launcher.launcher.buildNumber", 5);
 	}
-	
+
 	public static void setLauncherSelectedBuild(int build) {
 		settings.setProperty("launcher.launcher.buildNumber", build);
 	}
-	
+
 	public static Build getLauncherBuild() {
 		return Build.getValue(settings.getString("launcher.launcher.build", "RECOMMENED"));
 	}
-	
+
 	public static void setLauncherBuild(String build) {
 		settings.setProperty("launcher.launcher.build", build);
 	}
-	
+
 	public static void setLauncherBuild(Build build) {
 		setLauncherBuild(build.name());
 	}
@@ -84,7 +84,7 @@ public class Settings {
 	public static void setSpoutcraftBuild(String build) {
 		settings.setProperty("launcher.client.build", build);
 	}
-	
+
 	public static void setSpoutcraftBuild(Build build) {
 		setSpoutcraftBuild(build.name());
 	}
@@ -92,7 +92,7 @@ public class Settings {
 	public static int getLoginTries() {
 		return settings.getInt("launcher.loginRetries", 3);
 	}
-	
+
 	public static void setLoginTries(int tries) {
 		settings.setProperty("launcher.loginRetries", tries);
 	}
@@ -100,7 +100,7 @@ public class Settings {
 	public static boolean isLatestLWJGL() {
 		return settings.getBoolean("launcher.latestLWJGL", false);
 	}
-	
+
 	public static void setLatestLWJGL(boolean latestLWJGL) {
 		settings.setProperty("launcher.latestLWJGL", latestLWJGL);
 	}
@@ -108,27 +108,27 @@ public class Settings {
 	public static boolean allowClipboardAccess() {
 		return settings.getBoolean("client.clipboardaccess", false);
 	}
-	
+
 	public static void setClipboardAccess(boolean allow) {
 		settings.setProperty("client.clipboardaccess", allow);
 	}
-	
+
 	public static boolean isAcceptUpdates() {
 		return settings.getBoolean("launcher.acceptUpdates", false);
 	}
-	
+
 	public static void setAcceptUpdates(boolean acceptUpdates) {
 		settings.setProperty("launcher.acceptUpdates", acceptUpdates);
 	}
-	
+
 	public static int getMemory() {
 		return settings.getInt("launcher.memory", 0);
 	}
-	
+
 	public static void setMemory(int memory) {
 		settings.setProperty("launcher.memory", 0);
 	}
-	
+
 	public static boolean retryLogin() {
 		return settings.getBoolean("launcher.retryLogin", true);
 	}

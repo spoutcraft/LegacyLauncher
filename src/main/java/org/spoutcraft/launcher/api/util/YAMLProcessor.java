@@ -54,10 +54,10 @@ import org.yaml.snakeyaml.representer.Representer;
  * a file and call its load() method. For specifying node paths in the
  * various get*() methods, they support SK's path notation, allowing you to
  * select child nodes by delimiting node names with periods.
- *
+ * <p/>
  * <p>
  * For example, given the following configuration file:</p>
- *
+ * <p/>
  * <pre>members:
  *     - Hollie
  *     - Jason
@@ -72,11 +72,10 @@ import org.yaml.snakeyaml.representer.Representer;
  *     cool: false
  *     eats:
  *         babies: true</pre>
- *
+ * <p/>
  * <p>Calling code could access sturmeh's baby eating state by using
  * <code>getBoolean("sturmeh.eats.babies", false)</code>. For lists, there are
  * methods such as <code>getStringList</code> that will return a type safe list.
- *
  *
  * @author sk89q
  */
@@ -89,10 +88,10 @@ public class YAMLProcessor extends YAMLNode {
 	protected YAMLFormat format;
 
 	/*
-		 * Map from property key to comment. Comment may have multiple lines that are newline-separated.
-		 * Comments support based on ZerothAngel's AnnotatedYAMLConfiguration
-		 * Comments are only supported with YAMLFormat.EXTENDED
-		 */
+	 * Map from property key to comment. Comment may have multiple lines that are newline-separated.
+	 * Comments support based on ZerothAngel's AnnotatedYAMLConfiguration
+	 * Comments are only supported with YAMLFormat.EXTENDED
+	 */
 	private final Map<String, String> comments = new HashMap<String, String>();
 
 	public YAMLProcessor(File file, boolean writeDefaults, YAMLFormat format) {
@@ -226,7 +225,8 @@ public class YAMLProcessor extends YAMLNode {
 				if (stream != null) {
 					stream.close();
 				}
-			} catch (IOException e) {}
+			} catch (IOException e) {
+			}
 		}
 
 		return false;
@@ -274,9 +274,8 @@ public class YAMLProcessor extends YAMLNode {
 	/**
 	 * Set a root-level comment.
 	 *
-	 * @param key the property key
 	 * @param comment the comment. May be <code>null</code>, in which case the comment
-	 *   is removed.
+	 *                is removed.
 	 */
 	public void setComment(String key, String... comment) {
 		if (comment != null && comment.length > 0) {
@@ -316,6 +315,7 @@ public class YAMLProcessor extends YAMLNode {
 	/**
 	 * This method returns an empty ConfigurationNode for using as a
 	 * default in methods that select a node from a node list.
+	 *
 	 * @return
 	 */
 	public static YAMLNode getEmptyNode(boolean writeDefaults) {

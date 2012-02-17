@@ -175,19 +175,19 @@ public class StringUtil {
 
 	/**
 	 * <p>Find the Levenshtein distance between two Strings.</p>
-	 *
+	 * <p/>
 	 * <p>This is the number of changes needed to change one String into
 	 * another, where each change is a single character modification (deletion,
 	 * insertion or substitution).</p>
-	 *
+	 * <p/>
 	 * <p>The previous implementation of the Levenshtein distance algorithm
 	 * was from <a href="http://www.merriampark.com/ld.htm">http://www.merriampark.com/ld.htm</a></p>
-	 *
+	 * <p/>
 	 * <p>Chas Emerick has written an implementation in Java, which avoids an OutOfMemoryError
 	 * which can occur when my Java implementation is used with very large strings.<br>
 	 * This implementation of the Levenshtein distance algorithm
 	 * is from <a href="http://www.merriampark.com/ldjava.htm">http://www.merriampark.com/ldjava.htm</a></p>
-	 *
+	 * <p/>
 	 * <pre>
 	 * StringUtil.getLevenshteinDistance(null, *)             = IllegalArgumentException
 	 * StringUtil.getLevenshteinDistance(*, null)             = IllegalArgumentException
@@ -202,8 +202,8 @@ public class StringUtil {
 	 * StringUtil.getLevenshteinDistance("hello", "hallo")    = 1
 	 * </pre>
 	 *
-	 * @param s  the first String, must not be null
-	 * @param t  the second String, must not be null
+	 * @param s the first String, must not be null
+	 * @param t the second String, must not be null
 	 * @return result distance
 	 * @throws IllegalArgumentException if either String input <code>null</code>
 	 */

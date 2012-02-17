@@ -87,7 +87,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return null;
 	}
-	
+
 	public final void saveUsername(String user, String pass) {
 		if (!hasSavedPassword(user) && pass != null && !Utils.isEmpty(pass))
 			usernames.put(user, new UserPasswordInformation(pass));

@@ -311,7 +311,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
 		addWindowListener(this);
-		
+
 		loginButton.setEnabled(true);
 	}
 
@@ -334,7 +334,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		} else if (e.getActionCommand().equals(optionsButton.getActionCommand())) {
 			OptionsFrame options = Launcher.getOptionsDialog();
 			options.setVisible(true);
-			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (320/2)), (int) Math.max(1, getBounds().getCenterY() - (365/2)), 320, 365);
+			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (320 / 2)), (int) Math.max(1, getBounds().getCenterY() - (365 / 2)), 320, 365);
 		}
 	}
 
@@ -378,7 +378,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 				} else {
 					Launcher.getGameUpdater().runValidator();
 				}
-				
+
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {

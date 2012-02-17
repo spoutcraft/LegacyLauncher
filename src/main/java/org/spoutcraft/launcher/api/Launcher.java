@@ -53,9 +53,9 @@ public class Launcher {
 		this.launcher = launcher;
 		this.key = key;
 
-		downloads =  new DownloadManager(key);
+		downloads = new DownloadManager(key);
 		security = new CommonSecurityManager(key);
-		
+
 		logger.addHandler(new ConsoleHandler());
 
 		System.setSecurityManager(security);
@@ -93,7 +93,7 @@ public class Launcher {
 	public static OptionsFrame getOptionsDialog() {
 		return instance.optionsFrame;
 	}
-	
+
 	public static void setOptionsFrame(OptionsFrame optionsFrame, double key) {
 		if (key != instance.key)
 			throw new IllegalArgumentException("Incorrect Key!");
