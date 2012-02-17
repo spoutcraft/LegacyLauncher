@@ -130,7 +130,7 @@ public class Utils {
 			Certificate[] certs = connection.getServerCertificates();
 
 			byte[] bytes = new byte[294];
-			DataInputStream dis = new DataInputStream(StartupParameters.class.getResourceAsStream("minecraft.key"));
+			DataInputStream dis = new DataInputStream(StartupParameters.class.getResourceAsStream("resources/minecraft.key"));
 			dis.readFully(bytes);
 			dis.close();
 

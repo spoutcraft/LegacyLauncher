@@ -60,7 +60,7 @@ public class UpdateDialog extends JDialog implements ActionListener {
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
 		getContentPane().add(contentPanel, BorderLayout.CENTER);
 
-		//setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("/resources/favicon.png")));
+		//setIconImage(Toolkit.getDefaultToolkit().getImage(LoginForm.class.getResource("resources/favicon.png")));
 
 		label.setFont(new Font("Arial", Font.PLAIN, 18));
 		contentPanel.add(label);
