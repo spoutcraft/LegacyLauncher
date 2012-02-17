@@ -82,7 +82,7 @@ public class Settings {
 	}
 
 	public static void setSpoutcraftBuild(String build) {
-		settings.setProperty("client.launcher.build", build);
+		settings.setProperty("launcher.client.build", build);
 	}
 	
 	public static void setSpoutcraftBuild(Build build) {
