@@ -87,6 +87,11 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return null;
 	}
+	
+	public final void saveUsername(String user, String pass) {
+		if (!hasSavedPassword(user) && pass != null && !Utils.isEmpty(pass))
+			usernames.put(user, new UserPasswordInformation(pass));
+	}
 
 	public final Skin getParentSkin() {
 		return parent;
@@ -212,6 +217,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			case SUCESSFUL_LOGIN:
 				CheckUpdatesWorker check = new CheckUpdatesWorker(this);
 				check.execute();
+				writeUsernameList();
 				break;
 			case UPDATE_FINISHED:
 				Launcher.getGameUpdater().runValidator();
