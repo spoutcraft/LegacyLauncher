@@ -31,14 +31,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Calendar;
 import java.util.Random;
+
 import javax.swing.JTextPane;
 
 import org.jdesktop.swingworker.SwingWorker;
 
-public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
+public class TumblerFeedParsingWorker extends SwingWorker<Object, Object> implements PropertyChangeListener {
 	JTextPane editorPane;
 	private String username = null;
 	private Random rand = new Random();
+	boolean isUpdating = false;
+	
 	public TumblerFeedParsingWorker(JTextPane editorPane) {
 		this.editorPane = editorPane;
 	}
@@ -54,28 +60,8 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
 				editorPane.setVisible(false);
+				editorPane.addPropertyChangeListener(this);
 				editorPane.setPage(url);
-				try {
-					Thread.sleep(5000);
-				}
-				catch (InterruptedException e) { }
-
-				String text = editorPane.getText();
-
-				int index = text.indexOf("<!-- BEGIN TUMBLR CODE -->");
-				int endIndex = text.indexOf("<!-- END TUMBLR CODE -->") + "<!-- END TUMBLR CODE -->".length();
-				if (index > -1 && endIndex > -1) {
-					text = text.substring(0, index) + text.substring(endIndex);
-				}
-				text = text.replaceAll("<li>", "- ");
-				text = text.replaceAll("</li>", "<br/>");
-				text = text.replaceAll("<p>", "");
-				text = text.replace("</p>", "<br/>");
-				text = text.replaceAll("</p>", "<br/><br/>");
-				text = text.replaceAll("@time_of_day", getTimeOfDay());
-				text = text.replaceAll("@username", getUsername());
-				editorPane.setText(text);
-				editorPane.setVisible(true);
 			} else {
 				editorPane.setText(getErrorMessage());
 			}
@@ -135,5 +121,29 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object>{
 			return "evening";
 		}
 		return "night";
+	}
+	
+
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (!isUpdating && evt.getPropertyName().equals("page")) {
+			isUpdating = true;
+			String text = editorPane.getText();
+
+			int index = text.indexOf("<!-- BEGIN TUMBLR CODE -->");
+			int endIndex = text.indexOf("<!-- END TUMBLR CODE -->") + "<!-- END TUMBLR CODE -->".length();
+			if (index > -1 && endIndex > -1) {
+				text = text.substring(0, index) + text.substring(endIndex);
+			}
+			text = text.replaceAll("<li>", "- ");
+			text = text.replaceAll("</li>", "<br/>");
+			text = text.replaceAll("<p>", "");
+			text = text.replace("</p>", "<br/>");
+			text = text.replaceAll("</p>", "<br/><br/>");
+			text = text.replaceAll("@time_of_day", getTimeOfDay());
+			text = text.replaceAll("@username", getUsername());
+			editorPane.setText(text);
+			editorPane.setVisible(true);
+			editorPane.setCaretPosition(0);
+		}
 	}
 }
