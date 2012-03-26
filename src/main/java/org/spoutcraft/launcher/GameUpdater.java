@@ -75,7 +75,6 @@ public class GameUpdater implements DownloadListener {
 	/* Minecraft Updating Arguments */
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
-	public final String spoutcraftMirrors = "http://cdn.spout.org/mirrors.html";
 
 	private DownloadListener listener;
 	public GameUpdater() {
@@ -383,7 +382,7 @@ public class GameUpdater implements DownloadListener {
 
 			if (!libraryFile.exists()) {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
-				String fallbackURL = "http://dl.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String fallbackURL = "http://get.spout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, this);
 				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, this);
 			}

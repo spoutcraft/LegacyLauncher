@@ -56,7 +56,7 @@ public class TumblerFeedParsingWorker extends SwingWorker<Object, Object> implem
 	@Override
 	protected Object doInBackground() throws Exception {
 		try {
-			URL url = new URL("http://updates.getspout.org/");
+			URL url = new URL("http://updates.spout.org/");
 			HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
 				editorPane.setVisible(false);
