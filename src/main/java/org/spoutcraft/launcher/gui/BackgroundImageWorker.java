@@ -47,7 +47,7 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object>{
 	protected Object doInBackground() {
 		try {
 			if (!backgroundImage.exists() || backgroundImage.length() < 10*1024 || System.currentTimeMillis() - backgroundImage.lastModified() > IMAGE_CYCLE_TIME) {
-				Download download = new Download("http://www.spoutcraft.org/splash/random.png", backgroundImage.getPath());
+				Download download = new Download("http://get.spout.org/splash/random.png", backgroundImage.getPath());
 				download.run();
 			}
 		} catch (Exception e) {
