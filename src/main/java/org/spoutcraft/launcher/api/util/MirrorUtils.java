@@ -32,7 +32,11 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -45,11 +49,11 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 public class MirrorUtils {
 	private static boolean updated = false;
 	private static File mirrorsYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "mirrors.yml");
-	private static final Random rand = new Random();
 	private static final String baseURL = "http://get.spout.org/";
+	private static List<String> mirrors = null;
 
 	public static String getMirrorUrl(String mirrorURI, String fallbackUrl, DownloadListener listener) {
-		try {
+		if (MirrorUtils.mirrors == null) {
 			Map<String, Integer> mirrors = getMirrors();
 			Set<Entry<String, Integer>> set = mirrors.entrySet();
 
@@ -57,47 +61,27 @@ public class MirrorUtils {
 			Iterator<Entry<String, Integer>> iterator = set.iterator();
 			while (iterator.hasNext()) {
 				Entry<String, Integer> e = iterator.next();
-				String mirror = "http://" + e.getKey() + "/" + mirrorURI;
+				String mirror = "http://" + e.getKey();
 				if (isAddressReachable(mirror)) {
 					goodMirrors.add(e.getKey());
 				}
 			}
-
-			// safe fast return
-			if (goodMirrors.size() == 1) {
-				return "http://" + goodMirrors.get(0) + "/" + mirrorURI;
+			
+			Collections.sort(goodMirrors, new MirrorComparator(mirrors));
+			for (String mirror : goodMirrors) {
+				System.out.println("Mirror " + mirror + " value " + mirrors.get(mirror));
 			}
-
-			// the for loop may fail if random numbers are unlucky, in which case we want to try again
-			while (goodMirrors.size() > 0) {
-				int random = rand.nextInt(10 * mirrors.size());
-				int index = random / 10;
-				float progress = 0F;
-				for (int i = index; i < goodMirrors.size() + index; i++) {
-					int j = i;
-					if (j >= goodMirrors.size())
-						j -= goodMirrors.size();
-					int roll = rand.nextInt(100);
-					int chance = mirrors.get(goodMirrors.get(j));
-					if (roll < chance) {
-						String mirror = "http://" + goodMirrors.get(j) + "/" + mirrorURI;
-						System.out.println("Using mirror: " + mirror);
-						if (listener != null) {
-							listener.stateChanged("Contacting Mirrors...", 100F);
-						}
-						return mirror;
-					} else {
-						progress += 100F / mirrors.size();
-						if (listener != null) {
-							listener.stateChanged("Contacting Mirrors...", progress);
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			
+			MirrorUtils.mirrors = goodMirrors;
 		}
-		System.err.println("All mirrors failed, reverting to default");
+		
+		for (String mirror : MirrorUtils.mirrors){
+			String lookup = "http://" + mirror + "/" + mirrorURI;
+			if (isAddressReachable(lookup)) {
+				return lookup;
+			}
+		}
+
 		return fallbackUrl;
 	}
 
@@ -112,6 +96,8 @@ public class MirrorUtils {
 			URL test = new URL(url);
 			HttpURLConnection.setFollowRedirects(false);
 			HttpURLConnection urlConnect = (HttpURLConnection) test.openConnection();
+			System.setProperty("http.agent", "");
+			urlConnect.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			urlConnect.setRequestMethod("HEAD");
 			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
 		} catch (Exception e) {
@@ -148,4 +134,26 @@ public class MirrorUtils {
 	public static String getBaseURL() {
 		return baseURL;
 	}
+}
+
+class MirrorComparator implements Comparator<String> {
+	final Map<String, Integer> values = new HashMap<String, Integer>();
+	final Random rand = new Random();
+	final Map<String, Integer> mirrors;
+	public MirrorComparator(Map<String, Integer> mirrors) {
+		this.mirrors = mirrors;
+	}
+	public int compare(String o1, String o2) {
+		return getValue(o2) - getValue(o1);
+	}
+	
+	private int getValue(String mirror) {
+		if (values.containsKey(mirror)) {
+			return values.get(mirror);
+		}
+		int value = rand.nextInt(mirrors.get(mirror)) + 1;
+		values.put(mirror, value);
+		return value;
+	}
+	
 }
