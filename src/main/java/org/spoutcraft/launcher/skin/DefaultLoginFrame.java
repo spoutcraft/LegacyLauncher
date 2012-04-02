@@ -59,10 +59,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.OptionsFrame;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
@@ -80,7 +78,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	private JPasswordField passwordField;
 	private JComboBox usernameField = new JComboBox();
 	private JButton loginButton = new JButton("Login");
-	private JButton optionsButton = new JButton("Options");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
 	private List<JButton> loginSkin1Image;
@@ -114,10 +111,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		loginButton.addActionListener(this);
 		loginButton.setEnabled(false);
-
-		optionsButton.setFont(arial11);
-		optionsButton.setOpaque(false);
-		optionsButton.addActionListener(this);
 
 		usernameField.setFont(arial11);
 		usernameField.addActionListener(this);
@@ -206,14 +199,14 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
+		
+		editorPane.setEditable(false);
+		editorPane.setOpaque(false);
 
 		AsyncRSSFeed rss = new AsyncRSSFeed(editorPane);
 		if (getSavedUsernames().size() > 0)
 			rss.setUser(getSavedUsernames().get(0));
 		rss.execute();
-
-		editorPane.setEditable(false);
-		editorPane.setOpaque(false);
 
 		JLabel trans2;
 
@@ -246,9 +239,8 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		usernameField.setEditable(true);
 		contentPane.setLayout(null);
-		rememberCheckbox.setBounds(144, 66, 93, 23);
+		rememberCheckbox.setBounds(272, 41, 86, 23);
 		contentPane.add(lblLogo);
-		optionsButton.setBounds(272, 41, 86, 23);
 		contentPane.add(loginSkin1);
 		contentPane.add(loginSkin2);
 
@@ -260,7 +252,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		loginPane.add(loginButton);
 		loginPane.add(rememberCheckbox);
 		loginPane.add(purchaseAccount);
-		loginPane.add(optionsButton);
 		contentPane.add(loginPane);
 
 		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
@@ -306,7 +297,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		order.add(passwordField);
 		order.add(rememberCheckbox);
 		order.add(loginButton);
-		order.add(optionsButton);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
@@ -331,10 +321,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			doLogin(loginSkin1.getText());
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
 			doLogin(loginSkin2.getText());
-		} else if (e.getActionCommand().equals(optionsButton.getActionCommand())) {
-			OptionsFrame options = Launcher.getOptionsDialog();
-			options.setVisible(true);
-			options.setBounds((int) Math.max(1, getBounds().getCenterX() - (320 / 2)), (int) Math.max(1, getBounds().getCenterY() - (365 / 2)), 320, 365);
 		}
 	}
 
@@ -358,56 +344,18 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
 				break;
-			case FINISHED_UPDATE_CHECK:
-				if (Launcher.getGameUpdater().isInitialInstall() || Settings.isAcceptUpdates()) {
-					runUpdater();
-				} else if (isMinecraftUpdateaAvailable()) {
-					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Minecraft. Would you like to update?", "Minecraft Update", JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						runUpdater();
-					} else {
-						Launcher.getGameUpdater().runValidator();
-					}
-				} else if (isSpoutcraftUpdateaAvailable()) {
-					int result = JOptionPane.showConfirmDialog(this, "There is an update available for Spoutcraft. Would you like to update?", "Spoutcraft Update", JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						runUpdater();
-					} else {
-						Launcher.getGameUpdater().runValidator();
-					}
-				} else {
-					Launcher.getGameUpdater().runValidator();
-				}
-
-				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
 				} else {
 					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
-						Launcher.getGameLauncher().runGame("Player", "", "", "");
+						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "", "");
 					}
 				}
 				break;
-			case GAME_LAUNCH_SUCCESS:
-				break;
-			case GAME_LAUNCH_FAILED:
-				break;
-			case SUCESSFUL_LOGIN:
-				break;
-			case UPDATE_FINISHED:
-				break;
 			case USER_NOT_PREMIUM:
 				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
-				break;
-			case UPDATE_FAILED:
-				JOptionPane.showMessageDialog(getParent(), new StringBuilder().append("Oh no! The ").append(isMinecraftUpdateaAvailable() && isSpoutcraftUpdateaAvailable() ? "Minecraft and Spoutcraft" : isSpoutcraftUpdateaAvailable() ? "Spoutcraft" : "Minecraft").append(" update failed!").toString());
-				break;
-			case VALIDATION_PASSED:
-				Launcher.getGameUpdater().runGame();
-				break;
-			case VALIDATION_FAILED:
 				break;
 		}
 	}
@@ -428,10 +376,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	public void windowClosing(WindowEvent e) {
 	}
 
-	public void windowClosed(WindowEvent e) {
-		Launcher.getOptionsDialog().exit();
-	}
-
 	public void windowIconified(WindowEvent e) {
 	}
 
@@ -442,5 +386,8 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	}
 
 	public void windowDeactivated(WindowEvent e) {
+	}
+
+	public void windowClosed(WindowEvent e) {
 	}
 }

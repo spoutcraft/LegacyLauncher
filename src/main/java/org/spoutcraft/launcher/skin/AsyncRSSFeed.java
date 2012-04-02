@@ -59,18 +59,16 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 	@Override
 	protected Object doInBackground() throws Exception {
 		try {
+			editorPane.setText("Loading RSS feed...");
 			URL url = new URL("http://updates.getspout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setConnectTimeout(7500);
 			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
-				conn.disconnect();
 				StringBuilder sb = new StringBuilder();
 				SyndFeedInput input = new SyndFeedInput();
-				URL feedUrl;
 				SyndFeed feed;
 				Iterator entries;
-				feedUrl = new URL("http://updates.getspout.org/rss");
-				feed = input.build(new XmlReader(feedUrl));
+				feed = input.build(new XmlReader(conn));
 				entries = feed.getEntries().iterator();
 
 				while (entries.hasNext()) {

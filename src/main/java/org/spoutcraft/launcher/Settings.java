@@ -58,7 +58,7 @@ public class Settings {
 	}
 
 	public static Build getLauncherBuild() {
-		return Build.getValue(settings.getString("launcher.launcher.build", "RECOMMENED"));
+		return Build.getValue(settings.getString("launcher.launcher.build", "RECOMMENDED"));
 	}
 
 	public static void setLauncherBuild(String build) {
@@ -78,7 +78,7 @@ public class Settings {
 	}
 
 	public static Build getSpoutcraftBuild() {
-		return Build.getValue(settings.getString("launcher.client.build", "RECOMMENED"));
+		return Build.getValue(settings.getString("launcher.client.build", "RECOMMENDED"));
 	}
 
 	public static void setSpoutcraftBuild(String build) {

@@ -47,7 +47,6 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 	private final LoginFrame loginFrame;
 	private String user;
 	private String pass;
-	@SuppressWarnings("unused")
 	private String[] values = null;
 
 	public LoginWorker(LoginFrame loginFrame) {
@@ -124,6 +123,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
 			} else {
 				loginFrame.offline = true;
+				Launcher.getGameUpdater().setMinecraftUser(user);
 				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
 			}
 			this.cancel(true);

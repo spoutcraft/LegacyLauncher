@@ -30,6 +30,8 @@ import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 
+import org.spoutcraft.launcher.api.skin.exceptions.DownloadException;
+
 public class Download implements Runnable {
 	private static final long TIMEOUT = 30000;
 
@@ -50,7 +52,7 @@ public class Download implements Runnable {
 		return ((float) downloaded / size) * 100;
 	}
 
-	public void run() {
+	public void run(){
 		try {
 			URLConnection conn = url.openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
@@ -110,12 +112,16 @@ public class Download implements Runnable {
 			rbc.close();
 			progress.interrupt();
 			success = size > 0 ? (size == outFile.length()) : true;
-		} catch (Exception e) {
+		}
+		catch (DownloadException e) {
+			success = false;
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected InputStream getConnectionInputStream(final URLConnection urlconnection) throws Exception {
+	protected InputStream getConnectionInputStream(final URLConnection urlconnection) throws DownloadException {
 		final InputStream[] is = new InputStream[1];
 
 		for (int j = 0; (j < 3) && (is[0] == null); j++) {
@@ -123,8 +129,7 @@ public class Download implements Runnable {
 				public void run() {
 					try {
 						is[0] = urlconnection.getInputStream();
-					} catch (IOException ignore) {
-					}
+					} catch (IOException ignore) {}
 				}
 			};
 			stream.start();
@@ -132,19 +137,17 @@ public class Download implements Runnable {
 			while ((is[0] == null) && (iterationCount++ < 5)) {
 				try {
 					stream.join(1000L);
-				} catch (InterruptedException ignore) {
-				}
+				} catch (InterruptedException ignore) {}
 			}
 			if (is[0] != null) continue;
 			try {
 				stream.interrupt();
 				stream.join();
-			} catch (InterruptedException ignore) {
-			}
+			} catch (InterruptedException ignore) {}
 		}
 
 		if (is[0] == null) {
-			throw new Exception("Unable to download file");
+			throw new DownloadException("Unable to download file");
 		}
 		return new BufferedInputStream(is[0]);
 	}

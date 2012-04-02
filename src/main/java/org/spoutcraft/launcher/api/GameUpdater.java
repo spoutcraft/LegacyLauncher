@@ -26,11 +26,7 @@
 
 package org.spoutcraft.launcher.api;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.spoutcraft.launcher.api.util.DownloadListener;
-import org.spoutcraft.launcher.api.util.Utils;
 
 public abstract class GameUpdater extends SpoutcraftDirectories implements DownloadListener {
 
@@ -43,8 +39,6 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
 	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
-
-	private boolean initialInstall = false;
 
 	private DownloadListener listener;
 
@@ -88,32 +82,10 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 		this.listener = listener;
 	}
 
-	public boolean isInitialInstall() {
-		return initialInstall;
-	}
-
-	public void setInitialInstall(boolean initialInstall) {
-		this.initialInstall = initialInstall;
-	}
-
 	public void stateChanged(String message, float progress) {
 		if (listener != null)
 			listener.stateChanged(message, progress);
 	}
-
-	public abstract boolean isSpoutcraftUpdateAvailible();
-
-	public abstract boolean isMinecraftUpdateAvailible();
-
-	public abstract void updateMinecraft() throws IOException;
-
-	public abstract void updateSpoutcraft() throws Exception;
-
-	public abstract void runValidator();
-
-	public abstract void setStartValidationTime(long validationTime);
-
-	public abstract void clearVersionsInYMLs();
 
 	public void runGame() {
 		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, minecraftPass);

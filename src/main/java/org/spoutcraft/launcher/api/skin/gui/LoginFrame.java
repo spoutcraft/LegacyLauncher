@@ -32,7 +32,6 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,12 +48,10 @@ import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.util.DownloadListener;
-import org.spoutcraft.launcher.api.util.FileUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
@@ -62,13 +59,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private static final long serialVersionUID = -2105611446626766230L;
 	private final Skin parent;
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
-	private boolean mcUpdate = false, scUpdate = false;
 	protected boolean offline = false;
-	private int updateTries = 0;
 
 	public LoginFrame(Skin parent) {
 		this.parent = parent;
-		Launcher.getGameUpdater().setDownloadListener(this);
 		readSavedUsernames();
 	}
 
@@ -111,6 +105,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		if (pass == null)
 			throw new NullPointerException("The password was null when logining in as user: '" + user + "'");
 
+		Launcher.getGameUpdater().setDownloadListener(this);
+		
 		LoginWorker loginThread = new LoginWorker(this);
 		loginThread.setUser(user);
 		loginThread.setPass(pass);
@@ -153,7 +149,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 	}
 
-	@SuppressWarnings("unused")
 	private final void writeUsernameList() {
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
@@ -202,67 +197,16 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	public final void onRawEvent(Event event) {
 		switch (event) {
-			case BAD_LOGIN:
-				break;
-			case FINISHED_UPDATE_CHECK:
-				break;
-			case MINECRAFT_NETWORK_DOWN:
-				break;
-			case GAME_LAUNCH_SUCCESS:
+			case GAME_LAUNCH:
 				setVisible(false);
 				dispose();
 				break;
-			case GAME_LAUNCH_FAILED:
-				break;
 			case SUCESSFUL_LOGIN:
-				CheckUpdatesWorker check = new CheckUpdatesWorker(this);
-				check.execute();
 				writeUsernameList();
+				Launcher.getGameUpdater().runGame();
 				break;
-			case UPDATE_FINISHED:
-				Launcher.getGameUpdater().runValidator();
-				break;
-			case USER_NOT_PREMIUM:
-				Launcher.getGameUpdater().runValidator();
-				break;
-			case VALIDATION_FAILED:
-				if (updateTries <= Settings.getLoginTries()) {
-					Launcher.clearCache();
-					mcUpdate = true;
-					scUpdate = true;
-					UpdateWorker updateWorker = new UpdateWorker(this);
-					updateWorker.execute();
-					updateTries++;
-					return;
-				} else {
-					onEvent(Event.UPDATE_FAILED);
-					return;
-				}
-			case VALIDATION_PASSED:
-
 		}
 		onEvent(event);
-	}
-
-	public boolean isSpoutcraftUpdateaAvailable() {
-		return scUpdate;
-	}
-
-	public void setSpoutcraftUpdateAvailable(boolean scUpdate) {
-		this.scUpdate = scUpdate;
-	}
-
-	public boolean isMinecraftUpdateaAvailable() {
-		return mcUpdate;
-	}
-
-	public void setMinecraftUpdateAvailable(boolean mcUpdate) {
-		this.mcUpdate = mcUpdate;
-	}
-
-	public void runUpdater() {
-		UpdateWorker updater = new UpdateWorker(this);
-		updater.execute();
 	}
 
 	protected static final class UserPasswordInformation {

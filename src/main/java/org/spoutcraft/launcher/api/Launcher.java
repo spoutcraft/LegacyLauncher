@@ -39,19 +39,16 @@ public class Launcher {
 	private static Launcher instance;
 	private final Logger logger = Logger.getLogger("org.spoutcraft.launcher.Main");
 	private final SkinManager skinManager;
-	private final double key;
 	private final CommonSecurityManager security;
 	private final DownloadManager downloads;
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
-	private OptionsFrame optionsFrame;
 
 	public Launcher(final GameUpdater updater, final GameLauncher launcher, double key) {
 		if (Launcher.instance != null)
 			throw new IllegalArgumentException("You can have a duplicate Launcher");
 		this.updater = updater;
 		this.launcher = launcher;
-		this.key = key;
 
 		downloads = new DownloadManager(key);
 		security = new CommonSecurityManager(key);
@@ -88,16 +85,6 @@ public class Launcher {
 
 	public static GameLauncher getGameLauncher() {
 		return instance.launcher;
-	}
-
-	public static OptionsFrame getOptionsDialog() {
-		return instance.optionsFrame;
-	}
-
-	public static void setOptionsFrame(OptionsFrame optionsFrame, double key) {
-		if (key != instance.key)
-			throw new IllegalArgumentException("Incorrect Key!");
-		instance.optionsFrame = optionsFrame;
 	}
 
 	public static boolean clearCache() {

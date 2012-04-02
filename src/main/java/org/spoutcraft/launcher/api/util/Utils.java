@@ -172,7 +172,15 @@ public class Utils {
 		return null;
 	}
 
+	private static OS cached = null;
 	public static OS getOperatingSystem() {
+		if (cached == null) {
+			cached = lookupOperatingSystem();
+		}
+		return cached;
+	}
+	
+	private static OS lookupOperatingSystem() {
 		String osName = System.getProperty("os.name").toLowerCase();
 		if (osName.contains("win"))
 			return OS.WINDOWS;

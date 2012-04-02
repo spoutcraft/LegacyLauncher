@@ -324,6 +324,7 @@ public class YAMLProcessor extends YAMLNode {
 
 	// This will be included in snakeyaml 1.10, but until then we have to do it manually.
 	private class FancyDumperOptions extends DumperOptions {
+		@SuppressWarnings("deprecation")
 		@Override
 		public DumperOptions.ScalarStyle calculateScalarStyle(ScalarAnalysis analysis, DumperOptions.ScalarStyle style) {
 			if (format == YAMLFormat.EXTENDED

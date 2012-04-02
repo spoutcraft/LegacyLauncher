@@ -29,6 +29,7 @@ package org.spoutcraft.launcher.api;
 import java.awt.Frame;
 
 public abstract class GameLauncher extends Frame {
+	private static final long serialVersionUID = 1L;
 
 	public GameLauncher(String title) {
 		super(title);

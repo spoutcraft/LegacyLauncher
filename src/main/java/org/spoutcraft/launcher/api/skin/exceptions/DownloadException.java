@@ -23,17 +23,38 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
+package org.spoutcraft.launcher.api.skin.exceptions;
 
-package org.spoutcraft.launcher.api;
+import java.io.IOException;
 
-import javax.swing.JFrame;
+public class DownloadException extends IOException {
+	private final Throwable cause;
+	private final String message;
 
-public abstract class OptionsFrame extends JFrame {
-
-	public void exit() {
-		synchronized (this) {
-			this.dispose();
-		}
+	public DownloadException(String message, Throwable cause) {
+		this.cause = cause;
+		this.message = message;
 	}
 
+	public DownloadException(Throwable cause) {
+		this(null, cause);
+	}
+
+	public DownloadException(String message) {
+		this(message, null);
+	}
+
+	public DownloadException() {
+		this(null, null);
+	}
+
+	public Throwable getCause() {
+		return this.cause;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	private static final long serialVersionUID = 1L;
 }
