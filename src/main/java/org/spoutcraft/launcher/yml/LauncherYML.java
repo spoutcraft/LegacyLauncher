@@ -39,11 +39,13 @@ import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLNode;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
+@SuppressWarnings("unused")
 public class LauncherYML {
 	private static volatile boolean updated = false;
 	private static File launcherYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "launcher.yml");
-	private static Object key = new Object();
-	private static int recommened = -1;
+	private static final Object key = new Object();
+	
+	private static int recommended = -1;
 	private static int current = -1;
 	private static int latest = -1;
 
@@ -94,7 +96,7 @@ public class LauncherYML {
 						config.load();
 						config.setProperty("current", Main.getBuild("launcher-version"));
 						// TODO REMOVE COMMENT current = config.getInt("current");
-						recommened = config.getInt("recommended");
+						recommended = config.getInt("recommended");
 						latest = config.getInt("latest");
 						config.save();
 					} catch (IOException e) {

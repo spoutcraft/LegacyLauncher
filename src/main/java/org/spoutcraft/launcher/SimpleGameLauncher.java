@@ -62,7 +62,14 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 
 	@Override
 	public void runGame(String user, String session, String downloadTicket, String mcpass) {
-		super.setVisible(true);
+		((SimpleGameUpdater)Launcher.getGameUpdater()).setWaiting(true);
+		while (!((SimpleGameUpdater)Launcher.getGameUpdater()).isFinished()) {
+			try {
+				System.out.println("Sleeping for 100 ms");
+				Thread.sleep(100);
+			}
+			catch (InterruptedException ignore) { }
+		}
 		Applet applet = null;
 		try {
 			applet = MinecraftLauncher.getMinecraftApplet();
@@ -73,7 +80,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
 			this.dispose();
-			Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_FAILED);
 			return;
 		}
 		if (applet == null) {
@@ -81,7 +87,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
-			Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_FAILED);
 			return;
 		}
 
@@ -103,15 +108,17 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		applet.setStub(minecraft);
 
 		this.add(minecraft);
+		
 		validate();
+		this.setVisible(true);
 
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());
 
 		minecraft.start();
 
-		this.setVisible(true);
-		Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH_SUCCESS);
+		
+		Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH);
 		return;
 	}
 
@@ -124,10 +131,9 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			this.minecraft.destroy();
 		}
 		try {
-			Thread.sleep(10000L);
-		} catch (InterruptedException e1) {
-			e1.printStackTrace();
-		}
+			Thread.sleep(1000L);
+		} catch (InterruptedException ignore) { }
+		
 		System.out.println("Exiting Spoutcraft");
 		System.exit(0);
 	}

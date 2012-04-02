@@ -47,8 +47,11 @@ import org.spoutcraft.launcher.skin.DefaultSkin;
 import org.spoutcraft.launcher.skin.DefaultSkinLoader;
 
 public class Main {
+	private static final boolean DEBUG_MODE = true;
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
+		final long startupTime = start;
+		
 		StartupParameters params = new StartupParameters();
 		try {
 			new JCommander(params, args);
@@ -62,7 +65,7 @@ public class Main {
 		System.out.println("Launcher Build: " + getBuild("launcher-version"));
 		System.out.println("Launcher API Build: " + getBuild("api-version"));
 
-		// Set up the directories \\
+		// Set up the directories
 		Utils.getWorkingDirectory().mkdirs();
 		File skinDir = new File(Utils.getWorkingDirectory(), "skins");
 		File sc = new File(Utils.getWorkingDirectory(), "spoutcraft");
@@ -70,6 +73,11 @@ public class Main {
 		skinDir.mkdirs();
 
 		setLookAndFeel();
+		
+		if (DEBUG_MODE) {
+			System.out.println("Initial Launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		final double key = (new Random()).nextDouble();
 		YAMLProcessor settings = setupSettings();
@@ -77,14 +85,27 @@ public class Main {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
 		Settings.setSettings(settings);
+		
+		if (DEBUG_MODE) {
+			System.out.println("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
-		// Set up the Launcher and load skins \\
+		// Set up the Launcher and load skins
 		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher(), key);
+		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
 		SkinManager skinManager = Launcher.getSkinManager();
 		skinManager.loadSkins(skinDir);
+		
+		if (DEBUG_MODE) {
+			System.out.println("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
-		SimpleOptionsFrame optionsFrame = new SimpleOptionsFrame();
-		Launcher.setOptionsFrame(optionsFrame, key);
+		if (DEBUG_MODE) {
+			System.out.println("Launcher options frame loading took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		// Register the default skin with the SkinManager \\
 		JavaSkin defaultSkin = new DefaultSkin();
@@ -92,6 +113,11 @@ public class Main {
 		SkinDescriptionFile desc = new SkinDescriptionFile("default", "1.0", "org.spoutcraft.launcher.skin.DefaultSkin");
 		defaultSkin.initialize(new DefaultSkinLoader((CommonSecurityManager) System.getSecurityManager(), (new Random()).nextDouble()), desc, null, null, null);
 		skinManager.addSkin(defaultSkin);
+		
+		if (DEBUG_MODE) {
+			System.out.println("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		// Load Selected Skin \\
 		Skin skin = skinManager.getSkin(settings.getString("skin", "default"));
@@ -105,23 +131,43 @@ public class Main {
 		if (skinManager.getEnabledSkin() == null) {
 			System.exit(-9);
 		}
+		
+		if (DEBUG_MODE) {
+			System.out.println("Launcher skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		System.out.println("Using Skin '" + skin.getDescription().getFullName() + "'");
 
 		skin.getLoginFrame().setVisible(true);
 
-		System.out.println("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
+		System.out.println("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
 	}
 
+	@SuppressWarnings("restriction")
 	public static void setLookAndFeel() {
 		if (Utils.getOperatingSystem() == Utils.OS.MAC_OS) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
 		}
-
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (Exception e) {
+			boolean laf = false;
+			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
+				//This bypasses the expensive reflection calls
+				try {
+					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
+					laf = true;
+				}
+				catch (Exception ignore) { }
+			}
+			
+			if (!laf) {
+				//Can't guess the laf for other os's as easily
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+			
+		}
+		catch (Exception e) {
 			System.out.println("There was an error setting the Look and Feel: " + e);
 		}
 	}
@@ -129,7 +175,7 @@ public class Main {
 	public static String getBuild(String buildFile) {
 		String build = "-1";
 		try {
-			build = IOUtils.toString(Main.class.getResource(buildFile).openStream(), "UTF-8");
+			build = IOUtils.toString(Main.class.getResource("resources/" +buildFile).openStream(), "UTF-8");
 		} catch (Exception e) {
 
 		}
@@ -141,7 +187,7 @@ public class Main {
 
 		if (!file.exists()) {
 			try {
-				InputStream input = Main.class.getResource("settings.yml").openStream();
+				InputStream input = Main.class.getResource("resources/settings.yml").openStream();
 				if (input != null) {
 					FileOutputStream output = null;
 					try {
@@ -168,9 +214,7 @@ public class Main {
 						}
 					}
 				}
-			} catch (Exception e) {
-
-			}
+			} catch (Exception e) { }
 		}
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);

@@ -27,33 +27,79 @@ package org.spoutcraft.launcher.launch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
 public class MinecraftClassLoader extends URLClassLoader {
-	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(1000);
-	private File spoutcraft = null;
-	private File[] libraries;
+	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(10000);
+	private HashSet<String> preloaded = new HashSet<String>();
+	private HashMap<String, File> classLocations;
 
 	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft, File[] libraries) {
 		super(urls, parent);
-		this.spoutcraft = spoutcraft;
-		this.libraries = libraries;
+		classLocations = new HashMap<String, File>(10000);
 		for (File f : libraries) {
 			try {
 				this.addURL(f.toURI().toURL());
-			} catch (MalformedURLException e) {
+				JarFile jar = new JarFile(f);
+				Enumeration<JarEntry> i = jar.entries();
+				while (i.hasMoreElements()) {
+					JarEntry entry = i.nextElement();
+					if (entry.getName().endsWith(".class")) {
+						String name = entry.getName();
+						name = name.replace("/", ".").substring(0, name.length() - 6);
+						classLocations.put(name, f);
+					}
+				}
+			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
+		try {
+			JarFile jar = new JarFile(spoutcraft);
+			Enumeration<JarEntry> i = jar.entries();
+			while (i.hasMoreElements()) {
+				JarEntry entry = i.nextElement();
+				if (entry.getName().endsWith(".class")) {
+					String name = entry.getName();
+					name = name.replace("/", ".").substring(0, name.length() - 6);
+					classLocations.put(name, spoutcraft);
+				}
+			}
+		}
+		 catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public int preloadClasses(int amount) {
+		Iterator<Entry<String, File>> i = classLocations.entrySet().iterator();
+		int preloaded = 0;
+		while (i.hasNext() && preloaded < amount) {
+			Entry<String, File> entry = i.next();
+			String className = entry.getKey();
+			if (!this.preloaded.contains(className)) {
+				try {
+					this.loadClass(className);
+					preloaded++;
+				}
+				catch (Throwable ignore) { }
+			}
+			this.preloaded.add(className);
+		}
+		return preloaded;
 	}
 
 	@Override
@@ -63,18 +109,15 @@ public class MinecraftClassLoader extends URLClassLoader {
 		if (result != null) {
 			return result;
 		}
-
-		result = findClassInjar(name, spoutcraft);
-		if (result != null) {
-			return result;
-		}
-
-		for (File file : libraries) {
-			result = findClassInjar(name, file);
+		
+		File f = classLocations.get(name);
+		if (f != null) {
+			result = findClassInjar(name, f);
 			if (result != null) {
 				return result;
 			}
 		}
+
 		return super.findClass(name);
 	}
 
