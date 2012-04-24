@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -60,6 +62,8 @@ public class UpdateThread extends Thread{
 				}
 			}
 			
+			cleanLogs();
+			
 			Validator validate = new Validator();
 			validate.run();
 			valid.set(validate.isValid());
@@ -92,6 +96,65 @@ public class UpdateThread extends Thread{
 		finished.set(true);
 	}
 	
+	private void cleanLogs() {
+		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+		if (logDirectory.exists() && logDirectory.isDirectory()) {
+			for (File log : logDirectory.listFiles()) {
+				
+				if (!log.getName().endsWith(".log")) {
+					log.delete();
+					continue;
+				}
+				
+				if (!log.getName().startsWith("Spoutcraft")) {
+					log.delete();
+					continue;
+				}
+				
+				String[] split = log.getName().split(" ");
+				if (split.length != 2) {
+					log.delete();
+					continue;
+				}
+				
+				String[] date = split[1].split("-");
+				if (date.length != 3) {
+					log.delete();
+					continue;
+				}
+				date[2] = date[2].substring(0, date[2].length() - 4); //trim .log extension
+				try {
+					int logYear = Integer.parseInt(date[0]);
+					int logMonth = Integer.parseInt(date[1]);
+					int logDay = Integer.parseInt(date[2]);
+					
+					int year = Calendar.getInstance().get(Calendar.YEAR);
+					int month = Calendar.getInstance().get(Calendar.MONTH);
+					int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+					
+					Calendar logDate = Calendar.getInstance();
+					//Add a month to the calendar (clear logs older than 1 month)
+					if (logMonth < 12) {
+						logMonth++;
+					}
+					else {
+						logMonth = 1;
+						logYear++;
+					}
+					logDate.set(logYear, logMonth, logDay);
+					
+					if (Calendar.getInstance().after(logDate)) {
+						log.delete();
+					}
+				}
+				catch (NumberFormatException ignore) {
+					log.delete();
+					continue;
+				}
+			}
+		}
+	}
+
 	public void setWaiting(boolean waiting) {
 		this.waiting.set(waiting);
 	}

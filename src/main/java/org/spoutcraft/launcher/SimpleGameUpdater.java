@@ -37,6 +37,7 @@ public class SimpleGameUpdater extends GameUpdater {
 	public SimpleGameUpdater() {
 		super();
 		updateThread = new UpdateThread();
+		updateThread.setDaemon(true);
 	}
 	
 	public void start() {

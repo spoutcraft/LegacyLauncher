@@ -25,10 +25,25 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Random;
+import java.util.logging.Formatter;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+import java.util.logging.StreamHandler;
+
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
@@ -59,6 +74,26 @@ public class Main {
 			ex.printStackTrace();
 		}
 		Utils.setStartupParameters(params);
+		
+		Logger logger = Logger.getLogger("");
+		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+		if (!logDirectory.exists()) {
+			logDirectory.mkdir();
+		}
+		File logs = new File(logDirectory, "Spoutcraft %D.log");
+		RotatingFileHandler fileHandler = new RotatingFileHandler(logs.getPath());
+
+		fileHandler.setFormatter(new DateOutputFormatter(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")));
+
+		for (Handler h : logger.getHandlers()) {
+			logger.removeHandler(h);
+		}
+		logger.addHandler(fileHandler);
+		
+		logger.setUseParentHandlers(false);
+		
+		System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
+		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
 
 		System.out.println("------------------------------------------");
 		System.out.println("Spoutcraft Launcher is starting....");
@@ -220,3 +255,89 @@ public class Main {
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
 	}
 }
+
+class LoggerOutputStream extends ByteArrayOutputStream {
+	private final String separator = System.getProperty("line.separator");
+	private final Level level;
+	private final Logger log;
+
+	public LoggerOutputStream(Level level, Logger log) {
+		super();
+		this.level = level;
+		this.log = log;
+	}
+
+	@Override
+	public synchronized void flush() throws IOException {
+		super.flush();
+		String record = this.toString();
+		super.reset();
+
+		if (record.length() > 0 && !record.equals(separator)) {
+			log.logp(level, "LoggerOutputStream", "log" + level, record);
+		}
+	}
+}
+
+class RotatingFileHandler extends StreamHandler {
+	private final SimpleDateFormat date;
+	private final String logFile;
+	private String filename;
+
+	public RotatingFileHandler(String logFile) {
+		this.logFile = logFile;
+		date = new SimpleDateFormat("yyyy-MM-dd");
+		filename = calculateFilename();
+		try {
+			setOutputStream(new FileOutputStream(filename, true));
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	@Override
+	public synchronized void flush() {
+		if (!filename.equals(calculateFilename())) {
+			filename = calculateFilename();
+			try {
+				setOutputStream(new FileOutputStream(filename, true));
+			} catch (FileNotFoundException ex) {
+				ex.printStackTrace();
+			}
+		}
+		super.flush();
+	}
+
+	private String calculateFilename() {
+		return logFile.replace("%D", date.format(new Date()));
+	}
+}
+
+class DateOutputFormatter extends Formatter {
+	private final SimpleDateFormat date;
+
+	public DateOutputFormatter(SimpleDateFormat date) {
+		this.date = date;
+	}
+
+	@Override
+	public String format(LogRecord record) {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(date.format(record.getMillis()));
+		builder.append(" [");
+		builder.append(record.getLevel().getLocalizedName().toUpperCase());
+		builder.append("] ");
+		builder.append(formatMessage(record));
+		builder.append('\n');
+
+		if (record.getThrown() != null) {
+			StringWriter writer = new StringWriter();
+			record.getThrown().printStackTrace(new PrintWriter(writer));
+			builder.append(writer.toString());
+		}
+
+		return builder.toString();
+	}
+}
+

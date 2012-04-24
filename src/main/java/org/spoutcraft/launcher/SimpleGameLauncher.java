@@ -28,6 +28,7 @@ package org.spoutcraft.launcher;
 import javax.swing.JOptionPane;
 import java.applet.Applet;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -129,12 +130,17 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		if (this.minecraft != null) {
 			this.minecraft.stop();
 			this.minecraft.destroy();
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e1) { }
 		}
-		try {
-			Thread.sleep(1000L);
-		} catch (InterruptedException ignore) { }
-		
-		System.out.println("Exiting Spoutcraft");
+		System.out.println("Exiting Spoutcraft Launcher");
+		for (Frame f : Frame.getFrames()) {
+			System.out.println("Closing Frame " + f.getTitle());
+			f.dispose();
+		}
+		//this.dispose();
 		System.exit(0);
 	}
 
