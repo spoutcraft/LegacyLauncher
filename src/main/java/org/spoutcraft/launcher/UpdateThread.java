@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -127,11 +126,7 @@ public class UpdateThread extends Thread{
 					int logYear = Integer.parseInt(date[0]);
 					int logMonth = Integer.parseInt(date[1]);
 					int logDay = Integer.parseInt(date[2]);
-					
-					int year = Calendar.getInstance().get(Calendar.YEAR);
-					int month = Calendar.getInstance().get(Calendar.MONTH);
-					int day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-					
+
 					Calendar logDate = Calendar.getInstance();
 					//Add a month to the calendar (clear logs older than 1 month)
 					if (logMonth < 12) {

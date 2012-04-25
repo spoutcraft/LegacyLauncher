@@ -66,7 +66,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		((SimpleGameUpdater)Launcher.getGameUpdater()).setWaiting(true);
 		while (!((SimpleGameUpdater)Launcher.getGameUpdater()).isFinished()) {
 			try {
-				System.out.println("Sleeping for 100 ms");
 				Thread.sleep(100);
 			}
 			catch (InterruptedException ignore) { }
@@ -137,10 +136,8 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		}
 		System.out.println("Exiting Spoutcraft Launcher");
 		for (Frame f : Frame.getFrames()) {
-			System.out.println("Closing Frame " + f.getTitle());
 			f.dispose();
 		}
-		//this.dispose();
 		System.exit(0);
 	}
 
