@@ -26,13 +26,14 @@
 
 package org.spoutcraft.launcher.api;
 
-import java.awt.Frame;
+import javax.swing.JFrame;
 
-public abstract class GameLauncher extends Frame {
+public abstract class GameLauncher extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	public GameLauncher(String title) {
 		super(title);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public abstract void runGame(String user, String session, String downloadTicket, String mcpass);

@@ -64,6 +64,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public LoginFrame(Skin parent) {
 		this.parent = parent;
 		readSavedUsernames();
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	public final List<String> getSavedUsernames() {

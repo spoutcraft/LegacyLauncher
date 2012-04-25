@@ -26,11 +26,39 @@
 
 package org.spoutcraft.launcher.api.util;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 
 import org.spoutcraft.launcher.StartupParameters;
 
-public class Resources {
+public final class Resources {
 	public static final URL spoutcraftFavIcon = StartupParameters.class.getResource("resources/favicon.png");
 	public static final URL spoutcraftLogo = StartupParameters.class.getResource("resources/spoutcraft.png");
+	
+	public static InputStream getResourceAsStream(String path) {
+		InputStream stream = Resources.class.getResourceAsStream(path);
+		if (stream == null) {
+			File resource = new File(".\\src\\main\\resources\\" + path);
+			if (resource.exists()) {
+				try {
+					stream = new BufferedInputStream(new FileInputStream(resource));
+				}
+				catch (IOException ignore) { }
+			}
+		}
+		if (stream == null) {
+			File resource = new File("..\\LauncherAPI\\src\\main\\resources\\" + path);
+			if (resource.exists()) {
+				try {
+					stream = new BufferedInputStream(new FileInputStream(resource));
+				}
+				catch (IOException ignore) { }
+			}
+		}
+		return stream;
+	}
 }

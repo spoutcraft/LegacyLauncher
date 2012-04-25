@@ -48,7 +48,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -59,6 +58,8 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.Skin;
@@ -83,6 +84,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	private List<JButton> loginSkin1Image;
 	private JButton loginSkin2;
 	private List<JButton> loginSkin2Image;
+	private JComboBox version = new JComboBox();
 
 	// Fonts \\
 	private Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -97,8 +99,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - 860) / 2, (dim.height - 500) / 2, 860, 500);
 		setResizable(false);
-
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -133,6 +133,18 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		passwordField = new JPasswordField();
 		passwordField.setFont(arial11);
 		passwordField.setBounds(143, 42, 119, 22);
+		
+		
+		JLabel versionLabel = new JLabel("Version: ");
+		versionLabel.setFont(arial11);
+		versionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		versionLabel.setBounds(-17, 72, 150, 14);
+		
+		version.setFont(arial11);
+		version.addItem("Recommended");
+		version.addItem("Latest");
+		version.setBounds(143, 68, 119, 22);
+		version.setEditable(false);
 
 		loginSkin1 = new JButton("Login as Player");
 		loginSkin1.setFont(arial11);
@@ -174,8 +186,6 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					}
 				}
 				usernameField.addItem(user);
-
-
 			}
 		}
 
@@ -187,7 +197,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
-		purchaseAccount.setBounds(243, 70, 111, 14);
+		purchaseAccount.setBounds(250, 70, 111, 14);
 
 		purchaseAccount.setText("<html><u>Need an account?</u></html>");
 		purchaseAccount.setFont(arial11);
@@ -252,7 +262,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		loginPane.add(loginButton);
 		loginPane.add(rememberCheckbox);
 		loginPane.add(purchaseAccount);
+		loginPane.add(version);
+		loginPane.add(versionLabel);
 		contentPane.add(loginPane);
+		
+		version.addActionListener(this);
+		version.setActionCommand("Version");
+		version.setSelectedIndex(Settings.getSpoutcraftBuild() == Build.RECOMMENDED ? 0 : 1);
 
 		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
 		offlineMessage.setFont(arial14);
@@ -274,7 +290,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		offlinePane.add(offlineMessage);
 		offlinePane.setVisible(false);
 		contentPane.add(offlinePane);
-
+		
+		JLabel trans3;
+		trans3 = new JLabel();
+		trans3.setBackground(new Color(229, 246, 255, 60));
+		trans3.setOpaque(true);
+		trans3.setBounds(20, 170, 410, 40);
+		
 		contentPane.add(scrollPane);
 		contentPane.add(trans2);
 		contentPane.add(login);
@@ -292,11 +314,12 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		File backgroundImage = new File(cacheDir, "launcher_background.jpg");
 		(new BackgroundImageWorker(backgroundImage, background)).execute();
 
-		Vector<Component> order = new Vector<Component>(5);
+		Vector<Component> order = new Vector<Component>(6);
 		order.add(usernameField.getEditor().getEditorComponent());
 		order.add(passwordField);
 		order.add(rememberCheckbox);
 		order.add(loginButton);
+		order.add(version);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
@@ -321,6 +344,9 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			doLogin(loginSkin1.getText());
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
 			doLogin(loginSkin2.getText());
+		} else if (e.getActionCommand().equals("Version")) {
+			Settings.setSpoutcraftBuild(version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV);
+			Settings.getSettings().save();
 		}
 	}
 

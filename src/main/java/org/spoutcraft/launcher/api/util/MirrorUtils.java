@@ -62,7 +62,7 @@ public class MirrorUtils {
 			while (iterator.hasNext()) {
 				Entry<String, Integer> e = iterator.next();
 				String mirror = "http://" + e.getKey();
-				if (isAddressReachable(mirror)) {
+				if (isAddressReachable(mirror, 250)) { //short timeout for fast mirrors
 					goodMirrors.add(e.getKey());
 				}
 			}
@@ -77,7 +77,7 @@ public class MirrorUtils {
 		
 		for (String mirror : MirrorUtils.mirrors){
 			String lookup = "http://" + mirror + "/" + mirrorURI;
-			if (isAddressReachable(lookup)) {
+			if (isAddressReachable(lookup, 1000)) {
 				return lookup;
 			}
 		}
@@ -91,7 +91,7 @@ public class MirrorUtils {
 		return (Map<String, Integer>) config.getProperty("mirrors");
 	}
 
-	public static boolean isAddressReachable(String url) {
+	public static boolean isAddressReachable(String url, int timeout) {
 		try {
 			URL test = new URL(url);
 			HttpURLConnection.setFollowRedirects(false);
@@ -99,6 +99,7 @@ public class MirrorUtils {
 			System.setProperty("http.agent", "");
 			urlConnect.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			urlConnect.setRequestMethod("HEAD");
+			urlConnect.setConnectTimeout(timeout);
 			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
 		} catch (Exception e) {
 			return false;

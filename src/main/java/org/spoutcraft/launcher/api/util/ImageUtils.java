@@ -45,7 +45,7 @@ public class ImageUtils {
 			try {
 				originalImage = ImageIO.read(new URL(url));
 			} catch (Exception e) {
-				originalImage = ImageIO.read(new URL("http://s3.amazonaws.com/MinecraftSkins/char.png"));
+				originalImage = ImageIO.read(Resources.getResourceAsStream("char.png"));
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
 
