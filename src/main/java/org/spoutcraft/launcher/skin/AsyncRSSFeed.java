@@ -64,11 +64,16 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setConnectTimeout(7500);
 			
-			HttpURLConnection con = (HttpURLConnection) (url.openConnection());
-			System.setProperty("http.agent", "");
-			con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+			conn.setDoInput(true);
+			conn.setDoOutput(false);
+			System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+			HttpURLConnection.setFollowRedirects(true);
+			conn.setUseCaches(false);
+			((HttpURLConnection)conn).setInstanceFollowRedirects(true);
+			int response = ((HttpURLConnection)conn).getResponseCode();
 
-			if (HttpURLConnection.HTTP_OK == conn.getResponseCode()) {
+			if (HttpURLConnection.HTTP_OK == response) {
 				StringBuilder sb = new StringBuilder();
 				SyndFeedInput input = new SyndFeedInput();
 				SyndFeed feed;

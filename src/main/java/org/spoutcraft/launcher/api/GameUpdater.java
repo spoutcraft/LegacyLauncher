@@ -90,4 +90,8 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public void runGame() {
 		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, minecraftPass);
 	}
+	
+	public void onSpoutcraftBuildChange() {
+		
+	}
 }

@@ -26,6 +26,8 @@
 
 package org.spoutcraft.launcher;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.util.List;
 
 import com.beust.jcommander.Parameter;
@@ -53,6 +55,18 @@ public class StartupParameters {
 
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
+	
+	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
+	private String proxyHost = null;
+	
+	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
+	private String proxyPort = null;
+	
+	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
+	private String proxyUser = null;
+	
+	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
+	private String proxyPassword = null;
 
 	public List<String> getParameters() {
 		return parameters;
@@ -94,5 +108,30 @@ public class StartupParameters {
 
 	public boolean isDebugMode() {
 		return debug;
+	}
+	
+	public void setupProxy() {
+		if (proxyHost != null) {
+			System.setProperty("http.proxyHost", proxyHost);
+			System.setProperty("https.proxyHost", proxyHost);
+			if (proxyPort != null) {
+				System.setProperty("http.proxyPort", proxyPort);
+				System.setProperty("https.proxyPort", proxyPort);
+			}
+		}
+		if (proxyUser != null && proxyPassword != null) {
+			Authenticator.setDefault(new ProxyAuthenticator(proxyUser, proxyPassword));
+		}
+	}
+	
+	private class ProxyAuthenticator extends Authenticator {
+		final String user, pass;
+		ProxyAuthenticator(String user, String pass) {
+			this.user = user;
+			this.pass = pass;
+		}
+		protected PasswordAuthentication getPasswordAuthentication() { 
+			return new PasswordAuthentication(user, pass.toCharArray()); 
+		} 
 	}
 }

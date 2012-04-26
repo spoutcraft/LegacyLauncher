@@ -327,6 +327,26 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 		loginButton.setEnabled(true);
 	}
+	
+	public void disable() {
+		usernameField.setEnabled(false);
+		passwordField.setEnabled(false);
+		version.setEnabled(false);
+		rememberCheckbox.setEnabled(false);
+		loginButton.setEnabled(false);
+		loginSkin1.setEnabled(false);
+		loginSkin2.setEnabled(false);
+	}
+	
+	public void enable() {
+		usernameField.setEnabled(true);
+		passwordField.setEnabled(true);
+		version.setEnabled(true);
+		rememberCheckbox.setEnabled(true);
+		loginButton.setEnabled(true);
+		loginSkin1.setEnabled(true);
+		loginSkin2.setEnabled(true);
+	}
 
 	public void init() {
 	}
@@ -337,12 +357,15 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
+			disable();
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 			if (rememberCheckbox.isSelected())
 				saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
+			disable();
 			doLogin(loginSkin1.getText());
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
+			disable();
 			doLogin(loginSkin2.getText());
 		} else if (e.getActionCommand().equals("Version")) {
 			Settings.setSpoutcraftBuild(version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV);
@@ -356,6 +379,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 
 	public void keyPressed(KeyEvent e) {
 		if (loginButton.isEnabled() && e.getKeyCode() == KeyEvent.VK_ENTER) {
+			disable();
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 		}
 	}
@@ -369,6 +393,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		switch (event) {
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
+				enable();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
@@ -378,10 +403,14 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					if (result == JOptionPane.YES_OPTION) {
 						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "", "");
 					}
+					else {
+						enable();
+					}
 				}
 				break;
 			case USER_NOT_PREMIUM:
 				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
+				enable();
 				break;
 		}
 	}

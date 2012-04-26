@@ -27,13 +27,14 @@
 package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class Settings {
 
 	private static YAMLProcessor settings;
 
-	public static void setSettings(YAMLProcessor settings) {
+	public static synchronized void setSettings(YAMLProcessor settings) {
 		if (Settings.settings != null)
 			throw new IllegalArgumentException("settings is already set!");
 		Settings.settings = settings;
@@ -45,95 +46,88 @@ public class Settings {
 
 	}
 
-	public static YAMLProcessor getSettings() {
+	public static synchronized YAMLProcessor getSettings() {
 		return settings;
 	}
 
-	public static int getLauncherSelectedBuild() {
+	public static synchronized int getLauncherSelectedBuild() {
 		return settings.getInt("launcher.launcher.buildNumber", 5);
 	}
 
-	public static void setLauncherSelectedBuild(int build) {
+	public static synchronized void setLauncherSelectedBuild(int build) {
 		settings.setProperty("launcher.launcher.buildNumber", build);
 	}
 
-	public static Build getLauncherBuild() {
+	public static synchronized Build getLauncherBuild() {
 		return Build.getValue(settings.getString("launcher.launcher.build", "RECOMMENDED"));
 	}
 
-	public static void setLauncherBuild(String build) {
+	private static synchronized void setLauncherBuild(String build) {
 		settings.setProperty("launcher.launcher.build", build);
 	}
 
-	public static void setLauncherBuild(Build build) {
+	public static synchronized void setLauncherBuild(Build build) {
 		setLauncherBuild(build.name());
 	}
 
-	public static int getSpoutcraftSelectedBuild() {
-		return settings.getInt("launcher.client.buildNumber", 5);
+	public static synchronized int getSpoutcraftSelectedBuild() {
+		return settings.getInt("launcher.client.buildNumber", -1);
 	}
 
-	public static void setSpoutcraftSelectedBuild(int build) {
+	public static synchronized void setSpoutcraftSelectedBuild(int build) {
 		settings.setProperty("launcher.client.buildNumber", build);
 	}
 
-	public static Build getSpoutcraftBuild() {
+	public static synchronized Build getSpoutcraftBuild() {
 		return Build.getValue(settings.getString("launcher.client.build", "RECOMMENDED"));
 	}
 
-	public static void setSpoutcraftBuild(String build) {
+	private static synchronized void setSpoutcraftBuild(String build) {
 		settings.setProperty("launcher.client.build", build);
 	}
 
-	public static void setSpoutcraftBuild(Build build) {
+	public static synchronized void setSpoutcraftBuild(Build build) {
 		setSpoutcraftBuild(build.name());
+		Launcher.getGameUpdater().onSpoutcraftBuildChange();
 	}
 
-	public static int getLoginTries() {
+	public static synchronized int getLoginTries() {
 		return settings.getInt("launcher.loginRetries", 3);
 	}
 
-	public static void setLoginTries(int tries) {
+	public static synchronized void setLoginTries(int tries) {
 		settings.setProperty("launcher.loginRetries", tries);
 	}
 
-	public static boolean isLatestLWJGL() {
-		return settings.getBoolean("launcher.latestLWJGL", false);
-	}
-
-	public static void setLatestLWJGL(boolean latestLWJGL) {
-		settings.setProperty("launcher.latestLWJGL", latestLWJGL);
-	}
-
-	public static boolean allowClipboardAccess() {
+	public static synchronized boolean allowClipboardAccess() {
 		return settings.getBoolean("client.clipboardaccess", false);
 	}
 
-	public static void setClipboardAccess(boolean allow) {
+	public static synchronized void setClipboardAccess(boolean allow) {
 		settings.setProperty("client.clipboardaccess", allow);
 	}
 
-	public static boolean isAcceptUpdates() {
+	public static synchronized boolean isAcceptUpdates() {
 		return settings.getBoolean("launcher.acceptUpdates", false);
 	}
 
-	public static void setAcceptUpdates(boolean acceptUpdates) {
+	public static synchronized void setAcceptUpdates(boolean acceptUpdates) {
 		settings.setProperty("launcher.acceptUpdates", acceptUpdates);
 	}
 
-	public static int getMemory() {
+	public static synchronized int getMemory() {
 		return settings.getInt("launcher.memory", 0);
 	}
 
-	public static void setMemory(int memory) {
+	public static synchronized void setMemory(int memory) {
 		settings.setProperty("launcher.memory", 0);
 	}
 
-	public static boolean retryLogin() {
+	public static synchronized boolean retryLogin() {
 		return settings.getBoolean("launcher.retryLogin", true);
 	}
 
-	public static void setRetryLogin(boolean retry) {
+	public static synchronized void setRetryLogin(boolean retry) {
 		settings.setProperty("launcher.retryLogin", retry);
 	}
 
