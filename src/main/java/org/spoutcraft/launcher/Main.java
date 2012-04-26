@@ -75,12 +75,14 @@ public class Main {
 		}
 		Utils.setStartupParameters(params);
 		
+		params.setupProxy();
+		
 		Logger logger = Logger.getLogger("");
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();
 		}
-		File logs = new File(logDirectory, "Spoutcraft %D.log");
+		File logs = new File(logDirectory, "spoutcraft_%D.log");
 		RotatingFileHandler fileHandler = new RotatingFileHandler(logs.getPath());
 
 		fileHandler.setFormatter(new DateOutputFormatter(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")));

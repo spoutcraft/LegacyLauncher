@@ -86,6 +86,11 @@ public class MinecraftLauncher {
 		}
 		return loader;
 	}
+	
+	public static void resetClassLoader() {
+		loader = null;
+	}
+	
 	@SuppressWarnings("rawtypes")
 	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException, MinecraftVerifyException {
 		File mcBinFolder = new File(Utils.getWorkingDirectory(), "bin");

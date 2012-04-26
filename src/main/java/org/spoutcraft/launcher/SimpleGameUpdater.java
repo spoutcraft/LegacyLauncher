@@ -25,19 +25,23 @@
  */
 package org.spoutcraft.launcher;
 
+import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.GameUpdater;
 import org.spoutcraft.launcher.api.util.DownloadListener;
+import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.yml.MinecraftYML;
 import org.spoutcraft.launcher.yml.SpoutcraftYML;
 
 public class SimpleGameUpdater extends GameUpdater {
+	private Build spoutcraftBuild;
 	private long validationTime;
-	private final UpdateThread updateThread;
+	private UpdateThread updateThread;
 
 	public SimpleGameUpdater() {
 		super();
 		updateThread = new UpdateThread();
 		updateThread.setDaemon(true);
+		spoutcraftBuild = Settings.getSpoutcraftBuild();
 	}
 	
 	public void start() {
@@ -52,9 +56,23 @@ public class SimpleGameUpdater extends GameUpdater {
 		updateThread.setWaiting(waiting);
 	}
 
+	@Override
 	public void setDownloadListener(DownloadListener listener) {
 		super.setDownloadListener(listener);
 		updateThread.setDownloadListener(listener);
+	}
+	
+	@Override
+	public void onSpoutcraftBuildChange() {
+		if (spoutcraftBuild != Settings.getSpoutcraftBuild()) {
+			spoutcraftBuild = Settings.getSpoutcraftBuild();
+			updateThread.setDownloadListener(null);
+			updateThread.interrupt();
+			MinecraftLauncher.resetClassLoader();
+			updateThread = new UpdateThread();
+			updateThread.setDaemon(true);
+			start();
+		}
 	}
 
 	public void clearVersionsInYMLs() {

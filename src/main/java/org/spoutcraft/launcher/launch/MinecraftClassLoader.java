@@ -88,6 +88,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 		Iterator<Entry<String, File>> i = classLocations.entrySet().iterator();
 		int preloaded = 0;
 		while (i.hasNext() && preloaded < amount) {
+			
+			if (Thread.currentThread().isInterrupted()) {
+				break;
+			}
+			
 			Entry<String, File> entry = i.next();
 			String className = entry.getKey();
 			if (!this.preloaded.contains(className)) {

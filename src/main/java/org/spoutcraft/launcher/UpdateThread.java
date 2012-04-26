@@ -67,7 +67,7 @@ public class UpdateThread extends Thread{
 			validate.run();
 			valid.set(validate.isValid());
 		}
-		
+
 		if (valid.get()) {
 			MinecraftClassLoader loader = MinecraftLauncher.getClassLoader();
 			int loaded = 0;
@@ -105,12 +105,12 @@ public class UpdateThread extends Thread{
 					continue;
 				}
 				
-				if (!log.getName().startsWith("Spoutcraft")) {
+				if (!log.getName().startsWith("spoutcraft")) {
 					log.delete();
 					continue;
 				}
 				
-				String[] split = log.getName().split(" ");
+				String[] split = log.getName().split("_");
 				if (split.length != 2) {
 					log.delete();
 					continue;
@@ -331,7 +331,7 @@ public class UpdateThread extends Thread{
 
 		// Download Natives \\
 		YAMLNode node = LibrariesYML.getLibrariesYML().getNode(fileName);
-		String version = Settings.isLatestLWJGL() ? node.getString("latest") : node.getString("recommended");
+		String version = node.getString("recommended");
 		StringBuilder url = new StringBuilder().append("Libraries/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
 		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url, listener);
 		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
