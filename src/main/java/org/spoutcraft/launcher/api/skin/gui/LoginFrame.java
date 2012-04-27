@@ -82,6 +82,16 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return null;
 	}
+	
+	public final String getSkinURL(String user) {
+		for (String key : usernames.keySet()) {
+			if (key.equalsIgnoreCase(user)) {
+				UserPasswordInformation info = usernames.get(key);
+				return "http://static.spout.org/skin/" + info.username + ".png";
+			}
+		}
+		return "http://static.spout.org/skin/" + user + ".png";
+	}
 
 	public final void saveUsername(String user, String pass) {
 		if (!hasSavedPassword(user) && pass != null && !Utils.isEmpty(pass))
@@ -114,6 +124,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		loginThread.execute();
 	}
 
+	@SuppressWarnings("unused")
 	private final void readSavedUsernames() {
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
@@ -130,16 +141,25 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 			try {
 				while (true) {
+					//read version
+					int version = dis.readInt();
+					//read key
+					String key = dis.readUTF();
+					//read user
 					String user = dis.readUTF();
+					//read hash
 					boolean isHash = dis.readBoolean();
 					if (isHash) {
 						byte[] hash = new byte[32];
 						dis.read(hash);
-						usernames.put(user, new UserPasswordInformation(hash));
+						usernames.put(key, new UserPasswordInformation(hash));
 					} else {
 						String pass = dis.readUTF();
-						usernames.put(user, new UserPasswordInformation(pass));
+						usernames.put(key, new UserPasswordInformation(pass));
 					}
+					UserPasswordInformation info = usernames.get(key);
+					
+					info.username = user;
 				}
 			} catch (EOFException e) {
 			}
@@ -163,8 +183,18 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				dos = new DataOutputStream(new FileOutputStream(lastLogin, true));
 			}
 			for (String user : usernames.keySet()) {
-				dos.writeUTF(user);
 				UserPasswordInformation info = usernames.get(user);
+				if (info.username == null) {
+					info.username = user;
+				}
+
+				//version
+				dos.writeInt(UserPasswordInformation.version);
+				//key
+				dos.writeUTF(user);
+				//user
+				dos.writeUTF(info.username);
+				//password
 				dos.writeBoolean(info.isHash);
 				if (info.isHash) {
 					dos.write(info.passwordHash);
@@ -211,6 +241,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	}
 
 	protected static final class UserPasswordInformation {
+		public static final int version = 2;
+		public String username = null;
 		public boolean isHash;
 		public byte[] passwordHash = null;
 		public String password = null;

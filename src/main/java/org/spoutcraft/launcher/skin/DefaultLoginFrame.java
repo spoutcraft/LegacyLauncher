@@ -167,9 +167,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 			if (hasSavedPassword(user)) {
 				loginid++;
 				if (loginid == 1) {
+					String formattedUser = user;
+					if (user.contains("@")) {
+						formattedUser = user.split("@")[0];
+					}
 					loginSkin1.setText(user);
 					loginSkin1.setVisible(true);
-					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 103, 170, loginSkin1Image);
+					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + formattedUser + ".png", 103, 170, loginSkin1Image);
 					loginSkin1.setActionCommand("LoginSkin1");
 					for (JButton button : loginSkin1Image) {
 						button.setActionCommand("LoginSkin1");
@@ -177,9 +181,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 					passwordField.setText(getSavedPassword(user));
 					rememberCheckbox.setSelected(true);
 				} else if (loginid == 2) {
+					String formattedUser = user;
+					if (user.contains("@")) {
+						formattedUser = user.split("@")[0];
+					}
 					loginSkin2.setText(user);
 					loginSkin2.setVisible(true);
-					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + user + ".png", 293, 170, loginSkin2Image);
+					ImageUtils.drawCharacter(contentPane, this, "http://s3.amazonaws.com/MinecraftSkins/" + formattedUser + ".png", 293, 170, loginSkin2Image);
 					loginSkin2.setActionCommand("LoginSkin2");
 					for (JButton button : loginSkin2Image) {
 						button.setActionCommand("LoginSkin2");
@@ -291,12 +299,13 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		offlinePane.setVisible(false);
 		contentPane.add(offlinePane);
 		
-		JLabel trans3;
-		trans3 = new JLabel();
-		trans3.setBackground(new Color(229, 246, 255, 60));
-		trans3.setOpaque(true);
-		trans3.setBounds(20, 170, 410, 40);
+		int buildNumber = Settings.getLauncherSelectedBuild();
+		JLabel build = new JLabel("Launcher Build: " + (buildNumber == -1 ? "Custom" : "b" + buildNumber));
+		build.setFont(arial11);
+		build.setOpaque(false);
+		build.setBounds(3, 460, 125, 12);
 		
+		contentPane.add(build);
 		contentPane.add(scrollPane);
 		contentPane.add(trans2);
 		contentPane.add(login);

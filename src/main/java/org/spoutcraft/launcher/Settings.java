@@ -51,7 +51,7 @@ public class Settings {
 	}
 
 	public static synchronized int getLauncherSelectedBuild() {
-		return settings.getInt("launcher.launcher.buildNumber", 5);
+		return settings.getInt("launcher.launcher.buildNumber", -1);
 	}
 
 	public static synchronized void setLauncherSelectedBuild(int build) {

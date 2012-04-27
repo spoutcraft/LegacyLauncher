@@ -27,9 +27,12 @@
 package org.spoutcraft.launcher.api.util;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -38,16 +41,40 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 
 public class ImageUtils {
+	private static int SKIN_WIDTH = 64;
+	private static int SKIN_HEIGHT = 32;
 
 	public static void drawCharacter(JPanel contentPane, ActionListener listener, String url, int x, int y, List<JButton> buttons) {
-		BufferedImage originalImage;
+		BufferedImage originalImage = null;
 		try {
+			boolean success = false;
 			try {
-				originalImage = ImageIO.read(new URL(url));
-			} catch (Exception e) {
+				URLConnection conn = (new URL(url)).openConnection();
+				conn.setDoInput(true);
+				conn.setDoOutput(false);
+				System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+				HttpURLConnection.setFollowRedirects(true);
+				conn.setUseCaches(false);
+				((HttpURLConnection)conn).setInstanceFollowRedirects(true);
+				int response = ((HttpURLConnection)conn).getResponseCode();
+				if (response == HttpURLConnection.HTTP_OK) {
+					originalImage = ImageIO.read(conn.getInputStream());
+					if (originalImage.getWidth() != SKIN_WIDTH || originalImage.getHeight() != SKIN_HEIGHT) {
+						BufferedImage resized = new BufferedImage(SKIN_WIDTH, SKIN_HEIGHT, originalImage.getType());
+						Graphics2D g = resized.createGraphics();
+						g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+						g.drawImage(originalImage, 0, 0, SKIN_WIDTH, SKIN_HEIGHT, 0, 0, originalImage.getWidth(), originalImage.getHeight(), null);
+						g.dispose();
+						originalImage = resized;
+					}
+					success = true;
+				}
+			} catch (Exception e) { }
+			if (!success) {
 				originalImage = ImageIO.read(Resources.getResourceAsStream("char.png"));
 			}
-			int type = BufferedImage.TYPE_INT_ARGB;//originalImage.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : originalImage.getType();
+			int type = BufferedImage.TYPE_INT_ARGB;
 
 			buttons.add(drawCropped(contentPane, listener, originalImage, type, 40, 8, 48, 16, x - 4, y - 5, 8)); // HAT
 

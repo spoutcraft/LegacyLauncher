@@ -79,6 +79,23 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
 			Launcher.getGameUpdater().setMinecraftPass(pass);
+			
+			UserPasswordInformation info = null;
+
+			for (String username : loginFrame.usernames.keySet()) {
+				if (username.equalsIgnoreCase(user)) {
+					info = loginFrame.usernames.get(username);
+					break;
+				}
+			}
+			
+			if (info != null) {
+				if (user.contains("@")) {
+					info.username = values[2].trim();
+				} else {
+					info.username = user;
+				}
+			}
 
 			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
 			return true;

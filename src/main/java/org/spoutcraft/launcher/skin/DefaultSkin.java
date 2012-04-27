@@ -31,7 +31,7 @@ import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 
 public class DefaultSkin extends JavaSkin {
 
-	private DefaultLoginFrame loginFrame = new DefaultLoginFrame(this);
+	private LegacyLoginFrame loginFrame = new LegacyLoginFrame(this);
 
 	public void onDisable() {
 	}
