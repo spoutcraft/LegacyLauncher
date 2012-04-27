@@ -97,9 +97,10 @@ public class Main {
 		System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
 
+		int launcherBuild = parseInt(getBuild("launcher-version"), -1);
 		System.out.println("------------------------------------------");
 		System.out.println("Spoutcraft Launcher is starting....");
-		System.out.println("Launcher Build: " + getBuild("launcher-version"));
+		System.out.println("Launcher Build: " + launcherBuild);
 		System.out.println("Launcher API Build: " + getBuild("api-version"));
 
 		// Set up the directories
@@ -122,6 +123,7 @@ public class Main {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
 		Settings.setSettings(settings);
+		Settings.setLauncherSelectedBuild(launcherBuild);
 		
 		if (DEBUG_MODE) {
 			System.out.println("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
@@ -206,6 +208,14 @@ public class Main {
 		}
 		catch (Exception e) {
 			System.out.println("There was an error setting the Look and Feel: " + e);
+		}
+	}
+	
+	private static int parseInt(String s, int def) {
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return def;
 		}
 	}
 
