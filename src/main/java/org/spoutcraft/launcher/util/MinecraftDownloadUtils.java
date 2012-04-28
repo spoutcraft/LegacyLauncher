@@ -54,7 +54,9 @@ public class MinecraftDownloadUtils {
 					download.getOutFile().delete();
 				}
 				System.err.println("Download of minecraft failed!");
-				listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
+				if (listener != null) {
+					listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
+				}
 			} else {
 				String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getLatestMinecraftVersion());
 				String resultMD5 = MD5Utils.getMD5(download.getOutFile());
