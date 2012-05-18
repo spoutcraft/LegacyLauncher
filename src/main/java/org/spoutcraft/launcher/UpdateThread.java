@@ -437,7 +437,7 @@ public class UpdateThread extends Thread{
 
 			if (!libraryFile.exists()) {
 				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
-				String fallbackURL = "http://dl.getspout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String fallbackURL = "http://get.spout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, listener);
 				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, listener);
 			}

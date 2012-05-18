@@ -108,7 +108,7 @@ public class LauncherYML {
 	public static void updateLauncherYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("launcher.yml", "http://get.spout.org/yml/launcher.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("launcher.yml", "http://get.spout.org/launcher.yml", null);
 				System.out.println(urlName);
 				if (urlName != null) {
 					try {

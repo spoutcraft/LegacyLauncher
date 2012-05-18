@@ -103,7 +103,7 @@ public class MinecraftYML {
 	public static void updateMinecraftYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://get.spout.org/yml/minecraft.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("minecraft.yml", "http://get.spout.org/minecraft.yml", null);
 				if (urlName != null) {
 					try {
 						String current = null;

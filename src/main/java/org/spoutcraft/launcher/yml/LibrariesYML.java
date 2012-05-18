@@ -81,7 +81,7 @@ public class LibrariesYML {
 	public static void updateLibrariesYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://get.spout.org/yml/libraries.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://get.spout.org/libraries.yml", null);
 				if (urlName != null) {
 					try {
 						URL url = new URL(urlName);

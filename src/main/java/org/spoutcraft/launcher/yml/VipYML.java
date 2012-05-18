@@ -80,7 +80,7 @@ public class VipYML {
 	public static void updateVipYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("vip.yml", "http://get.spout.org/yml/vip.yml", null);
+				String urlName = MirrorUtils.getMirrorUrl("vip.yml", "http://get.spout.org/vip.yml", null);
 				if (urlName != null) {
 					try {
 						String current = null;
