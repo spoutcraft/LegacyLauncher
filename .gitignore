@@ -11,11 +11,6 @@ target
 *.o
 *.so
 
-# Unwanted scripts #
-####################
-*.bat
-*.sh
-
 # Git #
 #######
 .git
@@ -58,8 +53,11 @@ build
 dist
 nbproject
 build.xml
+nb-configuration.xml
 
 # IntelliJ IDEA files #
 #######################
 .idea
 *.iml
+*.ipr
+*.iws

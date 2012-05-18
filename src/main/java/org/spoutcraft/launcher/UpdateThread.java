@@ -1,3 +1,29 @@
+/*
+ * This file is part of Spoutcraft Launcher.
+ *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
+ */
 package org.spoutcraft.launcher;
 
 import java.io.File;
@@ -40,7 +66,7 @@ public class UpdateThread extends Thread{
 	public UpdateThread() {
 		super("Update Thread");
 	}
-	
+
 	public void run() {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable();
@@ -60,9 +86,9 @@ public class UpdateThread extends Thread{
 					e.printStackTrace();
 				}
 			}
-			
+
 			cleanLogs();
-			
+
 			Validator validate = new Validator();
 			validate.run();
 			valid.set(validate.isValid());
@@ -72,7 +98,7 @@ public class UpdateThread extends Thread{
 			MinecraftClassLoader loader = MinecraftLauncher.getClassLoader();
 			int loaded = 0;
 			final int PRELOAD_PASS = 250;
-			while(true) {
+			while (true) {
 				if (waiting.get()) {
 					break;
 				}
@@ -84,38 +110,36 @@ public class UpdateThread extends Thread{
 				}
 			}
 			System.out.println("Preloaded " + loaded + " classes in advance");
-		}
-		else {
+		} else {
 			try {
 				sleep(100);
 			}
 			catch (InterruptedException ignore) { }
 		}
-		
+
 		finished.set(true);
 	}
-	
+
 	private void cleanLogs() {
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (logDirectory.exists() && logDirectory.isDirectory()) {
 			for (File log : logDirectory.listFiles()) {
-				
 				if (!log.getName().endsWith(".log")) {
 					log.delete();
 					continue;
 				}
-				
+
 				if (!log.getName().startsWith("spoutcraft")) {
 					log.delete();
 					continue;
 				}
-				
+
 				String[] split = log.getName().split("_");
 				if (split.length != 2) {
 					log.delete();
 					continue;
 				}
-				
+
 				String[] date = split[1].split("-");
 				if (date.length != 3) {
 					log.delete();
@@ -131,18 +155,16 @@ public class UpdateThread extends Thread{
 					//Add a month to the calendar (clear logs older than 1 month)
 					if (logMonth < 12) {
 						logMonth++;
-					}
-					else {
+					} else {
 						logMonth = 1;
 						logYear++;
 					}
 					logDate.set(logYear, logMonth, logDay);
-					
+
 					if (Calendar.getInstance().after(logDate)) {
 						log.delete();
 					}
-				}
-				catch (NumberFormatException ignore) {
+				} catch (NumberFormatException ignore) {
 					log.delete();
 					continue;
 				}
@@ -153,15 +175,15 @@ public class UpdateThread extends Thread{
 	public void setWaiting(boolean waiting) {
 		this.waiting.set(waiting);
 	}
-	
+
 	public boolean isFinished() {
 		return finished.get();
 	}
-	
+
 	public boolean isValidInstall() {
 		return valid.get();
 	}
-	
+
 	public boolean isSpoutcraftUpdateAvailable() {
 		if (!Utils.getWorkingDirectory().exists()) {
 			return true;
@@ -239,8 +261,6 @@ public class UpdateThread extends Thread{
 		String required = build.getMinecraftVersion();
 		return !installed.equals(required);
 	}
-	
-
 
 	public void updateMinecraft() throws IOException {
 		Launcher.getGameUpdater().getBinDir().mkdir();
@@ -405,7 +425,6 @@ public class UpdateThread extends Thread{
 
 			File libraryFile = new File(libDir, lib.getKey() + ".jar");
 			String MD5 = LibrariesYML.getMD5(lib.getKey(), version);
-			
 
 			if (libraryFile.exists()) {
 				String computedMD5 = MD5Utils.getMD5(libraryFile);
@@ -448,7 +467,7 @@ public class UpdateThread extends Thread{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public DownloadListener getDownloadListener() {
 		return listener;
 	}
@@ -458,8 +477,8 @@ public class UpdateThread extends Thread{
 	}
 
 	public void stateChanged(String message, float progress) {
-		if (listener != null)
+		if (listener != null) {
 			listener.stateChanged(message, progress);
+		}
 	}
-
 }

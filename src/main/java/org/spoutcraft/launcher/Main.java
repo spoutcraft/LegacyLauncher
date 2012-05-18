@@ -1,4 +1,30 @@
 /*
+ * This file is part of Spoutcraft Launcher.
+ *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
+ */
+/*
  * This file is part of Launcher (http://www.spout.org/).
  *
  * Launcher is licensed under the SpoutDev License Version 1.
@@ -43,7 +69,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
-
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
@@ -66,7 +91,7 @@ public class Main {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
-		
+
 		StartupParameters params = new StartupParameters();
 		try {
 			new JCommander(params, args);
@@ -74,9 +99,9 @@ public class Main {
 			ex.printStackTrace();
 		}
 		Utils.setStartupParameters(params);
-		
+
 		params.setupProxy();
-		
+
 		Logger logger = Logger.getLogger("");
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (!logDirectory.exists()) {
@@ -91,9 +116,9 @@ public class Main {
 			logger.removeHandler(h);
 		}
 		logger.addHandler(fileHandler);
-		
+
 		logger.setUseParentHandlers(false);
-		
+
 		System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
 
@@ -111,7 +136,7 @@ public class Main {
 		skinDir.mkdirs();
 
 		setLookAndFeel();
-		
+
 		if (DEBUG_MODE) {
 			System.out.println("Initial Launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
@@ -124,7 +149,7 @@ public class Main {
 		}
 		Settings.setSettings(settings);
 		Settings.setLauncherSelectedBuild(launcherBuild);
-		
+
 		if (DEBUG_MODE) {
 			System.out.println("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
@@ -135,7 +160,7 @@ public class Main {
 		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
 		SkinManager skinManager = Launcher.getSkinManager();
 		skinManager.loadSkins(skinDir);
-		
+
 		if (DEBUG_MODE) {
 			System.out.println("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
@@ -152,7 +177,7 @@ public class Main {
 		SkinDescriptionFile desc = new SkinDescriptionFile("default", "1.0", "org.spoutcraft.launcher.skin.DefaultSkin");
 		defaultSkin.initialize(new DefaultSkinLoader((CommonSecurityManager) System.getSecurityManager(), (new Random()).nextDouble()), desc, null, null, null);
 		skinManager.addSkin(defaultSkin);
-		
+
 		if (DEBUG_MODE) {
 			System.out.println("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
@@ -170,7 +195,7 @@ public class Main {
 		if (skinManager.getEnabledSkin() == null) {
 			System.exit(-9);
 		}
-		
+
 		if (DEBUG_MODE) {
 			System.out.println("Launcher skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
@@ -199,18 +224,18 @@ public class Main {
 				}
 				catch (Exception ignore) { }
 			}
-			
+
 			if (!laf) {
 				//Can't guess the laf for other os's as easily
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
-			
+
 		}
 		catch (Exception e) {
 			System.out.println("There was an error setting the Look and Feel: " + e);
 		}
 	}
-	
+
 	private static int parseInt(String s, int def) {
 		try {
 			return Integer.parseInt(s);
@@ -352,4 +377,3 @@ class DateOutputFormatter extends Formatter {
 		return builder.toString();
 	}
 }
-
