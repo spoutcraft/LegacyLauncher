@@ -37,7 +37,7 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
-	public final String spoutcraftMirrors = "http://cdn.spout.org/yml/mirrors.yml";
+	public final String spoutcraftMirrors = "http://get.spout.org/mirrors.yml";
 
 	private DownloadListener listener;
 
