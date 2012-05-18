@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin;
 
 import java.io.File;
@@ -32,7 +32,6 @@ import org.spoutcraft.launcher.api.skin.exceptions.InvalidDescriptionFileExcepti
 import org.spoutcraft.launcher.api.skin.exceptions.InvalidSkinException;
 
 public interface SkinManager {
-
 	public Skin[] getSkins();
 
 	public Skin getSkin(String name);
@@ -50,5 +49,4 @@ public interface SkinManager {
 	public Skin getEnabledSkin();
 
 	public void addSkin(Skin skin);
-
 }

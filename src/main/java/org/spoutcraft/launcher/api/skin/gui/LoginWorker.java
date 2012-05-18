@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,16 +24,15 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin.gui;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingworker.SwingWorker;
+
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame.UserPasswordInformation;
@@ -43,7 +43,6 @@ import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 
 public class LoginWorker extends SwingWorker<Object, Object> {
-
 	private final LoginFrame loginFrame;
 	private String user;
 	private String pass;
@@ -72,14 +71,14 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 	@Override
 	protected Object doInBackground() throws Exception {
 		loginFrame.getProgressBar().setVisible(true);
-		loginFrame.getProgressBar().setString("Connecting to www.minecraft.net...");
+		loginFrame.getProgressBar().setString("Connecting to minecraft.net...");
 		try {
 			values = Utils.doLogin(user, pass, loginFrame.getProgressBar());
 			Launcher.getGameUpdater().setMinecraftUser(values[2].trim());
 			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
 			Launcher.getGameUpdater().setMinecraftPass(pass);
-			
+
 			UserPasswordInformation info = null;
 
 			for (String username : loginFrame.usernames.keySet()) {
@@ -88,7 +87,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 					break;
 				}
 			}
-			
+
 			if (info != null) {
 				if (user.contains("@")) {
 					info.username = values[2].trim();
@@ -157,5 +156,4 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 		}
 		return null;
 	}
-
 }

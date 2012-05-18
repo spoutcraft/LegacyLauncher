@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.util.Collection;
@@ -31,8 +31,6 @@ import java.util.Map;
 
 /**
  * String utilities.
- *
- * @author sk89q
  */
 public class StringUtil {
 	/**
@@ -58,8 +56,7 @@ public class StringUtil {
 	 * @param initialIndex
 	 * @return
 	 */
-	public static String joinString(String[] str, String delimiter,
-	                                int initialIndex) {
+	public static String joinString(String[] str, String delimiter, int initialIndex) {
 		if (str.length == 0) {
 			return "";
 		}
@@ -79,8 +76,7 @@ public class StringUtil {
 	 * @param quote
 	 * @return
 	 */
-	public static String joinQuotedString(String[] str, String delimiter,
-	                                      int initialIndex, String quote) {
+	public static String joinQuotedString(String[] str, String delimiter, int initialIndex, String quote) {
 		if (str.length == 0) {
 			return "";
 		}
@@ -113,8 +109,7 @@ public class StringUtil {
 	 * @param initialIndex
 	 * @return
 	 */
-	public static String joinString(Object[] str, String delimiter,
-	                                int initialIndex) {
+	public static String joinString(Object[] str, String delimiter, int initialIndex) {
 		if (str.length == 0) {
 			return "";
 		}
@@ -133,8 +128,7 @@ public class StringUtil {
 	 * @param initialIndex
 	 * @return
 	 */
-	public static String joinString(int[] str, String delimiter,
-	                                int initialIndex) {
+	public static String joinString(int[] str, String delimiter, int initialIndex) {
 		if (str.length == 0) {
 			return "";
 		}
@@ -153,8 +147,7 @@ public class StringUtil {
 	 * @param initialIndex
 	 * @return
 	 */
-	public static String joinString(Collection<?> str, String delimiter,
-	                                int initialIndex) {
+	public static String joinString(Collection<?> str, String delimiter, int initialIndex) {
 		if (str.size() == 0) {
 			return "";
 		}
@@ -213,24 +206,24 @@ public class StringUtil {
 		}
 
 		/*
-				 * The difference between this impl. and the previous is that, rather
-				 * than creating and retaining a matrix of size s.length()+1 by
-				 * t.length()+1, we maintain two single-dimensional arrays of length
-				 * s.length()+1. The first, d, is the 'current working' distance array
-				 * that maintains the newest distance cost counts as we iterate through
-				 * the characters of String s. Each time we increment the index of
-				 * String t we are comparing, d is copied to p, the second int[]. Doing
-				 * so allows us to retain the previous cost counts as required by the
-				 * algorithm (taking the minimum of the cost count to the left, up one,
-				 * and diagonally up and to the left of the current cost count being
-				 * calculated). (Note that the arrays aren't really copied anymore, just
-				 * switched...this is clearly much better than cloning an array or doing
-				 * a System.arraycopy() each time through the outer loop.)
-				 *
-				 * Effectively, the difference between the two implementations is this
-				 * one does not cause an out of memory condition when calculating the LD
-				 * over two very large strings.
-				 */
+		 * The difference between this impl. and the previous is that, rather
+		 * than creating and retaining a matrix of size s.length()+1 by
+		 * t.length()+1, we maintain two single-dimensional arrays of length
+		 * s.length()+1. The first, d, is the 'current working' distance array
+		 * that maintains the newest distance cost counts as we iterate through
+		 * the characters of String s. Each time we increment the index of
+		 * String t we are comparing, d is copied to p, the second int[]. Doing
+		 * so allows us to retain the previous cost counts as required by the
+		 * algorithm (taking the minimum of the cost count to the left, up one,
+		 * and diagonally up and to the left of the current cost count being
+		 * calculated). (Note that the arrays aren't really copied anymore, just
+		 * switched...this is clearly much better than cloning an array or doing
+		 * a System.arraycopy() each time through the outer loop.)
+		 *
+		 * Effectively, the difference between the two implementations is this
+		 * one does not cause an out of memory condition when calculating the LD
+		 * over two very large strings.
+		 */
 
 		int n = s.length(); // length of s
 		int m = t.length(); // length of t

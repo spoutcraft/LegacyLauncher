@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.skin;
 
 import java.awt.Color;
@@ -42,7 +42,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -70,7 +69,6 @@ import org.spoutcraft.launcher.api.util.Resources;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
-
 	private static final long serialVersionUID = 1797546961340465149L;
 	private JPanel contentPane = new JPanel();
 	private Container loginPane = new Container();
@@ -94,7 +92,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	public LegacyLoginFrame(Skin parent) {
 		super(parent);
 		setTitle("Spoutcraft Launcher");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftFavIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftIcon));
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - 860) / 2, (dim.height - 500) / 2, 860, 500);
@@ -133,13 +131,12 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		passwordField = new JPasswordField();
 		passwordField.setFont(arial11);
 		passwordField.setBounds(143, 42, 119, 22);
-		
-		
+
 		JLabel versionLabel = new JLabel("Version: ");
 		versionLabel.setFont(arial11);
 		versionLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		versionLabel.setBounds(-17, 72, 150, 14);
-		
+
 		version.setFont(arial11);
 		version.addItem("Recommended");
 		version.addItem("Latest");
@@ -209,7 +206,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		final JTextPane editorPane = new JTextPane();
 		editorPane.setContentType("text/html");
-		
+
 		editorPane.setEditable(false);
 		editorPane.setOpaque(false);
 
@@ -265,7 +262,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginPane.add(version);
 		loginPane.add(versionLabel);
 		contentPane.add(loginPane);
-		
+
 		version.addActionListener(this);
 		version.setActionCommand("Version");
 		version.setSelectedIndex(Settings.getSpoutcraftBuild() == Build.RECOMMENDED ? 0 : 1);
@@ -290,13 +287,13 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		offlinePane.add(offlineMessage);
 		offlinePane.setVisible(false);
 		contentPane.add(offlinePane);
-		
+
 		int buildNumber = Settings.getLauncherSelectedBuild();
 		JLabel build = new JLabel("Launcher Build: " + (buildNumber == -1 ? "Custom" : "b" + buildNumber));
 		build.setFont(arial11);
 		build.setOpaque(false);
 		build.setBounds(3, 460, 125, 12);
-		
+
 		contentPane.add(build);
 		contentPane.add(scrollPane);
 		contentPane.add(trans2);
@@ -328,7 +325,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		loginButton.setEnabled(true);
 	}
-	
+
 	public void disable() {
 		usernameField.setEnabled(false);
 		passwordField.setEnabled(false);
@@ -338,7 +335,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginSkin1.setEnabled(false);
 		loginSkin2.setEnabled(false);
 	}
-	
+
 	public void enable() {
 		usernameField.setEnabled(true);
 		passwordField.setEnabled(true);
@@ -360,8 +357,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
 			disable();
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
-			if (rememberCheckbox.isSelected())
+			if (rememberCheckbox.isSelected()) {
 				saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+			}
 		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
 			disable();
 			doLogin(loginSkin1.getText());
@@ -375,7 +373,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	public void keyTyped(KeyEvent e) {
-
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -386,14 +383,13 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	public void keyReleased(KeyEvent e) {
-
 	}
 
 	@Override
 	public void onEvent(Event event) {
 		switch (event) {
 			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
+				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
 				enable();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
@@ -403,14 +399,13 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
 						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "", "");
-					}
-					else {
+					} else {
 						enable();
 					}
 				}
 				break;
 			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
+				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
 				enable();
 				break;
 		}

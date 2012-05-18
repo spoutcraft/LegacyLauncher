@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.awt.Graphics2D;
@@ -34,7 +34,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.List;
-
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -124,5 +123,4 @@ public class ImageUtils {
 		contentPane.add(tmp);
 		return tmp;
 	}
-
 }

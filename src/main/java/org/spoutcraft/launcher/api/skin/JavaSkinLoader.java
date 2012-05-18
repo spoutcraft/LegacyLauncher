@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin;
 
 import java.io.File;
@@ -43,7 +43,6 @@ import org.spoutcraft.launcher.api.skin.exceptions.InvalidDescriptionFileExcepti
 import org.spoutcraft.launcher.api.skin.exceptions.InvalidSkinException;
 
 public class JavaSkinLoader implements SkinLoader {
-
 	final CommonSecurityManager manager;
 	private final double key;
 	private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -55,8 +54,9 @@ public class JavaSkinLoader implements SkinLoader {
 	}
 
 	public void enableSkin(Skin paramSkin) {
-		if (!JavaSkin.class.isAssignableFrom(paramSkin.getClass()))
+		if (!JavaSkin.class.isAssignableFrom(paramSkin.getClass())) {
 			throw new IllegalArgumentException("Cannot enable skin with this SkinLoader as it is of the wrong type!");
+		}
 		if (!paramSkin.isEnabled()) {
 			JavaSkin cp = (JavaSkin) paramSkin;
 			String name = cp.getDescription().getName();
@@ -75,8 +75,9 @@ public class JavaSkinLoader implements SkinLoader {
 	}
 
 	public void disableSkin(Skin paramSkin) {
-		if (!JavaSkin.class.isAssignableFrom(paramSkin.getClass()))
+		if (!JavaSkin.class.isAssignableFrom(paramSkin.getClass())) {
 			throw new IllegalArgumentException("Cannot disable skin with this SkinLoader as it is of the wrong type!");
+		}
 		if (paramSkin.isEnabled()) {
 			JavaSkin js = (JavaSkin) paramSkin;
 			String name = js.getDescription().getName();
@@ -92,15 +93,15 @@ public class JavaSkinLoader implements SkinLoader {
 				Launcher.getLogger().log(Level.SEVERE, new StringBuilder().append("An error occurred when disabling skin '").append(paramSkin.getDescription().getFullName()).append("' : ").append(e.getMessage()).toString(), e);
 			}
 		}
-
 	}
 
 	public Skin loadSkin(File paramFile) throws InvalidSkinException, InvalidDescriptionFileException {
 		JavaSkin result = null;
 		SkinDescriptionFile desc = null;
 
-		if (!paramFile.exists())
+		if (!paramFile.exists()) {
 			throw new InvalidSkinException(new StringBuilder().append(paramFile.getName()).append(" does not exist!").toString());
+		}
 
 		JarFile jar = null;
 		InputStream in = null;
@@ -108,8 +109,9 @@ public class JavaSkinLoader implements SkinLoader {
 			jar = new JarFile(paramFile);
 			JarEntry entry = jar.getJarEntry("skin.yml");
 
-			if (entry == null)
+			if (entry == null) {
 				throw new InvalidSkinException("Jar has no skin.yml!");
+			}
 
 			in = jar.getInputStream(entry);
 			desc = new SkinDescriptionFile(in);
@@ -151,8 +153,9 @@ public class JavaSkinLoader implements SkinLoader {
 
 			result.initialize(this, desc, dataFolder, paramFile, loader);
 
-			if (!locked)
+			if (!locked) {
 				manager.unlock(key);
+			}
 		} catch (Exception e) {
 			throw new InvalidSkinException(e);
 		}
@@ -188,5 +191,4 @@ public class JavaSkinLoader implements SkinLoader {
 			classes.put(name, clazz);
 		}
 	}
-
 }

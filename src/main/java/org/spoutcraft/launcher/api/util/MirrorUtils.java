@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.io.File;
@@ -66,15 +66,15 @@ public class MirrorUtils {
 					goodMirrors.add(e.getKey());
 				}
 			}
-			
+
 			Collections.sort(goodMirrors, new MirrorComparator(mirrors));
 			for (String mirror : goodMirrors) {
 				System.out.println("Mirror " + mirror + " value " + mirrors.get(mirror));
 			}
-			
+
 			MirrorUtils.mirrors = goodMirrors;
 		}
-		
+
 		for (String mirror : MirrorUtils.mirrors){
 			String lookup = "http://" + mirror + "/" + mirrorURI;
 			if (isAddressReachable(lookup, 1000)) {
@@ -120,7 +120,7 @@ public class MirrorUtils {
 	public static void updateMirrorsYMLCache() {
 		if (!updated) {
 			try {
-				URL url = new URL("http://cdn.spout.org/mirrors.yml");
+				URL url = new URL("http://cdn.spout.org/yml/mirrors.yml");
 				HttpURLConnection con = (HttpURLConnection) (url.openConnection());
 				System.setProperty("http.agent", "");
 				con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
@@ -147,7 +147,7 @@ class MirrorComparator implements Comparator<String> {
 	public int compare(String o1, String o2) {
 		return getValue(o2) - getValue(o1);
 	}
-	
+
 	private int getValue(String mirror) {
 		if (values.containsKey(mirror)) {
 			return values.get(mirror);
@@ -156,5 +156,4 @@ class MirrorComparator implements Comparator<String> {
 		values.put(mirror, value);
 		return value;
 	}
-	
 }

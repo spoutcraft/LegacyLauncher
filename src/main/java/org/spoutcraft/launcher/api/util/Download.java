@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -75,14 +76,12 @@ public class Download implements Runnable {
 
 			stateChanged();
 
-
 			final Thread instance = Thread.currentThread();
 			Thread progress = new Thread() {
 				long last = System.currentTimeMillis();
 
 				public void run() {
 					while (!this.isInterrupted()) {
-
 						long diff = outFile.length() - downloaded;
 						downloaded = outFile.length();
 
@@ -120,11 +119,9 @@ public class Download implements Runnable {
 			rbc.close();
 			progress.interrupt();
 			success = size > 0 ? (size == outFile.length()) : true;
-		}
-		catch (DownloadException e) {
+		} catch (DownloadException e) {
 			success = false;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -137,7 +134,8 @@ public class Download implements Runnable {
 				public void run() {
 					try {
 						is[0] = urlconnection.getInputStream();
-					} catch (IOException ignore) {}
+					} catch (IOException ignore) {
+					}
 				}
 			};
 			stream.start();
@@ -145,13 +143,15 @@ public class Download implements Runnable {
 			while ((is[0] == null) && (iterationCount++ < 5)) {
 				try {
 					stream.join(1000L);
-				} catch (InterruptedException ignore) {}
+				} catch (InterruptedException ignore) {
+				}
 			}
 			if (is[0] != null) continue;
 			try {
 				stream.interrupt();
 				stream.join();
-			} catch (InterruptedException ignore) {}
+			} catch (InterruptedException ignore) {
+			}
 		}
 
 		if (is[0] == null) {

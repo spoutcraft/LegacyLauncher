@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin.gui;
 
 import java.awt.Cursor;
@@ -33,7 +33,6 @@ import java.net.URI;
 import javax.swing.JLabel;
 
 public class HyperlinkJLabel extends JLabel implements MouseListener {
-
 	private static final long serialVersionUID = -3801443131566852907L;
 	private String url;
 
@@ -57,7 +56,6 @@ public class HyperlinkJLabel extends JLabel implements MouseListener {
 	}
 
 	public void mouseEntered(MouseEvent e) {
-
 	}
 
 	public void mouseExited(MouseEvent e) {

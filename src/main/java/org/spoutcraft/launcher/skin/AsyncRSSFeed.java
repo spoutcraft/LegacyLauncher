@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.skin;
 
 import java.net.HttpURLConnection;
@@ -31,18 +31,15 @@ import java.net.URL;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Random;
-
 import javax.swing.JTextPane;
 
 import org.jdesktop.swingworker.SwingWorker;
-
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 public class AsyncRSSFeed extends SwingWorker<Object, Object> {
-
 	private JTextPane editorPane;
 	private String username = null;
 	private Random rand = new Random();
@@ -60,10 +57,10 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 	protected Object doInBackground() throws Exception {
 		try {
 			editorPane.setText("Loading RSS feed...");
-			URL url = new URL("http://updates.getspout.org/rss");
+			URL url = new URL("http://updates.spout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setConnectTimeout(7500);
-			
+
 			conn.setDoInput(true);
 			conn.setDoOutput(false);
 			System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
@@ -160,6 +157,5 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 		text = text.replaceAll("@time_of_day", getTimeOfDay());
 		text = text.replaceAll("@username", getUsername());
 		return text;
-
 	}
 }

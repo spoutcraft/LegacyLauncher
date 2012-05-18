@@ -1,24 +1,18 @@
-<!--
-	Maven build file for Spoutcraft LauncherAPI
-
-	Copyright (c) 2011-2012 SpoutDev <http://www.spout.org>
-	Spoutcraft LauncherAPI is licensed under GNU LESSER GENERAL PUBLIC LICENSE Version 3, but with a provision that files are released under the MIT license 180 days after they are published. Please see the `LICENSE.txt` file for details.
--->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Project information -->
+	<name>LauncherAPI</name>
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>launcherapi</artifactId>
 	<version>dev-SNAPSHOT</version>
-	<name>Spoutcraft LauncherAPI</name>
 	<url>http://www.spout.org</url>
+	<inceptionYear>2011</inceptionYear>
 	<description>Skin and customization API for Spoutcraft Launcher.</description>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<build.number>Unknown</build.number>
+		<buildNumber>0</buildNumber>
 	</properties>
 
 	<!-- License -->
@@ -27,20 +21,21 @@
 			<name>SpoutDev License Version 1</name>
 			<url>http://www.spout.org/SpoutDevLicenseV1.txt</url>
 			<distribution>repo</distribution>
+			<comments>GNU Lesser General Public License Version 3, but with a provision that files are released under the MIT license 180 days after they are published</comments>
 		</license>
 	</licenses>
 
 	<!-- Source code -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:SpoutDev/${project.name}.git</developerConnection>
-		<connection>scm:git:git://github.com/SpoutDev/${project.name}.git</connection>
-		<url>https://github.com/SpoutDev/${project.name}</url>
+		<developerConnection>scm:git:git@github.com:SpoutDev/LauncherAPI.git</developerConnection>
+		<connection>scm:git:git://github.com/SpoutDev/LauncherAPI.git</connection>
+		<url>https://github.com/SpoutDev/LauncherAPI</url>
 	</scm>
 
 	<!-- Continuous integration -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://ci.spout.org</url>
+		<url>http://build.spout.org</url>
 	</ciManagement>
 
 	<!-- Repository locations -->
@@ -63,21 +58,18 @@
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
 			<version>1.10</version>
-			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swing-layout</artifactId>
 			<version>1.0.3</version>
-			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.swinglabs</groupId>
 			<artifactId>swing-worker</artifactId>
 			<version>1.1</version>
-			<type>jar</type>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -88,9 +80,9 @@
 		</dependency>
 	</dependencies>
 
+	<!-- Build settings -->
 	<build>
-		<defaultGoal>clean install</defaultGoal>
-		<sourceDirectory>${basedir}/src/main/java</sourceDirectory>
+		<defaultGoal>clean package install</defaultGoal>
 		<!-- Resources -->
 		<resources>
 			<resource>
@@ -112,27 +104,59 @@
 		</resources>
 		<!-- Plugins -->
 		<plugins>
+			<!-- License header formatting plugin -->
+			<plugin>
+				<groupId>com.mycila.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.10.b1</version>
+				<executions>
+					<execution>
+						<phase>clean</phase>
+						<goals>
+							<goal>format</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<quiet>true</quiet>
+					<encoding>UTF-8</encoding>
+					<strictCheck>true</strictCheck>
+					<header>${basedir}/HEADER.txt</header>
+					<keywords>
+						<keyword>${project.name}</keyword>
+						<keyword>license</keyword>
+					</keywords>
+					<mapping>
+						<java>SLASHSTAR_STYLE</java>
+					</mapping>
+					<properties>
+						<name>${project.name}</name>
+						<url>${project.url}</url>
+						<license>SpoutDev License Version 1</license>
+						<licenseUrl>http://www.spout.org/SpoutDevLicenseV1.txt</licenseUrl>
+						<copyright>Copyright (c) ${project.inceptionYear}-2012, SpoutDev</copyright>
+					</properties>
+					<includes>
+						<include>src/main/java/**</include>
+						<include>src/test/java/**</include>
+					</includes>
+				</configuration>
+			</plugin>
 			<!-- Compile plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>2.4</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-			<!-- JAR creation plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>2.3.2</version>
-			</plugin>
 			<!-- JAR dependency addition plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.5</version>
+				<version>1.6</version>
 				<executions>
 					<execution>
 						<phase>package</phase>

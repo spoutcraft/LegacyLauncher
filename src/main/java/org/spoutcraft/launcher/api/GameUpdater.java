@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,13 +24,11 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api;
 
 import org.spoutcraft.launcher.api.util.DownloadListener;
 
 public abstract class GameUpdater extends SpoutcraftDirectories implements DownloadListener {
-
 	/* Minecraft Updating Arguments */
 	private String user = "Player";
 	private String downloadTicket = "1";
@@ -38,7 +37,7 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
-	public final String spoutcraftMirrors = "http://cdn.getspout.org/mirrors.html";
+	public final String spoutcraftMirrors = "http://cdn.spout.org/yml/mirrors.yml";
 
 	private DownloadListener listener;
 
@@ -90,8 +89,7 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	public void runGame() {
 		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, minecraftPass);
 	}
-	
+
 	public void onSpoutcraftBuildChange() {
-		
 	}
 }

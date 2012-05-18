@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin;
 
 import java.io.File;
@@ -40,7 +40,6 @@ import org.spoutcraft.launcher.api.skin.exceptions.InvalidSkinException;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public class CommonSkinManager implements SkinManager {
-
 	private final CommonSecurityManager manager;
 	private final double key;
 	public final Map<String, Skin> names = new HashMap<String, Skin>();
@@ -48,7 +47,6 @@ public class CommonSkinManager implements SkinManager {
 	public final SkinLoader javaLoader;
 	public final SkinLoader yamlLoader;
 	public Skin enabledSkin = null;
-
 
 	public CommonSkinManager(final CommonSecurityManager manager, final double key) {
 		this.manager = manager;
@@ -66,8 +64,9 @@ public class CommonSkinManager implements SkinManager {
 	}
 
 	public void loadSkins(File directory) {
-		if (!directory.isDirectory())
+		if (!directory.isDirectory()) {
 			throw new IllegalArgumentException("File parameter was not a Directory!");
+		}
 
 		for (File file : directory.listFiles()) {
 			if (file.isFile()) {
@@ -80,7 +79,6 @@ public class CommonSkinManager implements SkinManager {
 				}
 			}
 		}
-
 	}
 
 	public Skin loadSkin(File file) throws InvalidSkinException, InvalidDescriptionFileException {
@@ -95,7 +93,6 @@ public class CommonSkinManager implements SkinManager {
 			// TODO Yaml Skin
 		}
 
-
 		if (!locked)
 			manager.unlock(key);
 
@@ -103,8 +100,9 @@ public class CommonSkinManager implements SkinManager {
 	}
 
 	public void enableSkin(Skin skin) {
-		if (enabledSkin != null)
+		if (enabledSkin != null) {
 			disableSkin(enabledSkin);
+		}
 
 		if (!skin.isEnabled()) {
 			boolean locked = manager.lock(key);
@@ -116,8 +114,9 @@ public class CommonSkinManager implements SkinManager {
 				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the Skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
 			}
 
-			if (!locked)
+			if (!locked) {
 				manager.unlock(key);
+			}
 		}
 	}
 
@@ -132,8 +131,9 @@ public class CommonSkinManager implements SkinManager {
 				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the Skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
 			}
 
-			if (!locked)
+			if (!locked) {
 				manager.unlock(key);
+			}
 		}
 	}
 
@@ -168,5 +168,4 @@ public class CommonSkinManager implements SkinManager {
 			manager.lock(key);
 		}
 	}
-
 }

@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -26,7 +27,6 @@
 package org.spoutcraft.launcher.api.security;
 
 public interface Secure {
-
 	/**
 	 * Returns true if it is locked
 	 *
@@ -49,5 +49,4 @@ public interface Secure {
 	 * @param key
 	 */
 	public void unlock(double key);
-
 }

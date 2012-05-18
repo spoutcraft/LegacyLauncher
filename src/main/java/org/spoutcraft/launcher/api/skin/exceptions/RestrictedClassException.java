@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,11 +24,9 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin.exceptions;
 
 public class RestrictedClassException extends ClassNotFoundException {
-
 	private static final long serialVersionUID = -5160321924997334617L;
 	private final String message;
 
@@ -44,5 +43,4 @@ public class RestrictedClassException extends ClassNotFoundException {
 	public String toString() {
 		return super.toString();
 	}
-
 }

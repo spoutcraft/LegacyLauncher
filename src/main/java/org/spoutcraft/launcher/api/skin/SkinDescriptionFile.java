@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,19 +24,18 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin;
 
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.Map;
 
-import org.spoutcraft.launcher.api.skin.exceptions.InvalidDescriptionFileException;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.SafeConstructor;
 
-public class SkinDescriptionFile {
+import org.spoutcraft.launcher.api.skin.exceptions.InvalidDescriptionFileException;
 
+public class SkinDescriptionFile {
 	private static final Yaml yaml = new Yaml(new SafeConstructor());
 	private String name;
 	private String version;
@@ -131,9 +131,7 @@ public class SkinDescriptionFile {
 				throw new InvalidDescriptionFileException(ex, "The field 'icon' is of the wrong type in the skin.yml!");
 			}
 		}
-
 	}
-
 
 	public String getMain() {
 		return main;
@@ -190,5 +188,4 @@ public class SkinDescriptionFile {
 	public void setFullname(String fullname) {
 		this.fullname = fullname;
 	}
-
 }

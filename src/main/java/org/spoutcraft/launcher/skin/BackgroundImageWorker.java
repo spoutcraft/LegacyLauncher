@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,16 +24,15 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.skin;
 
 import java.io.File;
-
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import org.jdesktop.swingworker.SwingWorker;
+
 import org.spoutcraft.launcher.api.util.Download;
 
 public class BackgroundImageWorker extends SwingWorker<Object, Object> {
@@ -49,7 +49,7 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 	protected Object doInBackground() {
 		try {
 			if (!backgroundImage.exists() || backgroundImage.length() < 10 * 1024 || System.currentTimeMillis() - backgroundImage.lastModified() > IMAGE_CYCLE_TIME) {
-				Download download = new Download("http://www.spoutcraft.org/splash/random.png", backgroundImage.getPath());
+				Download download = new Download("http://get.spout.org/splash/random.png", backgroundImage.getPath());
 				download.run();
 			}
 		} catch (Exception e) {

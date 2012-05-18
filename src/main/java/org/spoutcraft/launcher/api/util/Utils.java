@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.io.BufferedInputStream;
@@ -48,7 +48,6 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
 
@@ -59,7 +58,6 @@ import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 
 public class Utils {
-
 	private static File workDir = null;
 	private static StartupParameters params = null;
 
@@ -104,8 +102,9 @@ public class Utils {
 			default:
 				workingDirectory = new File(userHome, applicationName + '/');
 		}
-		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs()))
+		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
 			throw new RuntimeException("The working directory could not be created: " + workingDirectory);
+		}
 		return workingDirectory;
 	}
 
@@ -139,8 +138,9 @@ public class Utils {
 			byte[] data = pk.getEncoded();
 
 			for (int j = 0; j < data.length; j++) {
-				if (data[j] == bytes[j])
+				if (data[j] == bytes[j]) {
 					continue;
+				}
 				throw new RuntimeException("Public key mismatch");
 			}
 
@@ -182,18 +182,24 @@ public class Utils {
 	
 	private static OS lookupOperatingSystem() {
 		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win"))
+		if (osName.contains("win")) {
 			return OS.WINDOWS;
-		if (osName.contains("mac"))
+		}
+		if (osName.contains("mac")) {
 			return OS.MAC_OS;
-		if (osName.contains("solaris"))
+		}
+		if (osName.contains("solaris")) {
 			return OS.SOLARIS;
-		if (osName.contains("sunos"))
+		}
+		if (osName.contains("sunos")) {
 			return OS.SOLARIS;
-		if (osName.contains("linux"))
+		}
+		if (osName.contains("linux")) {
 			return OS.LINUX;
-		if (osName.contains("unix"))
+		}
+		if (osName.contains("unix")) {
 			return OS.LINUX;
+		}
 		return OS.UNKNOWN;
 	}
 
@@ -206,8 +212,9 @@ public class Utils {
 	}
 
 	public static String getFileExtention(String file) {
-		if (!file.contains("."))
+		if (!file.contains(".")) {
 			return null;
+		}
 
 		return file.substring(file.lastIndexOf(".") + 1, file.length());
 	}
@@ -220,10 +227,12 @@ public class Utils {
 			outputStream = new FileOutputStream(output);
 			copy(inputStream, outputStream);
 		} finally {
-			if (inputStream != null)
+			if (inputStream != null) {
 				inputStream.close();
-			if (outputStream != null)
+			}
+			if (outputStream != null) {
 				outputStream.close();
+			}
 		}
 	}
 
@@ -288,21 +297,24 @@ public class Utils {
 						break;
 					}
 				}
-				if (skip)
+				if (skip) {
 					continue;
+				}
 			}
 
 			if (entry.getName().endsWith("/")) {
 				if (!file.mkdir()) {
-					if (ignores == null)
+					if (ignores == null) {
 						ignores = new ArrayList<String>();
+					}
 					ignores.add(entry.getName());
 				}
 				continue;
 			}
 
-			if (file.exists())
+			if (file.exists()) {
 				file.delete();
+			}
 
 			file.createNewFile();
 
@@ -316,8 +328,6 @@ public class Utils {
 			}
 			out.close();
 			in.close();
-
 		}
-
 	}
 }

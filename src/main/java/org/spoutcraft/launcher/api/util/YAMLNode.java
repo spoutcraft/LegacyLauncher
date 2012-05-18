@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.util.ArrayList;
@@ -33,8 +33,6 @@ import java.util.Map;
 
 /**
  * Represents a configuration node.
- *
- * @author sk89q
  */
 public class YAMLNode {
 	protected Map<String, Object> root;
@@ -114,7 +112,6 @@ public class YAMLNode {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setProperty(String path, Object value) {
-
 		if (!path.contains(".")) {
 			root.put(path, value);
 			return;

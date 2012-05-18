@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
 import java.net.Authenticator;
@@ -34,7 +34,6 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 
 public class StartupParameters {
-
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
@@ -55,16 +54,16 @@ public class StartupParameters {
 
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
-	
+
 	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
 	private String proxyHost = null;
-	
+
 	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
 	private String proxyPort = null;
-	
+
 	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
 	private String proxyUser = null;
-	
+
 	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
 	private String proxyPassword = null;
 
@@ -109,7 +108,7 @@ public class StartupParameters {
 	public boolean isDebugMode() {
 		return debug;
 	}
-	
+
 	public void setupProxy() {
 		if (proxyHost != null) {
 			System.setProperty("http.proxyHost", proxyHost);
@@ -123,15 +122,15 @@ public class StartupParameters {
 			Authenticator.setDefault(new ProxyAuthenticator(proxyUser, proxyPassword));
 		}
 	}
-	
+
 	private class ProxyAuthenticator extends Authenticator {
 		final String user, pass;
 		ProxyAuthenticator(String user, String pass) {
 			this.user = user;
 			this.pass = pass;
 		}
-		protected PasswordAuthentication getPasswordAuthentication() { 
-			return new PasswordAuthentication(user, pass.toCharArray()); 
-		} 
+		protected PasswordAuthentication getPasswordAuthentication() {
+			return new PasswordAuthentication(user, pass.toCharArray());
+		}
 	}
 }

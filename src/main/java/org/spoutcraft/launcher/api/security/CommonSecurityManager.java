@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.security;
 
 import java.io.FileDescriptor;
@@ -39,7 +39,6 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 	private final static HashMap<String, HashSet<String>> systemMethodWhiteList;
 
 	static {
-
 		// This defines permissions that are not protected
 
 		allowedPermissions = new HashSet<String>();
@@ -48,15 +47,14 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 
 		/*
 		 * This defines the white list for class/methods pairs that can be used when sandboxed
-		 * 
+		 *
 		 * This is the last java.x.y class the is detected in the stack trace, before normal classes are detected. This means that the only system level classes are called between the security manager check and the calling method
-		 * 
+		 *
 		 * This allows whitelisting of system methods that are safe, even if they use protected functionality
 		 */
 		systemMethodWhiteList = new HashMap<String, HashSet<String>>();
 
 		addMethodToWhiteList("java.lang.Enum", "valueOf");
-
 	}
 
 	private static void addMethodToWhiteList(String className, String methodName) {
@@ -81,14 +79,16 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 
 	public boolean lock(double key) {
 		boolean old = locked;
-		if (key == this.key)
+		if (key == this.key) {
 			locked = true;
+		}
 		return old;
 	}
 
 	public void unlock(double key) {
-		if (key == this.key)
+		if (key == this.key) {
 			locked = false;
+		}
 	}
 
 	private void checkAccess() {
@@ -153,7 +153,6 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 	@Override
 	public void checkPermission(Permission perm) {
 		if (isLocked()) {
-
 			if (allowedPermissions.contains(perm.getName())) {
 				return;
 			}
@@ -177,7 +176,6 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 	}
 
 	private int getFirstNonSystem(Class<?> stack[], StackTraceElement trace[], int start) {
-
 		int stackPos = start;
 		int tracePos = start + 1;
 
@@ -278,8 +276,6 @@ public class CommonSecurityManager extends SecurityManager implements Secure {
 	}
 
 	public static boolean hasFileAccess(String file) {
-
 		return false;
 	}
-
 }

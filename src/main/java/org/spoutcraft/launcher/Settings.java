@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
@@ -31,7 +31,6 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class Settings {
-
 	private static YAMLProcessor settings;
 
 	public static synchronized void setSettings(YAMLProcessor settings) {
@@ -43,7 +42,6 @@ public class Settings {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public static synchronized YAMLProcessor getSettings() {
@@ -130,5 +128,4 @@ public class Settings {
 	public static synchronized void setRetryLogin(boolean retry) {
 		settings.setProperty("launcher.retryLogin", retry);
 	}
-
 }

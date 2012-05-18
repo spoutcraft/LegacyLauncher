@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.skin.gui;
 
 import java.io.DataInputStream;
@@ -37,7 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -55,7 +54,6 @@ import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
-
 	private static final long serialVersionUID = -2105611446626766230L;
 	private final Skin parent;
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
@@ -82,7 +80,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return null;
 	}
-	
+
 	public final String getSkinURL(String user) {
 		for (String key : usernames.keySet()) {
 			if (key.equalsIgnoreCase(user)) {
@@ -94,8 +92,9 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	}
 
 	public final void saveUsername(String user, String pass) {
-		if (!hasSavedPassword(user) && pass != null && !Utils.isEmpty(pass))
+		if (!hasSavedPassword(user) && pass != null && !Utils.isEmpty(pass)) {
 			usernames.put(user, new UserPasswordInformation(pass));
+		}
 	}
 
 	public final Skin getParentSkin() {
@@ -107,17 +106,19 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	}
 
 	public final void doLogin(String user) {
-		if (!hasSavedPassword(user))
+		if (!hasSavedPassword(user)) {
 			throw new NullPointerException("There is no saved password for the user '" + user + "'");
+		}
 		doLogin(user, getSavedPassword(user));
 	}
 
 	public final void doLogin(String user, String pass) {
-		if (pass == null)
+		if (pass == null) {
 			throw new NullPointerException("The password was null when logining in as user: '" + user + "'");
+		}
 
 		Launcher.getGameUpdater().setDownloadListener(this);
-		
+
 		LoginWorker loginThread = new LoginWorker(this);
 		loginThread.setUser(user);
 		loginThread.setPass(pass);
@@ -128,14 +129,15 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private final void readSavedUsernames() {
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
-			if (!lastLogin.exists())
+			if (!lastLogin.exists()) {
 				return;
+			}
 			Cipher cipher = getCipher(2, "passwordfile");
 
 			DataInputStream dis;
-			if (cipher != null)
+			if (cipher != null) {
 				dis = new DataInputStream(new CipherInputStream(new FileInputStream(lastLogin), cipher));
-			else {
+			} else {
 				dis = new DataInputStream(new FileInputStream(lastLogin));
 			}
 
@@ -158,7 +160,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 						usernames.put(key, new UserPasswordInformation(pass));
 					}
 					UserPasswordInformation info = usernames.get(key);
-					
+
 					info.username = user;
 				}
 			} catch (EOFException e) {
@@ -177,9 +179,9 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			Cipher cipher = getCipher(1, "passwordfile");
 
 			DataOutputStream dos;
-			if (cipher != null)
+			if (cipher != null) {
 				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin), cipher));
-			else {
+			} else {
 				dos = new DataOutputStream(new FileOutputStream(lastLogin, true));
 			}
 			for (String user : usernames.keySet()) {
@@ -257,5 +259,4 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			passwordHash = hash;
 		}
 	}
-
 }

@@ -1,6 +1,7 @@
 /*
- * This file is part of LauncherAPI (http://www.spout.org/).
+ * This file is part of LauncherAPI.
  *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
  * LauncherAPI is licensed under the SpoutDev License Version 1.
  *
  * LauncherAPI is free software: you can redistribute it and/or modify
@@ -23,7 +24,6 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.api.util;
 
 import java.io.BufferedInputStream;
@@ -36,9 +36,9 @@ import java.net.URL;
 import org.spoutcraft.launcher.StartupParameters;
 
 public final class Resources {
-	public static final URL spoutcraftFavIcon = StartupParameters.class.getResource("resources/favicon.png");
+	public static final URL spoutcraftIcon = StartupParameters.class.getResource("resources/icon.png");
 	public static final URL spoutcraftLogo = StartupParameters.class.getResource("resources/spoutcraft.png");
-	
+
 	public static InputStream getResourceAsStream(String path) {
 		InputStream stream = Resources.class.getResourceAsStream(path);
 		if (stream == null) {
@@ -46,8 +46,8 @@ public final class Resources {
 			if (resource.exists()) {
 				try {
 					stream = new BufferedInputStream(new FileInputStream(resource));
+				} catch (IOException ignore) {
 				}
-				catch (IOException ignore) { }
 			}
 		}
 		if (stream == null) {
@@ -55,8 +55,8 @@ public final class Resources {
 			if (resource.exists()) {
 				try {
 					stream = new BufferedInputStream(new FileInputStream(resource));
+				} catch (IOException ignore) {
 				}
-				catch (IOException ignore) { }
 			}
 		}
 		return stream;
