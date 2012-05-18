@@ -73,12 +73,6 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.3</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.0</version>
@@ -289,7 +283,7 @@
 										<fileVersion>2.0.0.${buildNumber}</fileVersion>
 										<txtFileVersion>2.0.0.${buildNumber}</txtFileVersion>
 										<fileDescription>${project.name}</fileDescription>
-										<copyright>Copyright (c) ${inceptionYear}-2012 SpoutDev, ${project.url}</copyright>
+										<copyright>Copyright (c) ${project.inceptionYear}-2012 SpoutDev, ${project.url}</copyright>
 										<productVersion>2.0.0.${buildNumber}</productVersion>
 										<txtProductVersion>2.0.0.${buildNumber}</txtProductVersion>
 										<productName>${project.name}</productName>
