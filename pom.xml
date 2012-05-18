@@ -253,9 +253,9 @@
 			<build>
 				<plugins>
 					<plugin>
-						<groupId>com.akathist.maven.plugins.launch4j</groupId>
-						<artifactId>launch4j-maven-plugin</artifactId>
-						<version>1.5.1</version>
+						<groupId>org.bluestemsoftware.open.maven.plugin</groupId>
+						<artifactId>launch4j-plugin</artifactId>
+						<version>1.5.0.0</version>
 						<executions>
 							<execution>
 								<phase>package</phase>
