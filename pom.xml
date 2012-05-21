@@ -38,6 +38,12 @@
 		<url>http://build.spout.org</url>
 	</ciManagement>
 
+	<!-- Issue management -->
+	<issueManagement>
+		<system>JIRA</system>
+		<url>http://issues.spout.org</url>
+	</issueManagement>
+
 	<!-- Repository locations -->
 	<repositories>
 		<repository>
@@ -45,6 +51,12 @@
 			<url>http://repo.spout.org</url>
 		</repository>
 	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spout-plugins</id>
+			<url>http://repo.spout.org</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<!-- Dependencies -->
 	<dependencies>
