@@ -49,6 +49,9 @@ public class Options {
 	@Parameter(names = { "-safe", "-smode", "-safe_mode", "-sm" }, description = "Safe mode preventing addons from loading")
 	private boolean safe_mode = false;
 
+	@Parameter(names = {"-nr", "-norelaunch"}, description = "Don't relaunch the launcher when memory settings are different")
+	private boolean noRelaunch = false;
+	
 	public List<String> getParameters() {
 		return parameters;
 	}
@@ -85,5 +88,9 @@ public class Options {
 
 	public boolean isSafe_mode() {
 		return safe_mode;
+	}
+	
+	public boolean noRelaunch() {
+		return noRelaunch;
 	}
 }
