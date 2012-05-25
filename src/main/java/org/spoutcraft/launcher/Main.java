@@ -30,7 +30,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.text.html.Option;
 
 import com.beust.jcommander.JCommander;
 
@@ -92,27 +95,54 @@ public class Main {
 		}
 		MinecraftUtils.setOptions(options);
 
+		
 		recursion = new File(PlatformUtils.getWorkingDirectory(), "rtemp");
 
 		args_temp = args;
+		
 		boolean relaunch = false;
-		try {
-			if (!recursion.exists()) {
-				relaunch = true;
-			} else {
-				recursion.delete();
-			}
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
 
-		if (relaunch) {
-			if (SettingsUtil.getMemorySelection() < 6) {
-				int mem = 1 << (9 + SettingsUtil.getMemorySelection());
-				recursion.createNewFile();
-				reboot("-Xmx" + mem + "m");
-			}
+		int memSelect = SettingsUtil.getMemorySelection();
+		if (memSelect < 0 || memSelect > 5)
+			memSelect = 0;
+		
+		int curMax = (int)(Runtime.getRuntime().maxMemory()>>20);
+		int wantedMax = 1 << (9 + SettingsUtil.getMemorySelection());
+			
+		
+		// maxMemory reports less than the -Xmx option(probably from vm internals)
+		int relaunchMin = wantedMax-254;
+		if (curMax < relaunchMin || curMax > wantedMax && !recursion.exists()) {
+			relaunch = true;
+		}  
+
+		/*
+		 *  Since "-norelaunch" will only be used in special cases, 
+		 *  it should be safe to assume the user can also add an 
+		 *  -Xmx option to get the desired max memory.
+		 * 
+		 *  This seems more logical then ignoring the memory selection 
+		 *  completely when -norelauch is enabled.
+		 */
+		if (options.noRelaunch() && curMax < relaunchMin) {
+			JOptionPane.showMessageDialog(null, 
+					"Not enough memory to launch Minecraft.\n"+
+					"Do either of the following on the command line:\n"+
+					" - add \"-Xmx" + wantedMax + "m\"\n"+ 
+					" - remove \"-norelaunch\" or \"-nr\"\n");
+			System.exit(1);
 		}
+		
+		
+		if(relaunch) {
+			if (SettingsUtil.getMemorySelection() < 6) {
+				recursion.createNewFile();
+				reboot("-Xmx" + wantedMax + "m");
+			}
+		} else {
+			recursion.delete();
+		}
+		
 		if (PlatformUtils.getPlatform() == PlatformUtils.OS.macos) {
 			try{
 				System.setProperty("apple.laf.useScreenMenuBar", "true");
