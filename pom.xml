@@ -139,7 +139,7 @@
 				<filtering>true</filtering>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
-					<include>launcher-version</include>
+					<include>version</include>
 				</includes>
 			</resource>
 			<resource>
