@@ -1,17 +1,28 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * This file is part of Spoutcraft Launcher.
+ *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.diff;
 
@@ -27,7 +38,7 @@ import java.util.zip.GZIPOutputStream;
  * Java Binary Diff utility. Based on
  * bsdiff (v4.2) by Colin Percival
  * (see http://www.daemonology.net/bsdiff/ ) and distributed under BSD license.
- *
+ * <p/>
  * <p>
  * Running this on large files will probably require an increae of the default
  * maximum heap size (use java -Xmx200m)
@@ -37,7 +48,7 @@ import java.util.zip.GZIPOutputStream;
  */
 public class JBDiff {
 	@SuppressWarnings("unused")
-	private static final String VERSION="jbdiff-0.1.0";
+	private static final String VERSION = "jbdiff-0.1.0";
 
 	private static final int min(int x, int y) {
 		return x < y ? x : y;
@@ -157,7 +168,7 @@ public class JBDiff {
 		}
 
 		for (i = 0; i < oldsize; i++) {
-			buckets[ (int)oldBuf[i] &0xff ]++;
+			buckets[(int) oldBuf[i] & 0xff]++;
 		}
 
 		for (i = 1; i < 256; i++) {
@@ -171,12 +182,12 @@ public class JBDiff {
 		buckets[0] = 0;
 
 		for (i = 0; i < oldsize; i++) {
-			I[++buckets[(int)oldBuf[i] & 0xff]] = i;
+			I[++buckets[(int) oldBuf[i] & 0xff]] = i;
 		}
 
 		I[0] = oldsize;
 		for (i = 0; i < oldsize; i++) {
-			V[i] = buckets[(int)oldBuf[i] &0xff];
+			V[i] = buckets[(int) oldBuf[i] & 0xff];
 		}
 		V[oldsize] = 0;
 
@@ -190,7 +201,7 @@ public class JBDiff {
 
 		for (h = 1; I[0] != -(oldsize + 1); h += h) {
 			len = 0;
-			for (i = 0; i < oldsize + 1;) {
+			for (i = 0; i < oldsize + 1; ) {
 				if (I[i] < 0) {
 					len -= I[i];
 					i -= I[i];
@@ -230,7 +241,7 @@ public class JBDiff {
 		int end = min(oldBuf.length - oldOffset, newBuf.length - newOffset);
 		int i;
 		for (i = 0; i < end; i++) {
-			if (oldBuf[oldOffset+i] != newBuf[newOffset+i]) {
+			if (oldBuf[oldOffset + i] != newBuf[newOffset + i]) {
 				break;
 			}
 		}
@@ -261,7 +272,7 @@ public class JBDiff {
 		}
 	}
 
-	public static void bsdiff (File oldFile, File newFile, File diffFile) throws IOException {
+	public static void bsdiff(File oldFile, File newFile, File diffFile) throws IOException {
 		int oldsize = (int) oldFile.length();
 		byte[] oldBuf = new byte[oldsize];
 
@@ -269,8 +280,8 @@ public class JBDiff {
 		Util.readFromStream(in, oldBuf, 0, oldsize);
 		in.close();
 
-		int[] I = new int[oldsize+1];
-		int[] V = new int[oldsize+1];
+		int[] I = new int[oldsize + 1];
+		int[] V = new int[oldsize + 1];
 
 		qsufsort(I, V, oldBuf);
 
@@ -347,7 +358,7 @@ public class JBDiff {
 					}
 				}
 
-				if (((len == oldscore) && (len != 0)) || (len > oldscore + 8))  {
+				if (((len == oldscore) && (len != 0)) || (len > oldscore + 8)) {
 					break;
 				}
 
@@ -360,7 +371,7 @@ public class JBDiff {
 				int s = 0;
 				int Sf = 0;
 				int lenf = 0;
-				for (i = 0; (lastscan + i < scan) && (lastpos + i < oldsize);) {
+				for (i = 0; (lastscan + i < scan) && (lastpos + i < oldsize); ) {
 					if (oldBuf[lastpos + i] == newBuf[lastscan + i])
 						s++;
 					i++;
@@ -423,8 +434,8 @@ public class JBDiff {
 				 * Write control block entry (3 x int)
 				 */
 				diffOut.writeInt(lenf);
-				diffOut.writeInt ( (scan - lenb) - (lastscan + lenf) );
-				diffOut.writeInt ( (pos.value - lenb) - (lastpos + lenf) );
+				diffOut.writeInt((scan - lenb) - (lastscan + lenf));
+				diffOut.writeInt((pos.value - lenb) - (lastpos + lenf));
 				ctrlBlockLen += 12;
 
 				lastscan = scan - lenb;
@@ -439,7 +450,7 @@ public class JBDiff {
 		 * Write diff block
 		 */
 		gzOut = new GZIPOutputStream(diffOut);
-		gzOut.write(db,0,dblen);
+		gzOut.write(db, 0, dblen);
 		gzOut.finish();
 		int diffBlockLen = diffOut.size() - ctrlBlockLen - 32;
 		//System.err.println ("diffBlockLen=" + diffBlockLen);
@@ -460,9 +471,9 @@ public class JBDiff {
 		 * Write missing header info. Need to reopen the file with RandomAccessFile
 		 * for this.
 		 */
-		RandomAccessFile diff = new RandomAccessFile (diffFile, "rw");
+		RandomAccessFile diff = new RandomAccessFile(diffFile, "rw");
 		diff.seek(8);
-		diff.writeLong (ctrlBlockLen);  // ctrlBlockLen (compressed) @offset 8
+		diff.writeLong(ctrlBlockLen);  // ctrlBlockLen (compressed) @offset 8
 		diff.writeLong(diffBlockLen);  // diffBlockLen (compressed) @offset 16
 		diff.close();
 	}
@@ -484,7 +495,7 @@ public class JBDiff {
 		File newFile = new File(arg[1]);
 		File diffFile = new File(arg[2]);
 
-		bsdiff (oldFile, newFile, diffFile);
+		bsdiff(oldFile, newFile, diffFile);
 	}
 
 	private static class IntByRef {

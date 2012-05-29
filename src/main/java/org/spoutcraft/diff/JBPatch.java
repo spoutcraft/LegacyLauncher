@@ -1,17 +1,28 @@
 /*
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
+ * This file is part of Spoutcraft Launcher.
+ *
+ * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the SpoutDev License Version 1.
+ *
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the SpoutDev License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
  */
 package org.spoutcraft.diff;
 
@@ -29,11 +40,12 @@ import java.util.zip.GZIPInputStream;
  */
 public class JBPatch {
 	@SuppressWarnings("unused")
-	private static final String VERSION="jbdiff-0.1.0";
+	private static final String VERSION = "jbdiff-0.1.0";
 
 	/**
 	 * Run JBPatch from the command line. Params: oldfile newfile patchfile.
 	 * newfile will be created.
+	 *
 	 * @param arg
 	 * @throws IOException
 	 */
@@ -46,15 +58,15 @@ public class JBPatch {
 		File newFile = new File(arg[1]);
 		File diffFile = new File(arg[2]);
 
-		bspatch (oldFile, newFile, diffFile);
+		bspatch(oldFile, newFile, diffFile);
 	}
 
 	@SuppressWarnings("unused")
-	public static void bspatch (File oldFile, File newFile, File diffFile)
-	throws IOException {
+	public static void bspatch(File oldFile, File newFile, File diffFile)
+			throws IOException {
 		int oldpos, newpos;
 
-		DataInputStream diffIn = new DataInputStream (new FileInputStream(diffFile));
+		DataInputStream diffIn = new DataInputStream(new FileInputStream(diffFile));
 
 		// headerMagic at header offset 0 (length 8 bytes)
 		long headerMagic = diffIn.readLong();
@@ -66,7 +78,7 @@ public class JBPatch {
 		long diffBlockLen = diffIn.readLong();
 
 		// size of new file at header offset 24 (length 8 bytes)
-		int newsize = (int)diffIn.readLong();
+		int newsize = (int) diffIn.readLong();
 
 		/*
 		System.err.println ("newsize=" + newsize);
@@ -76,12 +88,12 @@ public class JBPatch {
 		*/
 
 		FileInputStream in;
-		in = new FileInputStream (diffFile);
+		in = new FileInputStream(diffFile);
 		in.skip(ctrlBlockLen + 32);
 		GZIPInputStream diffBlockIn = new GZIPInputStream(in);
 
-		in = new FileInputStream (diffFile);
-		in.skip (diffBlockLen + ctrlBlockLen + 32);
+		in = new FileInputStream(diffFile);
+		in.skip(diffBlockLen + ctrlBlockLen + 32);
 		GZIPInputStream extraBlockIn = new GZIPInputStream(in);
 
 		/*
@@ -113,8 +125,8 @@ public class JBPatch {
 			/*
 			 * Read ctrl[0] bytes from diffBlock stream
 			 */
-			if (! Util.readFromStream(diffBlockIn, newBuf, newpos, ctrl[0])) {
-				System.err.println ("error reading from extraIn");
+			if (!Util.readFromStream(diffBlockIn, newBuf, newpos, ctrl[0])) {
+				System.err.println("error reading from extraIn");
 				return;
 			}
 
@@ -132,8 +144,8 @@ public class JBPatch {
 				return;
 			}
 
-			if (! Util.readFromStream(extraBlockIn, newBuf, newpos, ctrl[1])) {
-				System.err.println ("error reading from extraIn");
+			if (!Util.readFromStream(extraBlockIn, newBuf, newpos, ctrl[1])) {
+				System.err.println("error reading from extraIn");
 				return;
 			}
 
@@ -150,7 +162,7 @@ public class JBPatch {
 		diffIn.close();
 
 		FileOutputStream out = new FileOutputStream(newFile);
-		out.write(newBuf,0,newBuf.length-1);
+		out.write(newBuf, 0, newBuf.length - 1);
 		out.close();
 	}
 }
