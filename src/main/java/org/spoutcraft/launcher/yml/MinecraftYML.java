@@ -38,7 +38,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class MinecraftYML {
 	private static volatile boolean updated = false;
-	private static File minecraftYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "minecraft.yml");
+	private static File minecraftYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "minecraft.yml");
 	private static String latest = null;
 	private static String recommended = null;
 	private static Object key = new Object();

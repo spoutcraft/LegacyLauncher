@@ -31,6 +31,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
@@ -38,7 +39,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class SpoutcraftYML {
 	private static volatile boolean updated = false;
-	private static File spoutcraftYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "spoutcraft.yml");
+	private static File spoutcraftYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "spoutcraft.yml");
 	private static Object key = new Object();
 
 	public static YAMLProcessor getSpoutcraftYML() {

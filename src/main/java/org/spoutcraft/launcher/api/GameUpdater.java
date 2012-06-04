@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -29,14 +29,14 @@ package org.spoutcraft.launcher.api;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 
 public abstract class GameUpdater extends SpoutcraftDirectories implements DownloadListener {
-	/* Minecraft Updating Arguments */
+	// Minecraft Updating Arguments
 	private String user = "Player";
 	private String downloadTicket = "1";
 	private String minecraftPass = "";
 	private String minecraftSession = "";
 
 	public final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
-	public final String latestLWJGLURL = "http://get.spout.org/Libraries/lwjgl/";
+	public final String latestLWJGLURL = "http://get.spout.org/lib/lwjgl/";
 	public final String spoutcraftMirrors = "http://get.spout.org/mirrors.yml";
 
 	private DownloadListener listener;

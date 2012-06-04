@@ -54,9 +54,9 @@ public class MinecraftDownloadUtils {
 				if (download.getOutFile() != null) {
 					download.getOutFile().delete();
 				}
-				System.err.println("Download of minecraft failed!");
+				System.err.println("Download of Minecraft failed!");
 				if (listener != null) {
-					listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
+					listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
 				}
 			} else {
 				String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getLatestMinecraftVersion());
@@ -90,7 +90,7 @@ public class MinecraftDownloadUtils {
 			}
 		}
 		if (outputFile == null) {
-			throw new IOException("Failed to download minecraft");
+			throw new IOException("Failed to download Minecraft!");
 		}
 		Utils.copy(outputFile, new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar"));
 	}

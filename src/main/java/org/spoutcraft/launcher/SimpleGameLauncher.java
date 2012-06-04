@@ -78,7 +78,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
 			Launcher.clearCache();
-			JOptionPane.showMessageDialog(getParent(), "The minecraft installation was corrupted. \nThe minecraft installation has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
+			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
 			this.setVisible(false);
 			this.dispose();
 			return;

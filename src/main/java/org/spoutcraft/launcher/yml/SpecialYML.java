@@ -38,7 +38,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class SpecialYML {
 	private static volatile boolean updated = false;
-	private static File specialYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "special.yml");
+	private static File specialYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "special.yml");
 	private static Object key = new Object();
 
 	public static YAMLProcessor getSpecialYML() {

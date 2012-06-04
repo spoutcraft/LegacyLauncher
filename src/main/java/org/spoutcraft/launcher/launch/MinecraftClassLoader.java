@@ -109,7 +109,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> result = null;
-		result = loadedClasses.get(name); //checks in cached classes
+		result = loadedClasses.get(name); // Checks in cached classes
 		if (result != null) {
 			return result;
 		}

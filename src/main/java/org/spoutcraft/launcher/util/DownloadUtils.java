@@ -52,7 +52,7 @@ public class DownloadUtils {
 				}
 				System.err.println("Download of " + url + " Failed!");
 				if (listener != null)
-					listener.stateChanged("Download Failed, retries remaining: " + tries, 0F);
+					listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
 			} else {
 				if (md5 != null) {
 					String resultMD5 = MD5Utils.getMD5(download.getOutFile());

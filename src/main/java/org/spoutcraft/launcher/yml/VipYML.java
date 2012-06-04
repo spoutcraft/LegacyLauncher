@@ -38,7 +38,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class VipYML {
 	private static volatile boolean updated = false;
-	private static File vipYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "vip.yml");
+	private static File vipYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "vip.yml");
 	private static Object key = new Object();
 
 	public static YAMLProcessor getVipYML() {

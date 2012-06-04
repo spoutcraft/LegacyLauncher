@@ -33,13 +33,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class LibrariesYML {
 	private static volatile boolean updated = false;
-	private static File librariesYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "libraries.yml");
+	private static File librariesYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "libraries.yml");
 	private static Object key = new Object();
 
 	public static YAMLProcessor getLibrariesYML() {

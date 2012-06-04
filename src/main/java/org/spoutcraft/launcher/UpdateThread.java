@@ -104,7 +104,7 @@ public class UpdateThread extends Thread{
 				}
 				int pass = loader.preloadClasses(PRELOAD_PASS);
 				loaded += pass;
-				//Less than the preload amount, so we are finished
+				// Less than the preload amount, so we are finished
 				if (pass != PRELOAD_PASS) {
 					break;
 				}
@@ -145,14 +145,14 @@ public class UpdateThread extends Thread{
 					log.delete();
 					continue;
 				}
-				date[2] = date[2].substring(0, date[2].length() - 4); //trim .log extension
+				date[2] = date[2].substring(0, date[2].length() - 4); // Trim .log extension
 				try {
 					int logYear = Integer.parseInt(date[0]);
 					int logMonth = Integer.parseInt(date[1]);
 					int logDay = Integer.parseInt(date[2]);
 
 					Calendar logDate = Calendar.getInstance();
-					//Add a month to the calendar (clear logs older than 1 month)
+					// Add a month to the calendar (clear logs older than 1 month)
 					if (logMonth < 12) {
 						logMonth++;
 					} else {
@@ -230,34 +230,34 @@ public class UpdateThread extends Thread{
 		if (!Launcher.getGameUpdater().getBinDir().exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 100F / steps);
+		stateChanged("Checking for Minecraft update...", 100F / steps);
 		if (!new File(Launcher.getGameUpdater().getBinDir(), "natives").exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 200F / steps);
+		stateChanged("Checking for Minecraft update...", 200F / steps);
 		File minecraft = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (!minecraft.exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 300F / steps);
+		stateChanged("Checking for Minecraft update...", 300F / steps);
 		File lib = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
 		if (!lib.exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 400F / steps);
+		stateChanged("Checking for Minecraft update...", 400F / steps);
 		lib = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (!lib.exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 500F / steps);
+		stateChanged("Checking for Minecraft update...", 500F / steps);
 		lib = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
 		if (!lib.exists()) {
 			return true;
 		}
-		stateChanged("Checking for Minecraft Update...", 600F / steps);
+		stateChanged("Checking for Minecraft update...", 600F / steps);
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		String installed = MinecraftYML.getInstalledVersion();
-		stateChanged("Checking for Minecraft Update...", 700F / steps);
+		stateChanged("Checking for Minecraft update...", 700F / steps);
 		String required = build.getMinecraftVersion();
 		return !installed.equals(required);
 	}
@@ -277,8 +277,8 @@ public class UpdateThread extends Thread{
 
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 
-		// Processs minecraft.jar \\
-		System.out.println("Spoutcraft Build: " + build.getBuild() + "Minecraft Version" + build.getMinecraftVersion());
+		// Processs minecraft.jar
+		System.out.println("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || !minecraftMD5.equals(MD5Utils.getMD5(mcCache))) {
 			String minecraftURL = Launcher.getGameUpdater().baseURL + "minecraft.jar?user=" + Launcher.getGameUpdater().getMinecraftUser() + "&ticket=" + Launcher.getGameUpdater().getDownloadTicket();
@@ -290,7 +290,7 @@ public class UpdateThread extends Thread{
 		File nativesDir = new File(Launcher.getGameUpdater().getBinDir().getPath(), "natives");
 		nativesDir.mkdir();
 
-		// Process other Downloads
+		// Process other downloads
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
@@ -349,15 +349,15 @@ public class UpdateThread extends Thread{
 				throw new UnsupportedOSException();
 		}
 
-		// Download Natives \\
+		// Download natives
 		YAMLNode node = LibrariesYML.getLibrariesYML().getNode(fileName);
 		String version = node.getString("recommended");
-		StringBuilder url = new StringBuilder().append("Libraries/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
+		StringBuilder url = new StringBuilder().append("lib/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
 		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url, listener);
 		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
 		DownloadUtils.downloadFile(mirrorUrl, nativesJar.getPath(), null, node.getNode("versions").getString(version), listener);
 
-		// Extract Natives \\
+		// Extract natives
 		List<String> ignores = new ArrayList<String>();
 		ignores.add("META-INF");
 		File tempNatives = new File(Launcher.getGameUpdater().getUpdateDir(), "natives");
@@ -384,13 +384,13 @@ public class UpdateThread extends Thread{
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
 		if (spoutcraft.exists() && build.getInstalledBuild() > 0) {
-			//Save our installed copy
+			// Save our installed copy
 			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
 			if (!spoutcraftCache.exists()) {
 				Utils.copy(spoutcraft, spoutcraftCache);
 			}
 			spoutcraft.delete();
-			//Check for an old copy of this build if it is already saved
+			// Check for an old copy of this build if it is already saved
 			spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getBuild() + ".jar");
 			if (spoutcraftCache.exists()) {
 				Utils.copy(spoutcraftCache, spoutcraft);
@@ -436,8 +436,8 @@ public class UpdateThread extends Thread{
 			}
 
 			if (!libraryFile.exists()) {
-				String mirrorURL = "/Libraries/" + lib.getKey() + "/" + name + ".jar";
-				String fallbackURL = "http://get.spout.org/Libraries/" + lib.getKey() + "/" + name + ".jar";
+				String mirrorURL = "lib/" + lib.getKey() + "/" + name + ".jar";
+				String fallbackURL = "http://get.spout.org/lib/" + lib.getKey() + "/" + name + ".jar";
 				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, listener);
 				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, listener);
 			}

@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -145,7 +145,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			this.cancel(true);
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (OutdatedMCLauncherException e) {
-			JOptionPane.showMessageDialog(loginFrame.getParent(), "Incompatible Login Version. Contact Spout about updating the Launcher!");
+			JOptionPane.showMessageDialog(loginFrame.getParent(), "Incompatible login version. Contact Spout about updating the launcher!");
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();

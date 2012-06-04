@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -84,7 +84,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private List<JButton> loginSkin2Image;
 	private JComboBox version = new JComboBox();
 
-	// Fonts \\
+	// Fonts
 	private Font arial11 = new Font("Arial", Font.PLAIN, 11);
 	private Font arial12 = new Font("Arial", Font.PLAIN, 12);
 	private Font arial14 = new Font("Arial", Font.PLAIN, 14);
@@ -192,7 +192,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 
-		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
+		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a Minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
 		purchaseAccount.setBounds(250, 70, 111, 14);
 
@@ -396,7 +396,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
 				} else {
-					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
+					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
 						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "", "");
 					} else {

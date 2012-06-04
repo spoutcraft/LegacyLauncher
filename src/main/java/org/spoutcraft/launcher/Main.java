@@ -50,6 +50,7 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
 import org.spoutcraft.launcher.api.skin.Skin;
@@ -101,19 +102,18 @@ public class Main {
 		System.out.println("------------------------------------------");
 		System.out.println("Spoutcraft Launcher is starting....");
 		System.out.println("Launcher Build: " + launcherBuild);
-		System.out.println("Launcher API Build: " + getBuild("api-version"));
 
 		// Set up the directories
 		Utils.getWorkingDirectory().mkdirs();
 		File skinDir = new File(Utils.getWorkingDirectory(), "skins");
-		File sc = new File(Utils.getWorkingDirectory(), "spoutcraft");
-		sc.mkdir();
+		File configDir = new File(Utils.getWorkingDirectory(), "config");
+		configDir.mkdir();
 		skinDir.mkdirs();
 
 		setLookAndFeel();
 
 		if (DEBUG_MODE) {
-			System.out.println("Initial Launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			System.out.println("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -146,7 +146,7 @@ public class Main {
 			start = System.currentTimeMillis();
 		}
 
-		// Register the default skin with the SkinManager \\
+		// Register the default skin with the SkinManager
 		JavaSkin defaultSkin = new DefaultSkin();
 
 		SkinDescriptionFile desc = new SkinDescriptionFile("default", "1.0", "org.spoutcraft.launcher.skin.DefaultSkin");
@@ -158,7 +158,7 @@ public class Main {
 			start = System.currentTimeMillis();
 		}
 
-		// Load Selected Skin \\
+		// Load selected skin
 		Skin skin = skinManager.getSkin(settings.getString("skin", "default"));
 		if (skin == null) {
 			skin = skinManager.getSkin("skin");
@@ -192,7 +192,7 @@ public class Main {
 		try {
 			boolean laf = false;
 			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
-				//This bypasses the expensive reflection calls
+				// This bypasses the expensive reflection calls
 				try {
 					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
 					laf = true;
@@ -201,7 +201,7 @@ public class Main {
 			}
 
 			if (!laf) {
-				//Can't guess the laf for other os's as easily
+				// Can't guess the laf for other os's as easily
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			}
 
@@ -222,7 +222,7 @@ public class Main {
 	public static String getBuild(String buildFile) {
 		String build = "-1";
 		try {
-			build = IOUtils.toString(Main.class.getResource("resources/" +buildFile).openStream(), "UTF-8");
+			build = IOUtils.toString(Main.class.getResource("resources/" + buildFile).openStream(), "UTF-8");
 		} catch (Exception e) {
 
 		}
@@ -230,7 +230,7 @@ public class Main {
 	}
 
 	private static YAMLProcessor setupSettings() {
-		File file = new File(Utils.getWorkingDirectory(), "settings.yml");
+		File file = new File(Utils.getWorkingDirectory(), "config" + File.separator + "settings.yml");
 
 		if (!file.exists()) {
 			try {

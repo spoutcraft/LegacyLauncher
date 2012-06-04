@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -65,7 +65,7 @@ public class CommonSkinManager implements SkinManager {
 
 	public void loadSkins(File directory) {
 		if (!directory.isDirectory()) {
-			throw new IllegalArgumentException("File parameter was not a Directory!");
+			throw new IllegalArgumentException("File parameter was not a directory!");
 		}
 
 		for (File file : directory.listFiles()) {
@@ -90,7 +90,7 @@ public class CommonSkinManager implements SkinManager {
 		if (ext != null && ext.equalsIgnoreCase("jar")) {
 			javaLoader.loadSkin(file);
 		} else if (ext != null && ext.equalsIgnoreCase("yml")) {
-			// TODO Yaml Skin
+			// TODO YAML skin
 		}
 
 		if (!locked)
@@ -111,7 +111,7 @@ public class CommonSkinManager implements SkinManager {
 				skin.getSkinLoader().enableSkin(skin);
 				enabledSkin = skin;
 			} catch (Exception e) {
-				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the Skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
+				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
 			}
 
 			if (!locked) {
@@ -128,7 +128,7 @@ public class CommonSkinManager implements SkinManager {
 				skin.getSkinLoader().disableSkin(skin);
 				enabledSkin = null;
 			} catch (Exception e) {
-				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the Skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
+				safelyLog(Level.SEVERE, new StringBuilder().append("An error ocurred in the skin Loader while disabling skin '").append(skin.getDescription().getFullName()).append("': ").append(e.getMessage()).toString(), e);
 			}
 
 			if (!locked) {

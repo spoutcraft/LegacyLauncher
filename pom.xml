@@ -16,6 +16,12 @@
 		<buildNumber>0</buildNumber>
 	</properties>
 
+	<!-- Organization -->
+	<organization>
+		<name>SpoutDev</name>
+		<url>http://www.spout.org</url>
+	</organization>
+
 	<!-- License -->
 	<licenses>
 		<license>
@@ -36,13 +42,13 @@
 	<!-- Continuous integration -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://build.spout.org</url>
+		<url>http://build.spout.org/job/SpoutcraftLauncher</url>
 	</ciManagement>
 
 	<!-- Issue management -->
 	<issueManagement>
-		<system>JIRA</system>
-		<url>http://issues.spout.org</url>
+		<system>jira</system>
+		<url>http://issues.spout.org/browse/SPOUTCRAFTLAUNCHER</url>
 	</issueManagement>
 
 	<!-- Repository locations -->
@@ -102,7 +108,7 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>jdom</groupId>
+			<groupId>org.jdom</groupId>
 			<artifactId>jdom</artifactId>
 			<version>1.1</version>
 			<scope>compile</scope>
@@ -184,10 +190,10 @@
 					</mapping>
 					<properties>
 						<name>${project.name}</name>
-						<url>${project.url}</url>
+						<url>${project.organization.url}</url>
 						<license>SpoutDev License Version 1</license>
 						<licenseUrl>http://www.spout.org/SpoutDevLicenseV1.txt</licenseUrl>
-						<copyright>Copyright (c) ${project.inceptionYear}-2012, SpoutDev</copyright>
+						<copyright>Copyright (c) ${project.inceptionYear}-2012, ${project.organization.name}</copyright>
 					</properties>
 					<includes>
 						<include>src/main/java/**</include>
@@ -242,9 +248,15 @@
 									</includes>
 								</filter>
 								<filter>
-									<artifact>jdom:jdom</artifact>
+									<artifact>org.jdom:jdom</artifact>
 									<includes>
 										<include>org/jdom/**</include>
+									</includes>
+								</filter>
+								<filter>
+									<artifact>rome:rome</artifact>
+									<includes>
+										<include>com/sun/syndication/**</include>
 									</includes>
 								</filter>
 								<filter>
@@ -315,7 +327,7 @@
 										<fileVersion>2.0.0.${buildNumber}</fileVersion>
 										<txtFileVersion>2.0.0.${buildNumber}</txtFileVersion>
 										<fileDescription>${project.name}</fileDescription>
-										<copyright>Copyright (c) ${project.inceptionYear}-2012 SpoutDev, ${project.url}</copyright>
+										<copyright>Copyright (c) ${project.inceptionYear}-2012 ${project.organization.name}, ${project.organization.url}</copyright>
 										<productVersion>2.0.0.${buildNumber}</productVersion>
 										<txtProductVersion>2.0.0.${buildNumber}</txtProductVersion>
 										<productName>${project.name}</productName>

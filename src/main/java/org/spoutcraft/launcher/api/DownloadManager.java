@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -43,7 +43,7 @@ public class DownloadManager {
 	public Download getDownload(String url, String out) throws MalformedURLException {
 		String ext = Utils.getFileExtention(out);
 		if (!isSafe(ext)) {
-			throw new SkinSecurityException(new StringBuilder().append("The Skin '").append(Launcher.getSkinManager().getEnabledSkin().getDescription().getName()).append("' tried to download a file that could be harmful.").toString());
+			throw new SkinSecurityException(new StringBuilder().append("The skin '").append(Launcher.getSkinManager().getEnabledSkin().getDescription().getName()).append("' tried to download a file that could be harmful.").toString());
 		}
 
 		return new Download(url, out);
@@ -51,7 +51,7 @@ public class DownloadManager {
 
 	public Download getUnrestrictedDownload(String url, String out, double key) throws MalformedURLException {
 		if (key != this.key)
-			throw new SkinSecurityException(new StringBuilder().append("The Skin '").append(Launcher.getSkinManager().getEnabledSkin().getDescription().getName()).append("' used the wrong key to unlock the DownloadManager.").toString());
+			throw new SkinSecurityException(new StringBuilder().append("The skin '").append(Launcher.getSkinManager().getEnabledSkin().getDescription().getName()).append("' used the wrong key to unlock the DownloadManager.").toString());
 		return new Download(url, out);
 	}
 

@@ -43,7 +43,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 @SuppressWarnings("unused")
 public class LauncherYML {
 	private static volatile boolean updated = false;
-	private static File launcherYML = new File(Utils.getWorkingDirectory(), "spoutcraft" + File.separator + "launcher.yml");
+	private static File launcherYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "launcher.yml");
 	private static final Object key = new Object();
 
 	private static int recommended = -1;

@@ -90,10 +90,10 @@ public class SpoutcraftBuild {
 	}
 
 	public String getPatchURL() {
-		String mirrorURL = "/Patches/Minecraft/minecraft_";
+		String mirrorURL = "patch/minecraft_";
 		mirrorURL += getLatestMinecraftVersion();
 		mirrorURL += "-" + getMinecraftVersion() + ".patch";
-		String fallbackURL = "http://get.spout.org/Patches/Minecraft/minecraft_";
+		String fallbackURL = "http://get.spout.org/patch/minecraft_";
 		fallbackURL += getLatestMinecraftVersion();
 		fallbackURL += "-" + getMinecraftVersion() + ".patch";
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, listener);

@@ -1,10 +1,10 @@
 /*
- * This file is part of LauncherAPI.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * LauncherAPI is licensed under the SpoutDev License Version 1.
+ * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
  *
- * LauncherAPI is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * LauncherAPI is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -144,7 +144,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		version.setBounds(143, 68, 119, 22);
 		version.setEditable(false);
 
-		loginSkin1 = new JButton("Login as Player");
+		loginSkin1 = new JButton("Login as player");
 		loginSkin1.setFont(arial11);
 		loginSkin1.setBounds(72, 428, 119, 23);
 		loginSkin1.setOpaque(false);
@@ -152,7 +152,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 		loginSkin1.setVisible(false);
 		loginSkin1Image = new ArrayList<JButton>();
 
-		loginSkin2 = new JButton("Login as Player");
+		loginSkin2 = new JButton("Login as player");
 		loginSkin2.setFont(arial11);
 		loginSkin2.setBounds(261, 428, 119, 23);
 		loginSkin2.setOpaque(false);
@@ -398,14 +398,14 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 	public void onEvent(Event event) {
 		switch (event) {
 			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Incorrect usernameField/passwordField combination");
+				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
 				enable();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
 				} else {
-					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to Connect to Minecraft.net", JOptionPane.YES_NO_OPTION);
+					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
 						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "", "");
 					}
@@ -415,7 +415,7 @@ public class DefaultLoginFrame extends LoginFrame implements ActionListener, Key
 				}
 				break;
 			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a minecraft account to play");
+				JOptionPane.showMessageDialog(getParent(), "You must purchase a Minecraft account to play");
 				enable();
 				break;
 		}
