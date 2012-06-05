@@ -34,7 +34,6 @@ import java.net.URL;
 import java.util.Map;
 
 import org.spoutcraft.launcher.Main;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLNode;
@@ -83,26 +82,24 @@ public class LauncherYML {
 	public static void updateLauncherYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("launcher.yml", "http://get.spout.org/launcher.yml", null);
+				String urlName = "http://get.spout.org/launcher.yml";
 				System.out.println(urlName);
-				if (urlName != null) {
-					try {
-						URL url = new URL(urlName);
-						HttpURLConnection con = (HttpURLConnection) (url.openConnection());
-						System.setProperty("http.agent", "");
-						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-						Utils.copy(con.getInputStream(), new FileOutputStream(launcherYML));
+				try {
+					URL url = new URL(urlName);
+					HttpURLConnection con = (HttpURLConnection) (url.openConnection());
+					System.setProperty("http.agent", "");
+					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+					Utils.copy(con.getInputStream(), new FileOutputStream(launcherYML));
 
-						YAMLProcessor config = new YAMLProcessor(launcherYML, false, YAMLFormat.EXTENDED);
-						config.load();
-						config.setProperty("current", Main.getBuild("launcher-version"));
-						// TODO REMOVE COMMENT current = config.getInt("current");
-						recommended = config.getInt("recommended");
-						latest = config.getInt("latest");
-						config.save();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					YAMLProcessor config = new YAMLProcessor(launcherYML, false, YAMLFormat.EXTENDED);
+					config.load();
+					config.setProperty("current", Main.getBuild("launcher-version"));
+					// TODO REMOVE COMMENT current = config.getInt("current");
+					recommended = config.getInt("recommended");
+					latest = config.getInt("latest");
+					config.save();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				updated = true;
 			}

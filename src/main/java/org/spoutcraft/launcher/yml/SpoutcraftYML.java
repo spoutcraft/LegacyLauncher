@@ -33,7 +33,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.spoutcraft.launcher.Main;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
@@ -56,34 +55,32 @@ public class SpoutcraftYML {
 	public static void updateSpoutcraftYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("spoutcraft.yml", "http://get.spout.org/spoutcraft.yml", null);
-				if (urlName != null) {
-					try {
-						int selected = -1;
-						if (spoutcraftYML.exists()) {
-							try {
-								YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
-								config.load();
-								selected = config.getInt("current", -1);
-							} catch (Exception ex) {
-								ex.printStackTrace();
-							}
+				String urlName = "http://get.spout.org/spoutcraft.yml";
+				try {
+					int selected = -1;
+					if (spoutcraftYML.exists()) {
+						try {
+							YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
+							config.load();
+							selected = config.getInt("current", -1);
+						} catch (Exception ex) {
+							ex.printStackTrace();
 						}
-
-						URL url = new URL(urlName);
-						HttpURLConnection con = (HttpURLConnection) (url.openConnection());
-						System.setProperty("http.agent", "");
-						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-						Utils.copy(con.getInputStream(), new FileOutputStream(spoutcraftYML));
-
-						YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
-						config.load();
-						config.setProperty("current", selected);
-						config.setProperty("launcher", Main.getBuild("launcher-version"));
-						config.save();
-					} catch (IOException e) {
-						e.printStackTrace();
 					}
+
+					URL url = new URL(urlName);
+					HttpURLConnection con = (HttpURLConnection) (url.openConnection());
+					System.setProperty("http.agent", "");
+					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+					Utils.copy(con.getInputStream(), new FileOutputStream(spoutcraftYML));
+
+					YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
+					config.load();
+					config.setProperty("current", selected);
+					config.setProperty("launcher", Main.getBuild("launcher-version"));
+					config.save();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				updated = true;
 			}

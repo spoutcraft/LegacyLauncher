@@ -46,7 +46,7 @@ public class Launcher {
 
 	public Launcher(final GameUpdater updater, final GameLauncher launcher, double key) {
 		if (Launcher.instance != null) {
-			throw new IllegalArgumentException("You can have a duplicate launcher");
+			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
 		this.updater = updater;
 		this.launcher = launcher;

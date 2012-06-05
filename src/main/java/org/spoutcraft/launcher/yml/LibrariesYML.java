@@ -33,8 +33,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
@@ -57,17 +55,15 @@ public class LibrariesYML {
 	public static void updateLibrariesYMLCache() {
 		if (!updated) {
 			synchronized (key) {
-				String urlName = MirrorUtils.getMirrorUrl("libraries.yml", "http://get.spout.org/libraries.yml", null);
-				if (urlName != null) {
-					try {
-						URL url = new URL(urlName);
-						HttpURLConnection con = (HttpURLConnection) (url.openConnection());
-						System.setProperty("http.agent", "");
-						con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
-						Utils.copy(con.getInputStream(), new FileOutputStream(librariesYML));
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+				String urlName = "http://get.spout.org/libraries.yml";
+				try {
+					URL url = new URL(urlName);
+					HttpURLConnection con = (HttpURLConnection) (url.openConnection());
+					System.setProperty("http.agent", "");
+					con.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
+					Utils.copy(con.getInputStream(), new FileOutputStream(librariesYML));
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 				updated = true;
 			}
