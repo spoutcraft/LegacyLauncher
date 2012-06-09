@@ -63,6 +63,11 @@ import org.spoutcraft.launcher.skin.DefaultSkinLoader;
 
 public class Main {
 	private static final boolean DEBUG_MODE = true;
+
+	public Main() {
+		main(new String[0]);
+	}
+
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
