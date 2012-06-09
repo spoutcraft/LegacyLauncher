@@ -164,7 +164,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			if (hasSavedPassword(user)) {
 				loginid++;
 				if (loginid == 1) {
-					loginSkin1.setText(user);
+					loginSkin1.setText(getUsername(user));
 					loginSkin1.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 103, 170, loginSkin1Image);
 					loginSkin1.setActionCommand("LoginSkin1");
@@ -174,7 +174,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					passwordField.setText(getSavedPassword(user));
 					rememberCheckbox.setSelected(true);
 				} else if (loginid == 2) {
-					loginSkin2.setText(user);
+					loginSkin2.setText(getUsername(user));
 					loginSkin2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 293, 170, loginSkin2Image);
 					loginSkin2.setActionCommand("LoginSkin2");
@@ -362,10 +362,10 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			}
 		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
 			disable();
-			doLogin(loginSkin1.getText());
+			doLogin(getAccountName(loginSkin1.getText()));
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
 			disable();
-			doLogin(loginSkin2.getText());
+			doLogin(getAccountName(loginSkin2.getText()));
 		} else if (e.getActionCommand().equals("Version")) {
 			Settings.setSpoutcraftBuild(version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV);
 			Settings.getSettings().save();

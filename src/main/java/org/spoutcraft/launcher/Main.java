@@ -50,7 +50,6 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.security.CommonSecurityManager;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
 import org.spoutcraft.launcher.api.skin.Skin;

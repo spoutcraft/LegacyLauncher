@@ -40,6 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.jar.JarFile;
 
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.util.Download;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.FileType;
@@ -88,6 +89,7 @@ public class UpdateThread extends Thread{
 			}
 
 			cleanLogs();
+			cleanTemp();
 
 			Validator validate = new Validator();
 			validate.run();
@@ -118,6 +120,18 @@ public class UpdateThread extends Thread{
 		}
 
 		finished.set(true);
+	}
+
+	private void cleanTemp() {
+		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
+		File binDir = dirs.getBinDir();
+		for (File f : binDir.listFiles()) {
+			if (f.isDirectory()) {
+				if (f.getName().startsWith("temp_")) {
+					FileUtils.deleteQuietly(f);
+				}
+			}
+		}
 	}
 
 	private void cleanLogs() {
@@ -259,7 +273,7 @@ public class UpdateThread extends Thread{
 		String installed = MinecraftYML.getInstalledVersion();
 		stateChanged("Checking for Minecraft update...", 700F / steps);
 		String required = build.getMinecraftVersion();
-		return !installed.equals(required);
+		return installed == null || !installed.equals(required);
 	}
 
 	public void updateMinecraft() throws IOException {

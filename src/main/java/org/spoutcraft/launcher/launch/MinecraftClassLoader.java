@@ -43,44 +43,63 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
+import org.apache.commons.io.FileUtils;
+import org.spoutcraft.launcher.api.SpoutcraftDirectories;
+
 public class MinecraftClassLoader extends URLClassLoader {
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(10000);
 	private HashSet<String> preloaded = new HashSet<String>();
-	private HashMap<String, File> classLocations;
+	private HashMap<String, File> classLocations = new HashMap<String, File>(10000);
 
-	public MinecraftClassLoader(URL[] urls, ClassLoader parent, File spoutcraft, File[] libraries) {
-		super(urls, parent);
-		classLocations = new HashMap<String, File>(10000);
+	public MinecraftClassLoader(ClassLoader parent, File spoutcraft, File[] libraries) {
+		super(new URL[0], parent);
+
+		//Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)
+		File tempDir = getTempDirectory();
 		for (File f : libraries) {
 			try {
-				this.addURL(f.toURI().toURL());
-				JarFile jar = new JarFile(f);
-				Enumeration<JarEntry> i = jar.entries();
-				while (i.hasMoreElements()) {
-					JarEntry entry = i.nextElement();
-					if (entry.getName().endsWith(".class")) {
-						String name = entry.getName();
-						name = name.replace("/", ".").substring(0, name.length() - 6);
-						classLocations.put(name, f);
-					}
-				}
+				File replacement = new File(tempDir, f.getName());
+				FileUtils.copyFile(f, replacement);
+				this.addURL(replacement.toURI().toURL());
+				index(replacement);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		try {
-			JarFile jar = new JarFile(spoutcraft);
-			Enumeration<JarEntry> i = jar.entries();
-			while (i.hasMoreElements()) {
-				JarEntry entry = i.nextElement();
-				if (entry.getName().endsWith(".class")) {
-					String name = entry.getName();
-					name = name.replace("/", ".").substring(0, name.length() - 6);
-					classLocations.put(name, spoutcraft);
-				}
-			}
+			File tempSpoutcraft = new File(tempDir, spoutcraft.getName());
+			FileUtils.copyFile(spoutcraft, tempSpoutcraft);
+			spoutcraft = tempSpoutcraft;
+			this.addURL(spoutcraft.toURI().toURL());
+			index(spoutcraft);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	private File getTempDirectory() {
+		SpoutcraftDirectories dir = new SpoutcraftDirectories();
+		int index = 0;
+		while(true) {
+			File tempDir = new File(dir.getBinDir(), "temp_" + index);
+			if (!tempDir.isDirectory() && !tempDir.exists()) {
+				tempDir.mkdirs();
+				return tempDir;
+			}
+			index++;
+		}
+	}
+	
+	private void index(File file) throws IOException{
+		JarFile jar = new JarFile(file);
+		Enumeration<JarEntry> i = jar.entries();
+		while (i.hasMoreElements()) {
+			JarEntry entry = i.nextElement();
+			if (entry.getName().endsWith(".class")) {
+				String name = entry.getName();
+				name = name.replace("/", ".").substring(0, name.length() - 6);
+				classLocations.put(name, file);
+			}
 		}
 	}
 

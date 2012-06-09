@@ -28,7 +28,6 @@ package org.spoutcraft.launcher.launch;
 
 import java.applet.Applet;
 import java.io.File;
-import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -65,20 +64,13 @@ public class MinecraftLauncher {
 				index++;
 			}
 
-			URL urls[] = new URL[5];
-
 			try {
-				urls[0] = minecraftJar.toURI().toURL();
 				files[index + 0] = minecraftJar;
-				urls[1] = jinputJar.toURI().toURL();
 				files[index + 1] = jinputJar;
-				urls[2] = lwglJar.toURI().toURL();
 				files[index + 2] = lwglJar;
-				urls[3] = lwjgl_utilJar.toURI().toURL();
 				files[index + 3] = lwjgl_utilJar;
-				urls[4] = spoutcraftJar.toURI().toURL();
 
-				loader = new MinecraftClassLoader(urls, ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
+				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

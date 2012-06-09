@@ -38,27 +38,27 @@ public class SpoutcraftDirectories {
 	private final File savesDir = new File(Utils.getWorkingDirectory(), "saves");
 	private final File updateDir = new File(Utils.getWorkingDirectory(), "temp");
 
-	public File getBinDir() {
+	public final File getBinDir() {
 		return binDir;
 	}
 
-	public File getBinCacheDir() {
+	public final File getBinCacheDir() {
 		return binCacheDir;
 	}
 
-	public File getBackupDir() {
+	public final File getBackupDir() {
 		return backupDir;
 	}
 
-	public File getSpoutcraftDir() {
+	public final File getSpoutcraftDir() {
 		return spoutcraftDir;
 	}
 
-	public File getSavesDir() {
+	public final File getSavesDir() {
 		return savesDir;
 	}
 
-	public File getUpdateDir() {
+	public final File getUpdateDir() {
 		return updateDir;
 	}
 }

@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Random;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -89,6 +90,26 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			}
 		}
 		return "http://static.spout.org/skin/" + user + ".png";
+	}
+	
+	
+	public final String getUsername(String account) {
+		for (String key : usernames.keySet()) {
+			if (key.equalsIgnoreCase(account)) {
+				UserPasswordInformation info = usernames.get(key);
+				return info.username;
+			}
+		}
+		return account;
+	}
+	
+	public final String getAccountName(String username) {
+		for (Entry<String, UserPasswordInformation> e: usernames.entrySet()) {
+			if (e.getValue().username.equals(username)) {
+				return e.getKey();
+			}
+		}
+		return username;
 	}
 
 	public final void saveUsername(String user, String pass) {
