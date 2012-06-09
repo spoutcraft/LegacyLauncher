@@ -37,7 +37,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -50,39 +49,109 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.security.CommonSecurityManager;
+import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
-import org.spoutcraft.launcher.api.skin.Skin;
-import org.spoutcraft.launcher.api.skin.SkinDescriptionFile;
-import org.spoutcraft.launcher.api.skin.SkinManager;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.skin.DefaultSkin;
-import org.spoutcraft.launcher.skin.DefaultSkinLoader;
 
 public class Main {
-	private static boolean DEBUG_MODE = true;
-
+	private static Logger logger = null;
 	public Main() {
-		DEBUG_MODE = false;
 		main(new String[0]);
 	}
 
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
+		StartupParameters params = setupParameters(args);
+		setupLogger();
 
-		StartupParameters params = new StartupParameters();
-		try {
-			new JCommander(params, args);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		int launcherBuild = parseInt(getBuild("launcher-version"), -1);
+		logger.info("------------------------------------------");
+		logger.info("Spoutcraft Launcher is starting....");
+		logger.info("Launcher Build: " + launcherBuild);
+		
+		//Setup Directories
+		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
+		dirs.getSkinDir().mkdirs();
+		dirs.getSpoutcraftDir().mkdirs();
+
+		setLookAndFeel();
+
+		if (params.isDebugMode()) {
+			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
 		}
-		Utils.setStartupParameters(params);
 
-		params.setupProxy();
+		YAMLProcessor settings = setupSettings();
+		if (settings == null) {
+			throw new NullPointerException("The YAMLProcessor object was null for settings.");
+		}
+		Settings.setSettings(settings);
+		Settings.setLauncherSelectedBuild(launcherBuild);
 
+		if (params.isDebugMode()) {
+			logger.info("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
+
+		// Set up the Launcher and load skins
+		Launcher launcher = new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
+		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
+
+		if (params.isDebugMode()) {
+			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
+
+		JavaSkin defaultSkin = new DefaultSkin();
+		launcher.setSkin(defaultSkin);
+		defaultSkin.getLoginFrame().setVisible(true);
+
+		if (params.isDebugMode()) {
+			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
+
+		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+	}
+
+	@SuppressWarnings("restriction")
+	private static void setLookAndFeel() {
+		if (Utils.getOperatingSystem() == Utils.OS.MAC_OS) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
+		}
+		try {
+			boolean laf = false;
+			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
+				// This bypasses the expensive reflection calls
+				try { 
+					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
+					laf = true;
+				} catch (Exception ignore) { }
+			}
+
+			if (!laf) {
+				// Can't guess the laf for other os's as easily
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to setup look and feel", e);
+		}
+	}
+
+	private static int parseInt(String s, int def) {
+		try {
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return def;
+		}
+	}
+
+	private static void setupLogger() {
 		Logger logger = Logger.getLogger("");
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (!logDirectory.exists()) {
@@ -102,126 +171,21 @@ public class Main {
 
 		System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
-
-		int launcherBuild = parseInt(getBuild("launcher-version"), -1);
-		System.out.println("------------------------------------------");
-		System.out.println("Spoutcraft Launcher is starting....");
-		System.out.println("Launcher Build: " + launcherBuild);
-
-		// Set up the directories
-		Utils.getWorkingDirectory().mkdirs();
-		File skinDir = new File(Utils.getWorkingDirectory(), "skins");
-		File configDir = new File(Utils.getWorkingDirectory(), "config");
-		configDir.mkdir();
-		skinDir.mkdirs();
-
-		setLookAndFeel();
-
-		if (DEBUG_MODE) {
-			System.out.println("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		final double key = (new Random()).nextDouble();
-		YAMLProcessor settings = setupSettings();
-		if (settings == null) {
-			throw new NullPointerException("The YAMLProcessor object was null for settings.");
-		}
-		Settings.setSettings(settings);
-		Settings.setLauncherSelectedBuild(launcherBuild);
-
-		if (DEBUG_MODE) {
-			System.out.println("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		// Set up the Launcher and load skins
-		new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher(), key);
-		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
-		SkinManager skinManager = Launcher.getSkinManager();
-		skinManager.loadSkins(skinDir);
-
-		if (DEBUG_MODE) {
-			System.out.println("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		if (DEBUG_MODE) {
-			System.out.println("Launcher options frame loading took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		// Register the default skin with the SkinManager
-		JavaSkin defaultSkin = new DefaultSkin();
-
-		SkinDescriptionFile desc = new SkinDescriptionFile("default", "1.0", "org.spoutcraft.launcher.skin.DefaultSkin");
-		defaultSkin.initialize(new DefaultSkinLoader((CommonSecurityManager) System.getSecurityManager(), (new Random()).nextDouble()), desc, null, null, null);
-		skinManager.addSkin(defaultSkin);
-
-		if (DEBUG_MODE) {
-			System.out.println("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		// Load selected skin
-		Skin skin = skinManager.getSkin(settings.getString("skin", "default"));
-		if (skin == null) {
-			skin = skinManager.getSkin("skin");
-			if (skin == null) {
-				throw new RuntimeException("Default skin object could not be found. Shutting down");
-			}
-		}
-		skinManager.enableSkin(skin);
-		if (skinManager.getEnabledSkin() == null) {
-			System.exit(-9);
-		}
-
-		if (DEBUG_MODE) {
-			System.out.println("Launcher skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		System.out.println("Using Skin '" + skin.getDescription().getFullName() + "'");
-
-		skin.getLoginFrame().setVisible(true);
-
-		System.out.println("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+		Main.logger = logger;
 	}
-
-	@SuppressWarnings("restriction")
-	public static void setLookAndFeel() {
-		if (Utils.getOperatingSystem() == Utils.OS.MAC_OS) {
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
-		}
+	
+	private static StartupParameters setupParameters(String[] args) {
+		StartupParameters params = new StartupParameters();
 		try {
-			boolean laf = false;
-			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
-				// This bypasses the expensive reflection calls
-				try {
-					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
-					laf = true;
-				}
-				catch (Exception ignore) { }
-			}
-
-			if (!laf) {
-				// Can't guess the laf for other os's as easily
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			}
-
+			new JCommander(params, args);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
-		catch (Exception e) {
-			System.out.println("There was an error setting the Look and Feel: " + e);
-		}
-	}
+		Utils.setStartupParameters(params);
 
-	private static int parseInt(String s, int def) {
-		try {
-			return Integer.parseInt(s);
-		} catch (NumberFormatException e) {
-			return def;
-		}
+		params.setupProxy();
+		
+		return params;
 	}
 
 	public static String getBuild(String buildFile) {

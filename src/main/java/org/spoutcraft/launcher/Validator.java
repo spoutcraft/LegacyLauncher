@@ -154,6 +154,9 @@ public class Validator implements Runnable{
 		String expected = MD5Utils.getMD5(type);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
+		if (expected == null || actual == null) {
+			return false;
+		}
 		return expected.equals(actual);
 	}
 
@@ -161,6 +164,9 @@ public class Validator implements Runnable{
 		String expected = build.getMD5();
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);
+		if (expected == null || actual == null) {
+			return false;
+		}
 		return expected.equals(actual);
 	}
 
@@ -168,6 +174,9 @@ public class Validator implements Runnable{
 		String expected = LibrariesYML.getMD5(lib, version);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + lib + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
+		if (expected == null || actual == null) {
+			return false;
+		}
 		return expected.equals(actual);
 	}
 

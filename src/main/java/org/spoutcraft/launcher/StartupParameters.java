@@ -33,7 +33,7 @@ import java.util.List;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 
-public class StartupParameters {
+public final class StartupParameters {
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
@@ -66,6 +66,9 @@ public class StartupParameters {
 
 	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
 	private String proxyPassword = null;
+	
+	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
+	private boolean ignoreMD5 = false;
 
 	public List<String> getParameters() {
 		return parameters;
@@ -107,6 +110,10 @@ public class StartupParameters {
 
 	public boolean isDebugMode() {
 		return debug;
+	}
+	
+	public boolean isIgnoreMD5() {
+		return ignoreMD5;
 	}
 
 	public void setupProxy() {

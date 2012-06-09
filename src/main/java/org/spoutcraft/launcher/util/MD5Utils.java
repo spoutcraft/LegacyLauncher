@@ -60,9 +60,16 @@ public class MD5Utils {
 	@SuppressWarnings("unchecked")
 	public static String getMD5(FileType type, String version) {
 		YAMLProcessor config = MinecraftYML.getMinecraftYML();
-		Map<String, Object> versions = (Map<String, Object>) config.getProperty("versions");
-		Map<String, Object> map = (Map<String, Object>) versions.get(version);
-		System.out.println(type.toString());
-		return (String) map.get(type.toString());
+		try {
+			Map<String, Object> versions = (Map<String, Object>) config.getProperty("versions");
+			Map<String, Object> map = (Map<String, Object>) versions.get(version);
+			return (String) map.get(type.toString());
+		} catch (NullPointerException npe) {
+			System.err.println("MD5 Configuration was not populated!");
+		} catch (Exception e) {
+			System.err.println("Failed to read md5");
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

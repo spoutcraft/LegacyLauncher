@@ -63,12 +63,13 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	@Override
 	public void runGame(String user, String session, String downloadTicket) {
 		Dimension size = new Dimension(870, 518);
-		Dimension currentSize = Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getSize();
-		Point location = Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getLocation();
+		Dimension currentSize = Launcher.getSkin().getLoginFrame().getSize();
+		Point location = Launcher.getSkin().getLoginFrame().getLocation();
 		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);
-		
+
 		this.setLocation(centeredLoc);
 		this.setSize(size);
+
 		((SimpleGameUpdater)Launcher.getGameUpdater()).setWaiting(true);
 		while (!((SimpleGameUpdater)Launcher.getGameUpdater()).isFinished()) {
 			try {
@@ -76,6 +77,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			}
 			catch (InterruptedException ignore) { }
 		}
+		
 		Applet applet = null;
 		try {
 			applet = MinecraftLauncher.getMinecraftApplet();
@@ -97,7 +99,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		}
 
 		minecraft = new MinecraftAppletEnglober(applet);
-
 		minecraft.addParameter("username", user);
 		minecraft.addParameter("sessionid", session);
 		minecraft.addParameter("downloadticket", downloadTicket);
@@ -111,18 +112,14 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		}
 
 		applet.setStub(minecraft);
-
 		this.add(minecraft);
 
 		validate();
 		this.setVisible(true);
-
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());
-
 		minecraft.start();
-
-		Launcher.getSkinManager().getEnabledSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH);
+		Launcher.getSkin().getLoginFrame().onRawEvent(Event.GAME_LAUNCH);
 		return;
 	}
 

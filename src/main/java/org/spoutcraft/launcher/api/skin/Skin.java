@@ -31,13 +31,9 @@ import java.io.File;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 
 public interface Skin {
-	public SkinDescriptionFile getDescription();
-
 	public File getDataFolder();
 
 	public boolean isEnabled();
-
-	public SkinLoader getSkinLoader();
 
 	public void onEnable();
 

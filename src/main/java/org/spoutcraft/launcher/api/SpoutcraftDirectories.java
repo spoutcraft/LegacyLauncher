@@ -37,6 +37,7 @@ public class SpoutcraftDirectories {
 	private final File spoutcraftDir = new File(Utils.getWorkingDirectory(), "config");
 	private final File savesDir = new File(Utils.getWorkingDirectory(), "saves");
 	private final File updateDir = new File(Utils.getWorkingDirectory(), "temp");
+	private final File skinDir = new File(Utils.getWorkingDirectory(), "skins");
 
 	public final File getBinDir() {
 		return binDir;
@@ -60,5 +61,9 @@ public class SpoutcraftDirectories {
 
 	public final File getUpdateDir() {
 		return updateDir;
+	}
+
+	public final File getSkinDir() {
+		return skinDir;
 	}
 }

@@ -63,11 +63,13 @@ public class UpdateThread extends Thread{
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
 	private final AtomicBoolean finished = new AtomicBoolean(false);
+	private final StartupParameters params = Utils.getStartupParameters();
 	private DownloadListener listener;
 	public UpdateThread() {
 		super("Update Thread");
 	}
 
+	@Override
 	public void run() {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable();
@@ -93,8 +95,12 @@ public class UpdateThread extends Thread{
 			updateFiles();
 
 			Validator validate = new Validator();
-			validate.run();
-			valid.set(validate.isValid());
+			if (!params.isIgnoreMD5()) {
+				validate.run();
+				valid.set(validate.isValid());
+			} else {
+				valid.set(true);
+			}
 		}
 
 		if (valid.get()) {
