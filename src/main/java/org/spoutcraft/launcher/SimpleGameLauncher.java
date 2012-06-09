@@ -30,6 +30,7 @@ import javax.swing.JOptionPane;
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Frame;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
@@ -54,7 +55,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 
 	public SimpleGameLauncher() {
 		super("Spoutcraft");
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setResizable(true);
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftIcon));
@@ -62,8 +62,13 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 
 	@Override
 	public void runGame(String user, String session, String downloadTicket) {
-		this.setLocation(Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getLocation());
-		this.setSize(Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getSize());
+		Dimension size = new Dimension(870, 518);
+		Dimension currentSize = Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getSize();
+		Point location = Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getLocation();
+		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);
+		
+		this.setLocation(centeredLoc);
+		this.setSize(size);
 		((SimpleGameUpdater)Launcher.getGameUpdater()).setWaiting(true);
 		while (!((SimpleGameUpdater)Launcher.getGameUpdater()).isFinished()) {
 			try {
