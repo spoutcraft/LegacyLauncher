@@ -36,5 +36,5 @@ public abstract class GameLauncher extends JFrame {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	public abstract void runGame(String user, String session, String downloadTicket, String mcpass);
+	public abstract void runGame(String user, String session, String downloadTicket);
 }

@@ -55,15 +55,15 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	public SimpleGameLauncher() {
 		super("Spoutcraft");
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setLocation((dim.width - 870) / 2, (dim.height - 518) / 2);
-		this.setSize(new Dimension(870, 518));
 		this.setResizable(true);
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftIcon));
 	}
 
 	@Override
-	public void runGame(String user, String session, String downloadTicket, String mcpass) {
+	public void runGame(String user, String session, String downloadTicket) {
+		this.setLocation(Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getLocation());
+		this.setSize(Launcher.getSkinManager().getEnabledSkin().getLoginFrame().getSize());
 		((SimpleGameUpdater)Launcher.getGameUpdater()).setWaiting(true);
 		while (!((SimpleGameUpdater)Launcher.getGameUpdater()).isFinished()) {
 			try {
@@ -96,7 +96,6 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		minecraft.addParameter("username", user);
 		minecraft.addParameter("sessionid", session);
 		minecraft.addParameter("downloadticket", downloadTicket);
-		minecraft.addParameter("mppass", mcpass);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", Utils.getStartupParameters().isPortable() + "");
 		if (Utils.getStartupParameters().getServer() != null) {
