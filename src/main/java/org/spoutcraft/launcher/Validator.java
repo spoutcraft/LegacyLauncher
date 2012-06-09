@@ -38,73 +38,74 @@ import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class Validator implements Runnable{
 	private boolean passed = false;
+	private boolean errors = false;
 
 	public void run() {
 		((SimpleGameUpdater)Launcher.getGameUpdater()).setStartValidationTime(System.currentTimeMillis());
-		validate();
+		errors = !validate();
 		((SimpleGameUpdater)Launcher.getGameUpdater()).validationFinished(passed);
 	}
 
-	private void validate() {
+	/**
+	 * Returns true if validation completed without errors, false if something went wrong deleting files
+	 * 
+	 * @return true on validation completion, false on failure
+	 */
+	private boolean validate() {
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
 			if (!compareMD5s(FileType.MINECRAFT, minecraftJar)) {
 				err("Invalid minecraft.jar");
-				minecraftJar.delete();
-				return;
+				return minecraftJar.delete();
 			}
 		} else {
 			err("There is no minecraft.jar!");
-			return;
+			return true;
 		}
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
 		if (spoutcraft.exists()) {
 			if (!compareSpoutcraftMD5s(build, spoutcraft)) {
 				err("Invalid spoutcraft.jar");
-				spoutcraft.delete();
-				return;
+				return spoutcraft.delete();
 			}
 		} else {
 			err("There is no spoutcraft.jar");
-			return;
+			return true;
 		}
 
 		File jinputJar = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
 		if (jinputJar.exists()) {
 			if (!compareMD5s(FileType.JINPUT, jinputJar)) {
 				err("Invalid jinput.jar");
-				jinputJar.delete();
-				return;
+				return jinputJar.delete();
 			}
 		} else {
 			err("There is no jinput.jar");
-			return;
+			return true;
 		}
 
 		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (lwjglJar.exists()) {
 			if (!compareMD5s(FileType.LWJGL, lwjglJar)) {
 				err("Invalid lwjgl.jar");
-				lwjglJar.delete();
-				return;
+				return lwjglJar.delete();
 			}
 		} else {
 			err("There is no lwjgl.jar");
-			return;
+			return true;
 		}
 
 		File lwjgl_utilJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
 		if (lwjgl_utilJar.exists()) {
 			if (!compareMD5s(FileType.LWJGL_UTIL, lwjgl_utilJar)) {
 				err("Invalid lwjgl_util.jar");
-				lwjgl_utilJar.delete();
-				return;
+				return lwjgl_utilJar.delete();
 			}
 		} else {
 			err("There is no lwjgl_util.jar");
-			return;
+			return true;
 		}
 
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
@@ -120,20 +121,33 @@ public class Validator implements Runnable{
 			if (libraryFile.exists()) {
 				if (!compareLibraryMD5s(lib.getKey(), version, libraryFile)) {
 					err("Invalid " + libraryFile.getName());
-					libraryFile.delete();
-					return;
+					return libraryFile.delete();
 				}
 			} else {
 				err("There is no " + libraryFile.getName());
-				return;
+				return true;
 			}
 		}
 		passed = true;
-		return;
+		return true;
 	}
 
+	/**
+	 * Returns true if the validator confirmed that all the files were correct
+	 * 
+	 * @return passed validation
+	 */
 	public boolean isValid() {
 		return passed;
+	}
+
+	/**
+	 * Returns true if the validator encountered an error while validating
+	 * 
+	 * @return true if an error occured
+	 */
+	public boolean hasErrors() {
+		return errors;
 	}
 
 	private boolean compareMD5s(FileType type, File file) {
