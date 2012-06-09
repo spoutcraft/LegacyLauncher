@@ -40,6 +40,7 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 public class AsyncRSSFeed extends SwingWorker<Object, Object> {
+	private static final int MAX_ENTRIES = 2;
 	private JTextPane editorPane;
 	private String username = null;
 	private Random rand = new Random();
@@ -59,7 +60,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			editorPane.setText("Loading RSS feed...");
 			URL url = new URL("http://updates.spout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setConnectTimeout(7500);
+			conn.setConnectTimeout(10000);
 
 			conn.setDoInput(true);
 			conn.setDoOutput(false);
@@ -77,14 +78,20 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 				Iterator entries;
 				feed = input.build(new XmlReader(conn));
 				entries = feed.getEntries().iterator();
+				
+				int entryNum = 0;
 
 				while (entries.hasNext()) {
+					entryNum++;
+					if (entryNum > MAX_ENTRIES) {
+						break;
+					}
 					SyndEntry entry = (SyndEntry) entries.next();
 					sb.append("<h1>").append(entry.getTitle()).append("</h1>").append("<br />").append(entry.getDescription().getValue()).append("<br /><br />");
 				}
 
 				if (sb.toString() != null) {
-					editorPane.setText(format(sb.toString()));
+					editorPane.setText(sb.toString()); //format(sb.toString()));
 				} else {
 					editorPane.setText(getErrorMessage());
 				}
