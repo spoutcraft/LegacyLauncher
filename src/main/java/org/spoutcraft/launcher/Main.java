@@ -62,9 +62,10 @@ import org.spoutcraft.launcher.skin.DefaultSkin;
 import org.spoutcraft.launcher.skin.DefaultSkinLoader;
 
 public class Main {
-	private static final boolean DEBUG_MODE = true;
+	private static boolean DEBUG_MODE = true;
 
 	public Main() {
+		DEBUG_MODE = false;
 		main(new String[0]);
 	}
 

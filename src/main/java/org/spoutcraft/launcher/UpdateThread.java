@@ -90,6 +90,7 @@ public class UpdateThread extends Thread{
 
 			cleanLogs();
 			cleanTemp();
+			updateFiles();
 
 			Validator validate = new Validator();
 			validate.run();
@@ -120,6 +121,28 @@ public class UpdateThread extends Thread{
 		}
 
 		finished.set(true);
+	}
+
+	private void updateFiles() {
+		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
+		File oldConfig = new File(Utils.getWorkingDirectory(), "spoutcraft");
+		if (oldConfig.exists() && oldConfig.isDirectory()) {
+			moveDirectory(oldConfig, dirs.getSpoutcraftDir());
+			FileUtils.deleteQuietly(oldConfig);
+		}
+	}
+	
+	private void moveDirectory(File dir, File newDir) {
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				moveDirectory(file, new File(newDir, file.getName()));
+			} else {
+				file.renameTo(new File(newDir, file.getName()));
+			}
+		}
 	}
 
 	private void cleanTemp() {
