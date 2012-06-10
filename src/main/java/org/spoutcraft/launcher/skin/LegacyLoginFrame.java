@@ -209,6 +209,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		editorPane.setEditable(false);
 		editorPane.setOpaque(false);
+		editorPane.setFont(arial11);
 
 		AsyncRSSFeed rss = new AsyncRSSFeed(editorPane);
 		if (getSavedUsernames().size() > 0)
