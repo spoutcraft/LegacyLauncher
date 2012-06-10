@@ -446,7 +446,7 @@ public class UpdateThread extends Thread{
 		String url = build.getSpoutcraftURL();
 
 		if (url == null) {
-			throw new NoMirrorsAvailableException();
+			throw new NoMirrorsAvailableException("No mirrors are available for build " + build.getBuild());
 		}
 
 		if (!spoutcraft.exists()) {

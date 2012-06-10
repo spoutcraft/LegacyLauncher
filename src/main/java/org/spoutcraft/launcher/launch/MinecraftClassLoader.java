@@ -28,6 +28,7 @@ package org.spoutcraft.launcher.launch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -168,6 +169,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 				result = defineClass(name, classByte, 0, classByte.length, new CodeSource(file.toURI().toURL(), (CodeSigner[]) null));
 				loadedClasses.put(name, result);
 				return result;
+			}
+		} catch (FileNotFoundException e) {
+			//Assume temp file has been cleaned if the thread is interrupted
+			if (!Thread.currentThread().isInterrupted()) {
+				e.printStackTrace();
 			}
 		} catch (ZipException zipEx) {
 			System.out.println("Failed to open " + name + " from " + file.getPath());
