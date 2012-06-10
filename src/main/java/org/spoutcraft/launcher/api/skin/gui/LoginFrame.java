@@ -32,6 +32,7 @@ import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -194,12 +195,12 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	}
 
 	private final void writeUsernameList() {
+		DataOutputStream dos = null;
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
 
 			Cipher cipher = getCipher(1, "passwordfile");
 
-			DataOutputStream dos;
 			if (cipher != null) {
 				dos = new DataOutputStream(new CipherOutputStream(new FileOutputStream(lastLogin), cipher));
 			} else {
@@ -225,9 +226,14 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					dos.writeUTF(info.password);
 				}
 			}
-			dos.close();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (dos != null) {
+				try {
+					dos.close();
+				} catch (IOException e) { }
+			}
 		}
 	}
 
