@@ -41,17 +41,10 @@ public final class Resources {
 
 	public static InputStream getResourceAsStream(String path) {
 		InputStream stream = Resources.class.getResourceAsStream(path);
+		String[] split = path.split("/");
+		path = split[split.length - 1];
 		if (stream == null) {
 			File resource = new File(".\\src\\main\\resources\\" + path);
-			if (resource.exists()) {
-				try {
-					stream = new BufferedInputStream(new FileInputStream(resource));
-				} catch (IOException ignore) {
-				}
-			}
-		}
-		if (stream == null) {
-			File resource = new File("..\\LauncherAPI\\src\\main\\resources\\" + path);
 			if (resource.exists()) {
 				try {
 					stream = new BufferedInputStream(new FileInputStream(resource));

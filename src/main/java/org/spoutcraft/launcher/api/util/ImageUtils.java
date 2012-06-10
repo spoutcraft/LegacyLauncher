@@ -71,7 +71,7 @@ public class ImageUtils {
 				}
 			} catch (Exception e) { }
 			if (!success) {
-				originalImage = ImageIO.read(Resources.getResourceAsStream("char.png"));
+				originalImage = ImageIO.read(Resources.getResourceAsStream("/org/spoutcraft/launcher/resources/char.png"));
 			}
 			int type = BufferedImage.TYPE_INT_ARGB;
 
