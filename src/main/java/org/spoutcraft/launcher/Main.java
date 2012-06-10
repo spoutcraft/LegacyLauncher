@@ -48,6 +48,7 @@ import javax.swing.UIManager;
 import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
+import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
@@ -65,6 +66,11 @@ public class Main {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
+		
+		//Required for ROME to work
+		ClassLoader cl = Main.class.getClassLoader();
+		Thread.currentThread().setContextClassLoader(cl);
+		
 		StartupParameters params = setupParameters(args);
 		setupLogger();
 
@@ -72,6 +78,8 @@ public class Main {
 		logger.info("------------------------------------------");
 		logger.info("Spoutcraft Launcher is starting....");
 		logger.info("Launcher Build: " + launcherBuild);
+		
+		params.logParameters(logger);
 		
 		//Setup Directories
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
@@ -91,6 +99,10 @@ public class Main {
 		}
 		Settings.setSettings(settings);
 		Settings.setLauncherSelectedBuild(launcherBuild);
+		if (params.getSpoutcraftBuild() > 0) {
+			Settings.setSpoutcraftSelectedBuild(params.getSpoutcraftBuild());
+			Settings.setSpoutcraftBuild(Build.CUSTOM);
+		}
 
 		if (params.isDebugMode()) {
 			logger.info("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
@@ -191,7 +203,7 @@ public class Main {
 	public static String getBuild(String buildFile) {
 		String build = "-1";
 		try {
-			build = IOUtils.toString(Main.class.getResource("resources/" + buildFile).openStream(), "UTF-8");
+			build = IOUtils.toString(Main.class.getResource("/" + buildFile).openStream(), "UTF-8");
 		} catch (Exception e) {
 
 		}

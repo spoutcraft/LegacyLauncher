@@ -27,7 +27,6 @@
 package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class Settings {
@@ -56,18 +55,6 @@ public class Settings {
 		settings.setProperty("launcher.launcher.buildNumber", build);
 	}
 
-	public static synchronized Build getLauncherBuild() {
-		return Build.getValue(settings.getString("launcher.launcher.build", "RECOMMENDED"));
-	}
-
-	private static synchronized void setLauncherBuild(String build) {
-		settings.setProperty("launcher.launcher.build", build);
-	}
-
-	public static synchronized void setLauncherBuild(Build build) {
-		setLauncherBuild(build.name());
-	}
-
 	public static synchronized int getSpoutcraftSelectedBuild() {
 		return settings.getInt("launcher.client.buildNumber", -1);
 	}
@@ -86,7 +73,6 @@ public class Settings {
 
 	public static synchronized void setSpoutcraftBuild(Build build) {
 		setSpoutcraftBuild(build.name());
-		Launcher.getGameUpdater().onSpoutcraftBuildChange();
 	}
 
 	public static synchronized int getLoginTries() {

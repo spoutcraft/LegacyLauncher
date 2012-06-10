@@ -265,7 +265,17 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		version.addActionListener(this);
 		version.setActionCommand("Version");
-		version.setSelectedIndex(Settings.getSpoutcraftBuild() == Build.RECOMMENDED ? 0 : 1);
+		if (Settings.getSpoutcraftBuild() == Build.RECOMMENDED) {
+			version.setSelectedIndex(0);
+		} else if (Settings.getSpoutcraftBuild() == Build.DEV) {
+			version.setSelectedIndex(1);
+		} else {
+			version.removeAllItems();
+			version.addItem("b" + Settings.getSpoutcraftSelectedBuild());
+			version.setSelectedIndex(0);
+			version.setEnabled(false);
+		}
+		
 
 		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
 		offlineMessage.setFont(arial14);
@@ -339,7 +349,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	public void enable() {
 		usernameField.setEnabled(true);
 		passwordField.setEnabled(true);
-		version.setEnabled(true);
+		if (Settings.getSpoutcraftBuild() != Build.CUSTOM){ 
+			version.setEnabled(true);
+		}
 		rememberCheckbox.setEnabled(true);
 		loginButton.setEnabled(true);
 		loginSkin1.setEnabled(true);
@@ -355,10 +367,12 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
-			disable();
-			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
-			if (rememberCheckbox.isSelected()) {
-				saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+			if (usernameField.getSelectedItem() != null) {
+				disable();
+				doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+				if (rememberCheckbox.isSelected()) {
+					saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
+				}
 			}
 		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
 			disable();
@@ -366,8 +380,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
 			disable();
 			doLogin(getAccountName(loginSkin2.getText()));
-		} else if (e.getActionCommand().equals("Version")) {
+		} else if (e.getActionCommand().equals("Version") && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
 			Settings.setSpoutcraftBuild(version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV);
+			Launcher.getGameUpdater().onSpoutcraftBuildChange();
 			Settings.getSettings().save();
 		}
 	}

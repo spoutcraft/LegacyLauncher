@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.channels.ClosedByInterruptException;
 import java.security.CodeSigner;
 import java.security.CodeSource;
 import java.util.Enumeration;
@@ -62,6 +63,8 @@ public class MinecraftClassLoader extends URLClassLoader {
 				FileUtils.copyFile(f, replacement);
 				this.addURL(replacement.toURI().toURL());
 				index(replacement);
+			} catch (ClosedByInterruptException e) {
+				//Ignore, assume we interrupted for a reason
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -72,6 +75,8 @@ public class MinecraftClassLoader extends URLClassLoader {
 			spoutcraft = tempSpoutcraft;
 			this.addURL(spoutcraft.toURI().toURL());
 			index(spoutcraft);
+		} catch (ClosedByInterruptException e) {
+			//Ignore, assume we interrupted for a reason
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

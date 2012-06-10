@@ -29,6 +29,7 @@ package org.spoutcraft.launcher;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.util.List;
+import java.util.logging.Logger;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
@@ -69,9 +70,29 @@ public final class StartupParameters {
 	
 	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
 	private boolean ignoreMD5 = false;
+	
+	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
+	private int build = -1;
 
 	public List<String> getParameters() {
 		return parameters;
+	}
+	
+	public void logParameters(Logger log) {
+		log.info("------------ Startup Parameters ------------");
+		if (user != null) log.info("Minecraft Username: " + user);
+		if (pass != null) log.info("Minecraft Password exists");
+		if (server != null) log.info("Minecraft Server: " + server);
+		if (portable) log.info("Portable mode activated");
+		if (safe_mode) log.info("Safe mode activated");
+		if (debug) log.info("Debug mode activated");
+		if (proxyHost != null) log.info("Proxy Host: " + proxyHost);
+		if (proxyPort != null) log.info("Proxy Port: " + proxyPort);
+		if (proxyUser != null) log.info("Proxy User exists");
+		if (proxyPassword != null) log.info("Porxy Password exists");
+		if (ignoreMD5) log.info("No MD5 Mode activated");
+		if (build != -1) log.info("Spoutcraft build selected: " + build);
+		log.info("--------- End of Startup Parameters ---------");
 	}
 
 	public String getUser() {
@@ -114,6 +135,10 @@ public final class StartupParameters {
 	
 	public boolean isIgnoreMD5() {
 		return ignoreMD5;
+	}
+	
+	public int getSpoutcraftBuild() {
+		return build;
 	}
 
 	public void setupProxy() {

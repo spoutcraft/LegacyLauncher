@@ -28,7 +28,6 @@ package org.spoutcraft.launcher.skin;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Random;
 import javax.swing.JTextPane;
@@ -42,6 +41,7 @@ import com.sun.syndication.io.XmlReader;
 public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 	private static final int MAX_ENTRIES = 2;
 	private JTextPane editorPane;
+	@SuppressWarnings("unused")
 	private String username = null;
 	private Random rand = new Random();
 
@@ -55,13 +55,12 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 
 	@SuppressWarnings("rawtypes")
 	@Override
-	protected Object doInBackground() throws Exception {
+	protected Object doInBackground(){
 		try {
 			editorPane.setText("Loading RSS feed...");
 			URL url = new URL("http://updates.spout.org/rss");
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setConnectTimeout(10000);
-
 			conn.setDoInput(true);
 			conn.setDoOutput(false);
 			System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
@@ -70,7 +69,6 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			conn.setUseCaches(false);
 			((HttpURLConnection)conn).setInstanceFollowRedirects(true);
 			int response = ((HttpURLConnection)conn).getResponseCode();
-
 			if (HttpURLConnection.HTTP_OK == response) {
 				StringBuilder sb = new StringBuilder();
 				SyndFeedInput input = new SyndFeedInput();
@@ -89,9 +87,9 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 					SyndEntry entry = (SyndEntry) entries.next();
 					sb.append("<h1>").append(entry.getTitle()).append("</h1>").append("<br />").append(entry.getDescription().getValue()).append("<br /><br />");
 				}
-
+				
 				if (sb.toString() != null) {
-					editorPane.setText(sb.toString()); //format(sb.toString()));
+					editorPane.setText(sb.toString());
 				} else {
 					editorPane.setText(getErrorMessage());
 				}
@@ -99,9 +97,9 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			} else {
 				editorPane.setText(getErrorMessage());
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-			editorPane.setText(getErrorMessage());
+		} catch (Throwable t) {
+			t.printStackTrace();
+			editorPane.setText(t.toString());
 		}
 		editorPane.setVisible(true);
 		return null;
@@ -110,10 +108,6 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 	private String getErrorMessage() {
 		String[] errors = {"Oh dear, I'm out of tea and crumpets again. I'll have to go make some more.", "I'm sorry, were you looking for something here? I couldn't find it.", "This isn't the Tumblr news feed you are looking for. Move along now.", "What do you mean the website is down...Hey! What's that over there!", "Looks like the %mob%s got into the servers again...", "Oh Noes! Our Tumblr Feed is Down!"};
 		return errors[rand.nextInt(errors.length)].replaceAll("%mob%", getRandomMob());
-	}
-
-	private String getUsername() {
-		return username != null ? username : "Player";
 	}
 
 	private String getRandomMob() {
@@ -132,37 +126,5 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 			default:
 				return "";
 		}
-	}
-
-	private String getTimeOfDay() {
-		int hours = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		if (hours < 6) {
-			return "night";
-		}
-		if (hours < 12) {
-			return "morning";
-		}
-		if (hours < 14) {
-			return "day";
-		}
-		if (hours < 18) {
-			return "afternoon";
-		}
-		if (hours < 22) {
-			return "evening";
-		}
-		return "night";
-	}
-
-	public String format(String text) {
-		text = text.replaceAll("<li>", "- ");
-		text = text.replaceAll("</li>", "<br/>");
-		text = text.replaceAll("<p>", "");
-		text = text.replace("</p>", "<br/>");
-		text = text.replace("<strong>", "");
-		text = text.replace("</strong>", "");
-		text = text.replaceAll("@time_of_day", getTimeOfDay());
-		text = text.replaceAll("@username", getUsername());
-		return text;
 	}
 }
