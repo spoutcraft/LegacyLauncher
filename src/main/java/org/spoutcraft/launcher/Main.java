@@ -68,7 +68,7 @@ public class Main {
 		StartupParameters params = setupParameters(args);
 		setupLogger();
 
-		int launcherBuild = parseInt(getBuild("launcher-version"), -1);
+		int launcherBuild = parseInt(getBuild("version"), -1);
 		logger.info("------------------------------------------");
 		logger.info("Spoutcraft Launcher is starting....");
 		logger.info("Launcher Build: " + launcherBuild);

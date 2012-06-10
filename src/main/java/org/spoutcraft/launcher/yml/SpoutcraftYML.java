@@ -77,7 +77,7 @@ public class SpoutcraftYML {
 					YAMLProcessor config = new YAMLProcessor(spoutcraftYML, false);
 					config.load();
 					config.setProperty("current", selected);
-					config.setProperty("launcher", Main.getBuild("launcher-version"));
+					config.setProperty("launcher", Main.getBuild("version"));
 					config.save();
 				} catch (IOException e) {
 					e.printStackTrace();
