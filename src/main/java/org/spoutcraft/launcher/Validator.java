@@ -151,6 +151,10 @@ public class Validator implements Runnable{
 	}
 
 	private boolean compareMD5s(FileType type, File file) {
+		return compareMD5s(type, Launcher.getSpoutcraftBuild().getMinecraftVersion(), file);
+	}
+
+	private boolean compareMD5s(FileType type, String version, File file) {
 		String expected = MD5Utils.getMD5(type);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
