@@ -30,16 +30,15 @@ import java.util.Map;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
-import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
+import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 
 public class SpoutcraftBuild {
 	private String minecraftVersion;
 	private String latestVersion;
 	private int build;
 	Map<String, Object> libraries;
-	private DownloadListener listener = null;
 	private String hash;
 
 	private SpoutcraftBuild(String minecraft, String latest, int build, Map<String, Object> libraries, String hash) {
@@ -70,12 +69,8 @@ public class SpoutcraftBuild {
 		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
 	}
 
-	public String getSpoutcraftURL() {
-		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-dev-SNAPSHOT.jar", null, listener);
-	}
-
-	public void setDownloadListener(DownloadListener listener) {
-		this.listener = listener;
+	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
+		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-dev-SNAPSHOT.jar");
 	}
 
 	public void install() {
@@ -96,7 +91,7 @@ public class SpoutcraftBuild {
 		String fallbackURL = "http://get.spout.org/patch/minecraft_";
 		fallbackURL += getLatestMinecraftVersion();
 		fallbackURL += "-" + getMinecraftVersion() + ".patch";
-		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, listener);
+		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
 	public Map<String, Object> getLibraries() {

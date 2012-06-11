@@ -55,7 +55,7 @@ public class Validator implements Runnable{
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
-			if (!compareMD5s(FileType.MINECRAFT, minecraftJar)) {
+			if (!compareMD5s(build, FileType.MINECRAFT, minecraftJar)) {
 				err("Invalid minecraft.jar");
 				return minecraftJar.delete();
 			}
@@ -77,7 +77,7 @@ public class Validator implements Runnable{
 
 		File jinputJar = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
 		if (jinputJar.exists()) {
-			if (!compareMD5s(FileType.JINPUT, jinputJar)) {
+			if (!compareMD5s(build, FileType.JINPUT, jinputJar)) {
 				err("Invalid jinput.jar");
 				return jinputJar.delete();
 			}
@@ -88,7 +88,7 @@ public class Validator implements Runnable{
 
 		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (lwjglJar.exists()) {
-			if (!compareMD5s(FileType.LWJGL, lwjglJar)) {
+			if (!compareMD5s(build, FileType.LWJGL, lwjglJar)) {
 				err("Invalid lwjgl.jar");
 				return lwjglJar.delete();
 			}
@@ -99,7 +99,7 @@ public class Validator implements Runnable{
 
 		File lwjgl_utilJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
 		if (lwjgl_utilJar.exists()) {
-			if (!compareMD5s(FileType.LWJGL_UTIL, lwjgl_utilJar)) {
+			if (!compareMD5s(build, FileType.LWJGL_UTIL, lwjgl_utilJar)) {
 				err("Invalid lwjgl_util.jar");
 				return lwjgl_utilJar.delete();
 			}
@@ -150,8 +150,8 @@ public class Validator implements Runnable{
 		return errors;
 	}
 
-	private boolean compareMD5s(FileType type, File file) {
-		return compareMD5s(type, Launcher.getSpoutcraftBuild().getMinecraftVersion(), file);
+	private boolean compareMD5s(SpoutcraftBuild build, FileType type, File file) {
+		return compareMD5s(type, build.getMinecraftVersion(), file);
 	}
 
 	private boolean compareMD5s(FileType type, String version, File file) {

@@ -42,9 +42,9 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
+import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 
 public class MirrorUtils {
 	private static boolean updated = false;
@@ -52,8 +52,34 @@ public class MirrorUtils {
 	private static final String baseURL = "http://get.spout.org/";
 	private static List<String> mirrors = null;
 
-	public static String getMirrorUrl(String mirrorURI, String fallbackUrl, DownloadListener listener) {
-		if (MirrorUtils.mirrors == null) {
+	public static String getMirrorUrl(String mirrorURI, String fallbackUrl){
+		updateMirrors();
+
+		boolean debug = Utils.getStartupParameters().isDebugMode();
+		if (debug) {
+			System.out.println("Testing " + MirrorUtils.mirrors.size() + " for " + mirrorURI);
+		}
+		for (String mirror : MirrorUtils.mirrors){
+			String lookup = "http://" + mirror + "/" + mirrorURI;
+			if (isAddressReachable(lookup, 1000)) {
+				return lookup;
+			}
+		}
+
+		return fallbackUrl;
+	}
+	
+	public static String getMirrorUrl(String mirrorURI) throws NoMirrorsAvailableException{
+		String url = getMirrorUrl(mirrorURI, null);
+		if (url != null) {
+			return url;
+		}
+
+		throw new NoMirrorsAvailableException("No mirrors available for " + mirrorURI + ", checked " + MirrorUtils.mirrors.size() + " mirrors");
+	}
+	
+	private static void updateMirrors() {
+		if (MirrorUtils.mirrors == null || MirrorUtils.mirrors.size() == 0) {
 			Map<String, Integer> mirrors = getMirrors();
 			Set<Entry<String, Integer>> set = mirrors.entrySet();
 
@@ -74,15 +100,6 @@ public class MirrorUtils {
 
 			MirrorUtils.mirrors = goodMirrors;
 		}
-
-		for (String mirror : MirrorUtils.mirrors){
-			String lookup = "http://" + mirror + "/" + mirrorURI;
-			if (isAddressReachable(lookup, 1000)) {
-				return lookup;
-			}
-		}
-
-		return fallbackUrl;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -100,7 +117,11 @@ public class MirrorUtils {
 			urlConnect.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			urlConnect.setRequestMethod("HEAD");
 			urlConnect.setConnectTimeout(timeout);
-			return (urlConnect.getResponseCode() == HttpURLConnection.HTTP_OK);
+			int response = urlConnect.getResponseCode();
+			if (Utils.getStartupParameters().isDebugMode()) {
+				System.out.println("Response for mirror " + url + " was " + response);
+			}
+			return (response == HttpURLConnection.HTTP_OK);
 		} catch (Exception e) {
 			return false;
 		}

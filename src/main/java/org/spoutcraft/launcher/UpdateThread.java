@@ -48,7 +48,6 @@ import org.spoutcraft.launcher.api.util.FileUtils;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLNode;
-import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
@@ -396,7 +395,7 @@ public class UpdateThread extends Thread{
 		YAMLNode node = LibrariesYML.getLibrariesYML().getNode(fileName);
 		String version = node.getString("recommended");
 		StringBuilder url = new StringBuilder().append("lib/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
-		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url, listener);
+		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url);
 		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
 		DownloadUtils.downloadFile(mirrorUrl, nativesJar.getPath(), null, node.getNode("versions").getString(version), listener);
 
@@ -441,13 +440,8 @@ public class UpdateThread extends Thread{
 		}
 
 		stateChanged("Looking Up Mirrors...", 0F);
-		build.setDownloadListener(listener);
 
 		String url = build.getSpoutcraftURL();
-
-		if (url == null) {
-			throw new NoMirrorsAvailableException("No mirrors are available for build " + build.getBuild());
-		}
 
 		if (!spoutcraft.exists()) {
 			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getUpdateDir() + File.separator + "spoutcraft.jar", null, build.getMD5(), listener);
@@ -481,7 +475,7 @@ public class UpdateThread extends Thread{
 			if (!libraryFile.exists()) {
 				String mirrorURL = "lib/" + lib.getKey() + "/" + name + ".jar";
 				String fallbackURL = "http://get.spout.org/lib/" + lib.getKey() + "/" + name + ".jar";
-				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL, listener);
+				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, listener);
 			}
 		}

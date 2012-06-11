@@ -32,7 +32,6 @@ import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.util.FileUtils;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class Launcher {
 	private static Launcher instance;
@@ -40,7 +39,6 @@ public class Launcher {
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
 	private Skin skin;
-	private SpoutcraftBuild build;
 
 	public Launcher(final GameUpdater updater, final GameLauncher launcher) {
 		if (Launcher.instance != null) {
@@ -77,13 +75,6 @@ public class Launcher {
 
 	public static Skin getSkin() {
 		return instance.skin;
-	}
-
-	public static SpoutcraftBuild getSpoutcraftBuild() {
-		if (instance.build == null) {
-			instance.build = SpoutcraftBuild.getSpoutcraftBuild();
-		}
-		return instance.build;
 	}
 
 	public static boolean clearCache() {
