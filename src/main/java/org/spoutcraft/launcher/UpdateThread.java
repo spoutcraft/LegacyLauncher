@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarFile;
 
 import org.spoutcraft.launcher.api.Launcher;
@@ -63,9 +64,10 @@ public class UpdateThread extends Thread{
 	private final AtomicBoolean valid = new AtomicBoolean(false);
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final StartupParameters params = Utils.getStartupParameters();
-	private DownloadListener listener;
-	public UpdateThread() {
+	private final DownloadListener listener = new DownloadListenerWrapper();
+	public UpdateThread(DownloadListener listener) {
 		super("Update Thread");
+		setDownloadListener(listener);
 	}
 
 	@Override
@@ -510,12 +512,26 @@ public class UpdateThread extends Thread{
 	}
 
 	public void setDownloadListener(DownloadListener listener) {
-		this.listener = listener;
+		((DownloadListenerWrapper)this.listener).setDownloadListener(listener);
 	}
 
 	public void stateChanged(String message, float progress) {
 		if (listener != null) {
 			listener.stateChanged(message, progress);
+		}
+	}
+	
+	private class DownloadListenerWrapper implements DownloadListener {
+		private final AtomicReference<DownloadListener> wrapped = new AtomicReference<DownloadListener>(null);
+		public void stateChanged(String fileName, float progress) {
+			DownloadListener listener = wrapped.get();
+			if (listener != null) {
+				listener.stateChanged(fileName, progress);
+			}
+		}
+		
+		public void setDownloadListener(DownloadListener listener) {
+			wrapped.set(listener);
 		}
 	}
 }

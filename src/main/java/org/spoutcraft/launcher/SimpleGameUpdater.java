@@ -28,6 +28,7 @@ package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.GameUpdater;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.yml.MinecraftYML;
@@ -40,7 +41,7 @@ public class SimpleGameUpdater extends GameUpdater {
 
 	public SimpleGameUpdater() {
 		super();
-		updateThread = new UpdateThread();
+		updateThread = new UpdateThread(null);
 		updateThread.setDaemon(true);
 		spoutcraftBuild = Settings.getSpoutcraftBuild();
 	}
@@ -67,10 +68,11 @@ public class SimpleGameUpdater extends GameUpdater {
 	public void onSpoutcraftBuildChange() {
 		if (spoutcraftBuild != Settings.getSpoutcraftBuild()) {
 			spoutcraftBuild = Settings.getSpoutcraftBuild();
+			DownloadListener old = updateThread.getDownloadListener();
 			updateThread.setDownloadListener(null);
 			updateThread.interrupt();
 			MinecraftLauncher.resetClassLoader();
-			updateThread = new UpdateThread();
+			updateThread = new UpdateThread(old);
 			updateThread.setDaemon(true);
 			start();
 		}
