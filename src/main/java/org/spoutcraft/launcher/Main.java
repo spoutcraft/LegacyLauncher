@@ -81,6 +81,11 @@ public class Main {
 		
 		params.logParameters(logger);
 		
+		if (params.relaunch()) {
+			System.exit(0);
+			return;
+		}
+		
 		//Setup Directories
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
 		dirs.getSkinDir().mkdirs();

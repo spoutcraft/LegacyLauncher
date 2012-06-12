@@ -26,8 +26,10 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -73,6 +75,9 @@ public final class StartupParameters {
 	
 	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
 	private int build = -1;
+	
+	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
+	private boolean relaunched = false;
 
 	public List<String> getParameters() {
 		return parameters;
@@ -92,7 +97,34 @@ public final class StartupParameters {
 		if (proxyPassword != null) log.info("Porxy Password exists");
 		if (ignoreMD5) log.info("No MD5 Mode activated");
 		if (build != -1) log.info("Spoutcraft build selected: " + build);
+		if (relaunched) log.info("Relaunched with correct memory");
 		log.info("--------- End of Startup Parameters ---------");
+	}
+	
+	public boolean relaunch() {
+		if (!relaunched) {
+			String separator = System.getProperty("file.separator");
+			String classpath = System.getProperty("java.class.path");
+			String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+			ProcessBuilder processBuilder = new ProcessBuilder();
+			ArrayList<String> commands = new ArrayList<String>();
+			commands.add(path);
+			commands.add("-Xmx1024m");
+			commands.add("-cp");
+			commands.add(classpath);
+			commands.add(Main.class.getName());
+			commands.addAll(this.parameters);
+			commands.add("-relaunched");
+			processBuilder.command(commands);
+			
+			try {
+				processBuilder.start();
+				return true;
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 
 	public String getUser() {
