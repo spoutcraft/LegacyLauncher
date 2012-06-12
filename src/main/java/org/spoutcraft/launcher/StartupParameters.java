@@ -102,7 +102,7 @@ public final class StartupParameters {
 	}
 	
 	public boolean relaunch() {
-		if (!relaunched) {
+	/*	if (!relaunched) {
 			String separator = System.getProperty("file.separator");
 			String classpath = System.getProperty("java.class.path");
 			String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
@@ -123,7 +123,7 @@ public final class StartupParameters {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		return false;
 	}
 
