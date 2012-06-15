@@ -82,6 +82,9 @@ public class Main {
 		params.logParameters(logger);
 		
 		if (params.relaunch()) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) { }
 			System.exit(0);
 			return;
 		}

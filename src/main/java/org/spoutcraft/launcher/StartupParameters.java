@@ -29,9 +29,12 @@ package org.spoutcraft.launcher;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import org.spoutcraft.launcher.api.util.Utils;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
@@ -102,16 +105,24 @@ public final class StartupParameters {
 	}
 	
 	public boolean relaunch() {
-	/*	if (!relaunched) {
-			String separator = System.getProperty("file.separator");
-			String classpath = System.getProperty("java.class.path");
-			String path = System.getProperty("java.home") + separator + "bin" + separator + "java";
+		if (!relaunched) {
+			String pathToJar;
+			try {
+				pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+			} catch (URISyntaxException e1) { 
+				return false;
+			}
+
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
-			commands.add(path);
+			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
+				commands.add("javaw");
+			} else {
+				commands.add("java"); 
+			}
 			commands.add("-Xmx1024m");
 			commands.add("-cp");
-			commands.add(classpath);
+			commands.add(pathToJar);
 			commands.add(Main.class.getName());
 			commands.addAll(this.parameters);
 			commands.add("-relaunched");
@@ -123,7 +134,7 @@ public final class StartupParameters {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}*/
+		}
 		return false;
 	}
 
