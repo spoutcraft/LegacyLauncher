@@ -66,6 +66,10 @@ public class Utils {
 			workDir = getWorkingDirectory("spoutcraft");
 		return workDir;
 	}
+	
+	public static File getAssetsDirectory() {
+		return new File(getWorkingDirectory(), "assets");
+	}
 
 	public static void setStartupParameters(StartupParameters params) {
 		Utils.params = params;
@@ -227,12 +231,16 @@ public class Utils {
 			outputStream = new FileOutputStream(output);
 			copy(inputStream, outputStream);
 		} finally {
-			if (inputStream != null) {
-				inputStream.close();
-			}
-			if (outputStream != null) {
-				outputStream.close();
-			}
+			try {
+				if (inputStream != null) {
+					inputStream.close();
+				}
+			} catch (IOException ignore) { }
+			try {
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			} catch (IOException ignore) { }
 		}
 	}
 
@@ -244,6 +252,7 @@ public class Utils {
 			output.write(buffer, 0, n);
 			count += n;
 		}
+		
 		return count;
 	}
 

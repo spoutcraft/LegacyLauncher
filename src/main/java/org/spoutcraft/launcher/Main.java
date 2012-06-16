@@ -172,7 +172,7 @@ public class Main {
 	}
 
 	private static void setupLogger() {
-		Logger logger = Logger.getLogger("");
+		Logger logger = Logger.getLogger("launcher");
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();

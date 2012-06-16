@@ -36,7 +36,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
-import org.spoutcraft.launcher.yml.MinecraftYML;
+import org.spoutcraft.launcher.yml.Resources;
 
 public class MD5Utils {
 	public static String getMD5(File file) {
@@ -54,12 +54,12 @@ public class MD5Utils {
 	}
 
 	public static String getMD5(FileType type) {
-		return getMD5(type, MinecraftYML.getLatestMinecraftVersion());
+		return getMD5(type, Resources.getLatestMinecraftVersion());
 	}
 
 	@SuppressWarnings("unchecked")
 	public static String getMD5(FileType type, String version) {
-		YAMLProcessor config = MinecraftYML.getMinecraftYML();
+		YAMLProcessor config = Resources.Minecraft.getYAML();
 		try {
 			Map<String, Object> versions = (Map<String, Object>) config.getProperty("versions");
 			Map<String, Object> map = (Map<String, Object>) versions.get(version);

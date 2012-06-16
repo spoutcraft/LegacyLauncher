@@ -33,7 +33,7 @@ import java.util.Map;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.yml.LibrariesYML;
+import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class Validator implements Runnable{
@@ -155,7 +155,7 @@ public class Validator implements Runnable{
 	}
 
 	private boolean compareMD5s(FileType type, String version, File file) {
-		String expected = MD5Utils.getMD5(type);
+		String expected = MD5Utils.getMD5(type, version);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
@@ -175,7 +175,7 @@ public class Validator implements Runnable{
 	}
 
 	private boolean compareLibraryMD5s(String lib, String version, File file) {
-		String expected = LibrariesYML.getMD5(lib, version);
+		String expected = Resources.getLibraryMD5(lib, version);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + lib + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {

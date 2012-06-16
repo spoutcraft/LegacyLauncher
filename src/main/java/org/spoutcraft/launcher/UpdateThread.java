@@ -39,6 +39,8 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
@@ -49,17 +51,18 @@ import org.spoutcraft.launcher.api.util.FileUtils;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLNode;
+import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
-import org.spoutcraft.launcher.yml.LibrariesYML;
-import org.spoutcraft.launcher.yml.MinecraftYML;
+import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class UpdateThread extends Thread{
+	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
 	private final AtomicBoolean finished = new AtomicBoolean(false);
@@ -90,6 +93,8 @@ public class UpdateThread extends Thread{
 					e.printStackTrace();
 				}
 			}
+			
+			updateAssets();
 
 			cleanLogs();
 			cleanTemp();
@@ -119,7 +124,7 @@ public class UpdateThread extends Thread{
 					break;
 				}
 			}
-			System.out.println("Preloaded " + loaded + " classes in advance");
+			logger.info("Preloaded " + loaded + " classes in advance");
 		} else {
 			try {
 				sleep(100);
@@ -128,6 +133,52 @@ public class UpdateThread extends Thread{
 		}
 
 		finished.set(true);
+	}
+
+	private void updateAssets() {
+		YAMLProcessor assets = Resources.Assets.getYAML();
+		updateAssets(assets.getMap(), Utils.getAssetsDirectory());
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateAssets(Map<String, Object> assets, File directory) {
+		directory.mkdirs();
+		for (Entry<String, Object> entry : assets.entrySet()) {
+			String key = entry.getKey();
+			Object value = entry.getValue();
+			if (value instanceof Map<?, ?>) {
+				updateAssets((Map<String, Object>)value, new File(directory, key));
+			} else if (value instanceof String) {
+				String url = (String)value;
+				String name = getFileName(url);
+				File asset = new File(directory, name);
+				
+				stateChanged("Verifying Asset: " + name, 0);
+				
+				boolean needDownload = true;
+				if (asset.exists() && !params.isIgnoreMD5()) {
+					String md5 = MD5Utils.getMD5(asset);
+					logger.info("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
+					needDownload = md5 == null || !md5.equals(key);
+				}
+
+				if (needDownload) {
+					try {
+						DownloadUtils.downloadFile(url, asset.getPath(), null, key, listener);
+					} catch (IOException e) {
+						logger.log(Level.SEVERE, "Failed to download asset [" + url + "]", e);
+					}
+				}
+				stateChanged("Verified Asset: " + name, 100);
+			} else {
+				logger.warning("Unknown asset type for " + key + ". Type is " + value);
+			}
+		}
+	}
+	
+	private String getFileName(String url) {
+		String[] split = url.split("/");
+		return split[split.length - 1];
 	}
 
 	private void updateFiles() {
@@ -300,7 +351,7 @@ public class UpdateThread extends Thread{
 		}
 		stateChanged("Checking for Minecraft update...", 600F / steps);
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
-		String installed = MinecraftYML.getInstalledVersion();
+		String installed = Resources.getInstalledVersion();
 		stateChanged("Checking for Minecraft update...", 700F / steps);
 		String required = build.getMinecraftVersion();
 		return installed == null || !installed.equals(required);
@@ -322,7 +373,7 @@ public class UpdateThread extends Thread{
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 
 		// Processs minecraft.jar
-		System.out.println("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
+		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || !minecraftMD5.equals(MD5Utils.getMD5(mcCache))) {
 			String minecraftURL = Launcher.getGameUpdater().baseURL + "minecraft.jar?user=" + Launcher.getGameUpdater().getMinecraftUser() + "&ticket=" + Launcher.getGameUpdater().getDownloadTicket();
@@ -365,7 +416,7 @@ public class UpdateThread extends Thread{
 
 		stateChanged("Extracting Files...", 0);
 
-		MinecraftYML.setInstalledVersion(build.getMinecraftVersion());
+		Resources.setInstalledVersion(build.getMinecraftVersion());
 	}
 
 	public String getNativesUrl() {
@@ -394,7 +445,7 @@ public class UpdateThread extends Thread{
 		}
 
 		// Download natives
-		YAMLNode node = LibrariesYML.getLibrariesYML().getNode(fileName);
+		YAMLNode node = Resources.Libraries.getYAML().getNode(fileName);
 		String version = node.getString("recommended");
 		StringBuilder url = new StringBuilder().append("lib/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
 		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url);
@@ -463,13 +514,13 @@ public class UpdateThread extends Thread{
 			String name = lib.getKey() + "-" + version;
 
 			File libraryFile = new File(libDir, lib.getKey() + ".jar");
-			String MD5 = LibrariesYML.getMD5(lib.getKey(), version);
+			String MD5 = Resources.getLibraryMD5(lib.getKey(), version);
 
 			if (libraryFile.exists()) {
 				String computedMD5 = MD5Utils.getMD5(libraryFile);
-				System.out.println("Checking MD5 of " + libraryFile.getName() + ". Expected MD5: " + MD5 + " | Actual MD5: " + computedMD5);
+				logger.info("Checking MD5 of " + libraryFile.getName() + ". Expected MD5: " + MD5 + " | Actual MD5: " + computedMD5);
 				if (!computedMD5.equals(MD5)) {
-					System.out.println("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
+					logger.info("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
 					libraryFile.delete();
 				}
 			}

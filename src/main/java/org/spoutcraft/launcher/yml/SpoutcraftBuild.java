@@ -74,13 +74,13 @@ public class SpoutcraftBuild {
 	}
 
 	public void install() {
-		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = Resources.Spoutcraft.getYAML();
 		config.setProperty("current", getBuild());
 		config.save();
 	}
 
 	public int getInstalledBuild() {
-		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = Resources.Spoutcraft.getYAML();
 		return config.getInt("current", -1);
 	}
 
@@ -100,7 +100,7 @@ public class SpoutcraftBuild {
 
 	@SuppressWarnings("unchecked")
 	public static SpoutcraftBuild getSpoutcraftBuild() {
-		YAMLProcessor config = SpoutcraftYML.getSpoutcraftYML();
+		YAMLProcessor config = Resources.Spoutcraft.getYAML();
 		Map<Integer, Object> builds = (Map<Integer, Object>) config.getProperty("builds");
 		int latest = config.getInt("latest", -1);
 		int recommended = config.getInt("recommended", -1);
@@ -118,6 +118,6 @@ public class SpoutcraftBuild {
 		Map<Object, Object> build = (Map<Object, Object>) builds.get(selected);
 		Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
 		String hash = String.valueOf(build.get("hash"));
-		return new SpoutcraftBuild(String.valueOf(build.get("minecraft")), MinecraftYML.getLatestMinecraftVersion(), selected, libs, hash);
+		return new SpoutcraftBuild(String.valueOf(build.get("minecraft")), Resources.getLatestMinecraftVersion(), selected, libs, hash);
 	}
 }

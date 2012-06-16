@@ -39,6 +39,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
@@ -57,6 +58,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Event;
@@ -65,10 +67,11 @@ import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 import org.spoutcraft.launcher.api.util.ImageUtils;
-import org.spoutcraft.launcher.api.util.Resources;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
+	public static final URL spoutcraftIcon = Main.class.getResource("resources/icon.png");
+	public static final URL spoutcraftLogo = Main.class.getResource("resources/spoutcraft.png");
 	private static final long serialVersionUID = 1797546961340465149L;
 	private JPanel contentPane = new JPanel();
 	private Container loginPane = new Container();
@@ -92,7 +95,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	public LegacyLoginFrame(Skin parent) {
 		super(parent);
 		setTitle("Spoutcraft Launcher");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - 860) / 2, (dim.height - 500) / 2, 860, 500);
@@ -116,7 +119,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		JLabel lblLogo = new JLabel("");
 		lblLogo.setBounds(8, 0, 294, 99);
-		lblLogo.setIcon(new ImageIcon(Resources.spoutcraftLogo));
+		lblLogo.setIcon(new ImageIcon(spoutcraftLogo));
 
 		JLabel lblMinecraftUsername = new JLabel("Minecraft Username: ");
 		lblMinecraftUsername.setFont(arial11);

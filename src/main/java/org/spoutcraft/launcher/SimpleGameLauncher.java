@@ -40,10 +40,10 @@ import org.spoutcraft.launcher.api.GameLauncher;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
-import org.spoutcraft.launcher.api.util.Resources;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.skin.LegacyLoginFrame;
 
 public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	private static final long serialVersionUID = 454654568463524665L;
@@ -57,7 +57,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 		super("Spoutcraft");
 		this.setResizable(true);
 		this.addWindowListener(this);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Resources.spoutcraftIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LegacyLoginFrame.spoutcraftIcon));
 	}
 
 	@Override

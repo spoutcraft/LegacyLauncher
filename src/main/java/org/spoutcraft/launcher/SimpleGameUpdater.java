@@ -28,11 +28,9 @@ package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.GameUpdater;
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.yml.MinecraftYML;
-import org.spoutcraft.launcher.yml.SpoutcraftYML;
+import org.spoutcraft.launcher.yml.Resources;
 
 public class SimpleGameUpdater extends GameUpdater {
 	private Build spoutcraftBuild;
@@ -79,8 +77,9 @@ public class SimpleGameUpdater extends GameUpdater {
 	}
 
 	public void clearVersionsInYMLs() {
-		SpoutcraftYML.getSpoutcraftYML().setProperty("current", "");
-		MinecraftYML.setInstalledVersion("");
+		Resources.Spoutcraft.getYAML().setProperty("current", "");
+		Resources.Spoutcraft.getYAML().save();
+		Resources.setInstalledVersion("");
 	}
 
 	public void setStartValidationTime(long validationTime) {
