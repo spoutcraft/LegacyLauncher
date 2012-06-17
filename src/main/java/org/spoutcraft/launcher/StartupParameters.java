@@ -26,10 +26,10 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -104,14 +104,18 @@ public final class StartupParameters {
 		log.info("--------- End of Startup Parameters ---------");
 	}
 	
-	public boolean relaunch() {
+	public boolean relaunch(Logger log) {
 		if (!relaunched) {
 			String pathToJar;
+			File jar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 			try {
-				pathToJar = Main.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-			} catch (URISyntaxException e1) { 
-				return false;
+				pathToJar = jar.getCanonicalPath();
+			} catch (IOException e1) {
+				pathToJar = jar.getAbsolutePath();
 			}
+			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
+			log.info("Attempting relaunch with " + memory + " mb of RAM");
+			log.info("Path to Launcher Jar: " + pathToJar);
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
@@ -120,7 +124,7 @@ public final class StartupParameters {
 			} else {
 				commands.add("java"); 
 			}
-			commands.add("-Xmx1024m");
+			commands.add("-Xmx" + memory + "m");
 			commands.add("-cp");
 			commands.add(pathToJar);
 			commands.add(Main.class.getName());

@@ -75,6 +75,20 @@ public class UpdateThread extends Thread{
 
 	@Override
 	public void run() {
+		while(true) {
+			try {
+				runTasks();
+				break;
+			} catch (Exception e) {
+				logger.log(Level.SEVERE, "Unable to execute tasks", e);
+			}
+			try {
+				sleep(1000);
+			} catch (InterruptedException ignore) { }
+		}
+	}
+	
+	private void runTasks() {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable();
 			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable();

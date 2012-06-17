@@ -104,7 +104,7 @@ public class Settings {
 	}
 
 	public static synchronized void setMemory(int memory) {
-		settings.setProperty("launcher.memory", 0);
+		settings.setProperty("launcher.memory", memory);
 	}
 
 	public static synchronized boolean retryLogin() {

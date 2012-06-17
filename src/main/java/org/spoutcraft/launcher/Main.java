@@ -81,14 +81,6 @@ public class Main {
 		
 		params.logParameters(logger);
 		
-		if (params.relaunch()) {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) { }
-			System.exit(0);
-			return;
-		}
-		
 		//Setup Directories
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
 		dirs.getSkinDir().mkdirs();
@@ -115,6 +107,14 @@ public class Main {
 		if (params.isDebugMode()) {
 			logger.info("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
+		}
+
+		if (params.relaunch(logger)) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) { }
+			System.exit(0);
+			return;
 		}
 
 		// Set up the Launcher and load skins

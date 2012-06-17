@@ -39,6 +39,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +61,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import org.spoutcraft.launcher.Main;
+import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Event;
@@ -86,6 +89,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private JButton loginSkin2;
 	private List<JButton> loginSkin2Image;
 	private JComboBox version = new JComboBox();
+	private JComboBox memory = new JComboBox();
 
 	// Fonts
 	private Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -145,6 +149,18 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		version.addItem("Latest");
 		version.setBounds(143, 68, 119, 22);
 		version.setEditable(false);
+		
+		JLabel memoryLabel = new JLabel("Memory: ");
+		memoryLabel.setFont(arial11);
+		memoryLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		memoryLabel.setBounds(-17, 98, 150, 14);
+		
+		memory.setFont(arial11);
+		memory.setBounds(143, 94, 119, 22);
+		memory.setEditable(false);
+		memory.setActionCommand("memory");
+		populateMemory(memory);
+		memory.addActionListener(this);
 
 		loginSkin1 = new JButton("Login as Player");
 		loginSkin1.setFont(arial11);
@@ -222,7 +238,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		JLabel trans2;
 
 		JScrollPane scrollPane = new JScrollPane(editorPane);
-		scrollPane.setBounds(473, 11, 372, 340);
+		scrollPane.setBounds(473, 11, 372, 320);
 		scrollPane.setBorder(BorderFactory.createEmptyBorder());
 		scrollPane.setOpaque(false);
 		scrollPane.getViewport().setOpaque(false);
@@ -231,12 +247,12 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		trans2 = new JLabel();
 		trans2.setBackground(new Color(229, 246, 255, 100));
 		trans2.setOpaque(true);
-		trans2.setBounds(473, 11, 372, 340);
+		trans2.setBounds(473, 11, 372, 320);
 
 		JLabel login = new JLabel();
 		login.setBackground(new Color(255, 255, 255, 120));
 		login.setOpaque(true);
-		login.setBounds(473, 362, 372, 99);
+		login.setBounds(473, 342, 372, 119);
 
 		JLabel trans;
 		trans = new JLabel();
@@ -255,7 +271,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		contentPane.add(loginSkin1);
 		contentPane.add(loginSkin2);
 
-		loginPane.setBounds(473, 362, 372, 99);
+		loginPane.setBounds(473, 342, 372, 119);
 		loginPane.add(lblPassword);
 		loginPane.add(lblMinecraftUsername);
 		loginPane.add(passwordField);
@@ -265,6 +281,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginPane.add(purchaseAccount);
 		loginPane.add(version);
 		loginPane.add(versionLabel);
+		loginPane.add(memory);
+		loginPane.add(memoryLabel);
 		contentPane.add(loginPane);
 
 		version.addActionListener(this);
@@ -332,6 +350,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		order.add(rememberCheckbox);
 		order.add(loginButton);
 		order.add(version);
+		order.add(memory);
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
@@ -340,10 +359,58 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(true);
 	}
 
+	@SuppressWarnings("restriction")
+	private void populateMemory(JComboBox memory) {
+		long maxMemory = 1024;
+		String architecture = System.getProperty("sun.arch.data.model", "32");
+		boolean bit64 = architecture.equals("64");
+
+		try {
+			OperatingSystemMXBean osInfo = ManagementFactory.getOperatingSystemMXBean();
+			if (osInfo instanceof com.sun.management.OperatingSystemMXBean) {
+				maxMemory = ((com.sun.management.OperatingSystemMXBean) osInfo).getTotalPhysicalMemorySize() / 1024 / 1024;
+			}
+		} catch (Throwable t) { }
+		maxMemory = Math.max(512, maxMemory);
+		
+		if (maxMemory >= 2048 && !bit64) {
+			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" +
+									"You have more than 1.5GB of memory available, but<br/>" +
+									"you must have 64bit java installed to use it.</html>");
+		} else {
+			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" +
+									"More memory is not always better.<br/>" +
+									"More memory will also cause your CPU to work more.</html>");
+		}
+		
+		if (!bit64) {
+			maxMemory = Math.min(Memory.MAX_32_BIT_MEMORY, maxMemory);
+		}
+
+		for (Memory mem : Memory.memoryOptions) {
+			if (maxMemory >= mem.getMemoryMB()) {
+				memory.addItem(mem.getDescription());
+			}
+		}
+
+		int memoryOption = Settings.getMemory();
+		
+		if (memoryOption < 0 || memoryOption > Memory.memoryOptions.length){
+			memoryOption = 0;
+		}
+		if (Memory.memoryOptions[memoryOption].getMemoryMB() > maxMemory) {
+			memoryOption = 0;
+		}
+
+		Settings.setMemory(memoryOption);
+		memory.setSelectedIndex(Memory.getMemoryIndexFromId(memoryOption));
+	}
+
 	public void disable() {
 		usernameField.setEnabled(false);
 		passwordField.setEnabled(false);
 		version.setEnabled(false);
+		memory.setEnabled(false);
 		rememberCheckbox.setEnabled(false);
 		loginButton.setEnabled(false);
 		loginSkin1.setEnabled(false);
@@ -356,6 +423,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		if (Settings.getSpoutcraftBuild() != Build.CUSTOM){ 
 			version.setEnabled(true);
 		}
+		memory.setEnabled(true);
 		rememberCheckbox.setEnabled(true);
 		loginButton.setEnabled(true);
 		loginSkin1.setEnabled(true);
@@ -385,8 +453,16 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			disable();
 			doLogin(getAccountName(loginSkin2.getText()));
 		} else if (e.getActionCommand().equals("Version") && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
-			Settings.setSpoutcraftBuild(version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV);
-			Launcher.getGameUpdater().onSpoutcraftBuildChange();
+			Build build = version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV;
+			if (build != Settings.getSpoutcraftBuild()) {
+				Settings.setSpoutcraftBuild(build);
+				Launcher.getGameUpdater().onSpoutcraftBuildChange();
+			}
+		} else if (e.getActionCommand().equals("memory")) {
+			int index = memory.getSelectedIndex();
+			Settings.setMemory(Memory.memoryOptions[index].getSettingsId());
+		}
+		if (loginButton.isEnabled()) {
 			Settings.getSettings().save();
 		}
 	}
