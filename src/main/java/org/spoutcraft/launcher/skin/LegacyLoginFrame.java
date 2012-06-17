@@ -149,12 +149,12 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		version.addItem("Latest");
 		version.setBounds(143, 68, 119, 22);
 		version.setEditable(false);
-		
+
 		JLabel memoryLabel = new JLabel("Memory: ");
 		memoryLabel.setFont(arial11);
 		memoryLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		memoryLabel.setBounds(-17, 98, 150, 14);
-		
+
 		memory.setFont(arial11);
 		memory.setBounds(143, 94, 119, 22);
 		memory.setEditable(false);
@@ -231,8 +231,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		editorPane.setFont(arial11);
 
 		AsyncRSSFeed rss = new AsyncRSSFeed(editorPane);
-		if (getSavedUsernames().size() > 0)
+		if (getSavedUsernames().size() > 0) {
 			rss.setUser(getSavedUsernames().get(0));
+		}
 		rss.execute();
 
 		JLabel trans2;
@@ -297,7 +298,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			version.setSelectedIndex(0);
 			version.setEnabled(false);
 		}
-		
 
 		JLabel offlineMessage = new JLabel("Could not connect to minecraft.net");
 		offlineMessage.setFont(arial14);
@@ -372,7 +372,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			}
 		} catch (Throwable t) { }
 		maxMemory = Math.max(512, maxMemory);
-		
+
 		if (maxMemory >= 2048 && !bit64) {
 			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" +
 									"You have more than 1.5GB of memory available, but<br/>" +
@@ -382,7 +382,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 									"More memory is not always better.<br/>" +
 									"More memory will also cause your CPU to work more.</html>");
 		}
-		
+
 		if (!bit64) {
 			maxMemory = Math.min(Memory.MAX_32_BIT_MEMORY, maxMemory);
 		}
@@ -394,7 +394,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		}
 
 		int memoryOption = Settings.getMemory();
-		
+
 		if (memoryOption < 0 || memoryOption > Memory.memoryOptions.length){
 			memoryOption = 0;
 		}
@@ -420,7 +420,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	public void enable() {
 		usernameField.setEnabled(true);
 		passwordField.setEnabled(true);
-		if (Settings.getSpoutcraftBuild() != Build.CUSTOM){ 
+		if (Settings.getSpoutcraftBuild() != Build.CUSTOM){
 			version.setEnabled(true);
 		}
 		memory.setEnabled(true);

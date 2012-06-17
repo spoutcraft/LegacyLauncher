@@ -36,7 +36,7 @@ import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
-public class Validator implements Runnable{
+public class Validator implements Runnable {
 	private boolean passed = false;
 	private boolean errors = false;
 

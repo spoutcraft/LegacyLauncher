@@ -77,7 +77,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			}
 			catch (InterruptedException ignore) { }
 		}
-		
+
 		Applet applet = null;
 		try {
 			applet = MinecraftLauncher.getMinecraftApplet();

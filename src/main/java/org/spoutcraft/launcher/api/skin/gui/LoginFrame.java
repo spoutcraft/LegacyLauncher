@@ -87,13 +87,12 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		for (String key : usernames.keySet()) {
 			if (key.equalsIgnoreCase(user)) {
 				UserPasswordInformation info = usernames.get(key);
-				return "http://static.spout.org/skin/" + info.username + ".png";
+				return "http://cdn.spout.org/legacy/skin/" + info.username + ".png";
 			}
 		}
-		return "http://static.spout.org/skin/" + user + ".png";
+		return "http://cdn.spout.org/legacy/skin/" + user + ".png";
 	}
-	
-	
+
 	public final String getUsername(String account) {
 		for (String key : usernames.keySet()) {
 			if (key.equalsIgnoreCase(account)) {
@@ -103,7 +102,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return account;
 	}
-	
+
 	public final String getAccountName(String username) {
 		for (Entry<String, UserPasswordInformation> e: usernames.entrySet()) {
 			if (e.getValue().username.equals(username)) {

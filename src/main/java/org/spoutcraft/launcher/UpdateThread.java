@@ -61,7 +61,7 @@ import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
 import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
-public class UpdateThread extends Thread{
+public class UpdateThread extends Thread {
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
@@ -75,7 +75,7 @@ public class UpdateThread extends Thread{
 
 	@Override
 	public void run() {
-		while(true) {
+		while (true) {
 			try {
 				runTasks();
 				break;
@@ -87,7 +87,7 @@ public class UpdateThread extends Thread{
 			} catch (InterruptedException ignore) { }
 		}
 	}
-	
+
 	private void runTasks() {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable();
@@ -107,7 +107,7 @@ public class UpdateThread extends Thread{
 					e.printStackTrace();
 				}
 			}
-			
+
 			updateAssets();
 
 			cleanLogs();
@@ -153,7 +153,7 @@ public class UpdateThread extends Thread{
 		YAMLProcessor assets = Resources.Assets.getYAML();
 		updateAssets(assets.getMap(), Utils.getAssetsDirectory());
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void updateAssets(Map<String, Object> assets, File directory) {
 		directory.mkdirs();
@@ -166,9 +166,9 @@ public class UpdateThread extends Thread{
 				String url = (String)value;
 				String name = getFileName(url);
 				File asset = new File(directory, name);
-				
+
 				stateChanged("Verifying Asset: " + name, 0);
-				
+
 				boolean needDownload = true;
 				if (asset.exists() && !params.isIgnoreMD5()) {
 					String md5 = MD5Utils.getMD5(asset);
@@ -189,7 +189,7 @@ public class UpdateThread extends Thread{
 			}
 		}
 	}
-	
+
 	private String getFileName(String url) {
 		String[] split = url.split("/");
 		return split[split.length - 1];
@@ -203,7 +203,7 @@ public class UpdateThread extends Thread{
 			FileUtils.deleteQuietly(oldConfig);
 		}
 	}
-	
+
 	private void moveDirectory(File dir, File newDir) {
 		if (!dir.exists()) {
 			dir.mkdirs();
@@ -585,7 +585,7 @@ public class UpdateThread extends Thread{
 			listener.stateChanged(message, progress);
 		}
 	}
-	
+
 	private class DownloadListenerWrapper implements DownloadListener {
 		private final AtomicReference<DownloadListener> wrapped = new AtomicReference<DownloadListener>(null);
 		public void stateChanged(String fileName, float progress) {
@@ -595,7 +595,7 @@ public class UpdateThread extends Thread{
 				listener.stateChanged(fileName, progress);
 			}
 		}
-		
+
 		public void setDownloadListener(DownloadListener listener) {
 			wrapped.set(listener);
 		}

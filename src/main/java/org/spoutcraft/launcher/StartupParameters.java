@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.spoutcraft.launcher.api.util.Utils;
-
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
+
+import org.spoutcraft.launcher.api.util.Utils;
 
 public final class StartupParameters {
 	@Parameter
@@ -72,38 +72,64 @@ public final class StartupParameters {
 
 	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
 	private String proxyPassword = null;
-	
+
 	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
 	private boolean ignoreMD5 = false;
-	
+
 	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
 	private int build = -1;
-	
+
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
 	private boolean relaunched = false;
 
 	public List<String> getParameters() {
 		return parameters;
 	}
-	
+
 	public void logParameters(Logger log) {
 		log.info("------------ Startup Parameters ------------");
-		if (user != null) log.info("Minecraft Username: " + user);
-		if (pass != null) log.info("Minecraft Password exists");
-		if (server != null) log.info("Minecraft Server: " + server);
-		if (portable) log.info("Portable mode activated");
-		if (safe_mode) log.info("Safe mode activated");
-		if (debug) log.info("Debug mode activated");
-		if (proxyHost != null) log.info("Proxy Host: " + proxyHost);
-		if (proxyPort != null) log.info("Proxy Port: " + proxyPort);
-		if (proxyUser != null) log.info("Proxy User exists");
-		if (proxyPassword != null) log.info("Porxy Password exists");
-		if (ignoreMD5) log.info("No MD5 Mode activated");
-		if (build != -1) log.info("Spoutcraft build selected: " + build);
-		if (relaunched) log.info("Relaunched with correct memory");
+		if (user != null) {
+			log.info("Minecraft Username: " + user);
+		}
+		if (pass != null) {
+			log.info("Minecraft Password exists");
+		}
+		if (server != null) {
+			log.info("Minecraft Server: " + server);
+		}
+		if (portable) {
+			log.info("Portable mode activated");
+		}
+		if (safe_mode) {
+			log.info("Safe mode activated");
+		}
+		if (debug) {
+			log.info("Debug mode activated");
+		}
+		if (proxyHost != null) {
+			log.info("Proxy Host: " + proxyHost);
+		}
+		if (proxyPort != null) {
+			log.info("Proxy Port: " + proxyPort);
+		}
+		if (proxyUser != null) {
+			log.info("Proxy User exists");
+		}
+		if (proxyPassword != null) {
+			log.info("Porxy Password exists");
+		}
+		if (ignoreMD5) {
+			log.info("No MD5 Mode activated");
+		}
+		if (build != -1) {
+			log.info("Spoutcraft build selected: " + build);
+		}
+		if (relaunched) {
+			log.info("Relaunched with correct memory");
+		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
-	
+
 	public boolean relaunch(Logger log) {
 		if (!relaunched) {
 			String pathToJar;
@@ -122,7 +148,7 @@ public final class StartupParameters {
 			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
 				commands.add("javaw");
 			} else {
-				commands.add("java"); 
+				commands.add("java");
 			}
 			commands.add("-Xmx" + memory + "m");
 			commands.add("-cp");
@@ -131,7 +157,7 @@ public final class StartupParameters {
 			commands.addAll(this.parameters);
 			commands.add("-relaunched");
 			processBuilder.command(commands);
-			
+
 			try {
 				processBuilder.start();
 				return true;
@@ -151,8 +177,9 @@ public final class StartupParameters {
 	}
 
 	public String getServer() {
-		if (server == null)
+		if (server == null) {
 			return null;
+		}
 		if (server.contains(":")) {
 			return server.substring(0, server.indexOf(":"));
 		}
@@ -160,8 +187,9 @@ public final class StartupParameters {
 	}
 
 	public String getPort() {
-		if (server == null)
+		if (server == null) {
 			return null;
+		}
 		if (server.contains(":")) {
 			return server.substring(server.indexOf(":") + 1);
 		}
@@ -179,11 +207,11 @@ public final class StartupParameters {
 	public boolean isDebugMode() {
 		return debug;
 	}
-	
+
 	public boolean isIgnoreMD5() {
 		return ignoreMD5;
 	}
-	
+
 	public int getSpoutcraftBuild() {
 		return build;
 	}

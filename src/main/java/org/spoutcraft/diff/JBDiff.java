@@ -206,7 +206,7 @@ public class JBDiff {
 					len -= I[i];
 					i -= I[i];
 				} else {
-					//if(len) I[i-len]=-len;
+					//if (len) I[i-len]=-len;
 					if (len != 0) {
 						I[i - len] = -len;
 					}

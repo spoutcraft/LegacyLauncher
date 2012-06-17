@@ -76,7 +76,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 				Iterator entries;
 				feed = input.build(new XmlReader(conn));
 				entries = feed.getEntries().iterator();
-				
+
 				int entryNum = 0;
 
 				while (entries.hasNext()) {
@@ -87,7 +87,7 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 					SyndEntry entry = (SyndEntry) entries.next();
 					sb.append("<h1>").append(entry.getTitle()).append("</h1>").append("<br />").append(entry.getDescription().getValue()).append("<br /><br />");
 				}
-				
+
 				if (sb.toString() != null) {
 					editorPane.setText(sb.toString());
 				} else {

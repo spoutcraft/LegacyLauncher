@@ -51,8 +51,9 @@ public class DownloadUtils {
 					download.getOutFile().delete();
 				}
 				System.err.println("Download of " + url + " Failed!");
-				if (listener != null)
+				if (listener != null) {
 					listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
+				}
 			} else {
 				if (md5 != null) {
 					String resultMD5 = MD5Utils.getMD5(download.getOutFile());

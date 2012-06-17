@@ -128,7 +128,7 @@ public class ImageUtils {
 		contentPane.add(tmp);
 		return tmp;
 	}
-	
+
 	public static InputStream getResourceAsStream(String path) {
 		InputStream stream = ImageUtils.class.getResourceAsStream(path);
 		String[] split = path.split("/");

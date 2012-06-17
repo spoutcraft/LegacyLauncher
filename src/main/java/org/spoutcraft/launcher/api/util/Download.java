@@ -66,7 +66,7 @@ public class Download implements Runnable {
 			((HttpURLConnection)conn).setInstanceFollowRedirects(true);
 			int response = ((HttpURLConnection)conn).getResponseCode();
 			InputStream in = getConnectionInputStream(conn);
-			
+
 			size = conn.getContentLength();
 			outFile = new File(outPath);
 			outFile.delete();

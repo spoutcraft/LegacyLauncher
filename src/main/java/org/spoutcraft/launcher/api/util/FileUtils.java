@@ -184,8 +184,9 @@ public class FileUtils {
 	}
 
 	public static void moveDirectory(File dir, File dest) {
-		if (!dest.exists())
+		if (!dest.exists()) {
 			dest.mkdirs();
+		}
 		for (File file : dir.listFiles()) {
 			if (file.isDirectory()) {
 				File newDir = new File(dest, file.getName());

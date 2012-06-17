@@ -50,7 +50,7 @@ public class Launcher {
 		logger.addHandler(new ConsoleHandler());
 		instance = this;
 	}
-	
+
 	public void setSkin(Skin skin) {
 		this.skin = skin;
 	}

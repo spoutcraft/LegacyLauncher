@@ -68,8 +68,8 @@ public class MirrorUtils {
 
 		return fallbackUrl;
 	}
-	
-	public static String getMirrorUrl(String mirrorURI) throws NoMirrorsAvailableException{
+
+	public static String getMirrorUrl(String mirrorURI) throws NoMirrorsAvailableException {
 		String url = getMirrorUrl(mirrorURI, null);
 		if (url != null) {
 			return url;
@@ -77,7 +77,7 @@ public class MirrorUtils {
 
 		throw new NoMirrorsAvailableException("No mirrors available for " + mirrorURI + ", checked " + MirrorUtils.mirrors.size() + " mirrors");
 	}
-	
+
 	private static void updateMirrors() {
 		if (MirrorUtils.mirrors == null || MirrorUtils.mirrors.size() == 0) {
 			Map<String, Integer> mirrors = getMirrors();
@@ -88,7 +88,7 @@ public class MirrorUtils {
 			while (iterator.hasNext()) {
 				Entry<String, Integer> e = iterator.next();
 				String mirror = "http://" + e.getKey();
-				if (isAddressReachable(mirror, 3000)) { 
+				if (isAddressReachable(mirror, 3000)) {
 					goodMirrors.add(e.getKey());
 				}
 			}

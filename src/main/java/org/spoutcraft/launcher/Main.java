@@ -66,11 +66,11 @@ public class Main {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
-		
+
 		//Required for ROME to work
 		ClassLoader cl = Main.class.getClassLoader();
 		Thread.currentThread().setContextClassLoader(cl);
-		
+
 		StartupParameters params = setupParameters(args);
 		setupLogger();
 
@@ -78,9 +78,9 @@ public class Main {
 		logger.info("------------------------------------------");
 		logger.info("Spoutcraft Launcher is starting....");
 		logger.info("Launcher Build: " + launcherBuild);
-		
+
 		params.logParameters(logger);
-		
+
 		//Setup Directories
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
 		dirs.getSkinDir().mkdirs();
@@ -148,7 +148,7 @@ public class Main {
 			boolean laf = false;
 			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
 				// This bypasses the expensive reflection calls
-				try { 
+				try {
 					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
 					laf = true;
 				} catch (Exception ignore) { }
@@ -193,7 +193,7 @@ public class Main {
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
 		Main.logger = logger;
 	}
-	
+
 	private static StartupParameters setupParameters(String[] args) {
 		StartupParameters params = new StartupParameters();
 		try {
@@ -204,7 +204,7 @@ public class Main {
 		Utils.setStartupParameters(params);
 
 		params.setupProxy();
-		
+
 		return params;
 	}
 
@@ -244,8 +244,9 @@ public class Main {
 						} catch (Exception ignored) {
 						}
 						try {
-							if (output != null)
+							if (output != null) {
 								output.close();
+							}
 						} catch (Exception e) {
 						}
 					}

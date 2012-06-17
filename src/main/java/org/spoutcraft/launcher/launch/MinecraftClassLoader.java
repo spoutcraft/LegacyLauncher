@@ -82,11 +82,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private File getTempDirectory() {
 		SpoutcraftDirectories dir = new SpoutcraftDirectories();
 		int index = 0;
-		while(true) {
+		while (true) {
 			File tempDir = new File(dir.getBinDir(), "temp_" + index);
 			if (!tempDir.isDirectory() && !tempDir.exists()) {
 				tempDir.mkdirs();
@@ -95,8 +95,8 @@ public class MinecraftClassLoader extends URLClassLoader {
 			index++;
 		}
 	}
-	
-	private void index(File file) throws IOException{
+
+	private void index(File file) throws IOException {
 		JarFile jar = new JarFile(file);
 		Enumeration<JarEntry> i = jar.entries();
 		while (i.hasMoreElements()) {

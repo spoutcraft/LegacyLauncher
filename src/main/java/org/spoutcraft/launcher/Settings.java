@@ -33,8 +33,9 @@ public class Settings {
 	private static YAMLProcessor settings;
 
 	public static synchronized void setSettings(YAMLProcessor settings) {
-		if (Settings.settings != null)
+		if (Settings.settings != null) {
 			throw new IllegalArgumentException("settings is already set!");
+		}
 		Settings.settings = settings;
 		try {
 			Settings.settings.load();

@@ -82,8 +82,9 @@ public abstract class GameUpdater extends SpoutcraftDirectories implements Downl
 	}
 
 	public void stateChanged(String message, float progress) {
-		if (listener != null)
+		if (listener != null) {
 			listener.stateChanged(message, progress);
+		}
 	}
 
 	public void runGame() {
