@@ -30,6 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Authenticator;
 import java.net.PasswordAuthentication;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -139,6 +140,7 @@ public final class StartupParameters {
 			} catch (IOException e1) {
 				pathToJar = jar.getAbsolutePath();
 			}
+			pathToJar = URLDecode.decode(pathToJar, "UTF-8");
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			log.info("Attempting relaunch with " + memory + " mb of RAM");
 			log.info("Path to Launcher Jar: " + pathToJar);
