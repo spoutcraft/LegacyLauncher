@@ -140,7 +140,10 @@ public final class StartupParameters {
 			} catch (IOException e1) {
 				pathToJar = jar.getAbsolutePath();
 			}
-			pathToJar = URLDecoder.decode(pathToJar, "UTF-8");
+			try {
+				pathToJar = URLDecoder.decode(pathToJar, "UTF-8");
+			} catch (java.io.UnsupportedEncodingException ignore) { }
+			
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			log.info("Attempting relaunch with " + memory + " mb of RAM");
 			log.info("Path to Launcher Jar: " + pathToJar);
