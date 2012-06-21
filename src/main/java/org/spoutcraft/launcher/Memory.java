@@ -36,6 +36,7 @@ public final class Memory {
 		(new Memory(3072, "3 GB", 5)),
 		(new Memory(4096, "4 GB", 6)),
 	};
+	public static final Memory DEFAULT_MEM = memoryOptions[2];
 	public static final int MAX_32_BIT_MEMORY = 1024;
 
 	int memory;
@@ -65,7 +66,7 @@ public final class Memory {
 				return m;
 			}
 		}
-		return null;
+		return DEFAULT_MEM;
 	}
 
 	public static int getMemoryIndexFromId(int id) {
