@@ -74,6 +74,17 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 				fis.getChannel().transferFrom(Channels.newChannel(image), 0, Integer.MAX_VALUE);
 			} catch (IOException e) {
 				Logger.getLogger("launcher").log(Level.WARNING, "Failed read local background image", e);
+			} finally {
+				if (fis != null) {
+					try {
+						fis.close();
+					} catch (IOException ignore) { }
+				}
+				if (image != null) {
+					try {
+						image.close();
+					} catch (IOException ignore) { }
+				}
 			}
 		}
 		return null;
