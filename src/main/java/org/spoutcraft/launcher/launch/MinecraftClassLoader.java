@@ -31,15 +31,19 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.channels.ClosedByInterruptException;
 import java.security.CodeSigner;
 import java.security.CodeSource;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -47,6 +51,7 @@ import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
+import org.spoutcraft.launcher.api.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(10000);
@@ -182,5 +187,88 @@ public class MinecraftClassLoader extends URLClassLoader {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	Map<String, List<URL>> resources = new HashMap<String, List<URL>>();
+	
+	@Override
+	public InputStream getResourceAsStream(String resource) {
+		URL result = getResource(resource);
+		if (result != null) {
+			try {
+				return result.openStream();
+			} catch (IOException e) {
+
+			}
+		}
+		return super.getResourceAsStream(resource);
+	}
+	
+	@Override
+	public URL getResource(String resource){
+		Enumeration<URL> results;
+		try {
+			results = getResources(resource);
+			while(results.hasMoreElements()) {
+				return results.nextElement();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return super.getResource(resource);
+	}
+	
+	@Override
+	public Enumeration<URL> getResources(String resource) throws IOException{
+		if (resource != null && resource.startsWith("res/")) {
+			if (resources.containsKey(resource)) {
+				return new IteratorEnumerator(resources.get(resource).iterator());
+			}
+			String[] split = resource.split("/");
+			ArrayList<URL> list = new ArrayList<URL>(1);
+			findResources(list, Utils.getAssetsDirectory(), split[split.length - 1]);
+
+			if (list.size() == 0) {
+				Enumeration<URL> enumeration = super.getResources(resource);
+				while(enumeration.hasMoreElements()) {
+					list.add(enumeration.nextElement());
+				}
+			}
+
+			resources.put(resource, list);
+			return new IteratorEnumerator(resources.get(resource).iterator());
+		}
+		return super.getResources(resource);
+	}
+	
+	private void findResources(List<URL> urls, File dir, String resource) {
+		for (File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				findResources(urls, file, resource);
+			} else {
+				if (file.getName().equals(resource)) {
+					try {
+						urls.add(file.toURI().toURL());
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
+	
+	private class IteratorEnumerator implements Enumeration<URL> {
+		final Iterator<URL> iterator;
+		protected IteratorEnumerator(Iterator<URL> iterator) {
+			this.iterator = iterator;
+		}
+
+		public boolean hasMoreElements() {
+			return iterator.hasNext();
+		}
+
+		public URL nextElement() {
+			return iterator.next();
+		}
 	}
 }

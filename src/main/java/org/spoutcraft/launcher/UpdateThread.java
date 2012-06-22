@@ -110,7 +110,11 @@ public class UpdateThread extends Thread {
 			}
 
 			updateAssets();
-
+			
+			//Download assets
+			Resources.VIP.getYAML();
+			Resources.Special.getYAML();
+			
 			cleanLogs();
 			cleanTemp();
 			updateFiles();
@@ -175,6 +179,8 @@ public class UpdateThread extends Thread {
 					String md5 = MD5Utils.getMD5(asset);
 					logger.info("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
 					needDownload = md5 == null || !md5.equals(key);
+				} else if (asset.exists() && params.isIgnoreMD5()) {
+					needDownload = false;
 				}
 
 				if (needDownload) {
