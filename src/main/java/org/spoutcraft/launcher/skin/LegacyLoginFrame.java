@@ -503,6 +503,10 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
 				enable();
 				break;
+			case PERMISSION_DENIED:
+				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
+				enable();
+				break;
 		}
 	}
 

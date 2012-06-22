@@ -27,12 +27,15 @@
 package org.spoutcraft.launcher.skin;
 
 import java.net.HttpURLConnection;
+import java.net.SocketException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Random;
 import javax.swing.JTextPane;
 
 import org.jdesktop.swingworker.SwingWorker;
+import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
+
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.SyndFeedInput;
@@ -96,6 +99,10 @@ public class AsyncRSSFeed extends SwingWorker<Object, Object> {
 
 			} else {
 				editorPane.setText(getErrorMessage());
+			}
+		} catch (SocketException e) {
+			if (e.getMessage().equalsIgnoreCase("Permission denied: connect")) {
+				editorPane.setText("Permission was denied - could not connect to RSS feed.");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

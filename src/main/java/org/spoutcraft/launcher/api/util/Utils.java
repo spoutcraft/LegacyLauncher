@@ -39,6 +39,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.PublicKey;
@@ -52,6 +53,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
 
 import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
 import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
@@ -113,7 +115,7 @@ public class Utils {
 		return workingDirectory;
 	}
 
-	public static String excutePost(String targetURL, String urlParameters, JProgressBar progress) {
+	public static String executePost(String targetURL, String urlParameters, JProgressBar progress) throws PermissionDeniedException {
 		HttpsURLConnection connection = null;
 		try {
 			URL url = new URL(targetURL);
@@ -166,6 +168,10 @@ public class Utils {
 			rd.close();
 
 			return response.toString();
+		} catch (SocketException e) {
+			if (e.getMessage().equalsIgnoreCase("Permission denied: connect")) {
+				throw new PermissionDeniedException("Permission to login was denied");
+			}
 		} catch (Exception e) {
 			String message = "Login failed...";
 			progress.setString(message);
@@ -257,9 +263,9 @@ public class Utils {
 		return count;
 	}
 
-	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException {
+	public static String[] doLogin(String user, String pass, JProgressBar progress) throws BadLoginException, MCNetworkException, OutdatedMCLauncherException, UnsupportedEncodingException, MinecraftUserNotPremiumException, PermissionDeniedException {
 		String parameters = "user=" + URLEncoder.encode(user, "UTF-8") + "&password=" + URLEncoder.encode(pass, "UTF-8") + "&version=" + 13;
-		String result = excutePost("https://login.minecraft.net/", parameters, progress);
+		String result = executePost("https://login.minecraft.net/", parameters, progress);
 		if (result == null) {
 			throw new MCNetworkException();
 		}

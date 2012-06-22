@@ -34,6 +34,7 @@ import org.spoutcraft.launcher.api.util.Download;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.api.util.Download.Result;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftDownloadUtils {
@@ -46,7 +47,7 @@ public class MinecraftDownloadUtils {
 			Download download = new Download(build.getMinecraftURL(user), output);
 			download.setListener(listener);
 			download.run();
-			if (!download.isSuccess()) {
+			if (download.getResult() != Result.SUCCESS) {
 				if (download.getOutFile() != null) {
 					download.getOutFile().delete();
 				}
@@ -63,7 +64,7 @@ public class MinecraftDownloadUtils {
 					if (!build.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
 						File patch = new File(Utils.getWorkingDirectory(), "mc.patch");
 						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
-						if (patchDownload.isSuccess()) {
+						if (patchDownload.getResult() == Result.SUCCESS) {
 							File patchedMinecraft = new File(Launcher.getGameUpdater().getUpdateDir(), "patched_minecraft.jar");
 							patchedMinecraft.delete();
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);

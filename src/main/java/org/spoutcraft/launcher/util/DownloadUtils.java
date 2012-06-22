@@ -32,6 +32,7 @@ import java.io.IOException;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.Download;
+import org.spoutcraft.launcher.api.util.Download.Result;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.Utils;
 
@@ -46,7 +47,7 @@ public class DownloadUtils {
 			download = new Download(url, output);
 			download.setListener(listener);
 			download.run();
-			if (!download.isSuccess()) {
+			if (download.getResult() != Result.SUCCESS) {
 				if (download.getOutFile() != null) {
 					download.getOutFile().delete();
 				}

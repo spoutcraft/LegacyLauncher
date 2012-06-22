@@ -45,6 +45,7 @@ import java.util.logging.Logger;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.util.Download;
+import org.spoutcraft.launcher.api.util.Download.Result;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.api.util.FileUtils;
@@ -512,7 +513,7 @@ public class UpdateThread extends Thread {
 
 		if (!spoutcraft.exists()) {
 			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getUpdateDir() + File.separator + "spoutcraft.jar", null, build.getMD5(), listener);
-			if (download.isSuccess()) {
+			if (download.getResult() == Result.SUCCESS) {
 				Utils.copy(download.getOutFile(), spoutcraft);
 			}
 		}

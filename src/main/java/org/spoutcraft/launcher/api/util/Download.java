@@ -30,8 +30,11 @@ import java.io.*;
 import java.net.*;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.spoutcraft.launcher.api.skin.exceptions.DownloadException;
+import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
 
 public class Download implements Runnable {
 	private static final long TIMEOUT = 30000;
@@ -41,7 +44,7 @@ public class Download implements Runnable {
 	private long downloaded = 0;
 	private String outPath;
 	private DownloadListener listener;
-	private boolean success = false;
+	private Result result = Result.FAILURE;
 	private File outFile = null;
 
 	public Download(String url, String outPath) throws MalformedURLException {
@@ -118,35 +121,43 @@ public class Download implements Runnable {
 			in.close();
 			rbc.close();
 			progress.interrupt();
-			success = size > 0 ? (size == outFile.length()) : true;
+			if (size > 0) {
+				if (size == outFile.length()) {
+					result = Result.SUCCESS;
+				}
+			} else {
+				result = Result.SUCCESS;
+			}
+		} catch (PermissionDeniedException e) {
+			result = Result.PERMISSION_DENIED;
 		} catch (DownloadException e) {
-			success = false;
+			result = Result.FAILURE;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	protected InputStream getConnectionInputStream(final URLConnection urlconnection) throws DownloadException {
-		final InputStream[] is = new InputStream[1];
+		final AtomicReference<InputStream> is = new AtomicReference<InputStream>();
 
-		for (int j = 0; (j < 3) && (is[0] == null); j++) {
-			Thread stream = new Thread() {
-				public void run() {
-					try {
-						is[0] = urlconnection.getInputStream();
-					} catch (IOException ignore) {
-					}
-				}
-			};
+		for (int j = 0; (j < 3) && (is.get() == null); j++) {
+			StreamThread stream = new StreamThread(urlconnection, is);
 			stream.start();
 			int iterationCount = 0;
-			while ((is[0] == null) && (iterationCount++ < 5)) {
+			while ((is.get() == null) && (iterationCount++ < 5)) {
 				try {
 					stream.join(1000L);
 				} catch (InterruptedException ignore) {
 				}
 			}
-			if (is[0] != null) continue;
+
+			if (stream.permDenied.get()) {
+				throw new PermissionDeniedException("Permission denied!");
+			}
+
+			if (is.get() != null) {
+				break;
+			}
 			try {
 				stream.interrupt();
 				stream.join();
@@ -154,10 +165,10 @@ public class Download implements Runnable {
 			}
 		}
 
-		if (is[0] == null) {
+		if (is.get() == null) {
 			throw new DownloadException("Unable to download file");
 		}
-		return new BufferedInputStream(is[0]);
+		return new BufferedInputStream(is.get());
 	}
 
 	private void stateChanged() {
@@ -168,11 +179,37 @@ public class Download implements Runnable {
 		this.listener = listener;
 	}
 
-	public boolean isSuccess() {
-		return success;
+	public Result getResult() {
+		return result;
 	}
 
 	public File getOutFile() {
 		return outFile;
+	}
+	
+	public class StreamThread extends Thread {
+		private final URLConnection urlconnection;
+		private final AtomicReference<InputStream> is;
+		public final AtomicBoolean permDenied = new AtomicBoolean(false);
+		public StreamThread(URLConnection urlconnection, AtomicReference<InputStream> is) {
+			this.urlconnection = urlconnection;
+			this.is = is;
+		}
+
+		public void run() {
+			try {
+				is.set(urlconnection.getInputStream());
+			} catch (SocketException e) {
+				if (e.getMessage().equalsIgnoreCase("Permission denied: connect")) {
+					permDenied.set(true);
+				}
+			} catch (IOException ignore) { }
+		}
+	}
+	
+	public enum Result {
+		SUCCESS,
+		FAILURE,
+		PERMISSION_DENIED,
 	}
 }

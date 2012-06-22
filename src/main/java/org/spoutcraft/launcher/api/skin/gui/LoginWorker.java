@@ -35,6 +35,7 @@ import org.jdesktop.swingworker.SwingWorker;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame.UserPasswordInformation;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
@@ -102,6 +103,10 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			loginFrame.onRawEvent(Event.BAD_LOGIN);
 		} catch (MinecraftUserNotPremiumException e) {
 			loginFrame.onRawEvent(Event.USER_NOT_PREMIUM);
+			loginFrame.getProgressBar().setVisible(false);
+		} catch (PermissionDeniedException e) {
+			loginFrame.onRawEvent(Event.PERMISSION_DENIED);
+			this.cancel(true);
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (MCNetworkException e) {
 			UserPasswordInformation info = null;
