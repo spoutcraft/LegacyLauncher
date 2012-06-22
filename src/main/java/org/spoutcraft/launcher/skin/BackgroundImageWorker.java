@@ -27,6 +27,13 @@
 package org.spoutcraft.launcher.skin;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
@@ -34,6 +41,8 @@ import javax.swing.SwingConstants;
 import org.jdesktop.swingworker.SwingWorker;
 
 import org.spoutcraft.launcher.api.util.Download;
+import org.spoutcraft.launcher.api.util.Download.Result;
+import org.spoutcraft.launcher.api.util.ImageUtils;
 
 public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 	private static final int IMAGE_CYCLE_TIME = 24 * 60 * 60 * 1000;
@@ -47,13 +56,25 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 
 	@Override
 	protected Object doInBackground() {
+		Download download = null;
 		try {
 			if (!backgroundImage.exists() || backgroundImage.length() < 10 * 1024 || System.currentTimeMillis() - backgroundImage.lastModified() > IMAGE_CYCLE_TIME) {
-				Download download = new Download("http://get.spout.org/splash/random.png", backgroundImage.getPath());
+				download = new Download("http://get.spout.org/splash/random.png", backgroundImage.getPath());
 				download.run();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Logger.getLogger("launcher").log(Level.WARNING, "Failed to download background image", e);
+		}
+		if (download == null || download.getResult() != Result.SUCCESS) {
+			InputStream image = ImageUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.png");
+			backgroundImage.delete();
+			FileInputStream fis = null;
+			try {
+				fis = new FileInputStream(backgroundImage);
+				fis.getChannel().transferFrom(Channels.newChannel(image), 0, Integer.MAX_VALUE);
+			} catch (IOException e) {
+				Logger.getLogger("launcher").log(Level.WARNING, "Failed read local background image", e);
+			}
 		}
 		return null;
 	}
