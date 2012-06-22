@@ -100,6 +100,7 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
 			return true;
 		} catch (BadLoginException e) {
+			loginFrame.getProgressBar().setVisible(false);
 			loginFrame.onRawEvent(Event.BAD_LOGIN);
 		} catch (MinecraftUserNotPremiumException e) {
 			loginFrame.onRawEvent(Event.USER_NOT_PREMIUM);
