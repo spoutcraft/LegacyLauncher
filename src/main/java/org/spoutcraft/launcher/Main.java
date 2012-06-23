@@ -195,7 +195,7 @@ public class Main {
 	}
 
 	private static StartupParameters setupParameters(String[] args) {
-		StartupParameters params = new StartupParameters();
+		StartupParameters params = new StartupParameters(args);
 		try {
 			new JCommander(params, args);
 		} catch (Exception ex) {

@@ -32,6 +32,7 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -41,6 +42,10 @@ import com.beust.jcommander.internal.Lists;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public final class StartupParameters {
+	private final String[] args;
+	protected StartupParameters(String[] args) {
+		this.args = args;
+	}
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
@@ -86,6 +91,7 @@ public final class StartupParameters {
 	public List<String> getParameters() {
 		return parameters;
 	}
+
 
 	public void logParameters(Logger log) {
 		log.info("------------ Startup Parameters ------------");
@@ -159,7 +165,7 @@ public final class StartupParameters {
 			commands.add("-cp");
 			commands.add(pathToJar);
 			commands.add(Main.class.getName());
-			commands.addAll(this.parameters);
+			commands.addAll(Arrays.asList(args));
 			commands.add("-relaunched");
 			processBuilder.command(commands);
 
