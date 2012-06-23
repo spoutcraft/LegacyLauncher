@@ -42,6 +42,8 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -186,6 +188,8 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return null;
 	}
+	
+	Map<String, List<URL>> resources = new HashMap<String, List<URL>>();
 	@Override
 	public InputStream getResourceAsStream(String resource) {
 		URL result = getResource(resource);
@@ -216,19 +220,23 @@ public class MinecraftClassLoader extends URLClassLoader {
 	@Override
 	public Enumeration<URL> getResources(String resource) throws IOException{
 		if (resource != null) {
+			if (resources.containsKey(resource)) {
+				return new IteratorEnumerator(resources.get(resource).iterator());
+			}
 			if (resource.startsWith("res/")) {
-				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3));
+				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3), resource);
 			} else if (resource.startsWith("/res/")) {
-				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4));
+				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4), resource);
 			}
 		}
 		return super.getResources(resource);
 	}
 	
-	private Enumeration<URL> getEnumeration(String resource) throws MalformedURLException {
+	private Enumeration<URL> getEnumeration(String resource, String key) throws MalformedURLException {
 		ArrayList<URL> list = new ArrayList<URL>(1);
 		File file = new File(resource);
 		list.add(file.toURI().toURL());
+		resources.put(key, list);
 		return new IteratorEnumerator(list.iterator());
 	}
 	
