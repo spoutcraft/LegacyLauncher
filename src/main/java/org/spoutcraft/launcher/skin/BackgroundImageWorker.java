@@ -65,7 +65,7 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 		} catch (Exception e) {
 			Logger.getLogger("launcher").log(Level.WARNING, "Failed to download background image", e);
 		}
-		if (download == null || download.getResult() != Result.SUCCESS) {
+		if (download != null && download.getResult() != Result.SUCCESS) {
 			InputStream image = ImageUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.png");
 			backgroundImage.delete();
 			FileInputStream fis = null;
