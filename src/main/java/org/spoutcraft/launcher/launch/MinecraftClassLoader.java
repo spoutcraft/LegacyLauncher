@@ -188,9 +188,6 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return null;
 	}
-	
-	Map<String, List<URL>> resources = new HashMap<String, List<URL>>();
-	
 	@Override
 	public InputStream getResourceAsStream(String resource) {
 		URL result = getResource(resource);
@@ -220,55 +217,13 @@ public class MinecraftClassLoader extends URLClassLoader {
 	
 	@Override
 	public Enumeration<URL> getResources(String resource) throws IOException{
-		if (resource != null && resource.startsWith("res/")) {
-			if (resources.containsKey(resource)) {
-				return new IteratorEnumerator(resources.get(resource).iterator());
+		if (resource != null) {
+			if (resource.startsWith("res/")) {
+				resource = Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3);
+			} else if (resource.startsWith("/res/")) {
+				resource = Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4);
 			}
-			String[] split = resource.split("/");
-			ArrayList<URL> list = new ArrayList<URL>(1);
-			findResources(list, Utils.getAssetsDirectory(), split[split.length - 1]);
-
-			if (list.size() == 0) {
-				Enumeration<URL> enumeration = super.getResources(resource);
-				while(enumeration.hasMoreElements()) {
-					list.add(enumeration.nextElement());
-				}
-			}
-
-			resources.put(resource, list);
-			return new IteratorEnumerator(resources.get(resource).iterator());
 		}
 		return super.getResources(resource);
-	}
-	
-	private void findResources(List<URL> urls, File dir, String resource) {
-		for (File file : dir.listFiles()) {
-			if (file.isDirectory()) {
-				findResources(urls, file, resource);
-			} else {
-				if (file.getName().equals(resource)) {
-					try {
-						urls.add(file.toURI().toURL());
-					} catch (MalformedURLException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	}
-	
-	private class IteratorEnumerator implements Enumeration<URL> {
-		final Iterator<URL> iterator;
-		protected IteratorEnumerator(Iterator<URL> iterator) {
-			this.iterator = iterator;
-		}
-
-		public boolean hasMoreElements() {
-			return iterator.hasNext();
-		}
-
-		public URL nextElement() {
-			return iterator.next();
-		}
 	}
 }
