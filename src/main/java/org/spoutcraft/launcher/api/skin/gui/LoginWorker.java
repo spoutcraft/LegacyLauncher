@@ -38,6 +38,7 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame.UserPasswordInformation;
 import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.exceptions.AccountMigratedException;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
 import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
@@ -95,10 +96,14 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 				} else {
 					info.username = user;
 				}
+				info.password = pass;
 			}
 
 			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
 			return true;
+		} catch (AccountMigratedException e) {
+			loginFrame.getProgressBar().setVisible(false);
+			loginFrame.onRawEvent(Event.ACCOUNT_MIGRATED);
 		} catch (BadLoginException e) {
 			loginFrame.getProgressBar().setVisible(false);
 			loginFrame.onRawEvent(Event.BAD_LOGIN);

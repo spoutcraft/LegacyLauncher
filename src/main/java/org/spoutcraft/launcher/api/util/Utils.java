@@ -54,6 +54,7 @@ import javax.swing.JProgressBar;
 
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
+import org.spoutcraft.launcher.exceptions.AccountMigratedException;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
 import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
@@ -270,12 +271,14 @@ public class Utils {
 			throw new MCNetworkException();
 		}
 		if (!result.contains(":")) {
-			if (result.trim().equals("Bad login")) {
+			if (result.trim().contains("Bad login")) {
 				throw new BadLoginException();
-			} else if (result.trim().equals("User not premium")) {
+			} else if (result.trim().contains("User not premium")) {
 				throw new MinecraftUserNotPremiumException();
-			} else if (result.trim().equals("Old version")) {
+			} else if (result.trim().contains("Old version")) {
 				throw new OutdatedMCLauncherException();
+			} else if (result.trim().contains("Account migrated, use e-mail as username.")) {
+				throw new AccountMigratedException();
 			} else {
 				System.err.print("Unknown login result: " + result);
 			}

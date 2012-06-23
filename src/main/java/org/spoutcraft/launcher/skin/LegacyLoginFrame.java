@@ -487,6 +487,10 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
 				enable();
 				break;
+			case ACCOUNT_MIGRATED:
+				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
+				enable();
+				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
