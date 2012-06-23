@@ -102,6 +102,8 @@ public class Main {
 		if (params.getSpoutcraftBuild() > 0) {
 			Settings.setSpoutcraftSelectedBuild(params.getSpoutcraftBuild());
 			Settings.setSpoutcraftBuild(Build.CUSTOM);
+		} else if (Settings.getSpoutcraftBuild() == Build.CUSTOM){
+			Settings.setSpoutcraftBuild(Build.RECOMMENDED);
 		}
 
 		if (params.isDebugMode()) {
