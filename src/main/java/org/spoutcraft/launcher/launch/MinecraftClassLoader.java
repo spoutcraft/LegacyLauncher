@@ -42,8 +42,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -195,7 +193,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 			try {
 				return result.openStream();
 			} catch (IOException e) {
-
+				//e.printStackTrace();
 			}
 		}
 		return super.getResourceAsStream(resource);
@@ -219,11 +217,33 @@ public class MinecraftClassLoader extends URLClassLoader {
 	public Enumeration<URL> getResources(String resource) throws IOException{
 		if (resource != null) {
 			if (resource.startsWith("res/")) {
-				resource = Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3);
+				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3));
 			} else if (resource.startsWith("/res/")) {
-				resource = Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4);
+				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4));
 			}
 		}
 		return super.getResources(resource);
+	}
+	
+	private Enumeration<URL> getEnumeration(String resource) throws MalformedURLException {
+		ArrayList<URL> list = new ArrayList<URL>(1);
+		File file = new File(resource);
+		list.add(file.toURI().toURL());
+		return new IteratorEnumerator(list.iterator());
+	}
+	
+	private class IteratorEnumerator implements Enumeration<URL> {
+		final Iterator<URL> iterator;
+		protected IteratorEnumerator(Iterator<URL> iterator) {
+			this.iterator = iterator;
+		}
+
+		public boolean hasMoreElements() {
+			return iterator.hasNext();
+		}
+
+		public URL nextElement() {
+			return iterator.next();
+		}
 	}
 }
