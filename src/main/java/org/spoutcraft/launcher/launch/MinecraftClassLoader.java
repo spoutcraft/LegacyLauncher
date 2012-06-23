@@ -223,10 +223,15 @@ public class MinecraftClassLoader extends URLClassLoader {
 			if (resources.containsKey(resource)) {
 				return new IteratorEnumerator(resources.get(resource).iterator());
 			}
+			Enumeration<URL> result = null;
 			if (resource.startsWith("res/")) {
-				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3), resource);
+				result =  getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3), resource);
 			} else if (resource.startsWith("/res/")) {
-				return getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4), resource);
+				result = getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4), resource);
+			}
+			
+			if (result != null) {
+				return result;
 			}
 		}
 		return super.getResources(resource);
@@ -235,9 +240,12 @@ public class MinecraftClassLoader extends URLClassLoader {
 	private Enumeration<URL> getEnumeration(String resource, String key) throws MalformedURLException {
 		ArrayList<URL> list = new ArrayList<URL>(1);
 		File file = new File(resource);
-		list.add(file.toURI().toURL());
-		resources.put(key, list);
-		return new IteratorEnumerator(list.iterator());
+		if (file.exists()) {
+			list.add(file.toURI().toURL());
+			resources.put(key, list);
+			return new IteratorEnumerator(list.iterator());
+		}
+		return null;
 	}
 	
 	private class IteratorEnumerator implements Enumeration<URL> {
