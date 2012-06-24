@@ -66,10 +66,14 @@ public class Main {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
+		
 
 		//Required for ROME to work
 		ClassLoader cl = Main.class.getClassLoader();
 		Thread.currentThread().setContextClassLoader(cl);
+		
+		SplashScreen splash = new SplashScreen();
+		splash.run();
 
 		StartupParameters params = setupParameters(args);
 		setupLogger();
@@ -130,6 +134,7 @@ public class Main {
 
 		JavaSkin defaultSkin = new DefaultSkin();
 		launcher.setSkin(defaultSkin);
+		splash.dispose();
 		defaultSkin.getLoginFrame().setVisible(true);
 
 		if (params.isDebugMode()) {
