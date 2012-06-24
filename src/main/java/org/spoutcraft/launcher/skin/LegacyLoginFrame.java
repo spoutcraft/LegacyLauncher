@@ -404,7 +404,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		}
 		
 		if (memoryOption >= memory.getItemCount() || memoryOption < 0) {
-			memoryOption = memory.getItemCount();
+			memoryOption = memory.getItemCount() - 1;
 			if (memoryOption == 0) {
 				//Something went wrong!
 				memory.addItem(Memory.memoryOptions[0]);
