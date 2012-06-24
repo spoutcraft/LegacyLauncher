@@ -396,7 +396,7 @@ public class UpdateThread extends Thread {
 		// Processs minecraft.jar
 		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		if (!mcCache.exists() || !minecraftMD5.equals(MD5Utils.getMD5(mcCache))) {
+		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String minecraftURL = Launcher.getGameUpdater().baseURL + "minecraft.jar?user=" + Launcher.getGameUpdater().getMinecraftUser() + "&ticket=" + Launcher.getGameUpdater().getDownloadTicket();
 			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
 			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, build, Launcher.getGameUpdater().getDownloadListener());
