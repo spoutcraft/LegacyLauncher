@@ -48,7 +48,7 @@
 	<!-- Issue management -->
 	<issueManagement>
 		<system>jira</system>
-		<url>http://issues.spout.org/browse/SPOUTCRAFTLAUNCHER</url>
+		<url>http://issues.spout.org/browse/SpoutcraftLauncher</url>
 	</issueManagement>
 
 	<!-- Repository locations -->
@@ -221,9 +221,6 @@
 						<manifest>
 							<mainClass>${mainClass}</mainClass>
 						</manifest>
-						<manifestEntries>
-							<SplashScreen-Image>org/spoutcraft/launcher/resources/splash.png</SplashScreen-Image>
-						</manifestEntries>
 					</archive>
 				</configuration>
 			</plugin>
@@ -318,11 +315,6 @@
 										<minVersion>1.5.0</minVersion>
 									</jre>
 									<icon>${basedir}/src/main/resources/exe/icon.ico</icon>
-									<splash>
-										<file>${basedir}/src/main/resources/splash.bmp</file>
-										<waitForWindow>true</waitForWindow>
-										<timeout>60</timeout>
-									</splash>
 									<versionInfo>
 										<fileVersion>2.0.0.${buildNumber}</fileVersion>
 										<txtFileVersion>2.0.0.${buildNumber}</txtFileVersion>
