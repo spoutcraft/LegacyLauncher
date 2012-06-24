@@ -373,7 +373,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		} catch (Throwable t) { }
 		maxMemory = Math.max(512, maxMemory);
 
-		if (maxMemory >= 2048 && !bit64) {
+		if (maxMemory >= Memory.MAX_32_BIT_MEMORY && !bit64) {
 			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" +
 									"You have more than 1.5GB of memory available, but<br/>" +
 									"you must have 64bit java installed to use it.</html>");
@@ -386,6 +386,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		if (!bit64) {
 			maxMemory = Math.min(Memory.MAX_32_BIT_MEMORY, maxMemory);
 		}
+		System.out.println("Maximum usable memory detected: " + maxMemory + " mb");
 
 		for (Memory mem : Memory.memoryOptions) {
 			if (maxMemory >= mem.getMemoryMB()) {
@@ -400,6 +401,14 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		}
 		if (Memory.memoryOptions[memoryOption].getMemoryMB() > maxMemory) {
 			memoryOption = 0;
+		}
+		
+		if (memoryOption >= memory.getItemCount() || memoryOption < 0) {
+			memoryOption = memory.getItemCount();
+			if (memoryOption == 0) {
+				//Something went wrong!
+				memory.addItem(Memory.memoryOptions[0]);
+			}
 		}
 
 		Settings.setMemory(memoryOption);
