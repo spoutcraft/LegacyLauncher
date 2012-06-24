@@ -402,17 +402,16 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		if (Memory.memoryOptions[memoryOption].getMemoryMB() > maxMemory) {
 			memoryOption = 0;
 		}
-		
-		if (memoryOption >= memory.getItemCount() || memoryOption < 0) {
-			memoryOption = memory.getItemCount() - 1;
-			if (memoryOption == 0) {
-				//Something went wrong!
-				memory.addItem(Memory.memoryOptions[0]);
-			}
-		}
 
-		Settings.setMemory(memoryOption);
-		memory.setSelectedIndex(Memory.getMemoryIndexFromId(memoryOption));
+		try {
+			Settings.setMemory(memoryOption);
+			memory.setSelectedIndex(Memory.getMemoryIndexFromId(memoryOption));
+		} catch (IllegalArgumentException e) {
+			memory.removeAllItems();
+			memory.addItem(Memory.memoryOptions[0]);
+			Settings.setMemory(1); //512 == 1
+			memory.setSelectedIndex(0); //1st element
+		}
 	}
 
 	public void disable() {
