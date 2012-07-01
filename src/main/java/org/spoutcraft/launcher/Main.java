@@ -59,6 +59,7 @@ import org.spoutcraft.launcher.skin.DefaultSkin;
 
 public class Main {
 	private static Logger logger = null;
+	protected static RotatingFileHandler handler = null;
 	public Main() {
 		main(new String[0]);
 	}
@@ -122,6 +123,10 @@ public class Main {
 			System.exit(0);
 			return;
 		}
+		
+		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
+		Thread logThread = new LogFlushThread();
+		logThread.start();
 
 		// Set up the Launcher and load skins
 		Launcher launcher = new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
@@ -193,6 +198,8 @@ public class Main {
 			logger.removeHandler(h);
 		}
 		logger.addHandler(fileHandler);
+		
+		Main.handler = fileHandler;
 
 		logger.setUseParentHandlers(false);
 
@@ -262,6 +269,39 @@ public class Main {
 		}
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
+	}
+}
+
+class LogFlushThread extends Thread {
+	public LogFlushThread() {
+		super("Log Flush Thread");
+		this.setDaemon(true);
+	}
+
+	@Override
+	public void run() {
+		while(!this.isInterrupted()) {
+			if (Main.handler != null) {
+				Main.handler.flush();
+			}
+			try {
+				sleep(60000);
+			} catch (InterruptedException e) { }
+		}
+	}
+}
+
+class ShutdownThread extends Thread {
+	public ShutdownThread() {
+		super("Shutdown Thread");
+		this.setDaemon(true);
+	}
+
+	@Override
+	public void run() {
+		if (Main.handler != null) {
+			Main.handler.flush();
+		}
 	}
 }
 
