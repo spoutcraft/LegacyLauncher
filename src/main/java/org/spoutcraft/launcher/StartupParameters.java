@@ -88,6 +88,9 @@ public final class StartupParameters {
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
 	private boolean relaunched = false;
 
+	@Parameter(names = {"-skin_class", "--skin_class"}, description = "Main class name of a custom launcher skin. For testing only.")
+	private String skinClass = null;
+
 	public List<String> getParameters() {
 		return parameters;
 	}
@@ -133,6 +136,9 @@ public final class StartupParameters {
 		}
 		if (relaunched) {
 			log.info("Relaunched with correct memory");
+		}
+		if (skinClass != null) {
+			log.info("Custom launcher skin class specified on command line: " + skinClass);
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -225,6 +231,10 @@ public final class StartupParameters {
 
 	public int getSpoutcraftBuild() {
 		return build;
+	}
+
+	public String getSkinClass() {
+		return skinClass;
 	}
 
 	public void setupProxy() {
