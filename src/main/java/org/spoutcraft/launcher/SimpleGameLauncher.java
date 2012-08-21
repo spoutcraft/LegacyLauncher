@@ -62,7 +62,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 
 	@Override
 	public void runGame(String user, String session, String downloadTicket) {
-		Dimension size = new Dimension(870, 518);
+		Dimension size = new Dimension(854, 480);
 		Dimension currentSize = Launcher.getSkin().getLoginFrame().getSize();
 		Point location = Launcher.getSkin().getLoginFrame().getLocation();
 		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);
