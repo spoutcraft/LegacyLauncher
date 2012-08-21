@@ -399,7 +399,7 @@ public class UpdateThread extends Thread {
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String minecraftURL = Launcher.getGameUpdater().baseURL + "minecraft.jar?user=" + Launcher.getGameUpdater().getMinecraftUser() + "&ticket=" + Launcher.getGameUpdater().getDownloadTicket();
 			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, build, Launcher.getGameUpdater().getDownloadListener());
+			MinecraftDownloadUtils.downloadMinecraft(minecraftURL, output, build, listener);
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
 
