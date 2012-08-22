@@ -38,13 +38,13 @@ import org.spoutcraft.launcher.api.util.Download.Result;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftDownloadUtils {
-	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException {
+	public static void downloadMinecraft(String url, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException {
 		int tries = 3;
 		File outputFile = null;
 		while (tries > 0) {
 			System.out.println("Starting download of minecraft, with " + tries + " tries remaining");
 			tries--;
-			Download download = new Download(build.getMinecraftURL(user), output);
+			Download download = new Download(url, output);
 			download.setListener(listener);
 			download.run();
 			if (download.getResult() != Result.SUCCESS) {
