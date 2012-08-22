@@ -137,7 +137,17 @@ public class Main {
 			start = System.currentTimeMillis();
 		}
 
-		JavaSkin defaultSkin = new DefaultSkin();
+		JavaSkin defaultSkin;
+		if (params.getSkinClass() != null) {
+			try {
+				defaultSkin = Class.forName(params.getSkinClass()).asSubclass(JavaSkin.class).getConstructor().newInstance();
+			} catch (Throwable e) {
+				e.printStackTrace();
+				defaultSkin = new DefaultSkin();
+			}
+		} else {
+			defaultSkin = new DefaultSkin();
+		}
 		launcher.setSkin(defaultSkin);
 		splash.dispose();
 		defaultSkin.getLoginFrame().setVisible(true);
