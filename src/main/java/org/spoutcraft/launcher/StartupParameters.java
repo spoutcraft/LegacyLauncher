@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 
+import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public final class StartupParameters {
@@ -156,7 +157,7 @@ public final class StartupParameters {
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
-			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
+			if (OperatingSystem.getOS().isWindows()) {
 				commands.add("javaw");
 			} else {
 				commands.add("java");

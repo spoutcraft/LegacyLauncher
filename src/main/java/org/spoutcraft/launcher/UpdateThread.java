@@ -50,6 +50,7 @@ import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.FileType;
 import org.spoutcraft.launcher.api.util.FileUtils;
 import org.spoutcraft.launcher.api.util.MirrorUtils;
+import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLNode;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
@@ -446,22 +447,15 @@ public class UpdateThread extends Thread {
 	public void getNatives() throws IOException, UnsupportedOSException {
 		String fileName;
 
-		switch (Utils.getOperatingSystem()) {
-			case LINUX:
-				fileName = "linux_natives";
-				break;
-			case MAC_OS:
-				fileName = "macosx_natives";
-				break;
-			case SOLARIS:
-				fileName = "solaris_natives";
-				break;
-			case WINDOWS:
-				fileName = "windows_natives";
-				break;
-			case UNKNOWN:
-			default:
-				throw new UnsupportedOSException();
+		OperatingSystem os = OperatingSystem.getOS();
+		if (os.isUnix()) {
+			fileName = "linux_natives";
+		} else if (os.isMac()) {
+			fileName = "macosx_natives";
+		} else if (os.isWindows()) {
+			fileName = "windows_natives";
+		} else {
+			throw new UnsupportedOperationException("Unknown OS: " + os);
 		}
 
 		// Download natives

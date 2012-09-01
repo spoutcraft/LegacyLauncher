@@ -70,6 +70,7 @@ import org.spoutcraft.launcher.api.skin.Skin;
 import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
 import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 import org.spoutcraft.launcher.api.util.ImageUtils;
+import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
@@ -102,7 +103,15 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds((dim.width - 860) / 2, (dim.height - 500) / 2, 860, 500);
+		int width, height;
+		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
+			width = 880;
+			height = 520;
+		} else {
+			width = 860;
+			height = 500;
+		}
+		setBounds((dim.width - height) / 2, (dim.height - width) / 2, height, width);
 		setResizable(false);
 
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));

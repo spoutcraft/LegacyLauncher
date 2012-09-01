@@ -91,23 +91,19 @@ public class Utils {
 		String userHome = System.getProperty("user.home", ".");
 		File workingDirectory;
 
-		switch (getOperatingSystem()) {
-			case LINUX:
-			case SOLARIS:
+		OperatingSystem os = OperatingSystem.getOS();
+		if (os.isUnix()) {
+			workingDirectory = new File(userHome, '.' + applicationName + '/');
+		} else if (os.isWindows()) {
+			String applicationData = System.getenv("APPDATA");
+			if (applicationData != null) {
+				workingDirectory = new File(applicationData, "." + applicationName + '/');
+			} else {
 				workingDirectory = new File(userHome, '.' + applicationName + '/');
-				break;
-			case WINDOWS:
-				String applicationData = System.getenv("APPDATA");
-				if (applicationData != null) {
-					workingDirectory = new File(applicationData, "." + applicationName + '/');
-				} else {
-					workingDirectory = new File(userHome, '.' + applicationName + '/');
-				}
-				break;
-			case MAC_OS:
+			}
+		} else if (os.isMac()) {
 				workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
-				break;
-			default:
+		} else {
 				workingDirectory = new File(userHome, applicationName + '/');
 		}
 		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
@@ -182,45 +178,6 @@ public class Utils {
 			}
 		}
 		return null;
-	}
-
-	private static OS cached = null;
-	public static OS getOperatingSystem() {
-		if (cached == null) {
-			cached = lookupOperatingSystem();
-		}
-		return cached;
-	}
-
-	private static OS lookupOperatingSystem() {
-		String osName = System.getProperty("os.name").toLowerCase();
-		if (osName.contains("win")) {
-			return OS.WINDOWS;
-		}
-		if (osName.contains("mac")) {
-			return OS.MAC_OS;
-		}
-		if (osName.contains("solaris")) {
-			return OS.SOLARIS;
-		}
-		if (osName.contains("sunos")) {
-			return OS.SOLARIS;
-		}
-		if (osName.contains("linux")) {
-			return OS.LINUX;
-		}
-		if (osName.contains("unix")) {
-			return OS.LINUX;
-		}
-		return OS.UNKNOWN;
-	}
-
-	public enum OS {
-		LINUX,
-		SOLARIS,
-		WINDOWS,
-		MAC_OS,
-		UNKNOWN;
 	}
 
 	public static String getFileExtention(String file) {

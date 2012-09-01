@@ -40,6 +40,7 @@ import org.spoutcraft.launcher.api.GameLauncher;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
+import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
@@ -62,7 +63,13 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 
 	@Override
 	public void runGame(String user, String session, String downloadTicket) {
-		Dimension size = new Dimension(854, 480);
+		Dimension size;
+		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
+			size = new Dimension(880, 520);
+		} else {
+			size = new Dimension(860, 500);
+		}
+		
 		Dimension currentSize = Launcher.getSkin().getLoginFrame().getSize();
 		Point location = Launcher.getSkin().getLoginFrame().getLocation();
 		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);

@@ -52,6 +52,7 @@ import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.skin.JavaSkin;
+import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLFormat;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
@@ -152,13 +153,14 @@ public class Main {
 
 	@SuppressWarnings("restriction")
 	private static void setLookAndFeel() {
-		if (Utils.getOperatingSystem() == Utils.OS.MAC_OS) {
+		OperatingSystem os = OperatingSystem.getOS();
+		if (os.isMac()) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
 		}
 		try {
 			boolean laf = false;
-			if (Utils.getOperatingSystem() == Utils.OS.WINDOWS) {
+			if (os.isWindows()) {
 				// This bypasses the expensive reflection calls
 				try {
 					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
