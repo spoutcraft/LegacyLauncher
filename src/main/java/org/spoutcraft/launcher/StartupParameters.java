@@ -166,7 +166,7 @@ public final class StartupParameters {
 			commands.add("-cp");
 			commands.add(pathToJar);
 			commands.add(Main.class.getName());
-			commands.addAll(Arrays.asList(args));
+			commands.addAll(getRelaunchParameters());
 			commands.add("-relaunched");
 			processBuilder.command(commands);
 
@@ -178,6 +178,55 @@ public final class StartupParameters {
 			}
 		}
 		return false;
+	}
+	
+	private List<String> getRelaunchParameters() {
+		List<String> params = new ArrayList<String>();
+		if (user != null) {
+			params.add("-username");
+			params.add(user);
+		}
+		if (pass != null) {
+			params.add("-password");
+			params.add(pass);
+		}
+		if (server != null) {
+			params.add("-server");
+			params.add(server);
+		}
+		if (portable) {
+			params.add("-portable");
+		}
+		if (safe_mode) {
+			params.add("-safe");
+		}
+		if (debug) {
+			params.add("-debug");
+		}
+		if (proxyHost != null) {
+			params.add("-proxy_host");
+			params.add(proxyHost);
+		}
+		if (proxyPort != null) {
+			params.add("-proxy_port");
+			params.add(proxyPort);
+		}
+		if (proxyUser != null) {
+			params.add("-proxy_user");
+			params.add(proxyUser);
+		}
+		if (proxyPassword != null) {
+			params.add("-proxy_password");
+			params.add(proxyPassword);
+		}
+		if (ignoreMD5) {
+			params.add("-nomd5");
+		}
+		if (build != -1) {
+			params.add("-build");
+			params.add(Integer.toString(build));
+		}
+		return params;
 	}
 
 	public String getUser() {

@@ -65,9 +65,9 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 	public void runGame(String user, String session, String downloadTicket) {
 		Dimension size;
 		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
-			size = new Dimension(880, 520);
+			size = new Dimension(900, 540);
 		} else {
-			size = new Dimension(860, 500);
+			size = new Dimension(880, 520);
 		}
 		
 		Dimension currentSize = Launcher.getSkin().getLoginFrame().getSize();
