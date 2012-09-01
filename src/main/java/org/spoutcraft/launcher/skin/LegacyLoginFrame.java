@@ -111,7 +111,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			width = 860;
 			height = 500;
 		}
-		setBounds((dim.width - height) / 2, (dim.height - width) / 2, height, width);
+		setBounds((dim.width - width) / 2, (dim.height - height) / 2, width, height);
 		setResizable(false);
 
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
