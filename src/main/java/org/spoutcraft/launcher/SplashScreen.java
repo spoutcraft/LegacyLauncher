@@ -41,7 +41,7 @@ public class SplashScreen extends JWindow implements Runnable {
 
 	@Override
 	public void paint(Graphics g) {
-		g.drawImage(bg, 0, 0, this);
+		g.drawImage(bg, 0, 0, new Color(0f, 0f, 0f, 0f), this);
 	}
 
 	public void run() {
