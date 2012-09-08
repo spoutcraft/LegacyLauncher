@@ -64,6 +64,10 @@ import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class UpdateThread extends Thread {
+	/**
+	 * We only want to clean the old logs, temp folders once per startup
+	 */
+	private static final AtomicBoolean cleaned = new AtomicBoolean(false);
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
@@ -113,12 +117,14 @@ public class UpdateThread extends Thread {
 			updateAssets();
 			
 			//Download assets
-			Resources.VIP.getYAML();
-			Resources.Special.getYAML();
-			
-			cleanLogs();
-			cleanTemp();
-			updateFiles();
+			if (cleaned.compareAndSet(false, true)) {
+				Resources.VIP.getYAML();
+				Resources.Special.getYAML();
+				
+				cleanLogs();
+				cleanTemp();
+				updateFiles();
+			}
 
 			Validator validate = new Validator();
 			if (!params.isIgnoreMD5()) {

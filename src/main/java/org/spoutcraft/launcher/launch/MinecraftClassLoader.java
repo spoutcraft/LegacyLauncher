@@ -52,6 +52,7 @@ import java.util.zip.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.util.MD5Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(10000);
@@ -71,6 +72,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 				index(replacement);
 			} catch (ClosedByInterruptException e) {
 				//Ignore, assume we interrupted for a reason
+				return;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -83,6 +85,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 			index(spoutcraft);
 		} catch (ClosedByInterruptException e) {
 			//Ignore, assume we interrupted for a reason
+			return;
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
