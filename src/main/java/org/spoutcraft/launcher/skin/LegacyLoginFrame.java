@@ -84,7 +84,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private Container offlinePane = new Container();
 	public JProgressBar progressBar;
 	private JPasswordField passwordField;
-	private JComboBox<String> usernameField = new JComboBox<String>();
+	private JComboBox usernameField = new JComboBox();
 	private JButton loginButton = new JButton("Login");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
