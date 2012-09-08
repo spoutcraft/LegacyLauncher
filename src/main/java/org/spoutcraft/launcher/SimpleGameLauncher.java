@@ -104,20 +104,34 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			this.dispose();
 			return;
 		}
+		
+		StartupParameters params = Utils.getStartupParameters();
 
 		minecraft = new MinecraftAppletEnglober(applet);
 		minecraft.addParameter("username", user);
 		minecraft.addParameter("sessionid", session);
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("spoutcraftlauncher", "true");
-		minecraft.addParameter("portable", Utils.getStartupParameters().isPortable() + "");
-		if (Utils.getStartupParameters().getServer() != null) {
-			minecraft.addParameter("server", Utils.getStartupParameters().getServer());
-			if (Utils.getStartupParameters().getPort() != null) {
-				minecraft.addParameter("port", Utils.getStartupParameters().getPort());
+		minecraft.addParameter("portable", params.isPortable() + "");
+		if (params.getServer() != null) {
+			minecraft.addParameter("server", params.getServer());
+			if (params.getPort() != null) {
+				minecraft.addParameter("port", params.getPort());
 			} else {
 				minecraft.addParameter("port", "25565");
 			}
+		}
+		if (params.getProxyHost() != null) {
+			minecraft.addParameter("proxy_host", params.getProxyHost());
+		}
+		if (params.getProxyPort() != null) {
+			minecraft.addParameter("proxy_port", params.getProxyPort());
+		}
+		if (params.getProxyUser() != null) {
+			minecraft.addParameter("proxy_user", params.getProxyUser());
+		}
+		if (params.getProxyPassword() != null) {
+			minecraft.addParameter("proxy_pass", params.getProxyPassword());
 		}
 
 		applet.setStub(minecraft);

@@ -304,6 +304,22 @@ public final class StartupParameters {
 		}
 	}
 
+	public String getProxyHost() {
+		return proxyHost;
+	}
+
+	public String getProxyPort() {
+		return proxyPort;
+	}
+
+	public String getProxyUser() {
+		return proxyUser;
+	}
+
+	public String getProxyPassword() {
+		return proxyPassword;
+	}
+
 	private class ProxyAuthenticator extends Authenticator {
 		final String user, pass;
 		ProxyAuthenticator(String user, String pass) {
