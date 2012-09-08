@@ -39,8 +39,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URL;
@@ -62,7 +60,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
@@ -90,14 +87,17 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private JComboBox usernameField = new JComboBox();
 	private JButton loginButton = new JButton("Login");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
-	private JButton loginSkin1;
+	private JButton forgetPlayer1;
 	private JLabel player1Name;
+	private long forget1Time = 0;
 	private List<JButton> loginSkin1Image;
-	private JButton loginSkin2;
+	private JButton forgetPlayer2;
 	private JLabel player2Name;
+	private long forget2Time = 0;
 	private List<JButton> loginSkin2Image;
 	private JComboBox version = new JComboBox();
 	private JComboBox memory = new JComboBox();
+	private final ForgetThread thread;
 
 	// Fonts
 	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -196,20 +196,20 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		player2Name = new JLabel();
 		player2Name.setFont(minecraft12);
 
-		loginSkin1 = new JButton("Forget");
-		loginSkin1.setFont(arial11);
-		loginSkin1.setBounds(72, 428, 119, 23);
-		loginSkin1.setOpaque(false);
-		loginSkin1.addActionListener(this);
-		loginSkin1.setVisible(false);
+		forgetPlayer1 = new JButton("Forget");
+		forgetPlayer1.setFont(arial11);
+		forgetPlayer1.setBounds(72, 428, 119, 23);
+		forgetPlayer1.setOpaque(false);
+		forgetPlayer1.addActionListener(this);
+		forgetPlayer1.setVisible(false);
 		loginSkin1Image = new ArrayList<JButton>();
 
-		loginSkin2 = new JButton("Forget");
-		loginSkin2.setFont(arial11);
-		loginSkin2.setBounds(261, 428, 119, 23);
-		loginSkin2.setOpaque(false);
-		loginSkin2.addActionListener(this);
-		loginSkin2.setVisible(false);
+		forgetPlayer2 = new JButton("Forget");
+		forgetPlayer2.setFont(arial11);
+		forgetPlayer2.setBounds(261, 428, 119, 23);
+		forgetPlayer2.setOpaque(false);
+		forgetPlayer2.addActionListener(this);
+		forgetPlayer2.setVisible(false);
 		loginSkin2Image = new ArrayList<JButton>();
 
 		int loginid = 0;
@@ -218,9 +218,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				loginid++;
 				if (loginid == 1) {
 					player1Name.setText(getUsername(user));
-					loginSkin1.setVisible(true);
+					forgetPlayer1.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 103, 170, loginSkin1Image);
-					loginSkin1.setActionCommand("Forget1");
+					forgetPlayer1.setActionCommand("Forget1");
 					for (JButton button : loginSkin1Image) {
 						button.setActionCommand("LoginSkin1");
 					}
@@ -228,9 +228,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					rememberCheckbox.setSelected(true);
 				} else if (loginid == 2) {
 					player2Name.setText(getUsername(user));
-					loginSkin2.setVisible(true);
+					forgetPlayer2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 293, 170, loginSkin2Image);
-					loginSkin2.setActionCommand("Forget1");
+					forgetPlayer2.setActionCommand("Forget1");
 					for (JButton button : loginSkin2Image) {
 						button.setActionCommand("LoginSkin2");
 					}
@@ -308,9 +308,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		contentPane.setLayout(null);
 		rememberCheckbox.setBounds(272, 41, 86, 23);
 		contentPane.add(lblLogo);
-		contentPane.add(loginSkin1);
+		contentPane.add(forgetPlayer1);
 		contentPane.add(player1Name);
-		contentPane.add(loginSkin2);
+		contentPane.add(forgetPlayer2);
 		contentPane.add(player2Name);
 
 		loginPane.setBounds(473, 342, 372, 119);
@@ -398,6 +398,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		addWindowListener(this);
 
 		loginButton.setEnabled(true);
+		thread = new ForgetThread();
+		thread.start();
 	}
 
 	@SuppressWarnings("restriction")
@@ -463,8 +465,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		memory.setEnabled(false);
 		rememberCheckbox.setEnabled(false);
 		loginButton.setEnabled(false);
-		loginSkin1.setEnabled(false);
-		loginSkin2.setEnabled(false);
+		forgetPlayer1.setEnabled(false);
+		forgetPlayer2.setEnabled(false);
 	}
 
 	@Override
@@ -477,8 +479,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		memory.setEnabled(true);
 		rememberCheckbox.setEnabled(true);
 		loginButton.setEnabled(true);
-		loginSkin1.setEnabled(true);
-		loginSkin2.setEnabled(true);
+		forgetPlayer1.setEnabled(true);
+		forgetPlayer2.setEnabled(true);
 	}
 
 	public void init() {
@@ -508,26 +510,38 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			doLogin(getAccountName(player2Name.getText()));
 		//Forget 1
 		} else if (e.getActionCommand().equals("Forget1")) {
-			removeAccount(getAccountName(player1Name.getText()));
-			loginSkin1.setVisible(false);
-			loginSkin1.setEnabled(false);
-			player1Name.setVisible(false);
-			for (JButton b : loginSkin1Image) {
-				b.setVisible(false);
-				b.setEnabled(false);
+			//Are you sure?
+			if (forgetPlayer1.getText().equals("Forget")) {
+				forgetPlayer1.setText("Are you sure?");
+				forget1Time = System.currentTimeMillis() + 1000 * 5;
+			} else {
+				removeAccount(getAccountName(player1Name.getText()));
+				forgetPlayer1.setVisible(false);
+				forgetPlayer1.setEnabled(false);
+				player1Name.setVisible(false);
+				for (JButton b : loginSkin1Image) {
+					b.setVisible(false);
+					b.setEnabled(false);
+				}
+				writeUsernameList();
 			}
-			writeUsernameList();
 		//Forget 2
 		} else if (e.getActionCommand().equals("Forget2")) {
-			removeAccount(getAccountName(player2Name.getText()));
-			loginSkin2.setVisible(false);
-			loginSkin2.setEnabled(false);
-			player2Name.setVisible(false);
-			for (JButton b : loginSkin2Image) {
-				b.setVisible(false);
-				b.setEnabled(false);
+			//Are you sure?
+			if (forgetPlayer2.getText().equals("Forget")) {
+				forgetPlayer2.setText("Are you sure?");
+				forget2Time = System.currentTimeMillis() + 1000 * 5;
+			} else {
+				removeAccount(getAccountName(player2Name.getText()));
+				forgetPlayer2.setVisible(false);
+				forgetPlayer2.setEnabled(false);
+				player2Name.setVisible(false);
+				for (JButton b : loginSkin2Image) {
+					b.setVisible(false);
+					b.setEnabled(false);
+				}
+				writeUsernameList();
 			}
-			writeUsernameList();
 		//Version
 		} else if (e.getActionCommand().equals("Version") && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
 			Build build = version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV;
@@ -594,6 +608,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				enableForm();
 				break;
 		case GAME_LAUNCH:
+			thread.interrupt();
 			break;
 		case SUCESSFUL_LOGIN:
 			break;
@@ -631,5 +646,33 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	public void windowClosed(WindowEvent e) {
+	}
+
+	private class ForgetThread extends Thread {
+		public ForgetThread() {
+			super("Forget Thread");
+			setDaemon(true);
+		}
+
+		@Override
+		public void run() {
+			while (!this.isInterrupted()) {
+				if (forgetPlayer1.isVisible() && !forgetPlayer1.getText().equals("Forget")) {
+					if (forget1Time < System.currentTimeMillis()) {
+						forgetPlayer1.setText("Forget");
+					}
+				}
+				if (forgetPlayer2.isVisible() && !forgetPlayer2.getText().equals("Forget")) {
+					if (forget2Time < System.currentTimeMillis()) {
+						forgetPlayer2.setText("Forget");
+					}
+				}
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					return;
+				}
+			}
+		}
 	}
 }
