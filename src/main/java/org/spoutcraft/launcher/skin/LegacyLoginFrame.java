@@ -39,6 +39,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URL;
@@ -60,6 +62,7 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
@@ -107,8 +110,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		
 		Font minecraft;
 		try {
-			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("minecraft.ttf")).deriveFont(12F);
+			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont(12F);
 		} catch (Exception e) {
+			e.printStackTrace();
 			//Fallback to arial
 			minecraft = arial12;
 		}
