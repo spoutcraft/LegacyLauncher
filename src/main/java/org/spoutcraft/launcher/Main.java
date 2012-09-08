@@ -144,6 +144,7 @@ public class Main {
 		splash.dispose();
 		defaultSkin.getLoginFrame().setVisible(true);
 		if (params.hasAccount()) {
+			defaultSkin.getLoginFrame().disableForm();
 			defaultSkin.getLoginFrame().doLogin(params.getUser(), params.getPass());
 		}
 

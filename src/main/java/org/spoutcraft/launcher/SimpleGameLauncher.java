@@ -115,6 +115,8 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			minecraft.addParameter("server", Utils.getStartupParameters().getServer());
 			if (Utils.getStartupParameters().getPort() != null) {
 				minecraft.addParameter("port", Utils.getStartupParameters().getPort());
+			} else {
+				minecraft.addParameter("port", "25565");
 			}
 		}
 

@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -101,6 +102,18 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			}
 		}
 		return account;
+	}
+	
+	public final boolean removeAccount(String account) {
+		Iterator<Entry<String, UserPasswordInformation>>  i = usernames.entrySet().iterator();
+		while (i.hasNext()) {
+			Entry<String, UserPasswordInformation> e = i.next();
+			if (e.getKey().equalsIgnoreCase(account)) {
+				i.remove();
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public final String getAccountName(String username) {
@@ -193,7 +206,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 	}
 
-	private final void writeUsernameList() {
+	public final void writeUsernameList() {
 		DataOutputStream dos = null;
 		try {
 			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
@@ -253,6 +266,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public abstract JProgressBar getProgressBar();
 
 	public abstract void onEvent(Event event);
+	
+	public abstract void disableForm();
+	
+	public abstract void enableForm();
 
 	public final void onRawEvent(Event event) {
 		switch (event) {

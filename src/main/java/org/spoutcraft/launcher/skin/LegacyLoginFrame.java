@@ -72,6 +72,7 @@ import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 import org.spoutcraft.launcher.api.util.ImageUtils;
 import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
+import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
 
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
 	public static final URL spoutcraftIcon = Main.class.getResource("resources/icon.png");
@@ -82,23 +83,36 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private Container offlinePane = new Container();
 	public JProgressBar progressBar;
 	private JPasswordField passwordField;
-	private JComboBox usernameField = new JComboBox();
+	private JComboBox<String> usernameField = new JComboBox<String>();
 	private JButton loginButton = new JButton("Login");
 	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
 	private JButton loginSkin1;
+	private JLabel player1Name;
 	private List<JButton> loginSkin1Image;
 	private JButton loginSkin2;
+	private JLabel player2Name;
 	private List<JButton> loginSkin2Image;
-	private JComboBox version = new JComboBox();
-	private JComboBox memory = new JComboBox();
+	private JComboBox<String> version = new JComboBox<String>();
+	private JComboBox<String> memory = new JComboBox<String>();
 
 	// Fonts
-	private Font arial11 = new Font("Arial", Font.PLAIN, 11);
-	private Font arial12 = new Font("Arial", Font.PLAIN, 12);
-	private Font arial14 = new Font("Arial", Font.PLAIN, 14);
+	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
+	private final Font arial12 = new Font("Arial", Font.PLAIN, 12);
+	private final Font arial14 = new Font("Arial", Font.PLAIN, 14);
+	private final Font minecraft12;
 
 	public LegacyLoginFrame(Skin parent) {
 		super(parent);
+		
+		Font minecraft;
+		try {
+			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("minecraft.ttf")).deriveFont(12F);
+		} catch (Exception e) {
+			//Fallback to arial
+			minecraft = arial12;
+		}
+		minecraft12 = minecraft;
+		
 		setTitle("Spoutcraft Launcher");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 
@@ -170,8 +184,14 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		memory.setActionCommand("memory");
 		populateMemory(memory);
 		memory.addActionListener(this);
+		
+		player1Name = new JLabel();
+		player1Name.setFont(minecraft12);
+		
+		player2Name = new JLabel();
+		player2Name.setFont(minecraft12);
 
-		loginSkin1 = new JButton("Login as Player");
+		loginSkin1 = new JButton("Forget");
 		loginSkin1.setFont(arial11);
 		loginSkin1.setBounds(72, 428, 119, 23);
 		loginSkin1.setOpaque(false);
@@ -179,7 +199,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginSkin1.setVisible(false);
 		loginSkin1Image = new ArrayList<JButton>();
 
-		loginSkin2 = new JButton("Login as Player");
+		loginSkin2 = new JButton("Forget");
 		loginSkin2.setFont(arial11);
 		loginSkin2.setBounds(261, 428, 119, 23);
 		loginSkin2.setOpaque(false);
@@ -192,20 +212,20 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			if (hasSavedPassword(user)) {
 				loginid++;
 				if (loginid == 1) {
-					loginSkin1.setText(getUsername(user));
+					player1Name.setText(getUsername(user));
 					loginSkin1.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 103, 170, loginSkin1Image);
-					loginSkin1.setActionCommand("LoginSkin1");
+					loginSkin1.setActionCommand("Forget1");
 					for (JButton button : loginSkin1Image) {
 						button.setActionCommand("LoginSkin1");
 					}
 					passwordField.setText(getSavedPassword(user));
 					rememberCheckbox.setSelected(true);
 				} else if (loginid == 2) {
-					loginSkin2.setText(getUsername(user));
+					player2Name.setText(getUsername(user));
 					loginSkin2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 293, 170, loginSkin2Image);
-					loginSkin2.setActionCommand("LoginSkin2");
+					loginSkin2.setActionCommand("Forget1");
 					for (JButton button : loginSkin2Image) {
 						button.setActionCommand("LoginSkin2");
 					}
@@ -213,6 +233,11 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				usernameField.addItem(user);
 			}
 		}
+		
+		player1Name.setHorizontalAlignment(SwingConstants.CENTER);
+		player1Name.setBounds(72, 144, 119, 23);
+		player2Name.setHorizontalAlignment(SwingConstants.CENTER);
+		player2Name.setBounds(261, 144, 119, 23);
 
 		progressBar = new JProgressBar();
 		progressBar.setBounds(30, 100, 400, 23);
@@ -279,7 +304,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		rememberCheckbox.setBounds(272, 41, 86, 23);
 		contentPane.add(lblLogo);
 		contentPane.add(loginSkin1);
+		contentPane.add(player1Name);
 		contentPane.add(loginSkin2);
+		contentPane.add(player2Name);
 
 		loginPane.setBounds(473, 342, 372, 119);
 		loginPane.add(lblPassword);
@@ -369,7 +396,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	@SuppressWarnings("restriction")
-	private void populateMemory(JComboBox memory) {
+	private void populateMemory(JComboBox<String> memory) {
 		long maxMemory = 1024;
 		String architecture = System.getProperty("sun.arch.data.model", "32");
 		boolean bit64 = architecture.equals("64");
@@ -417,13 +444,14 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			memory.setSelectedIndex(Memory.getMemoryIndexFromId(memoryOption));
 		} catch (IllegalArgumentException e) {
 			memory.removeAllItems();
-			memory.addItem(Memory.memoryOptions[0]);
+			memory.addItem(String.valueOf(Memory.memoryOptions[0]));
 			Settings.setMemory(1); //512 == 1
 			memory.setSelectedIndex(0); //1st element
 		}
 	}
 
-	public void disable() {
+	@Override
+	public void disableForm() {
 		usernameField.setEnabled(false);
 		passwordField.setEnabled(false);
 		version.setEnabled(false);
@@ -434,7 +462,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginSkin2.setEnabled(false);
 	}
 
-	public void enable() {
+	@Override
+	public void enableForm() {
 		usernameField.setEnabled(true);
 		passwordField.setEnabled(true);
 		if (Settings.getSpoutcraftBuild() != Build.CUSTOM){
@@ -455,26 +484,53 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		//Username/Pass login
 		if (e.getActionCommand().equalsIgnoreCase("login")) {
 			if (usernameField.getSelectedItem() != null) {
-				disable();
+				disableForm();
 				doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 				if (rememberCheckbox.isSelected()) {
 					saveUsername(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 				}
 			}
-		} else if (e.getActionCommand().equals(loginSkin1.getActionCommand())) {
-			disable();
-			doLogin(getAccountName(loginSkin1.getText()));
-		} else if (e.getActionCommand().equals(loginSkin2.getActionCommand())) {
-			disable();
-			doLogin(getAccountName(loginSkin2.getText()));
+		//Login Skin 1
+		} else if (e.getActionCommand().equals("LoginSkin1")) {
+			disableForm();
+			doLogin(getAccountName(player1Name.getText()));
+		//Login Skin 2
+		} else if (e.getActionCommand().equals("LoginSkin2")) {
+			disableForm();
+			doLogin(getAccountName(player2Name.getText()));
+		//Forget 1
+		} else if (e.getActionCommand().equals("Forget1")) {
+			removeAccount(getAccountName(player1Name.getText()));
+			loginSkin1.setVisible(false);
+			loginSkin1.setEnabled(false);
+			player1Name.setVisible(false);
+			for (JButton b : loginSkin1Image) {
+				b.setVisible(false);
+				b.setEnabled(false);
+			}
+			writeUsernameList();
+		//Forget 2
+		} else if (e.getActionCommand().equals("Forget2")) {
+			removeAccount(getAccountName(player2Name.getText()));
+			loginSkin2.setVisible(false);
+			loginSkin2.setEnabled(false);
+			player2Name.setVisible(false);
+			for (JButton b : loginSkin2Image) {
+				b.setVisible(false);
+				b.setEnabled(false);
+			}
+			writeUsernameList();
+		//Version
 		} else if (e.getActionCommand().equals("Version") && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
 			Build build = version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV;
 			if (build != Settings.getSpoutcraftBuild()) {
 				Settings.setSpoutcraftBuild(build);
 				Launcher.getGameUpdater().onSpoutcraftBuildChange();
 			}
+		//Memory
 		} else if (e.getActionCommand().equals("memory")) {
 			int index = memory.getSelectedIndex();
 			Settings.setMemory(Memory.memoryOptions[index].getSettingsId());
@@ -489,7 +545,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 	public void keyPressed(KeyEvent e) {
 		if (loginButton.isEnabled() && e.getKeyCode() == KeyEvent.VK_ENTER) {
-			disable();
+			disableForm();
 			doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
 		}
 	}
@@ -502,11 +558,18 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		switch (event) {
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-				enable();
+				removeAccount(usernameField.getSelectedItem().toString());
+				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:
 				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
-				enable();
+				removeAccount(usernameField.getSelectedItem().toString());
+				enableForm();
+				break;
+			case USER_NOT_PREMIUM:
+				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+				removeAccount(usernameField.getSelectedItem().toString());
+				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
@@ -516,18 +579,21 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					if (result == JOptionPane.YES_OPTION) {
 						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "");
 					} else {
-						enable();
+						enableForm();
 					}
 				}
 				break;
-			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
-				enable();
-				break;
+
 			case PERMISSION_DENIED:
 				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
-				enable();
+				enableForm();
 				break;
+		case GAME_LAUNCH:
+			break;
+		case SUCESSFUL_LOGIN:
+			break;
+		default:
+			break;
 		}
 	}
 

@@ -43,6 +43,7 @@ import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.api.util.Download;
 import org.spoutcraft.launcher.api.util.Download.Result;
 import org.spoutcraft.launcher.api.util.ImageUtils;
+import org.spoutcraft.launcher.api.util.ResourceUtils;
 
 public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 	private static final int IMAGE_CYCLE_TIME = 24 * 60 * 60 * 1000;
@@ -66,7 +67,7 @@ public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 			Logger.getLogger("launcher").log(Level.WARNING, "Failed to download background image", e);
 		}
 		if (download != null && download.getResult() != Result.SUCCESS) {
-			InputStream image = ImageUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.png");
+			InputStream image = ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.png");
 			backgroundImage.delete();
 			FileInputStream fis = null;
 			try {
