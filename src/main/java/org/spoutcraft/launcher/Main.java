@@ -68,7 +68,6 @@ public class Main {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
-		
 
 		//Required for ROME to work
 		ClassLoader cl = Main.class.getClassLoader();
@@ -103,8 +102,10 @@ public class Main {
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
+		
 		Settings.setSettings(settings);
 		Settings.setLauncherSelectedBuild(launcherBuild);
+		
 		if (params.getSpoutcraftBuild() > 0) {
 			Settings.setSpoutcraftSelectedBuild(params.getSpoutcraftBuild());
 			Settings.setSpoutcraftBuild(Build.CUSTOM);
@@ -142,6 +143,9 @@ public class Main {
 		launcher.setSkin(defaultSkin);
 		splash.dispose();
 		defaultSkin.getLoginFrame().setVisible(true);
+		if (params.hasAccount()) {
+			defaultSkin.getLoginFrame().doLogin(params.getUser(), params.getPass());
+		}
 
 		if (params.isDebugMode()) {
 			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
@@ -151,7 +155,6 @@ public class Main {
 		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
 	}
 
-	@SuppressWarnings("restriction")
 	private static void setLookAndFeel() {
 		OperatingSystem os = OperatingSystem.getOS();
 		if (os.isMac()) {
@@ -159,19 +162,7 @@ public class Main {
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
 		}
 		try {
-			boolean laf = false;
-			if (os.isWindows()) {
-				// This bypasses the expensive reflection calls
-				try {
-					UIManager.setLookAndFeel(new com.sun.java.swing.plaf.windows.WindowsLookAndFeel());
-					laf = true;
-				} catch (Exception ignore) { }
-			}
-
-			if (!laf) {
-				// Can't guess the laf for other os's as easily
-				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-			}
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to setup look and feel", e);
 		}

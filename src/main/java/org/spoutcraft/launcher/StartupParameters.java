@@ -137,9 +137,22 @@ public final class StartupParameters {
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
+	
+	public boolean hasAccount() {
+		return user != null && user.length() > 0 && pass != null && pass.length() > 0;
+	}
+
+	private boolean shouldRelaunch() {
+		if (relaunched) {
+			return false;
+		}
+		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
+		return mb < min;
+	}
 
 	public boolean relaunch(Logger log) {
-		if (!relaunched) {
+		if (shouldRelaunch()) {
 			String pathToJar;
 			File jar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 			try {

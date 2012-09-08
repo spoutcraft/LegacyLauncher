@@ -143,9 +143,7 @@ public class SimpleGameLauncher extends GameLauncher implements WindowListener {
 			} catch (InterruptedException e1) { }
 		}
 		System.out.println("Exiting Spoutcraft Launcher");
-		for (Frame f : Frame.getFrames()) {
-			f.dispose();
-		}
+		this.dispose();
 		System.exit(0);
 	}
 
