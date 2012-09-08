@@ -320,7 +320,7 @@ public final class StartupParameters {
 		return proxyPassword;
 	}
 
-	private class ProxyAuthenticator extends Authenticator {
+	private static class ProxyAuthenticator extends Authenticator {
 		final String user, pass;
 		ProxyAuthenticator(String user, String pass) {
 			this.user = user;

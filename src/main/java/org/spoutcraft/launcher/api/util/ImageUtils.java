@@ -123,7 +123,10 @@ public class ImageUtils {
 					image = resized;
 				}
 			}
-			return image;
+			if (image != null) {
+				return image;
+			}
+			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/char.png"));
 		} catch (Exception e) {
 			try {
 				return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/char.png"));
