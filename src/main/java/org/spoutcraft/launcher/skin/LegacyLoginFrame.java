@@ -146,6 +146,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(false);
 
 		usernameField.setFont(arial11);
+		usernameField.setActionCommand("username");
 		usernameField.addActionListener(this);
 		usernameField.setOpaque(false);
 
@@ -491,8 +492,16 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		//Selected username from dropdown
+		if (e.getActionCommand().equals("username")) {
+			if (this.hasSavedPassword(usernameField.getSelectedItem().toString())) {
+				passwordField.setText(getSavedPassword(usernameField.getSelectedItem().toString()));
+			} else {
+				passwordField.setText("");
+			}
+		}
 		//Username/Pass login
-		if (e.getActionCommand().equalsIgnoreCase("login")) {
+		else if (e.getActionCommand().equalsIgnoreCase("login")) {
 			if (usernameField.getSelectedItem() != null) {
 				disableForm();
 				doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
@@ -577,7 +586,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		switch (event) {
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-				removeAccount(usernameField.getSelectedItem().toString());
 				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:
@@ -587,7 +595,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				break;
 			case USER_NOT_PREMIUM:
 				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
-				removeAccount(usernameField.getSelectedItem().toString());
 				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
