@@ -74,6 +74,7 @@ import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
 import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
 
+@SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
 	public static final URL spoutcraftIcon = Main.class.getResource("resources/icon.png");
 	public static final URL spoutcraftLogo = Main.class.getResource("resources/spoutcraft.png");
@@ -92,8 +93,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private JButton loginSkin2;
 	private JLabel player2Name;
 	private List<JButton> loginSkin2Image;
-	private JComboBox<String> version = new JComboBox<String>();
-	private JComboBox<String> memory = new JComboBox<String>();
+	private JComboBox version = new JComboBox();
+	private JComboBox memory = new JComboBox();
 
 	// Fonts
 	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -396,7 +397,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	@SuppressWarnings("restriction")
-	private void populateMemory(JComboBox<String> memory) {
+	private void populateMemory(JComboBox memory) {
 		long maxMemory = 1024;
 		String architecture = System.getProperty("sun.arch.data.model", "32");
 		boolean bit64 = architecture.equals("64");
