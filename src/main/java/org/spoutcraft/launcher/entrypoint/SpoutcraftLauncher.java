@@ -77,11 +77,8 @@ public class SpoutcraftLauncher {
 		//Required for ROME to work
 		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();
 		Thread.currentThread().setContextClassLoader(cl);
-		
-		File temp = new File(Utils.getWorkingDirectory(), "temp.jar");
-		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "temp.exe");
-		temp.delete();
+
+		cleanup();
 		
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
@@ -164,6 +161,19 @@ public class SpoutcraftLauncher {
 		}
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+	}
+	
+	private static void cleanup() {
+		File temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
+		temp.delete();
 	}
 
 	private static void setLookAndFeel() {
