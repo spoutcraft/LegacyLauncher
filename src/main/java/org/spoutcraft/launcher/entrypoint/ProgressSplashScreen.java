@@ -24,38 +24,30 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher;
+package org.spoutcraft.launcher.entrypoint;
 
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Toolkit;
 
-import javax.swing.ImageIcon;
-import javax.swing.JWindow;
+import javax.swing.JProgressBar;
 
-public class SplashScreen extends JWindow implements Runnable {
-	private static final long serialVersionUID = 0L;
-	private static Image bg = Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png"));
+public class ProgressSplashScreen extends SplashScreen{
+	private static final long serialVersionUID = 1L;
+	private JProgressBar progressBar = new JProgressBar();
 
-	ImageIcon icon = new ImageIcon(bg);
+	public ProgressSplashScreen() {                   
+	    super(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 
-	@Override
-	public void paint(Graphics g) {
-		g.drawImage(bg, 0, 0, new Color(0f, 0f, 0f, 0f), this);
+	    //Setup the progress bar
+	    progressBar.setMaximum(100);
+	    progressBar.setBounds(0, icon.getIconHeight(), icon.getIconWidth(), 20);
+	    progressBar.setString("Downloading launcher updates...");
+	    getContentPane().add(progressBar);
+	    setVisible(true);
 	}
-
-	public void run() {
-		showSplash();
-	}
-
-	public void showSplash() {
-		try {
-			setSize(this.icon.getIconWidth(), this.icon.getIconHeight());
-			setLocationRelativeTo(null);
-			setVisible(true);
-		} catch (Exception e) {
-			e.printStackTrace();
+	
+	public void updateProgress(int percent) {
+		if (percent >= 0 && percent <= 100) {
+			progressBar.setValue(percent);
 		}
 	}
 }

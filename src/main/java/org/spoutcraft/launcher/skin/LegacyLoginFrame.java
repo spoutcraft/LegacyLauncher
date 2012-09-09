@@ -60,7 +60,6 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
@@ -72,12 +71,14 @@ import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
 import org.spoutcraft.launcher.api.util.ImageUtils;
 import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+
 import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
-	public static final URL spoutcraftIcon = Main.class.getResource("resources/icon.png");
-	public static final URL spoutcraftLogo = Main.class.getResource("resources/spoutcraft.png");
+	public static final URL spoutcraftIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
+	public static final URL spoutcraftLogo = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
 	private static final long serialVersionUID = 1797546961340465149L;
 	private JPanel contentPane = new JPanel();
 	private Container loginPane = new Container();

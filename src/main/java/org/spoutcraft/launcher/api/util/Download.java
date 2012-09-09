@@ -33,6 +33,7 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.api.skin.exceptions.DownloadException;
 import org.spoutcraft.launcher.api.skin.exceptions.PermissionDeniedException;
 
@@ -58,6 +59,8 @@ public class Download implements Runnable {
 
 	@SuppressWarnings("unused")
 	public void run(){
+		ReadableByteChannel rbc = null;
+		FileOutputStream fos = null;
 		try {
 			URLConnection conn = url.openConnection();
 			conn.setDoInput(true);
@@ -74,48 +77,13 @@ public class Download implements Runnable {
 			outFile = new File(outPath);
 			outFile.delete();
 
-			final ReadableByteChannel rbc = Channels.newChannel(in);
-			final FileOutputStream fos = new FileOutputStream(outFile);
+			rbc = Channels.newChannel(in);
+			fos = new FileOutputStream(outFile);
 
 			stateChanged();
 
-			final Thread instance = Thread.currentThread();
-			Thread progress = new Thread() {
-				long last = System.currentTimeMillis();
-
-				public void run() {
-					while (!this.isInterrupted()) {
-						long diff = outFile.length() - downloaded;
-						downloaded = outFile.length();
-
-						if (diff == 0) {
-							if ((System.currentTimeMillis() - last) > TIMEOUT) {
-								if (listener != null) {
-									listener.stateChanged("Download Failed", getProgress());
-								}
-								try {
-									rbc.close();
-									instance.interrupt();
-								} catch (IOException e) {
-									e.printStackTrace();
-								}
-								return;
-							}
-						} else {
-							last = System.currentTimeMillis();
-						}
-
-						stateChanged();
-						try {
-							sleep(100);
-						} catch (InterruptedException ignore) {
-							break;
-						}
-					}
-				}
-			};
+			Thread progress = new MonitorThread(Thread.currentThread(), rbc);
 			progress.start();
-
 
 			fos.getChannel().transferFrom(rbc, 0, size > 0 ? size : Integer.MAX_VALUE);
 			in.close();
@@ -134,6 +102,9 @@ public class Download implements Runnable {
 			result = Result.FAILURE;
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(fos);
+			IOUtils.closeQuietly(rbc);
 		}
 	}
 
@@ -187,7 +158,7 @@ public class Download implements Runnable {
 		return outFile;
 	}
 	
-	public class StreamThread extends Thread {
+	private static class StreamThread extends Thread {
 		private final URLConnection urlconnection;
 		private final AtomicReference<InputStream> is;
 		public final AtomicBoolean permDenied = new AtomicBoolean(false);
@@ -204,6 +175,47 @@ public class Download implements Runnable {
 					permDenied.set(true);
 				}
 			} catch (IOException ignore) { }
+		}
+	}
+	
+	private class MonitorThread extends Thread {
+		private final ReadableByteChannel rbc;
+		private final Thread downloadThread;
+		private long last = System.currentTimeMillis();
+		public MonitorThread(Thread downloadThread, ReadableByteChannel rbc) {
+			super("Download Monitor Thread");
+			this.setDaemon(true);
+			this.rbc = rbc;
+			this.downloadThread = downloadThread;
+		}
+
+		@Override
+		public void run() {
+			while (!this.isInterrupted()) {
+				long diff = outFile.length() - downloaded;
+				downloaded = outFile.length();
+				if (diff == 0) {
+					if ((System.currentTimeMillis() - last) > TIMEOUT) {
+						if (listener != null) {
+							listener.stateChanged("Download Failed", getProgress());
+						}
+						try {
+							rbc.close();
+							downloadThread.interrupt();
+						} catch (IOException ignore) { }
+						return;
+					}
+				} else {
+					last = System.currentTimeMillis();
+				}
+
+				stateChanged();
+				try {
+					sleep(50);
+				} catch (InterruptedException ignore) {
+					return;
+				}
+			}
 		}
 	}
 	

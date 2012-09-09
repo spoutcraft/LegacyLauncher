@@ -32,7 +32,6 @@ import java.net.Authenticator;
 import java.net.PasswordAuthentication;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -40,11 +39,11 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 
 import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 public final class StartupParameters {
 	private final String[] args;
-	protected StartupParameters(String[] args) {
+	public StartupParameters(String[] args) {
 		this.args = args;
 	}
 	@Parameter
@@ -154,7 +153,7 @@ public final class StartupParameters {
 	public boolean relaunch(Logger log) {
 		if (shouldRelaunch()) {
 			String pathToJar;
-			File jar = new File(Main.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+			File jar = new File(SpoutcraftLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 			try {
 				pathToJar = jar.getCanonicalPath();
 			} catch (IOException e1) {
@@ -178,7 +177,7 @@ public final class StartupParameters {
 			commands.add("-Xmx" + memory + "m");
 			commands.add("-cp");
 			commands.add(pathToJar);
-			commands.add(Main.class.getName());
+			commands.add(SpoutcraftLauncher.class.getName());
 			commands.addAll(getRelaunchParameters());
 			commands.add("-relaunched");
 			processBuilder.command(commands);

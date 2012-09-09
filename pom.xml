@@ -12,7 +12,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mainClass>${project.groupId}.${project.artifactId}.Main</mainClass>
+		<mainClass>${project.groupId}.${project.artifactId}.entrypoint.Start</mainClass>
 		<buildNumber>0</buildNumber>
 	</properties>
 
@@ -141,7 +141,7 @@
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>.</targetPath>
+				<targetPath>org/spoutcraft/launcher/resources</targetPath>
 				<filtering>true</filtering>
 				<directory>${basedir}/src/main/resources</directory>
 				<includes>
