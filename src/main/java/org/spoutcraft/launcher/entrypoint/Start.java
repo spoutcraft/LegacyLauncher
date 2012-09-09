@@ -10,6 +10,7 @@ import java.util.Arrays;
 
 import javax.swing.UIManager;
 
+import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.api.util.Download;
 import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.OperatingSystem;
@@ -32,6 +33,8 @@ public class Start {
 			}
 			return;
 		}
+		
+		migrateFolders();
 
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = getLatestLauncherBuild();
@@ -110,6 +113,22 @@ public class Start {
 			}
 		}
 		return 0;
+	}
+
+	private static void migrateFolders() {
+		File brokenSpoutcraftDir = Utils.getWorkingDirectory("Spoutcraft");
+		if (brokenSpoutcraftDir.exists()) {
+			File correctSpoutcraftDir = Utils.getWorkingDirectory();
+			OperatingSystem os = OperatingSystem.getOS();
+			if (os.isUnix() || os.isMac()) {
+				try {
+					FileUtils.copyDirectory(brokenSpoutcraftDir, correctSpoutcraftDir);
+					FileUtils.deleteDirectory(brokenSpoutcraftDir);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	private static class LauncherDownloadListener implements DownloadListener {
