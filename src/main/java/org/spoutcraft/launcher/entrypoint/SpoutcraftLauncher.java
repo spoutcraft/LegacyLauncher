@@ -98,21 +98,22 @@ public class SpoutcraftLauncher {
 		dirs.getSkinDir().mkdirs();
 		dirs.getSpoutcraftDir().mkdirs();
 
-		setLookAndFeel();
-
-		if (params.isDebugMode()) {
-			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
 		YAMLProcessor settings = setupSettings();
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
-		
-		Settings.setSettings(settings);
-		Settings.setLauncherSelectedBuild(launcherBuild);
-		
+		Settings.setYAML(settings);
+		Settings.setLauncherBuild(launcherBuild);
+
+		if (params.isDebugMode()) {
+			Settings.setDebugMode(true);
+		}
+
+		if (Settings.isDebugMode()) {
+			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			start = System.currentTimeMillis();
+		}
+
 		if (params.getSpoutcraftBuild() > 0) {
 			Settings.setSpoutcraftSelectedBuild(params.getSpoutcraftBuild());
 			Settings.setSpoutcraftBuild(Build.CUSTOM);
@@ -120,7 +121,7 @@ public class SpoutcraftLauncher {
 			Settings.setSpoutcraftBuild(Build.RECOMMENDED);
 		}
 
-		if (params.isDebugMode()) {
+		if (Settings.isDebugMode()) {
 			logger.info("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}
@@ -133,6 +134,8 @@ public class SpoutcraftLauncher {
 			return;
 		}
 		
+		setLookAndFeel();
+		
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
 		logThread.start();
@@ -141,7 +144,7 @@ public class SpoutcraftLauncher {
 		Launcher launcher = new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
 		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
 
-		if (params.isDebugMode()) {
+		if (Settings.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}
@@ -155,7 +158,7 @@ public class SpoutcraftLauncher {
 			defaultSkin.getLoginFrame().doLogin(params.getUser(), params.getPass());
 		}
 
-		if (params.isDebugMode()) {
+		if (Settings.isDebugMode()) {
 			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}

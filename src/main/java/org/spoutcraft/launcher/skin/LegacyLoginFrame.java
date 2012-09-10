@@ -50,6 +50,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -77,6 +78,14 @@ import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
+	private static final String MEMORY_ACTION = "memory";
+	private static final String VERSION_ACTION = "version";
+	private static final String LOGIN_SKIN_2_ACTION = "LoginSkin2";
+	private static final String LOGIN_SKIN_1_ACTION = "LoginSkin1";
+	private static final String LOGIN_ACTION = "login";
+	private static final String USERNAME_ACTION = "username";
+	private static final String FORGET_1_ACTION = "Forget1";
+	private static final String FORGET_2_ACTION = "Forget2";
 	public static final URL spoutcraftIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	public static final URL spoutcraftLogo = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
 	public static final URL gearIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
@@ -102,6 +111,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private final ForgetThread thread;
 	private final JButton options = new JButton();
 	private final JLabel optionsLabel = new JLabel("Options:");
+	private OptionsMenu optionsMenu = null;
 
 	// Fonts
 	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -150,7 +160,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(false);
 
 		usernameField.setFont(arial11);
-		usernameField.setActionCommand("username");
+		usernameField.setActionCommand(USERNAME_ACTION);
 		usernameField.addActionListener(this);
 		usernameField.setOpaque(false);
 
@@ -191,7 +201,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		memory.setFont(arial11);
 		memory.setBounds(143, 94, 119, 22);
 		memory.setEditable(false);
-		memory.setActionCommand("memory");
+		memory.setActionCommand(MEMORY_ACTION);
 		populateMemory(memory);
 		memory.addActionListener(this);
 		
@@ -237,9 +247,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					player1Name.setText(getUsername(user));
 					forgetPlayer1.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 103, 170, loginSkin1Image);
-					forgetPlayer1.setActionCommand("Forget1");
+					forgetPlayer1.setActionCommand(FORGET_1_ACTION);
 					for (JButton button : loginSkin1Image) {
-						button.setActionCommand("LoginSkin1");
+						button.setActionCommand(LOGIN_SKIN_1_ACTION);
 					}
 					passwordField.setText(getSavedPassword(user));
 					rememberCheckbox.setSelected(true);
@@ -247,9 +257,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					player2Name.setText(getUsername(user));
 					forgetPlayer2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 293, 170, loginSkin2Image);
-					forgetPlayer2.setActionCommand("Forget1");
+					forgetPlayer2.setActionCommand(FORGET_2_ACTION);
 					for (JButton button : loginSkin2Image) {
-						button.setActionCommand("LoginSkin2");
+						button.setActionCommand(LOGIN_SKIN_2_ACTION);
 					}
 				}
 				usernameField.addItem(user);
@@ -347,7 +357,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		contentPane.add(loginPane);
 
 		version.addActionListener(this);
-		version.setActionCommand("Version");
+		version.setActionCommand(VERSION_ACTION);
 		if (Settings.getSpoutcraftBuild() == Build.RECOMMENDED) {
 			version.setSelectedIndex(0);
 		} else if (Settings.getSpoutcraftBuild() == Build.DEV) {
@@ -380,7 +390,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		offlinePane.setVisible(false);
 		contentPane.add(offlinePane);
 
-		int buildNumber = Settings.getLauncherSelectedBuild();
+		int buildNumber = Settings.getLauncherBuild();
 		JLabel build = new JLabel("Launcher Build: " + (buildNumber == -1 ? "Custom" : "b" + buildNumber));
 		build.setFont(arial11);
 		build.setOpaque(false);
@@ -511,7 +521,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 	public void actionPerformed(ActionEvent e) {
 		//Selected username from dropdown
-		if (e.getActionCommand().equals("username")) {
+		if (e.getActionCommand().equals(USERNAME_ACTION)) {
 			if (this.hasSavedPassword(usernameField.getSelectedItem().toString())) {
 				passwordField.setText(getSavedPassword(usernameField.getSelectedItem().toString()));
 			} else {
@@ -519,7 +529,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			}
 		}
 		//Username/Pass login
-		else if (e.getActionCommand().equalsIgnoreCase("login")) {
+		else if (e.getActionCommand().equalsIgnoreCase(LOGIN_ACTION)) {
 			if (usernameField.getSelectedItem() != null) {
 				disableForm();
 				doLogin(usernameField.getSelectedItem().toString(), new String(passwordField.getPassword()));
@@ -528,15 +538,15 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				}
 			}
 		//Login Skin 1
-		} else if (e.getActionCommand().equals("LoginSkin1")) {
+		} else if (e.getActionCommand().equals(LOGIN_SKIN_1_ACTION)) {
 			disableForm();
 			doLogin(getAccountName(player1Name.getText()));
 		//Login Skin 2
-		} else if (e.getActionCommand().equals("LoginSkin2")) {
+		} else if (e.getActionCommand().equals(LOGIN_SKIN_2_ACTION)) {
 			disableForm();
 			doLogin(getAccountName(player2Name.getText()));
 		//Forget 1
-		} else if (e.getActionCommand().equals("Forget1")) {
+		} else if (e.getActionCommand().equals(FORGET_1_ACTION)) {
 			//Are you sure?
 			if (forgetPlayer1.getText().equals("Forget")) {
 				forgetPlayer1.setText("Are you sure?");
@@ -553,7 +563,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				writeUsernameList();
 			}
 		//Forget 2
-		} else if (e.getActionCommand().equals("Forget2")) {
+		} else if (e.getActionCommand().equals(FORGET_2_ACTION)) {
 			//Are you sure?
 			if (forgetPlayer2.getText().equals("Forget")) {
 				forgetPlayer2.setText("Are you sure?");
@@ -570,23 +580,25 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				writeUsernameList();
 			}
 		//Version
-		} else if (e.getActionCommand().equals("Version") && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
+		} else if (e.getActionCommand().equals(VERSION_ACTION) && Settings.getSpoutcraftBuild() != Build.CUSTOM) {
 			Build build = version.getSelectedIndex() == 0 ? Build.RECOMMENDED : Build.DEV;
 			if (build != Settings.getSpoutcraftBuild()) {
 				Settings.setSpoutcraftBuild(build);
 				Launcher.getGameUpdater().onSpoutcraftBuildChange();
 			}
 		//Memory
-		} else if (e.getActionCommand().equals("memory")) {
+		} else if (e.getActionCommand().equals(MEMORY_ACTION)) {
 			int index = memory.getSelectedIndex();
 			Settings.setMemory(Memory.memoryOptions[index].getSettingsId());
 		} else if (e.getActionCommand().equals("Options")) {
-			OptionsMenu menu = new OptionsMenu();
-			menu.setAlwaysOnTop(true);
-			menu.setVisible(true);
+			if (optionsMenu == null || !optionsMenu.isVisible()) {
+				optionsMenu = new OptionsMenu();
+				optionsMenu.setAlwaysOnTop(true);
+				optionsMenu.setVisible(true);
+			}
 		}
 		if (loginButton.isEnabled()) {
-			Settings.getSettings().save();
+			Settings.getYAML().save();
 		}
 	}
 

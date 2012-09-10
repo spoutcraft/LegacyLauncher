@@ -42,6 +42,7 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
@@ -55,7 +56,7 @@ public class MirrorUtils {
 	public static String getMirrorUrl(String mirrorURI, String fallbackUrl){
 		updateMirrors();
 
-		boolean debug = Utils.getStartupParameters().isDebugMode();
+		boolean debug = Settings.isDebugMode();
 		if (debug) {
 			System.out.println("Testing " + MirrorUtils.mirrors.size() + " for " + mirrorURI);
 		}
@@ -118,7 +119,7 @@ public class MirrorUtils {
 			urlConnect.setRequestMethod("HEAD");
 			urlConnect.setConnectTimeout(timeout);
 			int response = urlConnect.getResponseCode();
-			if (Utils.getStartupParameters().isDebugMode()) {
+			if (Settings.isDebugMode()) {
 				System.out.println("Response for mirror " + url + " was " + response);
 			}
 			return (response == HttpURLConnection.HTTP_OK);

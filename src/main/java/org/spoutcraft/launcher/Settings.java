@@ -30,46 +30,62 @@ import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class Settings {
-	private static YAMLProcessor settings;
+	private static YAMLProcessor yaml;
 
-	public static synchronized void setSettings(YAMLProcessor settings) {
-		if (Settings.settings != null) {
+	public static synchronized void setYAML(YAMLProcessor settings) {
+		if (Settings.yaml != null) {
 			throw new IllegalArgumentException("settings is already set!");
 		}
-		Settings.settings = settings;
+		Settings.yaml = settings;
 		try {
-			Settings.settings.load();
+			Settings.yaml.load();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static synchronized YAMLProcessor getSettings() {
-		return settings;
+	public static synchronized YAMLProcessor getYAML() {
+		return yaml;
 	}
 
-	public static synchronized int getLauncherSelectedBuild() {
-		return settings.getInt("launcher.launcher.buildNumber", -1);
+	public static synchronized int getLauncherBuild() {
+		return yaml.getInt("launcher.launcher.buildNumber", -1);
 	}
 
-	public static synchronized void setLauncherSelectedBuild(int build) {
-		settings.setProperty("launcher.launcher.buildNumber", build);
+	public static synchronized void setLauncherBuild(int build) {
+		yaml.setProperty("launcher.launcher.buildNumber", build);
+	}
+
+	public static synchronized LauncherBuild getLauncherChannel() {
+		return LauncherBuild.getType(yaml.getInt("launcher.launcher.type", 0));
+	}
+
+	public static synchronized void setLauncherChannel(LauncherBuild build) {
+		yaml.setProperty("launcher.launcher.type", build.type());
+	}
+
+	public static synchronized boolean isDebugMode() {
+		return yaml.getInt("launcher.launcher.debug", 0) == 1;
+	}
+
+	public static synchronized void setDebugMode(boolean b) {
+		yaml.setProperty("launcher.launcher.debug", b ? 1 : 0);
 	}
 
 	public static synchronized int getSpoutcraftSelectedBuild() {
-		return settings.getInt("launcher.client.buildNumber", -1);
+		return yaml.getInt("launcher.client.buildNumber", -1);
 	}
 
 	public static synchronized void setSpoutcraftSelectedBuild(int build) {
-		settings.setProperty("launcher.client.buildNumber", build);
+		yaml.setProperty("launcher.client.buildNumber", build);
 	}
 
 	public static synchronized Build getSpoutcraftBuild() {
-		return Build.getValue(settings.getString("launcher.client.build", "RECOMMENDED"));
+		return Build.getValue(yaml.getString("launcher.client.build", "RECOMMENDED"));
 	}
 
 	private static synchronized void setSpoutcraftBuild(String build) {
-		settings.setProperty("launcher.client.build", build);
+		yaml.setProperty("launcher.client.build", build);
 	}
 
 	public static synchronized void setSpoutcraftBuild(Build build) {
@@ -77,42 +93,42 @@ public class Settings {
 	}
 
 	public static synchronized int getLoginTries() {
-		return settings.getInt("launcher.loginRetries", 3);
+		return yaml.getInt("launcher.loginRetries", 3);
 	}
 
 	public static synchronized void setLoginTries(int tries) {
-		settings.setProperty("launcher.loginRetries", tries);
+		yaml.setProperty("launcher.loginRetries", tries);
 	}
 
 	public static synchronized boolean allowClipboardAccess() {
-		return settings.getBoolean("client.clipboardaccess", false);
+		return yaml.getBoolean("client.clipboardaccess", false);
 	}
 
 	public static synchronized void setClipboardAccess(boolean allow) {
-		settings.setProperty("client.clipboardaccess", allow);
+		yaml.setProperty("client.clipboardaccess", allow);
 	}
 
 	public static synchronized boolean isAcceptUpdates() {
-		return settings.getBoolean("launcher.acceptUpdates", false);
+		return yaml.getBoolean("launcher.acceptUpdates", false);
 	}
 
 	public static synchronized void setAcceptUpdates(boolean acceptUpdates) {
-		settings.setProperty("launcher.acceptUpdates", acceptUpdates);
+		yaml.setProperty("launcher.acceptUpdates", acceptUpdates);
 	}
 
 	public static synchronized int getMemory() {
-		return settings.getInt("launcher.memory", 0);
+		return yaml.getInt("launcher.memory", 0);
 	}
 
 	public static synchronized void setMemory(int memory) {
-		settings.setProperty("launcher.memory", memory);
+		yaml.setProperty("launcher.memory", memory);
 	}
 
 	public static synchronized boolean retryLogin() {
-		return settings.getBoolean("launcher.retryLogin", true);
+		return yaml.getBoolean("launcher.retryLogin", true);
 	}
 
 	public static synchronized void setRetryLogin(boolean retry) {
-		settings.setProperty("launcher.retryLogin", retry);
+		yaml.setProperty("launcher.retryLogin", retry);
 	}
 }

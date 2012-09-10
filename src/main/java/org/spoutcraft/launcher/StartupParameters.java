@@ -290,17 +290,12 @@ public final class StartupParameters {
 	}
 
 	public void setupProxy() {
-		if (proxyHost != null) {
-			System.setProperty("http.proxyHost", proxyHost);
-			System.setProperty("https.proxyHost", proxyHost);
-			if (proxyPort != null) {
-				System.setProperty("http.proxyPort", proxyPort);
-				System.setProperty("https.proxyPort", proxyPort);
-			}
-		}
-		if (proxyUser != null && proxyPassword != null) {
-			Authenticator.setDefault(new ProxyAuthenticator(proxyUser, proxyPassword));
-		}
+		Proxy proxy = new Proxy();
+		proxy.setHost(this.proxyHost);
+		proxy.setPort(this.proxyPort);
+		proxy.setUser(this.proxyUser);
+		proxy.setPass(proxyPassword != null ? this.proxyPassword.toCharArray() : null);
+		proxy.setup();
 	}
 
 	public String getProxyHost() {
@@ -317,16 +312,5 @@ public final class StartupParameters {
 
 	public String getProxyPassword() {
 		return proxyPassword;
-	}
-
-	private static class ProxyAuthenticator extends Authenticator {
-		final String user, pass;
-		ProxyAuthenticator(String user, String pass) {
-			this.user = user;
-			this.pass = pass;
-		}
-		protected PasswordAuthentication getPasswordAuthentication() {
-			return new PasswordAuthentication(user, pass.toCharArray());
-		}
 	}
 }

@@ -184,13 +184,10 @@ public class Validator implements Runnable {
 		return expected.equals(actual);
 	}
 
-	@SuppressWarnings("unused")
-	private void print(Object obj) {
-		System.out.println(obj);
-	}
-
 	private void debug(Object obj) {
-		System.out.println(obj);
+		if (Settings.isDebugMode()) {
+			System.out.println(obj);
+		}
 	}
 
 	private void err(Object obj) {
