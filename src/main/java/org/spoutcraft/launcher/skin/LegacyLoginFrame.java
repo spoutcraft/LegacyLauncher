@@ -232,7 +232,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					player2Name.setText(getUsername(user));
 					forgetPlayer2.setVisible(true);
 					ImageUtils.drawCharacter(contentPane, this, getSkinURL(user), 293, 170, loginSkin2Image);
-					forgetPlayer2.setActionCommand("Forget2");
+					forgetPlayer2.setActionCommand("Forget1");
 					for (JButton button : loginSkin2Image) {
 						button.setActionCommand("LoginSkin2");
 					}
