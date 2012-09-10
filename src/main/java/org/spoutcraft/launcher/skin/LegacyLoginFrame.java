@@ -79,26 +79,29 @@ import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
 	public static final URL spoutcraftIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	public static final URL spoutcraftLogo = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
-	private static final long serialVersionUID = 1797546961340465149L;
-	private JPanel contentPane = new JPanel();
-	private Container loginPane = new Container();
-	private Container offlinePane = new Container();
-	public JProgressBar progressBar;
-	private JPasswordField passwordField;
-	private JComboBox usernameField = new JComboBox();
-	private JButton loginButton = new JButton("Login");
-	private JCheckBox rememberCheckbox = new JCheckBox("Remember");
-	private JButton forgetPlayer1;
-	private JLabel player1Name;
+	public static final URL gearIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
+	private static final long serialVersionUID = 1L;
+	private final JPanel contentPane = new JPanel();
+	private final Container loginPane = new Container();
+	private final Container offlinePane = new Container();
+	public final JProgressBar progressBar;
+	private final JPasswordField passwordField;
+	private final JComboBox usernameField = new JComboBox();
+	private final JButton loginButton = new JButton("Login");
+	private final JCheckBox rememberCheckbox = new JCheckBox("Remember");
+	private final JButton forgetPlayer1;
+	private final JLabel player1Name;
 	private long forget1Time = 0;
-	private List<JButton> loginSkin1Image;
-	private JButton forgetPlayer2;
-	private JLabel player2Name;
+	private final List<JButton> loginSkin1Image;
+	private final JButton forgetPlayer2;
+	private final JLabel player2Name;
 	private long forget2Time = 0;
-	private List<JButton> loginSkin2Image;
-	private JComboBox version = new JComboBox();
-	private JComboBox memory = new JComboBox();
+	private final List<JButton> loginSkin2Image;
+	private final JComboBox version = new JComboBox();
+	private final JComboBox memory = new JComboBox();
 	private final ForgetThread thread;
+	private final JButton options = new JButton();
+	private final JLabel optionsLabel = new JLabel("Options:");
 
 	// Fonts
 	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
@@ -118,7 +121,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			minecraft = arial12;
 		}
 		minecraft12 = minecraft;
-		
+
 		setTitle("Spoutcraft Launcher");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 
@@ -192,6 +195,18 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		populateMemory(memory);
 		memory.addActionListener(this);
 		
+		options.setIcon(new ImageIcon(gearIcon));
+		options.setBounds(320, 88, 30, 30);
+		options.setFocusable(false);
+		options.setContentAreaFilled(false);
+		options.setBorderPainted(false);
+		options.setActionCommand("Options");
+		options.addActionListener(this);
+		
+		optionsLabel.setFont(arial11);
+		optionsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
+		optionsLabel.setBounds(216, 90, 100, 30);
+		
 		player1Name = new JLabel();
 		player1Name.setFont(minecraft12);
 		
@@ -254,7 +269,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		JLabel purchaseAccount = new HyperlinkJLabel("<html><u>Need a Minecraft account?</u></html>", "http://www.minecraft.net/register.jsp");
 		purchaseAccount.setHorizontalAlignment(SwingConstants.RIGHT);
-		purchaseAccount.setBounds(250, 70, 111, 14);
+		purchaseAccount.setBounds(271, 70, 90, 14);
 
 		purchaseAccount.setText("<html><u>Need an account?</u></html>");
 		purchaseAccount.setFont(arial11);
@@ -327,6 +342,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginPane.add(versionLabel);
 		loginPane.add(memory);
 		loginPane.add(memoryLabel);
+		loginPane.add(options);
+		loginPane.add(optionsLabel);
 		contentPane.add(loginPane);
 
 		version.addActionListener(this);
@@ -563,6 +580,10 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		} else if (e.getActionCommand().equals("memory")) {
 			int index = memory.getSelectedIndex();
 			Settings.setMemory(Memory.memoryOptions[index].getSettingsId());
+		} else if (e.getActionCommand().equals("Options")) {
+			OptionsMenu menu = new OptionsMenu();
+			menu.setAlwaysOnTop(true);
+			menu.setVisible(true);
 		}
 		if (loginButton.isEnabled()) {
 			Settings.getSettings().save();

@@ -26,6 +26,7 @@
  */
 package org.spoutcraft.launcher.entrypoint;
 
+import java.awt.Font;
 import java.awt.Toolkit;
 
 import javax.swing.JProgressBar;
@@ -38,6 +39,7 @@ public class ProgressSplashScreen extends SplashScreen{
 	    super(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 
 	    //Setup the progress bar
+	    progressBar.setFont(new Font("Arial", Font.PLAIN, 11));
 	    progressBar.setMaximum(100);
 	    progressBar.setBounds(0, icon.getIconHeight(), icon.getIconWidth(), 20);
 	    progressBar.setString("Downloading launcher updates...");

@@ -79,7 +79,7 @@ public class SpoutcraftLauncher {
 		Thread.currentThread().setContextClassLoader(cl);
 
 		cleanup();
-		
+
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
 
