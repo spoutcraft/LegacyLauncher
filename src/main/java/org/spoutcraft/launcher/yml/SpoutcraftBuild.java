@@ -70,7 +70,7 @@ public class SpoutcraftBuild {
 	}
 
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
-		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-dev-SNAPSHOT.jar");
+		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-1.3.2-SNAPSHOT.jar");
 	}
 
 	public void install() {
