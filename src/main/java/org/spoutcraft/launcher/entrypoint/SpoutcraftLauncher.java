@@ -49,6 +49,7 @@ import javax.swing.UIManager;
 import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
+import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.SimpleGameLauncher;
 import org.spoutcraft.launcher.SimpleGameUpdater;
@@ -104,6 +105,13 @@ public class SpoutcraftLauncher {
 		}
 		Settings.setYAML(settings);
 		Settings.setLauncherBuild(launcherBuild);
+		Proxy proxy = new Proxy();
+		proxy.setHost(Settings.getProxyHost());
+		proxy.setPort(Settings.getProxyPort());
+		proxy.setUser(Settings.getProxyUsername());
+		String pass = Settings.getProxyPassword();
+		proxy.setPass(pass != null ? pass.toCharArray() : null);
+		proxy.setup();
 
 		if (params.isDebugMode()) {
 			Settings.setDebugMode(true);

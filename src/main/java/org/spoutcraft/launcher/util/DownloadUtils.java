@@ -29,7 +29,6 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.util.Download;
 import org.spoutcraft.launcher.api.util.Download.Result;
@@ -37,8 +36,9 @@ import org.spoutcraft.launcher.api.util.DownloadListener;
 import org.spoutcraft.launcher.api.util.Utils;
 
 public class DownloadUtils {
+	private static final int DOWNLOAD_RETRIES = 3;
 	public static Download downloadFile(String url, String output, String cacheName, String md5, DownloadListener listener) throws IOException {
-		int tries = Settings.getLoginTries();
+		int tries = DOWNLOAD_RETRIES;
 		File outputFile = null;
 		Download download = null;
 		while (tries > 0) {

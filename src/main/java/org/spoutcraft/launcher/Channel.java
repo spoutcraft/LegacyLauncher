@@ -1,13 +1,13 @@
 package org.spoutcraft.launcher;
 
-public enum LauncherBuild {
+public enum Channel {
 	STABLE(0),
 	BETA(1),
 	DEV(2);
 
 	private final int type;
 
-	private LauncherBuild(int type) {
+	private Channel(int type) {
 		this.type = type;
 	}
 
@@ -15,12 +15,17 @@ public enum LauncherBuild {
 		return type;
 	}
 
-	public static LauncherBuild getType(int type) {
-		for (LauncherBuild b : values()) {
+	public static Channel getType(int type) {
+		for (Channel b : values()) {
 			if (b.type == type) {
 				return b;
 			}
 		}
 		throw new IllegalArgumentException("Unknown launcher build type: " + type);
+	}
+
+	@Override
+	public String toString() {
+		return name().toLowerCase();
 	}
 }

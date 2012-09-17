@@ -28,8 +28,6 @@ package org.spoutcraft.launcher;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.Authenticator;
-import java.net.PasswordAuthentication;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +40,7 @@ import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 public final class StartupParameters {
+	@SuppressWarnings("unused")
 	private final String[] args;
 	public StartupParameters(String[] args) {
 		this.args = args;
@@ -60,9 +59,6 @@ public final class StartupParameters {
 
 	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
 	private boolean portable = false;
-
-	@Parameter(names = {"-safe", "-smode", "-safe_mode", "-sm"}, description = "Safe Mode")
-	private boolean safe_mode = false;
 
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
@@ -106,9 +102,6 @@ public final class StartupParameters {
 		}
 		if (portable) {
 			log.info("Portable mode activated");
-		}
-		if (safe_mode) {
-			log.info("Safe mode activated");
 		}
 		if (debug) {
 			log.info("Debug mode activated");
@@ -209,9 +202,6 @@ public final class StartupParameters {
 		if (portable) {
 			params.add("-portable");
 		}
-		if (safe_mode) {
-			params.add("-safe");
-		}
 		if (debug) {
 			params.add("-debug");
 		}
@@ -271,10 +261,6 @@ public final class StartupParameters {
 
 	public boolean isPortable() {
 		return portable;
-	}
-
-	public boolean isSafeMode() {
-		return safe_mode;
 	}
 
 	public boolean isDebugMode() {

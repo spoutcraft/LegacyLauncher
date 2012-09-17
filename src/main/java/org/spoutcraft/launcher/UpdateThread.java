@@ -57,6 +57,7 @@ import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
@@ -120,6 +121,7 @@ public class UpdateThread extends Thread {
 			if (cleaned.compareAndSet(false, true)) {
 				Resources.VIP.getYAML();
 				Resources.Special.getYAML();
+				Versions.getMinecraftVersions();
 				
 				cleanLogs();
 				cleanTemp();
@@ -127,7 +129,7 @@ public class UpdateThread extends Thread {
 			}
 
 			Validator validate = new Validator();
-			if (!params.isIgnoreMD5()) {
+			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
 				validate.run();
 				valid.set(validate.isValid());
 			} else {
@@ -182,7 +184,7 @@ public class UpdateThread extends Thread {
 				stateChanged("Verifying Asset: " + name, 0);
 
 				boolean needDownload = true;
-				if (asset.exists() && !params.isIgnoreMD5()) {
+				if (asset.exists() && !(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
 					String md5 = MD5Utils.getMD5(asset);
 					logger.info("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
 					needDownload = md5 == null || !md5.equals(key);

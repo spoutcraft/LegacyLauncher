@@ -56,12 +56,20 @@ public class Settings {
 		yaml.setProperty("launcher.launcher.buildNumber", build);
 	}
 
-	public static synchronized LauncherBuild getLauncherChannel() {
-		return LauncherBuild.getType(yaml.getInt("launcher.launcher.type", 0));
+	public static synchronized Channel getLauncherChannel() {
+		return Channel.getType(yaml.getInt("launcher.launcher.type", 0));
 	}
 
-	public static synchronized void setLauncherChannel(LauncherBuild build) {
+	public static synchronized void setLauncherChannel(Channel build) {
 		yaml.setProperty("launcher.launcher.type", build.type());
+	}
+	
+	public static synchronized Channel getSpoutcraftChannel() {
+		return Channel.getType(yaml.getInt("launcher.client.type", 0));
+	}
+
+	public static synchronized void setSpoutcraftChannel(Channel build) {
+		yaml.setProperty("launcher.client.type", build.type());
 	}
 
 	public static synchronized boolean isDebugMode() {
@@ -92,30 +100,6 @@ public class Settings {
 		setSpoutcraftBuild(build.name());
 	}
 
-	public static synchronized int getLoginTries() {
-		return yaml.getInt("launcher.loginRetries", 3);
-	}
-
-	public static synchronized void setLoginTries(int tries) {
-		yaml.setProperty("launcher.loginRetries", tries);
-	}
-
-	public static synchronized boolean allowClipboardAccess() {
-		return yaml.getBoolean("client.clipboardaccess", false);
-	}
-
-	public static synchronized void setClipboardAccess(boolean allow) {
-		yaml.setProperty("client.clipboardaccess", allow);
-	}
-
-	public static synchronized boolean isAcceptUpdates() {
-		return yaml.getBoolean("launcher.acceptUpdates", false);
-	}
-
-	public static synchronized void setAcceptUpdates(boolean acceptUpdates) {
-		yaml.setProperty("launcher.acceptUpdates", acceptUpdates);
-	}
-
 	public static synchronized int getMemory() {
 		return yaml.getInt("launcher.memory", 0);
 	}
@@ -123,12 +107,56 @@ public class Settings {
 	public static synchronized void setMemory(int memory) {
 		yaml.setProperty("launcher.memory", memory);
 	}
-
-	public static synchronized boolean retryLogin() {
-		return yaml.getBoolean("launcher.retryLogin", true);
+	
+	public static synchronized String getDeveloperCode() {
+		return yaml.getString("launcher.devcode", "");
+	}
+	
+	public static synchronized void setDeveloperCode(String code) {
+		yaml.setProperty("launcher.devcode", code);
 	}
 
-	public static synchronized void setRetryLogin(boolean retry) {
-		yaml.setProperty("launcher.retryLogin", retry);
+	public static synchronized boolean isIgnoreMD5() {
+		return yaml.getBoolean("launcher.md5", false);
+	}
+
+	public static synchronized void setIgnoreMD5(boolean ignore) {
+		yaml.setProperty("launcher.md5", ignore);
+	}
+	
+	public static synchronized String getProxyHost() {
+		return yaml.getString("launcher.proxy_host", null);
+	}
+
+	public static synchronized void setProxyHost(String host) {
+		yaml.setProperty("launcher.proxy_host", host);
+	}
+	
+	public static synchronized String getProxyPort() {
+		return yaml.getString("launcher.proxy_port", null);
+	}
+
+	public static synchronized void setProxyPort(String port) {
+		yaml.setProperty("launcher.proxy_port", port);
+	}
+	
+	public static synchronized String getProxyUsername() {
+		return yaml.getString("launcher.proxy_user", null);
+	}
+
+	public static synchronized void setProxyUsername(String user) {
+		yaml.setProperty("launcher.proxy_user", user);
+	}
+	
+	public static synchronized String getProxyPassword() {
+		return yaml.getString("launcher.proxy_pass", null);
+	}
+
+	public static synchronized void setProxyPassword(char[] pass) {
+		StringBuilder b = new StringBuilder();
+		for (char c : pass) {
+			b.append(c);
+		}
+		yaml.setProperty("launcher.proxy_pass", b.toString());
 	}
 }
