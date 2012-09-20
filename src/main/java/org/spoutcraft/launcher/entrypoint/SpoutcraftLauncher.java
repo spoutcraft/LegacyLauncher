@@ -49,20 +49,20 @@ import javax.swing.UIManager;
 import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
+import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.SimpleGameLauncher;
-import org.spoutcraft.launcher.SimpleGameUpdater;
+import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
-import org.spoutcraft.launcher.api.skin.JavaSkin;
-import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.api.util.YAMLFormat;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
-import org.spoutcraft.launcher.skin.DefaultSkin;
+import org.spoutcraft.launcher.skin.LegacyLoginFrame;
+import org.spoutcraft.launcher.skin.gui.LoginFrame;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.yml.YAMLFormat;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class SpoutcraftLauncher {
 	private static Logger logger = null;
@@ -148,22 +148,23 @@ public class SpoutcraftLauncher {
 		Thread logThread = new LogFlushThread();
 		logThread.start();
 
-		// Set up the Launcher and load skins
-		Launcher launcher = new Launcher(new SimpleGameUpdater(), new SimpleGameLauncher());
-		((SimpleGameUpdater)Launcher.getGameUpdater()).start();
+		// Set up the Launcher and load login frame
+		LoginFrame frame = new LegacyLoginFrame();
+		@SuppressWarnings("unused")
+		Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
+		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}
 
-		JavaSkin defaultSkin = new DefaultSkin();
-		launcher.setSkin(defaultSkin);
+		
 		splash.dispose();
-		defaultSkin.getLoginFrame().setVisible(true);
+		frame.setVisible(true);
 		if (params.hasAccount()) {
-			defaultSkin.getLoginFrame().disableForm();
-			defaultSkin.getLoginFrame().doLogin(params.getUser(), params.getPass());
+			frame.disableForm();
+			frame.doLogin(params.getUser(), params.getPass());
 		}
 
 		if (Settings.isDebugMode()) {

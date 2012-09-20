@@ -29,18 +29,21 @@ package org.spoutcraft.launcher.launch;
 import java.applet.Applet;
 import java.io.File;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.spoutcraft.launcher.api.skin.exceptions.CorruptedMinecraftJarException;
-import org.spoutcraft.launcher.api.skin.exceptions.MinecraftVerifyException;
-import org.spoutcraft.launcher.api.skin.exceptions.UnknownMinecraftException;
-import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
+import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
+import org.spoutcraft.launcher.exceptions.UnknownMinecraftException;
+import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftLauncher {
 	private static MinecraftClassLoader loader = null;
-	public static MinecraftClassLoader getClassLoader() {
+	public static MinecraftClassLoader getClassLoader() throws RestfulAPIException {
 		if (loader == null) {
 			File mcBinFolder = new File(Utils.getWorkingDirectory(), "bin");
 
@@ -51,15 +54,13 @@ public class MinecraftLauncher {
 			File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
 
 			SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
-			Map<String, Object> libraries = build.getLibraries();
+			List<Library> libraries = build.getLibraries();
 
 			File[] files = new File[4 + libraries.size()];
 
 			int index = 0;
-			Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
-			while (i.hasNext()) {
-				Entry<String, Object> lib = i.next();
-				File libraryFile = new File(mcBinFolder, "lib" + File.separator + lib.getKey() + ".jar");
+			for (Library lib : libraries) {
+				File libraryFile = new File(mcBinFolder, "lib" + File.separator + lib.name() + ".jar");
 				files[index] = libraryFile;
 				index++;
 			}

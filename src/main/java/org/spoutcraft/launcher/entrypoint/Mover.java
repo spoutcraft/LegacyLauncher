@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
-import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
 
 public class Mover {
 

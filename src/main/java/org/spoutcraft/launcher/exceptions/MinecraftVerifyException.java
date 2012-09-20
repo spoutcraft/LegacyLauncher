@@ -24,10 +24,32 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.exceptions;
 
+public class MinecraftVerifyException extends Exception {
+	private static final long serialVersionUID = 1L;
+	private final Throwable cause;
+	private final String message;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+	public MinecraftVerifyException(String message) {
+		this(null, message);
+	}
+
+	public MinecraftVerifyException(Throwable throwable, String message) {
+		this.cause = throwable;
+		this.message = message;
+	}
+
+	public MinecraftVerifyException(Throwable throwable) {
+		this.cause = throwable;
+		this.message = null;
+	}
+
+	public Throwable getCause() {
+		return this.cause;
+	}
+
+	public String getMessage() {
+		return this.message;
+	}
 }

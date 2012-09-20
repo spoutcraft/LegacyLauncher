@@ -36,8 +36,8 @@ import java.util.logging.Logger;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
 
-import org.spoutcraft.launcher.api.util.OperatingSystem;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.util.OperatingSystem;
 
 public final class StartupParameters {
 	@SuppressWarnings("unused")

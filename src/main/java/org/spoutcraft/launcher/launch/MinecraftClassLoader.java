@@ -50,9 +50,10 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
-import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.util.MD5Utils;
+import org.spoutcraft.launcher.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
 	private HashMap<String, Class<?>> loadedClasses = new HashMap<String, Class<?>>(10000);
@@ -105,14 +106,23 @@ public class MinecraftClassLoader extends URLClassLoader {
 	}
 
 	private void index(File file) throws IOException {
-		JarFile jar = new JarFile(file);
-		Enumeration<JarEntry> i = jar.entries();
-		while (i.hasMoreElements()) {
-			JarEntry entry = i.nextElement();
-			if (entry.getName().endsWith(".class")) {
-				String name = entry.getName();
-				name = name.replace("/", ".").substring(0, name.length() - 6);
-				classLocations.put(name, file);
+		JarFile jar = null;
+		try {
+			jar = new JarFile(file);
+			Enumeration<JarEntry> i = jar.entries();
+			while (i.hasMoreElements()) {
+				JarEntry entry = i.nextElement();
+				if (entry.getName().endsWith(".class")) {
+					String name = entry.getName();
+					name = name.replace("/", ".").substring(0, name.length() - 6);
+					classLocations.put(name, file);
+				}
+			}
+		} catch (IOException e) {
+			throw e;
+		} finally {
+			if (jar != null) {
+				IOUtils.closeQuietly(jar);
 			}
 		}
 	}
@@ -161,8 +171,9 @@ public class MinecraftClassLoader extends URLClassLoader {
 	private Class<?> findClassInjar(String name, File file) throws ClassNotFoundException {
 		byte classByte[];
 		Class<?> result = null;
+		JarFile jar = null;
 		try {
-			JarFile jar = new JarFile(file);
+			jar = new JarFile(file);
 			JarEntry entry = jar.getJarEntry(name.replace(".", "/") + ".class");
 			if (entry != null) {
 				InputStream is = jar.getInputStream(entry);
@@ -188,6 +199,8 @@ public class MinecraftClassLoader extends URLClassLoader {
 			zipEx.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			IOUtils.closeQuietly(jar);
 		}
 		return null;
 	}

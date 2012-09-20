@@ -1,16 +1,21 @@
 package org.spoutcraft.launcher.rest;
 
+import java.io.File;
+
+import org.spoutcraft.launcher.exceptions.DownloadException;
+import org.spoutcraft.launcher.util.DownloadListener;
+
 /**
  * Represents a downloadable file
  */
 public interface Downloadable {
 	/**
-	 * Gets the full download url given the prefix to the maven repository
+	 * Downloads the file from the maven repository and saves it in the given location
 	 * 
-	 * @param prefix
-	 * @return full download url
+	 * @param file location to save the file
+	 * @param listener download listener, optional
 	 */
-	public String getUrl(String prefix);
+	public void download(File location, DownloadListener listener) throws DownloadException;
 
 	/**
 	 * True if the md5 is a valid match
@@ -19,4 +24,11 @@ public interface Downloadable {
 	 * @return matches
 	 */
 	public boolean valid(String md5);
+	
+	/**
+	 * Name of the file
+	 * 
+	 * @return file name
+	 */
+	public String name();
 }

@@ -24,10 +24,8 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.util;
 
-
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+public interface DownloadListener {
+	public void stateChanged(String fileName, float progress);
 }

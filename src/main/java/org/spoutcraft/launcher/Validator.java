@@ -27,13 +27,12 @@
 package org.spoutcraft.launcher;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.Map;
-
+import java.util.List;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.util.FileType;
+import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class Validator implements Runnable {
@@ -41,17 +40,22 @@ public class Validator implements Runnable {
 	private boolean errors = false;
 
 	public void run() {
-		((SimpleGameUpdater)Launcher.getGameUpdater()).setStartValidationTime(System.currentTimeMillis());
-		errors = !validate();
-		((SimpleGameUpdater)Launcher.getGameUpdater()).validationFinished(passed);
+		Launcher.getGameUpdater().setStartValidationTime(System.currentTimeMillis());
+		try {
+			errors = !validate();
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+		}
+		Launcher.getGameUpdater().validationFinished(passed);
 	}
 
 	/**
 	 * Returns true if validation completed without errors, false if something went wrong deleting files
 	 * 
 	 * @return true on validation completion, false on failure
+	 * @throws RestfulAPIException 
 	 */
-	private boolean validate() {
+	private boolean validate() throws RestfulAPIException {
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
@@ -109,17 +113,13 @@ public class Validator implements Runnable {
 		}
 
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
-		Map<String, Object> libraries = build.getLibraries();
-		Iterator<Map.Entry<String, Object>> i = libraries.entrySet().iterator();
-		while (i.hasNext()) {
-			Map.Entry<String, Object> lib = i.next();
-			String version = String.valueOf(lib.getValue());
-			//String name = lib.getKey() + "-" + version;
-
-			File libraryFile = new File(libDir, lib.getKey() + ".jar");
+		List<Library> libraries = build.getLibraries();
+		for (Library lib : libraries) {
+			File libraryFile = new File(libDir, lib.name() + ".jar");
 
 			if (libraryFile.exists()) {
-				if (!compareLibraryMD5s(lib.getKey(), version, libraryFile)) {
+				String md5 = MD5Utils.getMD5(libraryFile);
+				if (!lib.valid(md5)) {
 					err("Invalid " + libraryFile.getName());
 					return libraryFile.delete();
 				}
@@ -168,16 +168,6 @@ public class Validator implements Runnable {
 		String expected = build.getMD5();
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);
-		if (expected == null || actual == null) {
-			return false;
-		}
-		return expected.equals(actual);
-	}
-
-	private boolean compareLibraryMD5s(String lib, String version, File file) {
-		String expected = Resources.getLibraryMD5(lib, version);
-		String actual = MD5Utils.getMD5(file);
-		debug("Checking MD5 of " + lib + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
 			return false;
 		}

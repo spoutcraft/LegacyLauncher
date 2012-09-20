@@ -24,10 +24,18 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.exceptions;
 
+public class CorruptedMinecraftJarException extends RuntimeException {
+	private final Throwable cause;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+	public CorruptedMinecraftJarException(Throwable ex) {
+		cause = ex;
+	}
+
+	public Throwable getCause() {
+		return this.cause;
+	}
+
+	private static final long serialVersionUID = 5550898219922574735L;
 }

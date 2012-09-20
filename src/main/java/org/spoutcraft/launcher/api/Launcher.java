@@ -30,29 +30,28 @@ import java.io.IOException;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Logger;
 
-import org.spoutcraft.launcher.api.skin.Skin;
-import org.spoutcraft.launcher.api.util.FileUtils;
+import org.spoutcraft.launcher.GameLauncher;
+import org.spoutcraft.launcher.GameUpdater;
+import org.spoutcraft.launcher.skin.gui.LoginFrame;
+import org.spoutcraft.launcher.util.FileUtils;
 
 public class Launcher {
 	private static Launcher instance;
 	private final Logger logger = Logger.getLogger("org.spoutcraft.launcher.Main");
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
-	private Skin skin;
+	private final LoginFrame loginFrame;
 
-	public Launcher(final GameUpdater updater, final GameLauncher launcher) {
+	public Launcher(final GameUpdater updater, final GameLauncher launcher, final LoginFrame frame) {
 		if (Launcher.instance != null) {
 			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
 		this.updater = updater;
 		this.launcher = launcher;
+		this.loginFrame = frame;
 
 		logger.addHandler(new ConsoleHandler());
 		instance = this;
-	}
-
-	public void setSkin(Skin skin) {
-		this.skin = skin;
 	}
 
 	public static GameUpdater getGameUpdater() {
@@ -73,10 +72,6 @@ public class Launcher {
 		return instance.launcher;
 	}
 
-	public static Skin getSkin() {
-		return instance.skin;
-	}
-
 	public static boolean clearCache() {
 		try {
 			FileUtils.deleteDirectory(instance.updater.getUpdateDir());
@@ -86,5 +81,9 @@ public class Launcher {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public static LoginFrame getLoginFrame() {
+		return instance.loginFrame;
 	}
 }

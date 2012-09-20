@@ -40,10 +40,9 @@ import javax.swing.SwingConstants;
 
 import org.jdesktop.swingworker.SwingWorker;
 
-import org.spoutcraft.launcher.api.util.Download;
-import org.spoutcraft.launcher.api.util.Download.Result;
-import org.spoutcraft.launcher.api.util.ImageUtils;
-import org.spoutcraft.launcher.api.util.ResourceUtils;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.ResourceUtils;
+import org.spoutcraft.launcher.util.Download.Result;
 
 public class BackgroundImageWorker extends SwingWorker<Object, Object> {
 	private static final int IMAGE_CYCLE_TIME = 24 * 60 * 60 * 1000;

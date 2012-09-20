@@ -24,10 +24,36 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.exceptions;
 
+public class PermissionDeniedException extends DownloadException {
+	private final Throwable cause;
+	private final String message;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+	public PermissionDeniedException(String message, Throwable cause) {
+		this.cause = cause;
+		this.message = message;
+	}
+
+	public PermissionDeniedException(Throwable cause) {
+		this(null, cause);
+	}
+
+	public PermissionDeniedException(String message) {
+		this(message, null);
+	}
+
+	public PermissionDeniedException() {
+		this(null, null);
+	}
+
+	public Throwable getCause() {
+		return this.cause;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	private static final long serialVersionUID = 1L;
 }

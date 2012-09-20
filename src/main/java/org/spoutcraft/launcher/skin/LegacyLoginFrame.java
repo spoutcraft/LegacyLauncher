@@ -54,7 +54,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JEditorPane;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -73,15 +72,14 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.skin.Skin;
-import org.spoutcraft.launcher.api.skin.gui.HyperlinkJLabel;
-import org.spoutcraft.launcher.api.skin.gui.LoginFrame;
-import org.spoutcraft.launcher.api.util.ImageUtils;
-import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.skin.gui.HyperlinkJLabel;
+import org.spoutcraft.launcher.skin.gui.LoginFrame;
+import org.spoutcraft.launcher.util.ImageUtils;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
 
-import static org.spoutcraft.launcher.api.util.ResourceUtils.*;
+import static org.spoutcraft.launcher.util.ResourceUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
@@ -126,9 +124,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private final Font arial14 = new Font("Arial", Font.PLAIN, 14);
 	private final Font minecraft12;
 
-	public LegacyLoginFrame(Skin parent) {
-		super(parent);
-		
+	public LegacyLoginFrame() {		
 		Font minecraft;
 		try {
 			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont(12F);

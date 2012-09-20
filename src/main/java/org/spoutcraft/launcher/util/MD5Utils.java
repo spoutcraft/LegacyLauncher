@@ -36,9 +36,8 @@ import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
-import org.spoutcraft.launcher.api.util.FileType;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.yml.Resources;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class MD5Utils {
 	private static final Logger logger = Logger.getLogger("launcher");

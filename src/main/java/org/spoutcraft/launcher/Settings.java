@@ -27,7 +27,7 @@
 package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.api.Build;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Settings {
 	private static YAMLProcessor yaml;
@@ -158,5 +158,13 @@ public class Settings {
 			b.append(c);
 		}
 		yaml.setProperty("launcher.proxy_pass", b.toString());
+	}
+	
+	public static synchronized int getWindowModeId() {
+		return yaml.getInt("launcher.windowmode", WindowMode.WINDOWED.getId());
+	}
+	
+	public static synchronized void setWindowModeId(int id) {
+		yaml.setProperty("launcher.windowmode", id);
 	}
 }

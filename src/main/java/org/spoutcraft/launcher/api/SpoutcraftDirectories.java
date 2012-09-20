@@ -28,7 +28,7 @@ package org.spoutcraft.launcher.api;
 
 import java.io.File;
 
-import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.util.Utils;
 
 public class SpoutcraftDirectories {
 	private final File backupDir = new File(Utils.getWorkingDirectory(), "backups");

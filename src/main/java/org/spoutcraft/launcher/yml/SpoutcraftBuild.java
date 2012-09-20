@@ -26,26 +26,35 @@
  */
 package org.spoutcraft.launcher.yml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Build;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
+import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.util.MirrorUtils;
 
 public class SpoutcraftBuild {
+	private final ObjectMapper mapper = new ObjectMapper();
 	private String minecraftVersion;
 	private String latestVersion;
 	private int build;
-	Map<String, Object> libraries;
 	private String hash;
 
-	private SpoutcraftBuild(String minecraft, String latest, int build, Map<String, Object> libraries, String hash) {
+	private SpoutcraftBuild(String minecraft, String latest, int build, String hash) {
 		this.minecraftVersion = minecraft;
 		this.latestVersion = latest;
 		this.build = build;
-		this.libraries = libraries;
 		this.hash = hash;
 	}
 
@@ -70,7 +79,7 @@ public class SpoutcraftBuild {
 	}
 
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
-		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-1.3.2-SNAPSHOT.jar");
+		return MirrorUtils.getMirrorUrl("Spoutcraft/" + build + "/spoutcraft-dev-SNAPSHOT.jar");
 	}
 
 	public void install() {
@@ -94,8 +103,18 @@ public class SpoutcraftBuild {
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
-	public Map<String, Object> getLibraries() {
-		return libraries;
+	public List<Library> getLibraries() throws RestfulAPIException{
+		InputStream stream = null;
+		String url = RestAPI.getLibraryURL(String.valueOf(build));
+		try {
+			URLConnection conn = (new URL(url)).openConnection();
+			stream = conn.getInputStream();
+			return Arrays.asList(mapper.readValue(stream, Library[].class));
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing url [" + url + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}	
 	}
 
 	@SuppressWarnings("unchecked")
@@ -116,8 +135,7 @@ public class SpoutcraftBuild {
 		}
 
 		Map<Object, Object> build = (Map<Object, Object>) builds.get(selected);
-		Map<String, Object> libs = (Map<String, Object>) build.get("libraries");
 		String hash = String.valueOf(build.get("hash"));
-		return new SpoutcraftBuild(String.valueOf(build.get("minecraft")), Resources.getLatestMinecraftVersion(), selected, libs, hash);
+		return new SpoutcraftBuild(String.valueOf(build.get("minecraft")), Resources.getLatestMinecraftVersion(), selected, hash);
 	}
 }

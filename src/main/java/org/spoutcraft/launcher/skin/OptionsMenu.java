@@ -16,6 +16,7 @@ import org.spoutcraft.launcher.Channel;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.WindowMode;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.rest.Versions;
 
@@ -61,13 +62,15 @@ public class OptionsMenu extends JDialog implements ActionListener{
 	private JButton resetButton;
 	private JButton cancelButton;
 	private JButton saveButton;
+	private JLabel windowModeLabel;
+	private JComboBox windowMode;
+
 	public OptionsMenu() {
 		initComponents();
 		
 		setTitle("Launcher Options");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 		setResizable(false);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
 		populateMemory(memory);
 
@@ -89,6 +92,20 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		for (String version : Versions.getMinecraftVersions()) {
 			this.minecraftVersion.addItem(version);
 		}
+		
+		Settings.setWindowModeId(populateWindowMode(windowMode));
+	}
+	
+	private int populateWindowMode(JComboBox window) {
+		int id = Settings.getWindowModeId();
+		for (WindowMode m : WindowMode.values()) {
+			window.addItem(m.getModeName());
+		}
+		if (id >= 0 && id < WindowMode.values().length) {
+			window.setSelectedIndex(id);
+			return id;
+		}
+		return WindowMode.WINDOWED.getId();
 	}
 
 	private Channel populateChannelVersion(JComboBox version, int selection) {
@@ -172,6 +189,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
 			Settings.setDebugMode(debugMode.isSelected());
 			Settings.setIgnoreMD5(md5Checkbox.isSelected());
+			Settings.setWindowModeId(windowMode.getSelectedIndex());
 			Settings.setProxyHost(this.proxyHost.getText());
 			Settings.setProxyPort(this.proxyPort.getText());
 			Settings.setProxyUsername(this.proxyUsername.getText());
@@ -202,6 +220,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		memory = new JComboBox();
 		minecraftVersionLabel = new JLabel();
 		minecraftVersion = new JComboBox();
+		windowModeLabel = new JLabel();
+		windowMode = new JComboBox();
 		proxyPane = new JPanel();
 		proxyHostLabel = new JLabel();
 		proxyPortLabel = new JLabel();
@@ -239,8 +259,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 
 			//======== gamePane ========
 			{
-
-				// JFormDesigner evaluation mark
+				gamePane.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- spoutcraftVersionLabel ----
 				spoutcraftVersionLabel.setText("Version:");
@@ -265,6 +284,16 @@ public class OptionsMenu extends JDialog implements ActionListener{
 				minecraftVersion.setFont(new Font("Arial", Font.PLAIN, 11));
 				minecraftVersion.setToolTipText("The minecraft version");
 
+				//---- windowModeLabel ----
+				windowModeLabel.setText("Window Mode:");
+				windowModeLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+				
+				//---- windowMode ----
+				windowMode.setFont(new Font("Arial", Font.PLAIN, 11));
+				windowMode.setToolTipText("<html>Windowed - Starts the game in a smaller 900x540 window<br/>" +
+											"Full Screen - Starts the game using the full monitor resolution, but not maximized<br/>" +
+											"Maximized - Starts the game using full monitor resolution and maximized</html>");
+
 				GroupLayout gamePaneLayout = new GroupLayout(gamePane);
 				gamePane.setLayout(gamePaneLayout);
 				gamePaneLayout.setHorizontalGroup(
@@ -275,7 +304,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 								.add(gamePaneLayout.createSequentialGroup()
 									.add(memoryLabel)
 									.addPreferredGap(LayoutStyle.UNRELATED)
-									.add(memory, GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE))
+									.add(memory))
 								.add(gamePaneLayout.createSequentialGroup()
 									.add(gamePaneLayout.createParallelGroup()
 										.add(minecraftVersionLabel)
@@ -283,7 +312,11 @@ public class OptionsMenu extends JDialog implements ActionListener{
 									.addPreferredGap(LayoutStyle.RELATED)
 									.add(gamePaneLayout.createParallelGroup()
 										.add(spoutcraftVersion, GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE)
-										.add(minecraftVersion, GroupLayout.DEFAULT_SIZE, 197, Short.MAX_VALUE))))
+										.add(minecraftVersion)))
+								.add(gamePaneLayout.createSequentialGroup()
+									.add(windowModeLabel)
+									.addPreferredGap(LayoutStyle.RELATED)
+									.add(windowMode, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)))
 							.addContainerGap())
 				);
 				gamePaneLayout.setVerticalGroup(
@@ -301,7 +334,11 @@ public class OptionsMenu extends JDialog implements ActionListener{
 							.add(gamePaneLayout.createParallelGroup(GroupLayout.BASELINE)
 								.add(memoryLabel)
 								.add(memory, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-							.addContainerGap(113, Short.MAX_VALUE))
+							.addPreferredGap(LayoutStyle.RELATED)
+							.add(gamePaneLayout.createParallelGroup(GroupLayout.BASELINE)
+								.add(windowModeLabel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
+								.add(windowMode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+							.addContainerGap(86, Short.MAX_VALUE))
 				);
 			}
 			mainOptions.addTab("Game", gamePane);

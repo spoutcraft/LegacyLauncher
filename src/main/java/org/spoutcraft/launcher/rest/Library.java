@@ -1,7 +1,13 @@
 package org.spoutcraft.launcher.rest;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.exceptions.DownloadException;
+import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.DownloadUtils;
 
 public final class Library implements Downloadable{
 	private final String groupId;
@@ -16,13 +22,22 @@ public final class Library implements Downloadable{
 		this.md5 = md5;
 	}
 
-	public String getUrl(String prefix) {
-		StringBuilder builder = new StringBuilder(prefix);
-		return builder.append(groupId).append("/").append(artifactId).append("/").append(version).toString();
+	public void download(File location, DownloadListener listener) throws DownloadException{
+		StringBuilder builder = new StringBuilder(RestAPI.LIBRARY_GET_URL);
+		String url =  builder.append(groupId).append("/").append(artifactId).append("/").append(version).toString();
+		try {
+			DownloadUtils.downloadFile(url, location.getPath(), location.getName(), md5, listener);
+		} catch (IOException e) {
+			throw new DownloadException(e);
+		}
 	}
 
 	public boolean valid(String m5d) {
 		return md5.equalsIgnoreCase(m5d);
+	}
+
+	public String name() {
+		return artifactId + "-" + version;
 	}
 
 	@Override

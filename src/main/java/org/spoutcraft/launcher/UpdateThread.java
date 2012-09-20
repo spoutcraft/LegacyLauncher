@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -44,25 +43,27 @@ import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
-import org.spoutcraft.launcher.api.util.Download;
-import org.spoutcraft.launcher.api.util.Download.Result;
-import org.spoutcraft.launcher.api.util.DownloadListener;
-import org.spoutcraft.launcher.api.util.FileType;
-import org.spoutcraft.launcher.api.util.FileUtils;
-import org.spoutcraft.launcher.api.util.MirrorUtils;
-import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.api.util.YAMLNode;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.FileType;
+import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
+import org.spoutcraft.launcher.util.MirrorUtils;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
+import org.spoutcraft.launcher.yml.YAMLNode;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class UpdateThread extends Thread {
 	/**
@@ -95,7 +96,7 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	private void runTasks() {
+	private void runTasks() throws RestfulAPIException {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable();
 			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable();
@@ -138,21 +139,27 @@ public class UpdateThread extends Thread {
 		}
 
 		if (valid.get()) {
-			MinecraftClassLoader loader = MinecraftLauncher.getClassLoader();
-			int loaded = 0;
-			final int PRELOAD_PASS = 250;
-			while (true) {
-				if (waiting.get()) {
-					break;
+			MinecraftClassLoader loader;
+			try {
+				loader = MinecraftLauncher.getClassLoader();
+				
+				int loaded = 0;
+				final int PRELOAD_PASS = 250;
+				while (true) {
+					if (waiting.get()) {
+						break;
+					}
+					int pass = loader.preloadClasses(PRELOAD_PASS);
+					loaded += pass;
+					// Less than the preload amount, so we are finished
+					if (pass != PRELOAD_PASS) {
+						break;
+					}
 				}
-				int pass = loader.preloadClasses(PRELOAD_PASS);
-				loaded += pass;
-				// Less than the preload amount, so we are finished
-				if (pass != PRELOAD_PASS) {
-					break;
-				}
+				logger.info("Preloaded " + loaded + " classes in advance");
+			} catch (RestfulAPIException e) {
+				e.printStackTrace();
 			}
-			logger.info("Preloaded " + loaded + " classes in advance");
 		} else {
 			try {
 				sleep(100);
@@ -309,7 +316,7 @@ public class UpdateThread extends Thread {
 		return valid.get();
 	}
 
-	public boolean isSpoutcraftUpdateAvailable() {
+	public boolean isSpoutcraftUpdateAvailable() throws RestfulAPIException {
 		if (!Utils.getWorkingDirectory().exists()) {
 			return true;
 		}
@@ -318,7 +325,7 @@ public class UpdateThread extends Thread {
 		}
 
 		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
-		Map<String, Object> libraries = build.getLibraries();
+		List<Library> libraries = build.getLibraries();
 		int steps = libraries.size() + 2;
 		float progress = 100F;
 
@@ -336,10 +343,8 @@ public class UpdateThread extends Thread {
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
 		libDir.mkdir();
 
-		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
-		while (i.hasNext()) {
-			Entry<String, Object> lib = i.next();
-			File libraryFile = new File(libDir, lib.getKey() + ".jar");
+		for (Library lib : libraries) {
+			File libraryFile = new File(libDir, lib.name() + ".jar");
 			if (!libraryFile.exists()) {
 				return true;
 			}
@@ -528,30 +533,20 @@ public class UpdateThread extends Thread {
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
 		libDir.mkdir();
 
-		Map<String, Object> libraries = build.getLibraries();
-		Iterator<Entry<String, Object>> i = libraries.entrySet().iterator();
-		while (i.hasNext()) {
-			Entry<String, Object> lib = i.next();
-			String version = String.valueOf(lib.getValue());
-			String name = lib.getKey() + "-" + version;
-
-			File libraryFile = new File(libDir, lib.getKey() + ".jar");
-			String MD5 = Resources.getLibraryMD5(lib.getKey(), version);
-
+		List<Library> libraries = build.getLibraries();
+		for (Library lib : libraries) {
+			String name = lib.name();
+			File libraryFile = new File(libDir, lib.name() + ".jar");
 			if (libraryFile.exists()) {
 				String computedMD5 = MD5Utils.getMD5(libraryFile);
-				logger.info("Checking MD5 of " + libraryFile.getName() + ". Expected MD5: " + MD5 + " | Actual MD5: " + computedMD5);
-				if (!computedMD5.equals(MD5)) {
-					logger.info("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
+				if (lib.valid(computedMD5)) {
+					logger.warning("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
 					libraryFile.delete();
 				}
 			}
 
 			if (!libraryFile.exists()) {
-				String mirrorURL = "lib/" + lib.getKey() + "/" + name + ".jar";
-				String fallbackURL = "http://get.spout.org/lib/" + lib.getKey() + "/" + name + ".jar";
-				url = MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
-				DownloadUtils.downloadFile(url, libraryFile.getPath(), null, MD5, listener);
+				lib.download(libraryFile, listener);
 			}
 		}
 

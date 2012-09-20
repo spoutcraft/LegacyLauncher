@@ -24,10 +24,38 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.exceptions;
 
+import java.io.IOException;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+public class DownloadException extends IOException {
+	private final Throwable cause;
+	private final String message;
+
+	public DownloadException(String message, Throwable cause) {
+		this.cause = cause;
+		this.message = message;
+	}
+
+	public DownloadException(Throwable cause) {
+		this(null, cause);
+	}
+
+	public DownloadException(String message) {
+		this(message, null);
+	}
+
+	public DownloadException() {
+		this(null, null);
+	}
+
+	public Throwable getCause() {
+		return this.cause;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	private static final long serialVersionUID = 1L;
 }

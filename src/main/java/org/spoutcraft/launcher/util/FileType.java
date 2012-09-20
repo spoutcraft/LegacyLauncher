@@ -24,10 +24,16 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.util;
 
+public enum FileType {
+	JINPUT,
+	LWJGL,
+	LWJGL_UTIL,
+	MINECRAFT;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+	@Override
+	public String toString() {
+		return super.name().toLowerCase();
+	}
 }

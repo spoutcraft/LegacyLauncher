@@ -30,11 +30,7 @@ import java.io.File;
 import java.io.IOException;
 import org.spoutcraft.diff.JBPatch;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.util.Download;
-import org.spoutcraft.launcher.api.util.DownloadListener;
-import org.spoutcraft.launcher.api.util.FileType;
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.api.util.Download.Result;
+import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftDownloadUtils {

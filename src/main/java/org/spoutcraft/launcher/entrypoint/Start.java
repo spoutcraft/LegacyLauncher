@@ -11,10 +11,10 @@ import java.util.Arrays;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
-import org.spoutcraft.launcher.api.util.Download;
-import org.spoutcraft.launcher.api.util.DownloadListener;
-import org.spoutcraft.launcher.api.util.OperatingSystem;
-import org.spoutcraft.launcher.api.util.Utils;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
 
 public class Start {
 	

@@ -8,12 +8,13 @@ public class RestAPI {
 	public static final String LIBRARIES = "libraries";
 	public static final String VERSIONS_URL = REST_URL + "versions/" + PROJECT;
 	public static final String INFO_URL = REST_URL + "info/";
+	public static final String LIBRARY_GET_URL = REST_URL + "library/";
 
 	public static String getSpoutcraftURL(Channel channel) {
 		return INFO_URL + channel.toString() + "/" + PROJECT;
 	}
 
 	public static String getLibraryURL(String build) {
-		return INFO_URL + LIBRARIES + "/build/" + build;
+		return REST_URL + LIBRARIES + "/build/" + build;
 	}
 }

@@ -36,7 +36,6 @@ import java.nio.channels.Channels;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
 
 public class BaseYAMLResource implements YAMLResource {
 	private final Logger logger = Logger.getLogger("launcher");

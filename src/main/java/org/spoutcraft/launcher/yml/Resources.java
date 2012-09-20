@@ -29,8 +29,7 @@ package org.spoutcraft.launcher.yml;
 import java.io.File;
 import java.util.Map;
 
-import org.spoutcraft.launcher.api.util.Utils;
-import org.spoutcraft.launcher.api.util.YAMLProcessor;
+import org.spoutcraft.launcher.util.Utils;
 
 public enum Resources implements YAMLResource {
 	Launcher ("http://get.spout.org/launcher.yml",

@@ -26,8 +26,17 @@
  */
 package org.spoutcraft.launcher.yml;
 
+/**
+ * YAMLProcessor exception.
+ */
+public class YAMLProcessorException extends Exception {
+	private static final long serialVersionUID = -2442886939908724203L;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+	public YAMLProcessorException() {
+		super();
+	}
+
+	public YAMLProcessorException(String msg) {
+		super(msg);
+	}
 }

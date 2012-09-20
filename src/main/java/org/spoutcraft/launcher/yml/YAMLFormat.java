@@ -26,8 +26,19 @@
  */
 package org.spoutcraft.launcher.yml;
 
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
-public interface ResourceAction {
-	public void beforeAction(YAMLProcessor previous);
-	public void afterAction(YAMLProcessor current);
+public enum YAMLFormat {
+	EXTENDED(FlowStyle.BLOCK),
+	COMPACT(FlowStyle.AUTO);
+
+	private final FlowStyle style;
+
+	YAMLFormat(FlowStyle style) {
+		this.style = style;
+	}
+
+	public FlowStyle getStyle() {
+		return style;
+	}
 }

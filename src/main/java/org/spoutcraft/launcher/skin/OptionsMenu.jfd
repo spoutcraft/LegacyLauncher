@@ -1,0 +1,203 @@
+JFDML JFormDesigner: "5.1.0.0.51" Java: "1.7.0_05" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JDialog", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq l {space :::p, comp resetButton:::p::p, space :::p, comp cancelButton:::p::p, space u:::p, comp saveButton::::55:x, space :p:11:p}, comp mainOptions::t::0:x}"
+			"$verticalGroup": "par l {seq l {comp mainOptions::::224:x, space :::p, par b {comp resetButton::b:p::p, comp cancelButton::b:p::p, comp saveButton::b:p::p}, space :::p}}"
+		} ) {
+			name: "this"
+			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
+				name: "mainOptions"
+				"font": new java.awt.Font( "Arial", 0, 11 )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp memoryLabel:::p::p, space u:::p, comp memory:::::x}, seq l {par l {comp minecraftVersionLabel::l:p::p, comp spoutcraftVersionLabel::l:p::p}, space :::p, par l {comp spoutcraftVersion::::197:x, comp minecraftVersion:::::x}}, seq {comp windowModeLabel:::p::p, space :::p, comp windowMode::::173:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par b {comp minecraftVersionLabel::b:p::p, comp minecraftVersion::b:p::p}, space :::p, par b {comp spoutcraftVersionLabel::b:p::p, comp spoutcraftVersion::b:p::p}, space :::p, par b {comp memoryLabel::b:p::p, comp memory::b:p::p}, space :::p, par b {comp windowModeLabel::b:p:21:p, comp windowMode::b:p::p}, space ::86:x}}"
+				} ) {
+					name: "gamePane"
+					"font": &Font0 new java.awt.Font( "Arial", 0, 11 )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "spoutcraftVersionLabel"
+						"text": "Version:"
+						"font": &Font1 new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "memoryLabel"
+						"text": "Memory:"
+						"background": sfield java.awt.Color white
+						"font": &Font2 new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "spoutcraftVersion"
+						"font": #Font1
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "memory"
+						"font": #Font1
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "minecraftVersionLabel"
+						"text": "Minecraft:"
+						"font": #Font1
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "minecraftVersion"
+						"font": #Font1
+						"toolTipText": "The minecraft version"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "windowModeLabel"
+						"text": "Window Mode:"
+						"font": #Font0
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "windowMode"
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Game"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l {comp proxyPortLabel::l:p::p, comp proxyHostLabel::l:p::p, comp proxyUsername::l:p::p, comp passwordLabel::l:p::p}, space u:::p, par l {comp proxyPass::::183:x, comp proxyUser::::183:x, comp proxyHost::::183:x, comp proxyPort::::183:x}, space :::p}}"
+					"$verticalGroup": "par l {seq l {space :::p, par b {comp proxyHostLabel::b:p:20:p, comp proxyHost::b:p::p}, space :::p, par b {comp proxyPortLabel::b:p::p, comp proxyPort::b:p::p}, space u:::p, par b {comp proxyUsername::b:p::p, comp proxyUser::b:p::p}, space :::p, par b {comp passwordLabel::b:p::p, comp proxyPass::b:p::p}, space ::82:x}}"
+				} ) {
+					name: "proxyPane"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "proxyHostLabel"
+						"text": "Proxy Host:"
+						"font": &Font3 new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "proxyPortLabel"
+						"text": "Proxy Port:"
+						"font": #Font3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "proxyUsername"
+						"text": "Username:"
+						"font": #Font3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "passwordLabel"
+						"text": "Password:"
+						"font": #Font3
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "proxyHost"
+						"font": #Font3
+						"toolTipText": "The host or IP address of the proxy"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "proxyPort"
+						"font": #Font3
+						"toolTipText": "The port (if any) for the proxy"
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "proxyUser"
+						"font": #Font3
+						"toolTipText": "The username, if required, for the proxy"
+					} )
+					add( new FormComponent( "javax.swing.JPasswordField" ) {
+						name: "proxyPass"
+						"font": #Font3
+						"toolTipText": "The password, if required, for the proxy"
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Proxy"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+					"$horizontalGroup": "par l {seq {space :::p, par l {seq l {comp DevLabel:::p::p, space :::p, comp developerCode:::::x}, seq l {comp launcherVersionLabel:::p::p, space :::p, comp launcherVersion:::::x}, seq l {comp serverLabel:::::x, space :::p, comp directJoin:::p:196:p}, seq l {comp buildLabel:::p::p, space :::p, comp buildCombo:::::x}, seq {par l {seq l {par l {comp debugLabel::l:p::p, comp lwjglLabel::l:p:77:p}, space :::p, par l {comp latestLWJGL:::p::p, comp debugMode:::p::p}}, seq l {comp md5Label:::p:77:p, space :::p, comp md5Checkbox:::p::p}}, space :0:0:x}}, space :::p}}"
+					"$verticalGroup": "par l {seq {space :::p, par b {comp DevLabel::b:p::p, comp developerCode::b:p::p}, space :::p, par b {comp launcherVersionLabel::b:p::p, comp launcherVersion::b:p::p}, space :::p, par b {comp buildCombo::b:p::p, comp buildLabel::b:p::p}, space :::p, par l {comp debugMode:::p::p, comp debugLabel::l:p:21:p}, space :::p, par t {comp lwjglLabel:::p:21:p, comp latestLWJGL:::p::p}, space :::p, par t {comp md5Label:::p:21:p, comp md5Checkbox:::p::p}, space :::p, par b {comp serverLabel::b:p:21:p, comp directJoin::b:p::p}, space ::5:x}}"
+				} ) {
+					name: "developerPane"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "DevLabel"
+						"text": "Developer Code:"
+						"font": &Font4 new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "developerCode"
+						"font": #Font4
+						"toolTipText": "Allows access to advanced settings"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "launcherVersionLabel"
+						"text": "Launcher:"
+						"background": sfield java.awt.Color white
+						"font": #Font4
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "launcherVersion"
+						"font": #Font4
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "debugLabel"
+						"text": "Debug Mode:"
+						"background": sfield java.awt.Color white
+						"font": #Font4
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "debugMode"
+						"background": sfield java.awt.Color white
+						"font": #Font4
+						"toolTipText": "Enables more detailed logging"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "lwjglLabel"
+						"text": "Latest LWJGL:"
+						"font": #Font2
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "latestLWJGL"
+						"font": &Font5 new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "md5Label"
+						"text": "Disable MD5:"
+						"font": #Font2
+					} )
+					add( new FormComponent( "javax.swing.JCheckBox" ) {
+						name: "md5Checkbox"
+						"font": #Font5
+						"toolTipText": "Disables MD5 hashsum checks on the files"
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "buildLabel"
+						"text": "Build:"
+						"font": new java.awt.Font( "Arial", 0, 11 )
+					} )
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "buildCombo"
+						"font": #Font4
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "serverLabel"
+						"text": "Direct Join:"
+						"font": #Font2
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "directJoin"
+						"font": #Font4
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "Developer"
+				} )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "resetButton"
+				"text": "Reset to Defaults"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "cancelButton"
+				"text": "Cancel"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "saveButton"
+				"text": "OK"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 290, 300 )
+		} )
+	}
+}
