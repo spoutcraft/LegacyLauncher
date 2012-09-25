@@ -78,7 +78,7 @@ public class Download implements Runnable {
 			int response = ((HttpURLConnection)conn).getResponseCode();
 			InputStream in = getConnectionInputStream(conn);
 
-			size = conn.getContentLengthLong();
+			size = conn.getContentLength();
 			outFile = new File(outPath);
 			outFile.delete();
 

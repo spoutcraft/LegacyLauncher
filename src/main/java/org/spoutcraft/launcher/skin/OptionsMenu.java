@@ -142,12 +142,19 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			e.printStackTrace();
 		}
 	}
-	
+
 	private String getSelectedSpoutcraftBuild() {
 		if (Channel.getType(spoutcraftVersion.getSelectedIndex()) == Channel.CUSTOM) {
 			return ((SpoutcraftBuild)buildCombo.getSelectedItem()).getBuildNumber();
 		}
 		return "-1";
+	}
+
+	private String getSelectedMinecraftVersion() {
+		if (Channel.getType(spoutcraftVersion.getSelectedIndex()) == Channel.CUSTOM) {
+			return ((SpoutcraftBuild)buildCombo.getSelectedItem()).getMinecraftVersion();
+		}
+		return minecraftVersion.getSelectedItem().toString();
 	}
 
 	private void populateMinecraftVersions(JComboBox minecraftVersion) {
@@ -262,7 +269,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			Settings.setDebugMode(debugMode.isSelected());
 			Settings.setIgnoreMD5(md5Checkbox.isSelected());
 			Settings.setWindowModeId(windowMode.getSelectedIndex());
-			Settings.setMinecraftVersion(minecraftVersion.getSelectedItem().toString());
+			Settings.setMinecraftVersion(getSelectedMinecraftVersion());
 			Settings.setSpoutcraftSelectedBuild(getSelectedSpoutcraftBuild());
 			Settings.setProxyHost(this.proxyHost.getText());
 			Settings.setProxyPort(this.proxyPort.getText());

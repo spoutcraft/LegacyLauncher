@@ -66,7 +66,7 @@ public class MinecraftDownloadUtils {
 							patchedMinecraft.delete();
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
 							//minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getMinecraftVersion());
-							minecraftMD5 = FileType.MINECRAFT.getMD5();
+							minecraftMD5 = FileType.MINECRAFT.getMD5(build.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 
 							if (minecraftMD5.equals(resultMD5)) {

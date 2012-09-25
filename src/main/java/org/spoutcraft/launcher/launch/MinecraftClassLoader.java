@@ -28,6 +28,7 @@ package org.spoutcraft.launcher.launch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -121,7 +122,9 @@ public class MinecraftClassLoader extends URLClassLoader {
 			throw e;
 		} finally {
 			if (jar != null) {
-				IOUtils.closeQuietly(jar);
+				try {
+					jar.close();
+				} catch (IOException ignore) { }
 			}
 		}
 	}
@@ -199,7 +202,9 @@ public class MinecraftClassLoader extends URLClassLoader {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			IOUtils.closeQuietly(jar);
+			try {
+				jar.close();
+			} catch (IOException ignore) { }
 		}
 		return null;
 	}
@@ -210,7 +215,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 		URL result = getResource(resource);
 		if (result != null) {
 			try {
-				return result.openStream();
+				try {
+					return new FileInputStream(result.getFile()); 
+				} catch (IOException e) {
+					return result.openStream();
+				}
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}
@@ -240,7 +249,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 			}
 			Enumeration<URL> result = null;
 			if (resource.startsWith("res/")) {
-				result =  getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3), resource);
+				result = getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(3), resource);
 			} else if (resource.startsWith("/res/")) {
 				result = getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4), resource);
 			}
@@ -256,7 +265,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 		ArrayList<URL> list = new ArrayList<URL>(1);
 		File file = new File(resource);
 		if (file.exists()) {
-			list.add(file.toURI().toURL());
+			try {
+				list.add(file.getCanonicalFile().toURI().toURL());
+			} catch (IOException e) {
+				list.add(file.toURI().toURL());
+			}
 			resources.put(key, list);
 			return new IteratorEnumerator(list.iterator());
 		}

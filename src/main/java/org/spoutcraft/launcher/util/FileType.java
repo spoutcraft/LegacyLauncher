@@ -41,6 +41,13 @@ public enum FileType {
 		return md5;
 	}
 
+	public String getMD5(String version) {
+		if (this == MINECRAFT && "1.2.5".equals(version)) {
+			return "8e8778078a175a33603a585257f28563";
+		}
+		return md5;
+	}
+
 	@Override
 	public String toString() {
 		return super.name().toLowerCase();

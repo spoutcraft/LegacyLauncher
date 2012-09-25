@@ -306,5 +306,6 @@ public class Utils {
 			out.close();
 			in.close();
 		}
+		jar.close();
 	}
 }

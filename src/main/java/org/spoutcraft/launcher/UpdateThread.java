@@ -430,6 +430,7 @@ public class UpdateThread extends Thread {
 		stateChanged("Extracting Files...", 0);
 
 		Settings.setInstalledMC(build.getMinecraftVersion());
+		Settings.getYAML().save();
 	}
 
 	public String getNativesUrl() {

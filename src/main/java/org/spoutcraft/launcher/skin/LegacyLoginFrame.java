@@ -646,7 +646,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		e.printStackTrace();
 		ErrorDialog dialog = new ErrorDialog(this, e);
 		dialog.setAlwaysOnTop(true);
-		dialog.setAutoRequestFocus(true);
 		dialog.setVisible(true);
 	}
 }

@@ -157,7 +157,6 @@ public class SpoutcraftLauncher {
 			splash.dispose();
 			frame.setVisible(true);
 			dialog.setAlwaysOnTop(true);
-			dialog.setAutoRequestFocus(true);
 			dialog.setVisible(true);
 			return;
 		}

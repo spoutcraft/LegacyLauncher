@@ -153,7 +153,7 @@ public class Validator{
 	}
 
 	private boolean compareMD5s(FileType type, String version, File file) {
-		String expected = type.getMD5();
+		String expected = type.getMD5(version);
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
