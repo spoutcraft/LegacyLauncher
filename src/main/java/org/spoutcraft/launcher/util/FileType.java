@@ -27,10 +27,19 @@
 package org.spoutcraft.launcher.util;
 
 public enum FileType {
-	JINPUT,
-	LWJGL,
-	LWJGL_UTIL,
-	MINECRAFT;
+	JINPUT("a7835a73a130656aba23e34147a55367"),
+	LWJGL("7a07c4285fa9a6b204ba59f011f1cd77"),
+	LWJGL_UTIL("f00470751cfc093ba760ca3cf10a512c"),
+	MINECRAFT("969699f13e5bbe7f12e40ac4f32b7d9a");
+
+	private final String md5;
+	private FileType(String md5) {
+		this.md5 = md5;
+	}
+
+	public String getMD5() {
+		return md5;
+	}
 
 	@Override
 	public String toString() {

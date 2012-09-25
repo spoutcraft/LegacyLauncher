@@ -264,6 +264,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	
 	public abstract void enableForm();
 
+	public abstract void handleException(Exception e);
+
 	@SuppressWarnings("incomplete-switch")
 	public final void onRawEvent(Event event) {
 		switch (event) {

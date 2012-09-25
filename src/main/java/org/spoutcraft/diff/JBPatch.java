@@ -61,7 +61,7 @@ public class JBPatch {
 		bspatch(oldFile, newFile, diffFile);
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused", "resource" })
 	public static void bspatch(File oldFile, File newFile, File diffFile)
 			throws IOException {
 		int oldpos, newpos;

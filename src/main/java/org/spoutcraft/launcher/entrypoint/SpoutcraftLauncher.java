@@ -36,14 +36,19 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.IOUtils;
@@ -54,9 +59,11 @@ import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
-import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
+import org.spoutcraft.launcher.rest.SpoutcraftBuild;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.LegacyLoginFrame;
 import org.spoutcraft.launcher.skin.gui.LoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -105,13 +112,7 @@ public class SpoutcraftLauncher {
 		}
 		Settings.setYAML(settings);
 		Settings.setLauncherBuild(launcherBuild);
-		Proxy proxy = new Proxy();
-		proxy.setHost(Settings.getProxyHost());
-		proxy.setPort(Settings.getProxyPort());
-		proxy.setUser(Settings.getProxyUsername());
-		String pass = Settings.getProxyPassword();
-		proxy.setPass(pass != null ? pass.toCharArray() : null);
-		proxy.setup();
+		setupProxy();
 
 		if (params.isDebugMode()) {
 			Settings.setDebugMode(true);
@@ -120,13 +121,6 @@ public class SpoutcraftLauncher {
 		if (Settings.isDebugMode()) {
 			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
-		}
-
-		if (params.getSpoutcraftBuild() > 0) {
-			Settings.setSpoutcraftSelectedBuild(params.getSpoutcraftBuild());
-			Settings.setSpoutcraftBuild(Build.CUSTOM);
-		} else if (Settings.getSpoutcraftBuild() == Build.CUSTOM){
-			Settings.setSpoutcraftBuild(Build.RECOMMENDED);
 		}
 
 		if (Settings.isDebugMode()) {
@@ -142,16 +136,31 @@ public class SpoutcraftLauncher {
 			return;
 		}
 		
+		checkInternet();
+
+		validateBuild(params);
+
 		setLookAndFeel();
-		
+
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
 		logThread.start();
 
 		// Set up the Launcher and load login frame
 		LoginFrame frame = new LegacyLoginFrame();
-		@SuppressWarnings("unused")
-		Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
+		try {
+			@SuppressWarnings("unused")
+			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
+		} catch (IOException failure) {
+			failure.printStackTrace();
+			ErrorDialog dialog = new ErrorDialog(frame, failure);
+			splash.dispose();
+			frame.setVisible(true);
+			dialog.setAlwaysOnTop(true);
+			dialog.setAutoRequestFocus(true);
+			dialog.setVisible(true);
+			return;
+		}
 		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
@@ -159,7 +168,6 @@ public class SpoutcraftLauncher {
 			start = System.currentTimeMillis();
 		}
 
-		
 		splash.dispose();
 		frame.setVisible(true);
 		if (params.hasAccount()) {
@@ -173,6 +181,53 @@ public class SpoutcraftLauncher {
 		}
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+	}
+	
+	private static void checkInternet() {
+		if (!hasInternet()) {
+			JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		}
+	}
+
+	private static boolean hasInternet() {
+		try {
+			final URL url = new URL("http://www.google.com");
+			final URLConnection conn = url.openConnection();
+			conn.setConnectTimeout(10000);
+			conn.getInputStream();
+			return true;
+		} catch (IOException e) {
+			return false;
+		}
+	}
+
+	private static void setupProxy() {
+		Proxy proxy = new Proxy();
+		proxy.setHost(Settings.getProxyHost());
+		proxy.setPort(Settings.getProxyPort());
+		proxy.setUser(Settings.getProxyUsername());
+		String pass = Settings.getProxyPassword();
+		proxy.setPass(pass != null ? pass.toCharArray() : null);
+		proxy.setup();
+	}
+
+	private static void validateBuild(StartupParameters params) {
+		if (params.getSpoutcraftBuild() > 0) {
+			List<SpoutcraftBuild> builds;
+			try {
+				builds = SpoutcraftBuild.getBuildList();
+				String build = String.valueOf(params.getSpoutcraftBuild());
+				for (SpoutcraftBuild b : builds) {
+					if (b.getBuildNumber().equals(build)) {
+						return;
+					}
+				}
+			} catch (RestfulAPIException e) {
+				e.printStackTrace();
+			}
+			params.setSpoutcraftBuild(-1);
+		}
 	}
 	
 	private static void cleanup() {

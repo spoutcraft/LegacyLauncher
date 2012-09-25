@@ -42,7 +42,6 @@ import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.LegacyLoginFrame;
-import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -62,12 +61,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 	}
 
 	public void runGame(String user, String session, String downloadTicket) {
-		Dimension size;
-		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
-			size = new Dimension(900, 540);
-		} else {
-			size = new Dimension(880, 520);
-		}
+		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		
 		Dimension currentSize = Launcher.getLoginFrame().getSize();
 		Point location = Launcher.getLoginFrame().getLocation();
@@ -86,14 +80,15 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		Applet applet = null;
 		try {
-			applet = MinecraftLauncher.getMinecraftApplet();
+			applet = MinecraftLauncher.getMinecraftApplet(Launcher.getGameUpdater().getBuild().getLibraries());
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
 			Launcher.clearCache();
-			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again. If that fails, close and \nrestart the appplication.");
+			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the appplication.");
 			this.setVisible(false);
 			this.dispose();
+			Launcher.getLoginFrame().enableForm();
 			return;
 		}
 		if (applet == null) {
@@ -101,6 +96,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
+			Launcher.getLoginFrame().enableForm();
 			return;
 		}
 		
@@ -119,6 +115,16 @@ public class GameLauncher extends JFrame implements WindowListener {
 			} else {
 				minecraft.addParameter("port", "25565");
 			}
+		} else if (Settings.getDirectJoin() != null && Settings.getDirectJoin().length() > 0) {
+			String address = Settings.getDirectJoin();
+			String port = "25565";
+			if (address.contains(":")) {
+				String[] s = address.split(":");
+				address = s[0];
+				port = s[1];
+			}
+			minecraft.addParameter("server", address);
+			minecraft.addParameter("port", port);
 		}
 		if (params.getProxyHost() != null) {
 			minecraft.addParameter("proxy_host", params.getProxyHost());
@@ -132,6 +138,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		if (params.getProxyPassword() != null) {
 			minecraft.addParameter("proxy_pass", params.getProxyPassword());
 		}
+		minecraft.addParameter("fullscreen", WindowMode.getModeById(Settings.getWindowModeId()) == WindowMode.FULL_SCREEN ? "true" : "false");
 
 		applet.setStub(minecraft);
 		this.add(minecraft);

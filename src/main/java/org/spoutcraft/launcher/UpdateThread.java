@@ -56,13 +56,10 @@ import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
-import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.yml.Resources;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
-import org.spoutcraft.launcher.yml.YAMLNode;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class UpdateThread extends Thread {
@@ -70,14 +67,29 @@ public class UpdateThread extends Thread {
 	 * We only want to clean the old logs, temp folders once per startup
 	 */
 	private static final AtomicBoolean cleaned = new AtomicBoolean(false);
+	private static final int PRELOAD_CLASSES = 100;
+	
+	//Temporarily hardcoded
+	private static final String WINDOWS_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/windows_natives.jar";
+	private static final String WINDOWS_NATIVES_MD5 = "9406d7d376b131d20c5717ee9fd89a7f";
+
+	private static final String OSX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/macosx_natives.jar";
+	private static final String OSX_NATIVES_MD5 = "2f60f009723553622af280c920bb7431";
+
+	private static final String LINUX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/linux_natives.jar";
+	private static final String LINUX_NATIVES_MD5 = "3b4435ec85e63faa041b4c080b815b22";
+
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
-	public UpdateThread(DownloadListener listener) {
+	private final SpoutcraftData build;
+	public UpdateThread(SpoutcraftData build, DownloadListener listener) {
 		super("Update Thread");
+		setDaemon(true);
+		this.build = build;
 		setDownloadListener(listener);
 	}
 
@@ -88,36 +100,26 @@ public class UpdateThread extends Thread {
 				runTasks();
 				break;
 			} catch (Exception e) {
-				logger.log(Level.SEVERE, "Unable to execute tasks", e);
+				Launcher.getLoginFrame().handleException(e);
+				return;
 			}
-			try {
-				sleep(1000);
-			} catch (InterruptedException ignore) { }
 		}
 	}
 
-	private void runTasks() throws RestfulAPIException {
+	private void runTasks() throws IOException{
 		while (!valid.get()) {
-			boolean minecraftUpdate = isMinecraftUpdateAvailable();
-			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable();
+			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
+			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable(build);
 
 			if (minecraftUpdate) {
-				try {
-					updateMinecraft();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				updateMinecraft(build);
 			}
 			if (spoutcraftUpdate) {
-				try {
-					updateSpoutcraft();
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+				updateSpoutcraft(build);
 			}
 
 			updateAssets();
-			
+
 			//Download assets
 			if (cleaned.compareAndSet(false, true)) {
 				Resources.VIP.getYAML();
@@ -131,42 +133,26 @@ public class UpdateThread extends Thread {
 
 			Validator validate = new Validator();
 			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
-				validate.run();
+				validate.run(build);
 				valid.set(validate.isValid());
 			} else {
 				valid.set(true);
 			}
 		}
 
-		if (valid.get()) {
-			MinecraftClassLoader loader;
-			try {
-				loader = MinecraftLauncher.getClassLoader();
-				
-				int loaded = 0;
-				final int PRELOAD_PASS = 250;
-				while (true) {
-					if (waiting.get()) {
-						break;
-					}
-					int pass = loader.preloadClasses(PRELOAD_PASS);
-					loaded += pass;
-					// Less than the preload amount, so we are finished
-					if (pass != PRELOAD_PASS) {
-						break;
-					}
-				}
-				logger.info("Preloaded " + loaded + " classes in advance");
-			} catch (RestfulAPIException e) {
-				e.printStackTrace();
+		MinecraftClassLoader loader;
+		loader = MinecraftLauncher.getClassLoader(build.getLibraries());
+		
+		int loaded = 0;
+		while (!waiting.get()) {
+			int pass = loader.preloadClasses(PRELOAD_CLASSES);
+			loaded += pass;
+			// Less than the preload amount, so we are finished
+			if (pass != PRELOAD_CLASSES) {
+				break;
 			}
-		} else {
-			try {
-				sleep(100);
-			}
-			catch (InterruptedException ignore) { }
 		}
-
+		logger.info("Preloaded " + loaded + " classes in advance");
 		finished.set(true);
 	}
 
@@ -316,7 +302,7 @@ public class UpdateThread extends Thread {
 		return valid.get();
 	}
 
-	public boolean isSpoutcraftUpdateAvailable() throws RestfulAPIException {
+	public boolean isSpoutcraftUpdateAvailable(SpoutcraftData build) throws RestfulAPIException {
 		if (!Utils.getWorkingDirectory().exists()) {
 			return true;
 		}
@@ -324,18 +310,14 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 
-		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
 		List<Library> libraries = build.getLibraries();
 		int steps = libraries.size() + 2;
 		float progress = 100F;
 
-		if (build.getBuild() != build.getInstalledBuild()) {
-			return true;
-		}
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
 		progress += 100F;
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (!spoutcraft.exists()) {
+		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
 			return true;
 		}
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
@@ -355,7 +337,7 @@ public class UpdateThread extends Thread {
 		return false;
 	}
 
-	public boolean isMinecraftUpdateAvailable() {
+	public boolean isMinecraftUpdateAvailable(SpoutcraftData build) {
 		int steps = 7;
 		if (!Launcher.getGameUpdater().getBinDir().exists()) {
 			return true;
@@ -385,14 +367,13 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 600F / steps);
-		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
-		String installed = Resources.getInstalledVersion();
+		String installed = Settings.getInstalledMC();
 		stateChanged("Checking for Minecraft update...", 700F / steps);
 		String required = build.getMinecraftVersion();
 		return installed == null || !installed.equals(required);
 	}
 
-	public void updateMinecraft() throws IOException {
+	public void updateMinecraft(SpoutcraftData build) throws IOException {
 		Launcher.getGameUpdater().getBinDir().mkdir();
 		Launcher.getGameUpdater().getBinCacheDir().mkdir();
 		if (Launcher.getGameUpdater().getUpdateDir().exists()) {
@@ -400,12 +381,10 @@ public class UpdateThread extends Thread {
 		}
 		Launcher.getGameUpdater().getUpdateDir().mkdir();
 
-		String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT);
-		String jinputMD5 = MD5Utils.getMD5(FileType.JINPUT);
-		String lwjglMD5 = MD5Utils.getMD5(FileType.LWJGL);
-		String lwjgl_utilMD5 = MD5Utils.getMD5(FileType.LWJGL);
-
-		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+		String minecraftMD5 = FileType.MINECRAFT.getMD5();
+		String jinputMD5 = FileType.JINPUT.getMD5();
+		String lwjglMD5 = FileType.LWJGL.getMD5();
+		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
 		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
@@ -450,34 +429,33 @@ public class UpdateThread extends Thread {
 
 		stateChanged("Extracting Files...", 0);
 
-		Resources.setInstalledVersion(build.getMinecraftVersion());
+		Settings.setInstalledMC(build.getMinecraftVersion());
 	}
 
 	public String getNativesUrl() {
-		return Launcher.getGameUpdater().baseURL;
+		return GameUpdater.baseURL;
 	}
 
 	public void getNatives() throws IOException, UnsupportedOSException {
-		String fileName;
+		String url, md5;
 
 		OperatingSystem os = OperatingSystem.getOS();
 		if (os.isUnix()) {
-			fileName = "linux_natives";
+			url = LINUX_NATIVES_URL;
+			md5 = LINUX_NATIVES_MD5;
 		} else if (os.isMac()) {
-			fileName = "macosx_natives";
+			url = OSX_NATIVES_URL;
+			md5 = OSX_NATIVES_MD5;
 		} else if (os.isWindows()) {
-			fileName = "windows_natives";
+			url = WINDOWS_NATIVES_URL;
+			md5 = WINDOWS_NATIVES_MD5;
 		} else {
 			throw new UnsupportedOperationException("Unknown OS: " + os);
 		}
 
 		// Download natives
-		YAMLNode node = Resources.Libraries.getYAML().getNode(fileName);
-		String version = node.getString("recommended");
-		StringBuilder url = new StringBuilder().append("lib/").append(fileName).append("/").append(fileName).append("-").append(version).append(".jar");
-		String mirrorUrl = MirrorUtils.getMirrorUrl(url.toString(), MirrorUtils.getBaseURL() + url);
 		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
-		DownloadUtils.downloadFile(mirrorUrl, nativesJar.getPath(), null, node.getNode("versions").getString(version), listener);
+		DownloadUtils.downloadFile(url, nativesJar.getPath(), null, md5, listener);
 
 		// Extract natives
 		List<String> ignores = new ArrayList<String>();
@@ -487,9 +465,7 @@ public class UpdateThread extends Thread {
 		FileUtils.moveDirectory(tempNatives, new File(Launcher.getGameUpdater().getBinDir(), "natives"));
 	}
 
-	public void updateSpoutcraft() throws Exception {
-		//performBackup();
-		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
 		cleanupBinFoldersFor(build);
 
 		Launcher.getGameUpdater().getUpdateDir().mkdirs();
@@ -505,7 +481,7 @@ public class UpdateThread extends Thread {
 		}
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (spoutcraft.exists() && build.getInstalledBuild() > 0) {
+		if (spoutcraft.exists() && Integer.parseInt(build.getInstalledBuild()) > 0) {
 			// Save our installed copy
 			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
 			if (!spoutcraftCache.exists()) {
@@ -535,11 +511,10 @@ public class UpdateThread extends Thread {
 
 		List<Library> libraries = build.getLibraries();
 		for (Library lib : libraries) {
-			String name = lib.name();
 			File libraryFile = new File(libDir, lib.name() + ".jar");
 			if (libraryFile.exists()) {
 				String computedMD5 = MD5Utils.getMD5(libraryFile);
-				if (lib.valid(computedMD5)) {
+				if (!lib.valid(computedMD5)) {
 					logger.warning("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
 					libraryFile.delete();
 				}
@@ -549,11 +524,9 @@ public class UpdateThread extends Thread {
 				lib.download(libraryFile, listener);
 			}
 		}
-
-		build.install();
 	}
 
-	public void cleanupBinFoldersFor(SpoutcraftBuild build) {
+	public void cleanupBinFoldersFor(SpoutcraftData build) {
 		try {
 			if (!Launcher.getGameUpdater().getBinDir().exists()) {
 				return;

@@ -33,16 +33,15 @@ import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
-public class Validator implements Runnable {
+public class Validator{
 	private boolean passed = false;
 	private boolean errors = false;
 
-	public void run() {
+	public void run(SpoutcraftData build) {
 		Launcher.getGameUpdater().setStartValidationTime(System.currentTimeMillis());
 		try {
-			errors = !validate();
+			errors = !validate(build);
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 		}
@@ -55,8 +54,7 @@ public class Validator implements Runnable {
 	 * @return true on validation completion, false on failure
 	 * @throws RestfulAPIException 
 	 */
-	private boolean validate() throws RestfulAPIException {
-		SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
+	private boolean validate(SpoutcraftData build) throws RestfulAPIException {
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
 			if (!compareMD5s(build, FileType.MINECRAFT, minecraftJar)) {
@@ -150,12 +148,12 @@ public class Validator implements Runnable {
 		return errors;
 	}
 
-	private boolean compareMD5s(SpoutcraftBuild build, FileType type, File file) {
+	private boolean compareMD5s(SpoutcraftData build, FileType type, File file) {
 		return compareMD5s(type, build.getMinecraftVersion(), file);
 	}
 
 	private boolean compareMD5s(FileType type, String version, File file) {
-		String expected = MD5Utils.getMD5(type, version);
+		String expected = type.getMD5();
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
@@ -164,7 +162,7 @@ public class Validator implements Runnable {
 		return expected.equals(actual);
 	}
 
-	private boolean compareSpoutcraftMD5s(SpoutcraftBuild build, File file) {
+	private boolean compareSpoutcraftMD5s(SpoutcraftData build, File file) {
 		String expected = build.getMD5();
 		String actual = MD5Utils.getMD5(file);
 		debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);

@@ -26,14 +26,15 @@
  */
 package org.spoutcraft.launcher;
 
-import org.spoutcraft.launcher.api.Build;
+import java.io.IOException;
+
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.yml.Resources;
 
-public class GameUpdater extends SpoutcraftDirectories{
+public final class GameUpdater extends SpoutcraftDirectories{
 	public static final String baseURL = "http://s3.amazonaws.com/MinecraftDownload/";
 	public static final String latestLWJGLURL = "http://get.spout.org/lib/lwjgl/";
 	public static final String spoutcraftMirrors = "http://get.spout.org/mirrors.yml";
@@ -45,14 +46,17 @@ public class GameUpdater extends SpoutcraftDirectories{
 	private String minecraftSession = "";
 
 	private DownloadListener listener;
-	private Build spoutcraftBuild;
+	private SpoutcraftData build;
 	private long validationTime;
 	private UpdateThread updateThread;
 
-	public GameUpdater() {
-		updateThread = new UpdateThread(null);
-		updateThread.setDaemon(true);
-		spoutcraftBuild = Settings.getSpoutcraftBuild();
+	public GameUpdater() throws RestfulAPIException {
+		build = new SpoutcraftData();
+		updateThread = new UpdateThread(build, null);
+	}
+
+	public SpoutcraftData getBuild() {
+		return build;
 	}
 
 	public void start() {
@@ -68,22 +72,20 @@ public class GameUpdater extends SpoutcraftDirectories{
 	}
 
 	public void onSpoutcraftBuildChange() {
-		if (spoutcraftBuild != Settings.getSpoutcraftBuild()) {
-			spoutcraftBuild = Settings.getSpoutcraftBuild();
-			DownloadListener old = updateThread.getDownloadListener();
-			updateThread.setDownloadListener(null);
-			updateThread.interrupt();
-			MinecraftLauncher.resetClassLoader();
-			updateThread = new UpdateThread(old);
-			updateThread.setDaemon(true);
-			start();
+		SpoutcraftData prev = this.build;
+		try {
+			this.build = new SpoutcraftData();
+			if (!this.build.getBuild().equals(prev.getBuild())) {
+				DownloadListener old = updateThread.getDownloadListener();
+				updateThread.setDownloadListener(null);
+				updateThread.interrupt();
+				MinecraftLauncher.resetClassLoader();
+				updateThread = new UpdateThread(build, old);
+				start();
+			}
+		} catch (IOException e) {
+			Launcher.getLoginFrame().handleException(e);
 		}
-	}
-
-	public void clearVersionsInYMLs() {
-		Resources.Spoutcraft.getYAML().setProperty("current", "");
-		Resources.Spoutcraft.getYAML().save();
-		Resources.setInstalledVersion("");
 	}
 
 	public void setStartValidationTime(long validationTime) {

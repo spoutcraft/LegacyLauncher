@@ -29,12 +29,12 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 import org.spoutcraft.diff.JBPatch;
+import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.util.Download.Result;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftDownloadUtils {
-	public static void downloadMinecraft(String user, String output, SpoutcraftBuild build, DownloadListener listener) throws IOException {
+	public static void downloadMinecraft(String user, String output, SpoutcraftData build, DownloadListener listener) throws IOException {
 		int tries = 3;
 		File outputFile = null;
 		while (tries > 0) {
@@ -52,7 +52,8 @@ public class MinecraftDownloadUtils {
 					listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
 				}
 			} else {
-				String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getLatestMinecraftVersion());
+				String minecraftMD5 = FileType.MINECRAFT.getMD5();
+				//String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getLatestMinecraftVersion());
 				String resultMD5 = MD5Utils.getMD5(download.getOutFile());
 				System.out.println("Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
 				if (resultMD5.equals(minecraftMD5) || (minecraftMD5 == null && resultMD5 != null)) {
@@ -64,7 +65,8 @@ public class MinecraftDownloadUtils {
 							File patchedMinecraft = new File(Launcher.getGameUpdater().getUpdateDir(), "patched_minecraft.jar");
 							patchedMinecraft.delete();
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
-							minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getMinecraftVersion());
+							//minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getMinecraftVersion());
+							minecraftMD5 = FileType.MINECRAFT.getMD5();
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 
 							if (minecraftMD5.equals(resultMD5)) {

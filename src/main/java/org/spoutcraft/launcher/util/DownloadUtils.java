@@ -67,7 +67,7 @@ public class DownloadUtils {
 			}
 		}
 		if (outputFile == null) {
-			throw new IOException("Failed to download " + url);
+			throw new IOException("Failed to download " + url, download != null ? download.getException() : null);
 		}
 		if (cacheName != null) {
 			Utils.copy(outputFile, new File(Launcher.getGameUpdater().getBinCacheDir(), cacheName));

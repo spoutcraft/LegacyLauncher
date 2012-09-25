@@ -275,6 +275,10 @@ public final class StartupParameters {
 		return build;
 	}
 
+	public void setSpoutcraftBuild(int build) {
+		this.build = build;
+	}
+
 	public void setupProxy() {
 		Proxy proxy = new Proxy();
 		proxy.setHost(this.proxyHost);

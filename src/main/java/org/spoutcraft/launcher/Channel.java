@@ -3,7 +3,8 @@ package org.spoutcraft.launcher;
 public enum Channel {
 	STABLE(0),
 	BETA(1),
-	DEV(2);
+	DEV(2),
+	CUSTOM(3);
 
 	private final int type;
 

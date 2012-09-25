@@ -28,22 +28,16 @@ package org.spoutcraft.launcher.launch;
 
 import java.applet.Applet;
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.UnknownMinecraftException;
 import org.spoutcraft.launcher.rest.Library;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.SpoutcraftBuild;
 
 public class MinecraftLauncher {
 	private static MinecraftClassLoader loader = null;
-	public static MinecraftClassLoader getClassLoader() throws RestfulAPIException {
+	public static MinecraftClassLoader getClassLoader(List<Library> libraries) {
 		if (loader == null) {
 			File mcBinFolder = new File(Utils.getWorkingDirectory(), "bin");
 
@@ -52,9 +46,6 @@ public class MinecraftLauncher {
 			File jinputJar = new File(mcBinFolder, "jinput.jar");
 			File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 			File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
-
-			SpoutcraftBuild build = SpoutcraftBuild.getSpoutcraftBuild();
-			List<Library> libraries = build.getLibraries();
 
 			File[] files = new File[4 + libraries.size()];
 
@@ -85,11 +76,11 @@ public class MinecraftLauncher {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet() throws CorruptedMinecraftJarException, MinecraftVerifyException {
+	public static Applet getMinecraftApplet(List<Library> libraries) throws CorruptedMinecraftJarException, MinecraftVerifyException {
 		File mcBinFolder = new File(Utils.getWorkingDirectory(), "bin");
 
 		try {
-			ClassLoader classLoader = getClassLoader();
+			ClassLoader classLoader = getClassLoader(libraries);
 
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);

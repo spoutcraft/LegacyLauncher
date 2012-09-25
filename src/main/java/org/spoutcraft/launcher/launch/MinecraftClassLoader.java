@@ -52,7 +52,6 @@ import java.util.zip.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
-import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {

@@ -26,10 +26,10 @@
  */
 package org.spoutcraft.launcher;
 
-import org.spoutcraft.launcher.api.Build;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Settings {
+	public static final String DEFAULT_MINECRAFT_VERSION = "Latest";
 	private static YAMLProcessor yaml;
 
 	public static synchronized void setYAML(YAMLProcessor settings) {
@@ -80,24 +80,12 @@ public class Settings {
 		yaml.setProperty("launcher.launcher.debug", b ? 1 : 0);
 	}
 
-	public static synchronized int getSpoutcraftSelectedBuild() {
-		return yaml.getInt("launcher.client.buildNumber", -1);
+	public static synchronized String getSpoutcraftSelectedBuild() {
+		return yaml.getString("launcher.client.buildNumber", "-1");
 	}
 
-	public static synchronized void setSpoutcraftSelectedBuild(int build) {
+	public static synchronized void setSpoutcraftSelectedBuild(String build) {
 		yaml.setProperty("launcher.client.buildNumber", build);
-	}
-
-	public static synchronized Build getSpoutcraftBuild() {
-		return Build.getValue(yaml.getString("launcher.client.build", "RECOMMENDED"));
-	}
-
-	private static synchronized void setSpoutcraftBuild(String build) {
-		yaml.setProperty("launcher.client.build", build);
-	}
-
-	public static synchronized void setSpoutcraftBuild(Build build) {
-		setSpoutcraftBuild(build.name());
 	}
 
 	public static synchronized int getMemory() {
@@ -166,5 +154,29 @@ public class Settings {
 	
 	public static synchronized void setWindowModeId(int id) {
 		yaml.setProperty("launcher.windowmode", id);
+	}
+
+	public static synchronized String getMinecraftVersion() {
+		return yaml.getString("launcher.mc", DEFAULT_MINECRAFT_VERSION);
+	}
+
+	public static synchronized void setMinecraftVersion(String version) {
+		yaml.setProperty("launcher.mc", version);
+	}
+
+	public static synchronized String getDirectJoin() {
+		return yaml.getString("launcher.client.server", null);
+	}
+
+	public static synchronized void setDirectJoin(String server) {
+		yaml.setProperty("launcher.client.server", server);
+	}
+
+	public static synchronized String getInstalledMC() {
+		return yaml.getString("launcher.client.minecraft", null);
+	}
+
+	public static synchronized void setInstalledMC(String version) {
+		yaml.setProperty("launcher.client.minecraft", version);
 	}
 }

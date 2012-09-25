@@ -1,12 +1,25 @@
 package org.spoutcraft.launcher.skin;
 
-import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URL;
-import javax.swing.*;
+import java.util.List;
+
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
@@ -17,8 +30,11 @@ import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.WindowMode;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 
 @SuppressWarnings({ "restriction", "rawtypes", "unchecked" })
 public class OptionsMenu extends JDialog implements ActionListener{
@@ -27,6 +43,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 	private static final String CANCEL_ACTION = "cancel";
 	private static final String RESET_ACTION = "reset";
 	private static final String SAVE_ACTION = "save";
+	private static final String SPOUTCRAFT_CHANNEL_ACTION = "spoutcraft_channel";
 	private JTabbedPane mainOptions;
 	private JPanel gamePane;
 	private JLabel spoutcraftVersionLabel;
@@ -38,7 +55,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 	private JPanel proxyPane;
 	private JLabel proxyHostLabel;
 	private JLabel proxyPortLabel;
-	private JLabel proxyUsername;
+	private JLabel proxyUsernameLabel;
 	private JLabel passwordLabel;
 	private JTextField proxyHost;
 	private JTextField proxyPort;
@@ -88,12 +105,70 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		
 		Settings.setSpoutcraftChannel(populateChannelVersion(spoutcraftVersion, Settings.getSpoutcraftChannel().type()));
 		Settings.setLauncherChannel(populateChannelVersion(launcherVersion, Settings.getLauncherChannel().type()));
-		
-		for (String version : Versions.getMinecraftVersions()) {
-			this.minecraftVersion.addItem(version);
-		}
-		
+		populateMinecraftVersions(minecraftVersion);
+		populateSpoutcraftBuilds(buildCombo);
 		Settings.setWindowModeId(populateWindowMode(windowMode));
+		
+		spoutcraftVersion.addActionListener(this);
+		spoutcraftVersion.setActionCommand(SPOUTCRAFT_CHANNEL_ACTION);
+		updateBuildList();
+		
+		directJoin.setText(Settings.getDirectJoin());
+	}
+	
+	private boolean isValidDeveloperCode() {
+		return true;
+	}
+
+	private void populateSpoutcraftBuilds(JComboBox builds) {
+		if (!isValidDeveloperCode()) {
+			return;
+		}
+		try {
+			List<SpoutcraftBuild> buildList = SpoutcraftBuild.getBuildList();
+			for (SpoutcraftBuild build : buildList) {
+				builds.addItem(build);
+			}
+			String selected = Settings.getSpoutcraftSelectedBuild();
+			for (int i = 0; i < buildList.size(); i++) {
+				if (buildList.get(i).getBuildNumber().equals(selected)) {
+					builds.setSelectedIndex(i);
+					break;
+				}
+			}
+		} catch (RestfulAPIException e) {
+			builds.setEnabled(false);
+			builds.setToolTipText("Error retrieving build list");
+			e.printStackTrace();
+		}
+	}
+	
+	private String getSelectedSpoutcraftBuild() {
+		if (Channel.getType(spoutcraftVersion.getSelectedIndex()) == Channel.CUSTOM) {
+			return ((SpoutcraftBuild)buildCombo.getSelectedItem()).getBuildNumber();
+		}
+		return "-1";
+	}
+
+	private void populateMinecraftVersions(JComboBox minecraftVersion) {
+		final String selected = Settings.getMinecraftVersion();
+		minecraftVersion.addItem("Latest");
+		for (String version : Versions.getMinecraftVersions()) {
+			minecraftVersion.addItem(version);
+		}
+		boolean found = false;
+		for (int i = 0; i < minecraftVersion.getItemCount(); i++) {
+			String item = minecraftVersion.getItemAt(i).toString();
+			if (item.equalsIgnoreCase(selected)) {
+				minecraftVersion.setSelectedIndex(i);
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			Settings.setMinecraftVersion(Settings.DEFAULT_MINECRAFT_VERSION);
+			minecraftVersion.setSelectedIndex(0);
+		}
 	}
 	
 	private int populateWindowMode(JComboBox window) {
@@ -111,8 +186,9 @@ public class OptionsMenu extends JDialog implements ActionListener{
 	private Channel populateChannelVersion(JComboBox version, int selection) {
 		version.addItem("Stable");
 		version.addItem("Beta");
-		if (Settings.getDeveloperCode().length() > 0) {
+		if (isValidDeveloperCode()) {
 			version.addItem("Dev");
+			version.addItem("Custom");
 		} else if (selection > 1 || selection < 0) {
 			selection = 0;
 		}
@@ -155,14 +231,6 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		}
 
 		int memoryOption = Settings.getMemory();
-
-		if (memoryOption < 0 || memoryOption > Memory.memoryOptions.length){
-			memoryOption = 0;
-		}
-		if (Memory.memoryOptions[memoryOption].getMemoryMB() > maxMemory) {
-			memoryOption = 0;
-		}
-
 		try {
 			Settings.setMemory(memoryOption);
 			memory.setSelectedIndex(Memory.getMemoryIndexFromId(memoryOption));
@@ -184,16 +252,23 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		} else if (command.equals(RESET_ACTION)) {
 			
 		} else if (command.equals(SAVE_ACTION)) {
+			Channel prev = Settings.getSpoutcraftChannel();
+			String build = Settings.getSpoutcraftSelectedBuild();
+
+			//Save
 			Settings.setLauncherChannel(Channel.getType(launcherVersion.getSelectedIndex()));
 			Settings.setSpoutcraftChannel(Channel.getType(spoutcraftVersion.getSelectedIndex()));
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
 			Settings.setDebugMode(debugMode.isSelected());
 			Settings.setIgnoreMD5(md5Checkbox.isSelected());
 			Settings.setWindowModeId(windowMode.getSelectedIndex());
+			Settings.setMinecraftVersion(minecraftVersion.getSelectedItem().toString());
+			Settings.setSpoutcraftSelectedBuild(getSelectedSpoutcraftBuild());
 			Settings.setProxyHost(this.proxyHost.getText());
 			Settings.setProxyPort(this.proxyPort.getText());
-			Settings.setProxyUsername(this.proxyUsername.getText());
+			Settings.setProxyUsername(this.proxyUser.getText());
 			Settings.setProxyPassword(this.proxyPass.getPassword());
+			Settings.setDirectJoin(this.directJoin.getText());
 			Proxy proxy = new Proxy();
 			proxy.setHost(Settings.getProxyHost());
 			proxy.setPort(Settings.getProxyPort());
@@ -202,6 +277,21 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			proxy.setup();
 			Settings.getYAML().save();
 			closeForm();
+
+			//Inform the updating thread
+			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild())) {
+				Launcher.getGameUpdater().onSpoutcraftBuildChange();
+			}
+		} else if (command.equals(SPOUTCRAFT_CHANNEL_ACTION)) {
+			updateBuildList();
+		}
+	}
+
+	private void updateBuildList() {
+		if (Channel.CUSTOM == Channel.getType(spoutcraftVersion.getSelectedIndex())) {
+			buildCombo.setEnabled(true);
+		} else {
+			buildCombo.setEnabled(false);
 		}
 	}
 
@@ -225,7 +315,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		proxyPane = new JPanel();
 		proxyHostLabel = new JLabel();
 		proxyPortLabel = new JLabel();
-		proxyUsername = new JLabel();
+		proxyUsernameLabel = new JLabel();
 		passwordLabel = new JLabel();
 		proxyHost = new JTextField();
 		proxyPort = new JTextField();
@@ -291,8 +381,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 				//---- windowMode ----
 				windowMode.setFont(new Font("Arial", Font.PLAIN, 11));
 				windowMode.setToolTipText("<html>Windowed - Starts the game in a smaller 900x540 window<br/>" +
-											"Full Screen - Starts the game using the full monitor resolution, but not maximized<br/>" +
-											"Maximized - Starts the game using full monitor resolution and maximized</html>");
+											"Full Screen - Starts the game using the full monitor resolution, ontop.<br/>" +
+											"Maximized - Starts the game with the maximimum size</html>");
 
 				GroupLayout gamePaneLayout = new GroupLayout(gamePane);
 				gamePane.setLayout(gamePaneLayout);
@@ -356,8 +446,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 				proxyPortLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- proxyUsername ----
-				proxyUsername.setText("Username:");
-				proxyUsername.setFont(new Font("Arial", Font.PLAIN, 11));
+				proxyUsernameLabel.setText("Username:");
+				proxyUsernameLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- passwordLabel ----
 				passwordLabel.setText("Password:");
@@ -388,7 +478,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 							.add(proxyPaneLayout.createParallelGroup()
 								.add(proxyPortLabel)
 								.add(proxyHostLabel)
-								.add(proxyUsername)
+								.add(proxyUsernameLabel)
 								.add(passwordLabel))
 							.addPreferredGap(LayoutStyle.UNRELATED)
 							.add(proxyPaneLayout.createParallelGroup()
@@ -411,7 +501,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 								.add(proxyPort, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(LayoutStyle.UNRELATED)
 							.add(proxyPaneLayout.createParallelGroup(GroupLayout.BASELINE)
-								.add(proxyUsername)
+								.add(proxyUsernameLabel)
 								.add(proxyUser, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 							.addPreferredGap(LayoutStyle.RELATED)
 							.add(proxyPaneLayout.createParallelGroup(GroupLayout.BASELINE)

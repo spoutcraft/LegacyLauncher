@@ -44,6 +44,10 @@ public final class Versions {
 		return versions;
 	}
 
+	public static synchronized String getLatestMinecraftVersion() {
+		return getMinecraftVersions().get(0);
+	}
+
 	private static class Channel {
 		@JsonProperty("release_channel")
 		private ChannelType releaseChannel;

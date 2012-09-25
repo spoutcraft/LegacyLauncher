@@ -30,17 +30,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.apache.commons.codec.digest.DigestUtils;
 
-import org.spoutcraft.launcher.yml.Resources;
-import org.spoutcraft.launcher.yml.YAMLProcessor;
-
 public class MD5Utils {
-	private static final Logger logger = Logger.getLogger("launcher");
 	public static String getMD5(File file) {
 		try {
 			FileInputStream fis = new FileInputStream(file);
@@ -51,33 +43,6 @@ public class MD5Utils {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-		return null;
-	}
-
-	public static String getMD5(FileType type) {
-		return getMD5(type, Resources.getLatestMinecraftVersion());
-	}
-
-	public static String getMD5(FileType type, String version) {
-		String md5 = getMD5Internal(type, version);
-		if (md5 == null) {
-			logger.log(Level.WARNING, "No MD5 Information found for filetype " + type.name() + ", for minecraft version: " + version);
-		}
-		return md5;
-	}
-
-	@SuppressWarnings("unchecked")
-	private static String getMD5Internal(FileType type, String version) {
-		YAMLProcessor config = Resources.Minecraft.getYAML();
-		try {
-			Map<String, Object> versions = (Map<String, Object>) config.getProperty("versions");
-			Map<String, Object> map = (Map<String, Object>) versions.get(version);
-			return (String) map.get(type.toString());
-		} catch (NullPointerException npe) {
-			logger.log(Level.SEVERE, "MD5 Configuration was not populated!", npe);
-		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Failed to read md5", e);
 		}
 		return null;
 	}

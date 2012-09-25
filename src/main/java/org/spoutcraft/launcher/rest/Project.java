@@ -12,7 +12,7 @@ public class Project{
 	private final String fileType;
 	private final String md5;
 	@JsonCreator
-	public Project(@JsonProperty("project") String project, @JsonProperty("release_channel") int releaseChannel, @JsonProperty("build") int build, @JsonProperty("version") String version, @JsonProperty("fileName") String fileName, @JsonProperty("file_type") String fileType, @JsonProperty("hash") String md5) {
+	public Project(@JsonProperty("project") String project, @JsonProperty("release_channel") int releaseChannel, @JsonProperty("build") int build, @JsonProperty("version") String version, @JsonProperty("file_name") String fileName, @JsonProperty("file_type") String fileType, @JsonProperty("hash") String md5) {
 		this.project = project;
 		this.releaseChannel = releaseChannel;
 		this.build = build;

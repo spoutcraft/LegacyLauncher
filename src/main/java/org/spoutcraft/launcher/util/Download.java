@@ -47,6 +47,7 @@ public class Download implements Runnable {
 	private DownloadListener listener;
 	private Result result = Result.FAILURE;
 	private File outFile = null;
+	private Exception exception = null;;
 
 	public Download(String url, String outPath) throws MalformedURLException {
 		this.url = new URL(url);
@@ -55,6 +56,10 @@ public class Download implements Runnable {
 
 	public float getProgress() {
 		return ((float) downloaded / size) * 100;
+	}
+	
+	public Exception getException() {
+		return exception;
 	}
 
 	@SuppressWarnings("unused")
@@ -73,7 +78,7 @@ public class Download implements Runnable {
 			int response = ((HttpURLConnection)conn).getResponseCode();
 			InputStream in = getConnectionInputStream(conn);
 
-			size = conn.getContentLength();
+			size = conn.getContentLengthLong();
 			outFile = new File(outPath);
 			outFile.delete();
 
@@ -97,10 +102,13 @@ public class Download implements Runnable {
 				result = Result.SUCCESS;
 			}
 		} catch (PermissionDeniedException e) {
+			exception = e;
 			result = Result.PERMISSION_DENIED;
 		} catch (DownloadException e) {
+			exception = e;
 			result = Result.FAILURE;
 		} catch (Exception e) {
+			exception = e;
 			e.printStackTrace();
 		} finally {
 			IOUtils.closeQuietly(fos);
