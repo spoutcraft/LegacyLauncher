@@ -112,7 +112,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		spoutcraftVersion.addActionListener(this);
 		spoutcraftVersion.setActionCommand(SPOUTCRAFT_CHANNEL_ACTION);
 		updateBuildList();
-		
+		this.md5Checkbox.setSelected(Settings.isIgnoreMD5());
+		this.debugMode.setSelected(Settings.isDebugMode());
 		directJoin.setText(Settings.getDirectJoin());
 	}
 	

@@ -214,7 +214,12 @@ public final class SpoutcraftData {
 		try {
 			URLConnection conn = (new URL(url)).openConnection();
 			stream = conn.getInputStream();
-			List<Library> libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, LibraryWrapper.class).spoutcraft));
+			List<Library> libs;
+			try {
+				libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, LibraryWrapper.class).spoutcraft));
+			} catch (IOException e) {
+				libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, Library[].class)));
+			}
 			Iterator<Library> i = libs.iterator();
 			//Handled separately
 			while(i.hasNext()) {
