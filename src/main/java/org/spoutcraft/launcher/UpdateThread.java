@@ -520,7 +520,13 @@ public class UpdateThread extends Thread {
 					libraryFile.delete();
 				}
 			}
-
+			File cachedLibraryFile = new File(cacheDir, lib.name() + ".jar");
+			if (cachedLibraryFile.exists()) {
+				String computedMD5 = MD5Utils.getMD5(cachedLibraryFile);
+				if (lib.valid(computedMD5)) {
+					Utils.copy(cachedLibraryFile, libraryFile);
+				}
+			}
 			if (!libraryFile.exists()) {
 				lib.download(libraryFile, listener);
 			}

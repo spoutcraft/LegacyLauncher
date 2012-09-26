@@ -31,10 +31,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
@@ -211,11 +214,27 @@ public final class SpoutcraftData {
 		try {
 			URLConnection conn = (new URL(url)).openConnection();
 			stream = conn.getInputStream();
-			return Arrays.asList(mapper.readValue(stream, Library[].class));
+			List<Library> libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, LibraryWrapper.class).spoutcraft));
+			Iterator<Library> i = libs.iterator();
+			//Handled separately
+			while(i.hasNext()) {
+				Library lib = i.next();
+				if (lib.name().contains("lwjgl")) {
+					i.remove();
+				}
+			}
+			return libs;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing url [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
+	}
+	
+	private static class LibraryWrapper {
+		@JsonProperty("spoutcraft")
+		Library[] spoutcraft;
+		@JsonProperty("minecraft")
+		Library[] minecraft;
 	}
 }
