@@ -214,11 +214,20 @@ public final class SpoutcraftData {
 		try {
 			URLConnection conn = (new URL(url)).openConnection();
 			stream = conn.getInputStream();
+			List<String> json = IOUtils.readLines(stream);
+			String fullJson = "";
+			for (String j : json) {
+				fullJson += j;
+			}
 			List<Library> libs;
 			try {
-				libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, LibraryWrapper.class).spoutcraft));
+				libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(fullJson, LibraryWrapper.class).spoutcraft));
 			} catch (IOException e) {
-				libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(stream, Library[].class)));
+				try {
+					libs = new ArrayList<Library>(Arrays.asList(mapper.readValue(fullJson, Library[].class)));
+				} catch (IOException e2) {
+					throw e;
+				}
 			}
 			Iterator<Library> i = libs.iterator();
 			//Handled separately
