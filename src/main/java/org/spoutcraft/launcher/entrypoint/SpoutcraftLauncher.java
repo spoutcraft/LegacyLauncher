@@ -149,7 +149,7 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the Launcher and load login frame
-		LoginFrame frame = new MetroLoginFrame();//new LegacyLoginFrame();
+		LoginFrame frame = new LegacyLoginFrame();
 		try {
 			@SuppressWarnings("unused")
 			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
