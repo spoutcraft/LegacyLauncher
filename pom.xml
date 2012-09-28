@@ -41,21 +41,21 @@
 
 	<!-- Source code access -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:spoutdev/spoutcraftlauncher.git</developerConnection>
-		<connection>scm:git:git://github.com/spoutdev/spoutcraftlauncher.git</connection>
-		<url>https://github.com/spoutdev/spoutcraftlauncher</url>
+		<developerConnection>scm:git:git@github.com:SpoutDev/SpoutcraftLauncher.git</developerConnection>
+		<connection>scm:git:git://github.com/SpoutDev/SpoutcraftLauncher.git</connection>
+		<url>https://github.com/SpoutDev/SpoutcraftLauncher</url>
 	</scm>
 
 	<!-- Build server -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://build.spout.org/job/spoutcraftlauncher</url>
+		<url>http://build.spout.org/job/SpoutcraftLauncher</url>
 	</ciManagement>
 
 	<!-- Issue tracker -->
 	<issueManagement>
 		<system>jira</system>
-		<url>http://issues.spout.org/browse/spoutcraftlauncher</url>
+		<url>http://issues.spout.org/browse/SpoutcraftLauncher</url>
 	</issueManagement>
 
 	<!-- Dependency repositories -->
@@ -319,6 +319,9 @@
 									<excludes>
 										<exclude>META-INF/*.txt</exclude>
 										<exclude>META-INF/info.xml</exclude>
+										<exclude>META-INF/ASL2.0</exclude>
+										<exclude>META-INF/LICENSE</exclude>
+										<exclude>META-INF/NOTICE</exclude>
 									</excludes>
 								</filter>
 							</filters>
@@ -350,9 +353,11 @@
 				</executions>
 			</plugin>
 		</plugins>
+
+		<!-- Plugin management -->
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!-- Eclipse exclusions -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
@@ -362,21 +367,15 @@
 							<pluginExecutions>
 								<pluginExecution>
 									<pluginExecutionFilter>
-										<groupId>
-											com.sourcesense.maven
-										</groupId>
-										<artifactId>
-											maven-nosnapshot-plugin
-										</artifactId>
-										<versionRange>
-											[0.0.7,)
-										</versionRange>
+										<groupId>com.sourcesense.maven</groupId>
+										<artifactId>maven-nosnapshot-plugin</artifactId>
+										<versionRange>[0.0.7-SNAPSHOT,)</versionRange>
 										<goals>
 											<goal>strip</goal>
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<ignore/>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>

@@ -60,6 +60,7 @@ nb-configuration.xml
 *.iml
 *.ipr
 *.iws
+*.jfd
 
 # Misc files #
 ##############

@@ -15,7 +15,7 @@ Copyright (c) 2011-2012, SpoutDev <<http://www.spout.org/>>
 
 ## Getting the Source
 The latest and greatest source can be found on [GitHub].  
-Download the latest builds from [Jenkins]. [![Build Status](http://build.spout.org/job/spoutcraftlauncher/badge/icon)][Jenkins]
+Download the latest builds from [Jenkins]. [![Build Status](http://build.spout.org/job/SpoutcraftLauncher/badge/icon)][Jenkins]
 
 ## Compiling the Source
 Spoutcraft Launcher uses Maven to handle its dependencies.
@@ -42,8 +42,8 @@ Spoutcraft Launcher uses Maven to handle its dependencies.
 [License]: http://www.spout.org/SpoutDevLicenseV1.txt
 [Website]: http://www.spout.org
 [Forums]: http://forums.spout.org
-[GitHub]: https://github.com/spoutdev/spoutcraftlauncher
-[Jenkins]: http://build.spout.org/job/spoutcraftlauncher
+[GitHub]: https://github.com/SpoutDev/SpoutcraftLauncher
+[Jenkins]: http://build.spout.org/job/SpoutcraftLauncher
 [Issues]: http://issues.spout.org/browse/spoutcraft
 [Twitter]: http://spout.in/twitter
 [Twitter Logo]: http://cdn.spout.org/img/button/twitter_follow_us.png
