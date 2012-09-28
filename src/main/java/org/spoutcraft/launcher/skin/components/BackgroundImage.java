@@ -62,21 +62,23 @@ public class BackgroundImage extends JLabel {
 
 	private BufferedImage getBackgroundImage() {
 		final List<File> images = new ArrayList<File>();
-		final String prefix = getTimeFolder();
-		File backgroundDir = new File(Utils.getAssetsDirectory(), prefix);
-		for (File f : backgroundDir.listFiles()) {
-			if (f.getName().endsWith(".png") || f.getName().endsWith(".jpg")) {
-				images.add(f);
+		File backgroundDir = new File(new File(Utils.getAssetsDirectory(), "background"), getTimeFolder());
+		if (backgroundDir.exists()) {
+			for (File f : backgroundDir.listFiles()) {
+				if (f.getName().endsWith(".png") || f.getName().endsWith(".jpg")) {
+					images.add(f);
+				}
 			}
 		}
-		int bgIndex = (new Random()).nextInt(images.size());
 		InputStream stream = null;
 		BufferedImage image;
 		try {
 			try {
-				stream = new FileInputStream(images.get(bgIndex));
-			} catch (IOException io) {
-				io.printStackTrace();
+				stream = new FileInputStream(images.get((new Random()).nextInt(images.size())));
+			} catch (Exception io) {
+				if (images.size() > 0) {
+					io.printStackTrace();
+				}
 				stream = ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/evening1.png");
 			}
 			image = ImageIO.read(stream);

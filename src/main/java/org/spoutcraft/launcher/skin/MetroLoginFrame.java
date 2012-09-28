@@ -43,6 +43,7 @@ import javax.swing.*;
 
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
@@ -56,10 +57,12 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 	private DynamicButton user;
 	private LiteTextBox name;
 	private LiteTextBox pass;
+	private HyperlinkJLabel home;
 	public MetroLoginFrame() {
 		initComponents();
 		this.addWindowListener(this);
-		this.addKeyListener(this);
+		name.addKeyListener(this);
+		pass.addKeyListener(this);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
@@ -69,17 +72,20 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 	private void initComponents() {
 		user = new DynamicButton(getImage("Afforess"), 44);
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(200, 100, 140, 24);
+		name.setBounds(622, 426, 140, 24);
 		pass = new LiteTextBox(this, "Password...");
-		pass.setBounds(200, 130, 140, 24);
-		Font minecraft = null;
-		try {
-			minecraft = Font.createFont(Font.TRUETYPE_FONT, ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont(12F);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		pass.setBounds(622, 455, 140, 24);
+		Font minecraft = getMinecraftFont(12);
 		name.setFont(minecraft);
 		pass.setFont(minecraft);
+		
+		home = new HyperlinkJLabel("Home", "http://www.spout.org/");
+		
+		home.setFont(minecraft.deriveFont((float)20));
+		home.setBounds(630, 65, 75, 24);
+		home.setForeground(Color.WHITE);
+		home.setOpaque(false);
+		home.setTransparency(0.80F);
 		
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
 		steam.setToolTipText("Game with us on Steam");
@@ -125,6 +131,7 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(facebook);
 		contentPane.add(twitter);
 		contentPane.add(paypal);
+		contentPane.add(home);
 		user.setBounds(300, 200, 75, 75);
 	}
 
@@ -205,8 +212,8 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		
 	}
 
-	int dx, dy;
 	public void keyPressed(KeyEvent e) {
+		int dx = 0, dy = 0;
 		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
 			dx--;
 		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
@@ -217,8 +224,9 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			dy++;
 		}
-		name.setBounds(name.getX() + dx, name.getY() + dy, name.getWidth(), name.getHeight());
-		System.out.println("Name pos: " + name.getX() + ", " + name.getY());
+		JComponent c = home;//(JComponent) e.getComponent();
+		c.setBounds(c.getX() + dx, c.getY() + dy, c.getWidth(), c.getHeight());
+		System.out.println("Icon pos: " + c.getX() + ", " + c.getY());
 	}
 
 	public void keyReleased(KeyEvent e) {

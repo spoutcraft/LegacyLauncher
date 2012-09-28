@@ -45,6 +45,11 @@ import org.spoutcraft.launcher.util.Utils;
 public class Start {
 	
 	public static void main(String[] args) throws Exception{
+		//Text for local build (not official build)
+		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
+			SpoutcraftLauncher.main(args);
+			return;
+		}
 		//Test for exe relaunch
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
 		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {

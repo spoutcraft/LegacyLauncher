@@ -306,7 +306,7 @@ public class SpoutcraftLauncher {
 	}
 
 	public static String getLauncherBuild() {
-		String build = "-1";
+		String build = "0";
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
 		} catch (Exception e) {

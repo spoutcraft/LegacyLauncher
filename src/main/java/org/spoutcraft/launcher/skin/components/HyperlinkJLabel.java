@@ -26,19 +26,13 @@
  */
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.Cursor;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
-import javax.swing.JLabel;
 
-public class HyperlinkJLabel extends JLabel implements MouseListener {
+public class HyperlinkJLabel extends TransparentJLabel implements MouseListener {
 	private static final long serialVersionUID = -3801443131566852907L;
 	private String url;
-
-	public HyperlinkJLabel() {
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-	}
 
 	public void mouseClicked(MouseEvent arg0) {
 		try {
