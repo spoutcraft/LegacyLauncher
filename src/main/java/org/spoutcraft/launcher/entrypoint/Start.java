@@ -33,24 +33,23 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
+
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public class Start {
-	
 	public static void main(String[] args) throws Exception{
-		//Text for local build (not official build)
+		// Text for local build (not official build)
 		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
 			SpoutcraftLauncher.main(args);
 			return;
 		}
-		//Test for exe relaunch
+		// Test for exe relaunch
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
 		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
 			String[] argsCopy = new String[args.length - 1];
@@ -64,7 +63,7 @@ public class Start {
 			}
 			return;
 		}
-		
+
 		migrateFolders();
 
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
@@ -82,7 +81,7 @@ public class Start {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
 			}
-			
+
 			ProgressSplashScreen splash = new ProgressSplashScreen();
 			Download download;
 			if (codeSource.getName().endsWith(".exe")) {
@@ -93,7 +92,7 @@ public class Start {
 
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
-			
+
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
 			if (!codeSource.getName().endsWith(".exe")) {

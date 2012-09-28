@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.io.IOUtils;
+
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
 
@@ -57,7 +58,7 @@ public class Download implements Runnable {
 	public float getProgress() {
 		return ((float) downloaded / size) * 100;
 	}
-	
+
 	public Exception getException() {
 		return exception;
 	}
@@ -165,7 +166,7 @@ public class Download implements Runnable {
 	public File getOutFile() {
 		return outFile;
 	}
-	
+
 	private static class StreamThread extends Thread {
 		private final URLConnection urlconnection;
 		private final AtomicReference<InputStream> is;
@@ -185,7 +186,7 @@ public class Download implements Runnable {
 			} catch (IOException ignore) { }
 		}
 	}
-	
+
 	private class MonitorThread extends Thread {
 		private final ReadableByteChannel rbc;
 		private final Thread downloadThread;
@@ -226,7 +227,7 @@ public class Download implements Runnable {
 			}
 		}
 	}
-	
+
 	public enum Result {
 		SUCCESS,
 		FAILURE,

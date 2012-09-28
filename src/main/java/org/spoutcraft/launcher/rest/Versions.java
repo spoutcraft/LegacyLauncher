@@ -49,7 +49,7 @@ public final class Versions {
 				stream = conn.getInputStream();
 				ObjectMapper mapper = new ObjectMapper();
 				Channel c = mapper.readValue(stream, Channel.class);
-				
+
 				Set<String> versions = new HashSet<String>();
 				for (Version version : c.releaseChannel.stable) {
 					versions.add(version.version);
@@ -93,5 +93,3 @@ public final class Versions {
 		private String version;
 	}
 }
-
-

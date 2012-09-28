@@ -81,7 +81,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private static final String FORGET_1_ACTION = "Forget1";
 	private static final String FORGET_2_ACTION = "Forget2";
 	private static final URL spoutcraftLogo = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
-	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
+	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPane = new JPanel();
 	private final Container loginPane = new Container();
@@ -110,7 +110,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private final Font arial14 = new Font("Arial", Font.PLAIN, 14);
 	private final Font minecraft12 = getMinecraftFont(12);
 
-	public LegacyLoginFrame() {		
+	public LegacyLoginFrame() {
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		int width, height;
 		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
@@ -175,14 +175,14 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		options.setBorderPainted(false);
 		options.setActionCommand("Options");
 		options.addActionListener(this);
-		
+
 		optionsLabel.setFont(arial11);
 		optionsLabel.setHorizontalAlignment(SwingConstants.RIGHT);
 		optionsLabel.setBounds(216, 90, 100, 30);
-		
+
 		player1Name = new JLabel();
 		player1Name.setFont(minecraft12);
-		
+
 		player2Name = new JLabel();
 		player2Name.setFont(minecraft12);
 
@@ -228,7 +228,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 				usernameField.addItem(user);
 			}
 		}
-		
+
 		player1Name.setHorizontalAlignment(SwingConstants.CENTER);
 		player1Name.setBounds(72, 144, 119, 23);
 		player2Name.setHorizontalAlignment(SwingConstants.CENTER);
@@ -373,27 +373,27 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(true);
 		thread = new ForgetThread();
 		thread.start();
-		
+
 		if (Main.isOldLauncher()) {
 			showOutdatedWarning();
 		}
 		System.out.println("Is old launcher: " + Main.isOldLauncher());
 	}
 	private void showOutdatedWarning() {
-	    JLabel label = new JLabel();
-	    label.setFont(arial12);
-	
-	    StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-	    style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-	    style.append("font-size:" + arial12.getSize() + "pt;");
-	
-	    JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">" 
-	            + "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a>"
-	            + "<br/>This launcher will continue to work for only a short time longer.</body></html>");
-	
-	    ep.addHyperlinkListener(new HyperlinkListener() {
-	        public void hyperlinkUpdate(HyperlinkEvent e) {
-	            if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
+		JLabel label = new JLabel();
+		label.setFont(arial12);
+
+		StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
+		style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
+		style.append("font-size:" + arial12.getSize() + "pt;");
+
+		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
+				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a>"
+				+ "<br/>This launcher will continue to work for only a short time longer.</body></html>");
+
+		ep.addHyperlinkListener(new HyperlinkListener() {
+			public void hyperlinkUpdate(HyperlinkEvent e) {
+				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
 					try {
 						Desktop.getDesktop().browse(e.getURL().toURI());
 					} catch (IOException e1) {
@@ -401,12 +401,12 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 					} catch (URISyntaxException e1) {
 						e1.printStackTrace();
 					}
-	        }
-	    });
-	    ep.setEditable(false);
-	    ep.setBackground(label.getBackground());
+			}
+		});
+		ep.setEditable(false);
+		ep.setBackground(label.getBackground());
 
-	    JOptionPane.showMessageDialog(this, ep);
+		JOptionPane.showMessageDialog(this, ep);
 	}
 
 	@Override

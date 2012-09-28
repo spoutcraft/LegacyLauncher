@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
+
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public class Mover {
-
 	public static void main(String[] args) {
 		main(args, false);
 	}
@@ -64,7 +64,7 @@ public class Mover {
 			IOUtils.closeQuietly(fis);
 			IOUtils.closeQuietly(fos);
 		}
-		
+
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		ArrayList<String> commands = new ArrayList<String>();
 		if (!exe) {
@@ -91,5 +91,4 @@ public class Mover {
 		}
 		System.exit(0);
 	}
-
 }

@@ -51,6 +51,7 @@ import javax.swing.event.DocumentListener;
 
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
+
 import org.spoutcraft.launcher.Channel;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Proxy;
@@ -110,7 +111,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 
 	public OptionsMenu() {
 		initComponents();
-		
+
 		setTitle("Launcher Options");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 		setResizable(false);
@@ -119,22 +120,22 @@ public class OptionsMenu extends JDialog implements ActionListener{
 
 		cancelButton.addActionListener(this);
 		cancelButton.setActionCommand(CANCEL_ACTION);
-		
+
 		resetButton.addActionListener(this);
 		resetButton.setActionCommand(RESET_ACTION);
-		
+
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(SAVE_ACTION);
-		
+
 		developerCode.setText(Settings.getDeveloperCode());
 		developerCode.getDocument().addDocumentListener(new DeveloperCodeListener(developerCode));
-		
+
 		Settings.setSpoutcraftChannel(populateChannelVersion(spoutcraftVersion, Settings.getSpoutcraftChannel().type()));
 		Settings.setLauncherChannel(populateChannelVersion(launcherVersion, Settings.getLauncherChannel().type()));
 		populateMinecraftVersions(minecraftVersion);
 		populateSpoutcraftBuilds(buildCombo);
 		Settings.setWindowModeId(populateWindowMode(windowMode));
-		
+
 		spoutcraftVersion.addActionListener(this);
 		spoutcraftVersion.setActionCommand(SPOUTCRAFT_CHANNEL_ACTION);
 		updateBuildList();
@@ -142,7 +143,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		this.debugMode.setSelected(Settings.isDebugMode());
 		directJoin.setText(Settings.getDirectJoin());
 	}
-	
+
 	private boolean isValidDeveloperCode() {
 		return true;
 	}
@@ -204,7 +205,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			minecraftVersion.setSelectedIndex(0);
 		}
 	}
-	
+
 	private int populateWindowMode(JComboBox window) {
 		int id = Settings.getWindowModeId();
 		for (WindowMode m : WindowMode.values()) {
@@ -271,8 +272,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		} catch (IllegalArgumentException e) {
 			memory.removeAllItems();
 			memory.addItem(String.valueOf(Memory.memoryOptions[0]));
-			Settings.setMemory(1); //512 == 1
-			memory.setSelectedIndex(0); //1st element
+			Settings.setMemory(1); // 512 == 1
+			memory.setSelectedIndex(0); // 1st element
 		}
 	}
 
@@ -284,12 +285,12 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		if (command.equals(CANCEL_ACTION)) {
 			closeForm();
 		} else if (command.equals(RESET_ACTION)) {
-			
+
 		} else if (command.equals(SAVE_ACTION)) {
 			Channel prev = Settings.getSpoutcraftChannel();
 			String build = Settings.getSpoutcraftSelectedBuild();
 
-			//Save
+			// Save
 			Settings.setLauncherChannel(Channel.getType(launcherVersion.getSelectedIndex()));
 			Settings.setSpoutcraftChannel(Channel.getType(spoutcraftVersion.getSelectedIndex()));
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
@@ -312,7 +313,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			Settings.getYAML().save();
 			closeForm();
 
-			//Inform the updating thread
+			// Inform the updating thread
 			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild())) {
 				Launcher.getGameUpdater().onSpoutcraftBuildChange();
 			}
@@ -411,7 +412,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 				//---- windowModeLabel ----
 				windowModeLabel.setText("Window Mode:");
 				windowModeLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-				
+
 				//---- windowMode ----
 				windowMode.setFont(new Font("Arial", Font.PLAIN, 11));
 				windowMode.setToolTipText("<html>Windowed - Starts the game in a smaller 900x540 window<br/>" +
@@ -467,10 +468,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			}
 			mainOptions.addTab("Game", gamePane);
 
-
 			//======== proxyPane ========
 			{
-
 				//---- proxyHostLabel ----
 				proxyHostLabel.setText("Proxy Host:");
 				proxyHostLabel.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -546,10 +545,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			}
 			mainOptions.addTab("Proxy", proxyPane);
 
-
 			//======== developerPane ========
 			{
-
 				//---- DevLabel ----
 				DevLabel.setText("Developer Code:");
 				DevLabel.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -680,7 +677,6 @@ public class OptionsMenu extends JDialog implements ActionListener{
 				);
 			}
 			mainOptions.addTab("Developer", developerPane);
-
 		}
 
 		//---- resetButton ----

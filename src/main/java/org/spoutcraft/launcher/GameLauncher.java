@@ -26,14 +26,14 @@
  */
 package org.spoutcraft.launcher;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import java.applet.Applet;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
@@ -62,7 +62,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 	public void runGame(String user, String session, String downloadTicket) {
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
-		
+
 		Dimension currentSize = Launcher.getLoginFrame().getSize();
 		Point location = Launcher.getLoginFrame().getLocation();
 		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);
@@ -99,7 +99,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			Launcher.getLoginFrame().enableForm();
 			return;
 		}
-		
+
 		StartupParameters params = Utils.getStartupParameters();
 
 		minecraft = new MinecraftAppletEnglober(applet);
@@ -164,7 +164,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 				Thread.sleep(1000);
 			} catch (InterruptedException e1) { }
 		}
-		System.out.println("Exiting Spoutcraft Launcher");
+		System.out.println("Exiting Spoutcraft");
 		this.dispose();
 		System.exit(0);
 	}

@@ -50,6 +50,7 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
+
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -61,7 +62,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 	public MinecraftClassLoader(ClassLoader parent, File spoutcraft, File[] libraries) {
 		super(new URL[0], parent);
 
-		//Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)
+		// Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)
 		File tempDir = getTempDirectory();
 		for (File f : libraries) {
 			try {
@@ -70,7 +71,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 				this.addURL(replacement.toURI().toURL());
 				index(replacement);
 			} catch (ClosedByInterruptException e) {
-				//Ignore, assume we interrupted for a reason
+				// Ignore, assume we interrupted for a reason
 				return;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -83,7 +84,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 			this.addURL(spoutcraft.toURI().toURL());
 			index(spoutcraft);
 		} catch (ClosedByInterruptException e) {
-			//Ignore, assume we interrupted for a reason
+			// Ignore, assume we interrupted for a reason
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -190,7 +191,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 				return result;
 			}
 		} catch (FileNotFoundException e) {
-			//Assume temp file has been cleaned if the thread is interrupted
+			// Assume temp file has been cleaned if the thread is interrupted
 			if (!Thread.currentThread().isInterrupted()) {
 				e.printStackTrace();
 			}
@@ -206,7 +207,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return null;
 	}
-	
+
 	Map<String, byte[]> pngResource = new HashMap<String, byte[]>();
 	Map<String, List<URL>> resources = new HashMap<String, List<URL>>();
 	@Override
@@ -221,13 +222,13 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return super.getResourceAsStream(resource);
 	}
-	
+
 	@Override
 	public URL getResource(String resource){
 		Enumeration<URL> results;
 		try {
 			results = getResources(resource);
-			while(results.hasMoreElements()) {
+			while (results.hasMoreElements()) {
 				return results.nextElement();
 			}
 		} catch (IOException e) {
@@ -235,7 +236,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return super.getResource(resource);
 	}
-	
+
 	@Override
 	public Enumeration<URL> getResources(String resource) throws IOException{
 		if (resource != null) {
@@ -248,14 +249,14 @@ public class MinecraftClassLoader extends URLClassLoader {
 			} else if (resource.startsWith("/res/")) {
 				result = getEnumeration(Utils.getAssetsDirectory().getCanonicalPath() + resource.substring(4), resource);
 			}
-			
+
 			if (result != null) {
 				return result;
 			}
 		}
 		return super.getResources(resource);
 	}
-	
+
 	private Enumeration<URL> getEnumeration(String resource, String key) throws MalformedURLException {
 		ArrayList<URL> list = new ArrayList<URL>(1);
 		File file = new File(resource);
@@ -270,7 +271,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 		return null;
 	}
-	
+
 	private class IteratorEnumerator implements Enumeration<URL> {
 		final Iterator<URL> iterator;
 		protected IteratorEnumerator(Iterator<URL> iterator) {

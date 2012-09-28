@@ -98,7 +98,7 @@
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.3</version>
+			<version>2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -272,7 +272,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>1.6</version>
+				<version>2.0</version>
 				<executions>
 					<execution>
 						<configuration>
@@ -408,7 +408,7 @@
 					<plugin>
 						<groupId>org.spout</groupId>
 						<artifactId>osxapp-maven-plugin</artifactId>
-						<version>1.1</version>
+						<version>1.1-SNAPSHOT</version>
 						<executions>
 							<execution>
 								<configuration>

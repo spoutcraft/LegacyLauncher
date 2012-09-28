@@ -36,9 +36,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.rest.Library;
@@ -59,8 +61,8 @@ public final class SpoutcraftData {
 	private final List<Library> libs;
 
 	/**
-	 * Creates a snapshot of spoutcraft build information
-	 * 
+	 * Creates a snapshot of Spoutcraft build information
+	 *
 	 * @throws RestfulAPIException
 	 */
 	public SpoutcraftData() throws RestfulAPIException {
@@ -118,11 +120,11 @@ public final class SpoutcraftData {
 	}
 
 	/**
-	 * Retrieves the md5 hashsum for the given spoutcraft build from the rest api
-	 * 
+	 * Retrieves the md5 hashsum for the given Spoutcraft build from the REST API
+	 *
 	 * @param build
 	 * @return md5 hashsum
-	 * @throws RestfulAPIException if the rest api could not be accessed
+	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static String calcaulateMD5(String build) throws RestfulAPIException {
 		String url = RestAPI.getSpoutcraftURL(build);
@@ -133,7 +135,7 @@ public final class SpoutcraftData {
 			Project project = mapper.readValue(stream, Project.class);
 			return project.getMd5();
 		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing url [" + url + "]", e);
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
@@ -141,13 +143,13 @@ public final class SpoutcraftData {
 
 	/**
 	 * Calculates the Spoutcraft build the launcher should retrieve information for
-	 * 
+	 *
 	 * It first checks the launcher arguments, which take first priority.
-	 * It then checks the spoutcraft custom build settings, which take second priority
+	 * It then checks the Spoutcraft custom build settings, which take second priority
 	 * If neither of the above are used, it uses the build channelt to select the build
-	 * 
+	 *
 	 * @return build
-	 * @throws RestfulAPIException if the rest api could not be accessed
+	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static String calculateBuild() throws RestfulAPIException {
 		int buildArg = Utils.getStartupParameters().getSpoutcraftBuild();
@@ -155,7 +157,7 @@ public final class SpoutcraftData {
 			return String.valueOf(buildArg);
 		}
 		Channel channel = Settings.getSpoutcraftChannel();
-		if (channel == Channel.CUSTOM){ 
+		if (channel == Channel.CUSTOM){
 			return Settings.getSpoutcraftSelectedBuild();
 		}
 		InputStream stream = null;
@@ -166,20 +168,20 @@ public final class SpoutcraftData {
 			Project project = mapper.readValue(stream, Project.class);
 			return String.valueOf(project.getBuild());
 		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing url [" + url + "]", e);
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 	}
-	
+
 	/**
 	 * Calculates the Spoutcraft build the launcher has currently installed
-	 * 
-	 * If the spoutcraft jar exists, it creates a md5 hashsum of the jar and retrieves
+	 *
+	 * If the Spoutcraft jar exists, it creates a md5 hashsum of the jar and retrieves
 	 * information from the build, if information exists
-	 * 
+	 *
 	 * @return build, or -1 if could not retrieve information
-	 * @throws RestfulAPIException if the rest api could not be accessed
+	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static String calculateInstall() throws RestfulAPIException {
 		File spoutcraft = new File((new SpoutcraftDirectories()).getBinDir(), "spoutcraft.jar");
@@ -202,11 +204,11 @@ public final class SpoutcraftData {
 	}
 
 	/**
-	 * Retrieves the libraries associated with the given build from the rest api
-	 * 
+	 * Retrieves the libraries associated with the given build from the REST API
+	 *
 	 * @param build
 	 * @return list of libraries
-	 * @throws RestfulAPIException if the rest api could not be accessed
+	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static List<Library> calculateLibraries(String build) throws RestfulAPIException {
 		InputStream stream = null;
@@ -230,8 +232,8 @@ public final class SpoutcraftData {
 				}
 			}
 			Iterator<Library> i = libs.iterator();
-			//Handled separately
-			while(i.hasNext()) {
+			// Handled separately
+			while (i.hasNext()) {
 				Library lib = i.next();
 				if (lib.name().contains("lwjgl")) {
 					i.remove();
@@ -239,12 +241,12 @@ public final class SpoutcraftData {
 			}
 			return libs;
 		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing url [" + url + "]", e);
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 	}
-	
+
 	private static class LibraryWrapper {
 		@JsonProperty("spoutcraft")
 		Library[] spoutcraft;

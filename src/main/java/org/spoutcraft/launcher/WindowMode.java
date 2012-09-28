@@ -52,11 +52,11 @@ public enum WindowMode {
 	public int getId() {
 		return id;
 	}
-	
+
 	public Dimension getDimension(Window window) {
 		DisplayMode mode;
 		switch(this) {
-			case WINDOWED: 
+			case WINDOWED:
 				if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
 					return new Dimension(900, 540);
 				} else {

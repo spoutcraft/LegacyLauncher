@@ -33,7 +33,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 public class ResourceUtils {
-
 	public static InputStream getResourceAsStream(String path) {
 		InputStream stream = ImageUtils.class.getResourceAsStream(path);
 		String[] split = path.split("/");
@@ -48,5 +47,4 @@ public class ResourceUtils {
 		}
 		return stream;
 	}
-	
 }

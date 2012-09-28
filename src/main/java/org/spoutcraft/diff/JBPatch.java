@@ -153,9 +153,9 @@ public class JBPatch {
 			oldpos += ctrl[2];
 		}
 
-		// TODO: Check if at end of ctrlIn
-		// TODO: Check if at the end of diffIn
-		// TODO: Check if at the end of extraIn
+		// TODO Check if at end of ctrlIn
+		// TODO Check if at the end of diffIn
+		// TODO Check if at the end of extraIn
 
 		diffBlockIn.close();
 		extraBlockIn.close();

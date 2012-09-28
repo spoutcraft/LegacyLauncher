@@ -47,12 +47,11 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
-
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
+import org.apache.commons.io.IOUtils;
 
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Main;
@@ -84,7 +83,7 @@ public class SpoutcraftLauncher {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
 
-		//Required for ROME to work
+		// Required for ROME to work
 		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();
 		Thread.currentThread().setContextClassLoader(cl);
 
@@ -103,7 +102,7 @@ public class SpoutcraftLauncher {
 
 		params.logParameters(logger);
 
-		//Setup Directories
+		// Setup directories
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
 		dirs.getSkinDir().mkdirs();
 		dirs.getSpoutcraftDir().mkdirs();
@@ -137,7 +136,7 @@ public class SpoutcraftLauncher {
 			System.exit(0);
 			return;
 		}
-		
+
 		checkInternet();
 
 		validateBuild(params);
@@ -148,8 +147,9 @@ public class SpoutcraftLauncher {
 		Thread logThread = new LogFlushThread();
 		logThread.start();
 
-		// Set up the Launcher and load login frame
+		// Set up the launcher and load login frame
 		LoginFrame frame = new LegacyLoginFrame();
+		//LoginFrame frame = new MetroLoginFrame();
 		try {
 			@SuppressWarnings("unused")
 			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
@@ -183,7 +183,7 @@ public class SpoutcraftLauncher {
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
 	}
-	
+
 	private static void checkInternet() {
 		if (!hasInternet()) {
 			JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
@@ -230,7 +230,7 @@ public class SpoutcraftLauncher {
 			params.setSpoutcraftBuild(-1);
 		}
 	}
-	
+
 	private static void cleanup() {
 		File temp = new File(Utils.getWorkingDirectory(), "temp.jar");
 		temp.delete();
@@ -282,7 +282,7 @@ public class SpoutcraftLauncher {
 			logger.removeHandler(h);
 		}
 		logger.addHandler(fileHandler);
-		
+
 		SpoutcraftLauncher.handler = fileHandler;
 
 		logger.setUseParentHandlers(false);
@@ -364,7 +364,7 @@ class LogFlushThread extends Thread {
 
 	@Override
 	public void run() {
-		while(!this.isInterrupted()) {
+		while (!this.isInterrupted()) {
 			if (SpoutcraftLauncher.handler != null) {
 				SpoutcraftLauncher.handler.flush();
 			}

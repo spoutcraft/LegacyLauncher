@@ -52,7 +52,7 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements WindowListener, ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
-	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
+	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private DynamicButton user;
@@ -78,13 +78,13 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		Font minecraft = getMinecraftFont(12);
 		name.setFont(minecraft);
 		pass.setFont(minecraft);
-		
-		//Giant Logo
+
+		// Spoutcraft logo
 		JLabel logo = new JLabel();
 		logo.setBounds(8, 15, 400, 109);
 		setIcon(logo, "spoutcraft.png", logo.getWidth(), logo.getHeight());
-		
-		//Home
+
+		// Home Link
 		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
 		home.setFont(minecraft.deriveFont((float)20));
 		home.setBounds(545, 35, 65, 20);
@@ -92,8 +92,8 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		home.setOpaque(false);
 		home.setTransparency(0.70F);
 		home.setHoverTransparency(1F);
-		
-		//Forums
+
+		// Forums link
 		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.spout.org/");
 		forums.setFont(minecraft.deriveFont((float)20));
 		forums.setBounds(625, 35, 90, 20);
@@ -101,8 +101,8 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		forums.setOpaque(false);
 		forums.setTransparency(0.70F);
 		forums.setHoverTransparency(1F);
-		
-		//Issues
+
+		// Issues link
 		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://spout.in/issues");
 		issues.setFont(minecraft.deriveFont((float)20));
 		issues.setBounds(733, 35, 85, 20);
@@ -110,42 +110,36 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		issues.setOpaque(false);
 		issues.setTransparency(0.70F);
 		issues.setHoverTransparency(1F);
-		
-		//Steam
+
+		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
 		steam.setToolTipText("Game with us on Steam");
 		steam.setBounds(6, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(steam, "steam_48x48.png", 28);
-		
-		//Youtube
-		JButton youtube = new ImageHyperlinkButton("http://spout.in/youtube");
-		youtube.setToolTipText("Subscribe to our videos");
-		youtube.setBounds(6 + 34, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(youtube, "youtube_48x48.png", 28);
-		
-		//G+
-		JButton googlePlus = new ImageHyperlinkButton("http://spout.in/googleplus");
-		googlePlus.setToolTipText("Follow us on Google+");
-		googlePlus.setBounds(6 + 34 * 2, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(googlePlus, "gplus_48x48.png", 28);
-		
-		//Facebook
-		JButton facebook = new ImageHyperlinkButton("http://spout.in/facebook");
-		facebook.setToolTipText("Like us on Facebook");
-		facebook.setBounds(6 + 34 * 3, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(facebook, "facebook_48x48.png", 28);
-		
-		//Twitter
+		setIcon(steam, "steam.png", 28);
+
+		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("http://spout.in/twitter");
 		twitter.setToolTipText("Follow us on Twitter");
 		twitter.setBounds(6 + 34 * 4, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(twitter, "twitter_48x48.png", 28);
-		
-		//Paypal
-		JButton paypal = new ImageHyperlinkButton("http://forums.spout.org/account/upgrades");
-		paypal.setToolTipText("Donate to the Spout project");
-		paypal.setBounds(6 + 34 * 5, FRAME_HEIGHT - 62, 28, 28);
-		setIcon(paypal, "paypal_48x48.png", 28);
+		setIcon(twitter, "twitter.png", 28);
+
+		// Facebook button
+		JButton facebook = new ImageHyperlinkButton("http://spout.in/facebook");
+		facebook.setToolTipText("Like us on Facebook");
+		facebook.setBounds(6 + 34 * 3, FRAME_HEIGHT - 62, 28, 28);
+		setIcon(facebook, "facebook.png", 28);
+
+		// Google+ button
+		JButton gplus = new ImageHyperlinkButton("http://spout.in/gplus");
+		gplus.setToolTipText("Follow us on Google+");
+		gplus.setBounds(6 + 34 * 2, FRAME_HEIGHT - 62, 28, 28);
+		setIcon(gplus, "gplus.png", 28);
+
+		// YouTube button
+		JButton youtube = new ImageHyperlinkButton("http://spout.in/youtube");
+		youtube.setToolTipText("Subscribe to our videos");
+		youtube.setBounds(6 + 34, FRAME_HEIGHT - 62, 28, 28);
+		setIcon(youtube, "youtube.png", 28);
 
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
@@ -154,11 +148,10 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(name);
 		contentPane.add(pass);
 		contentPane.add(steam);
-		contentPane.add(youtube);
-		contentPane.add(googlePlus);
-		contentPane.add(facebook);
 		contentPane.add(twitter);
-		contentPane.add(paypal);
+		contentPane.add(facebook);
+		contentPane.add(gplus);
+		contentPane.add(youtube);
 		contentPane.add(home);
 		contentPane.add(forums);
 		contentPane.add(issues);
@@ -219,7 +212,6 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 	public void stateChanged(String fileName, float progress) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -231,13 +223,12 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 	@Override
 	public void disableForm() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void enableForm() {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -248,7 +239,6 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void keyPressed(KeyEvent e) {
@@ -270,6 +260,5 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
-		
 	}
 }

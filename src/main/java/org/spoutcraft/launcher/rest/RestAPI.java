@@ -29,10 +29,10 @@ package org.spoutcraft.launcher.rest;
 import org.spoutcraft.launcher.Channel;
 
 public class RestAPI {
-	//Private
+	// Private
 	private static final String PROJECT = "spoutcraft";
 
-	//Public
+	// Public
 	public static final String REST_URL = "http://get.spout.org/nuget/";
 	public static final String VERSIONS_URL = REST_URL + "versions/" + PROJECT;
 	public static final String INFO_URL = REST_URL + "info/";
@@ -42,7 +42,7 @@ public class RestAPI {
 		if (channel != Channel.CUSTOM) {
 			return INFO_URL + channel.toString() + "/" + PROJECT;
 		}
-		throw new IllegalArgumentException("No download url available for custom channel builds");
+		throw new IllegalArgumentException("No download URL available for custom channel builds");
 	}
 
 	public static String getSpoutcraftURL(String build) {
@@ -56,12 +56,12 @@ public class RestAPI {
 	public static String getLibraryURL(String build) {
 		return REST_URL + "libraries/build/" + build;
 	}
-	
+
 	public static String getBuildListURL(Channel channel) {
 		if (channel != Channel.CUSTOM) {
 			return REST_URL + "builds/" + channel.toString() + "/" + PROJECT;
 		}
-		throw new IllegalArgumentException("No download url available for custom channel builds");
+		throw new IllegalArgumentException("No download URL available for custom channel builds");
 	}
 
 	public static String getMD5URL(String md5) {

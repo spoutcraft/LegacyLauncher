@@ -72,7 +72,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public LoginFrame() {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Spoutcraft Launcher");
+		setTitle("Spoutcraft");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 	}
 
@@ -111,7 +111,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		}
 		return account;
 	}
-	
+
 	public final boolean removeAccount(String account) {
 		Iterator<Entry<String, UserPasswordInformation>>  i = usernames.entrySet().iterator();
 		while (i.hasNext()) {
@@ -181,13 +181,13 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 			try {
 				while (true) {
-					//read version
+					// Read version
 					int version = dis.readInt();
-					//read key
+					// Read key
 					String key = dis.readUTF();
-					//read user
+					// Read user
 					String user = dis.readUTF();
-					//read hash
+					// Read hash
 					boolean isHash = dis.readBoolean();
 					if (isHash) {
 						byte[] hash = new byte[32];
@@ -228,13 +228,13 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					info.username = user;
 				}
 
-				//version
+				// Version
 				dos.writeInt(UserPasswordInformation.version);
-				//key
+				// Key
 				dos.writeUTF(user);
-				//user
+				// User
 				dos.writeUTF(info.username);
-				//password
+				// Password
 				dos.writeBoolean(info.isHash);
 				if (info.isHash) {
 					dos.write(info.passwordHash);
@@ -268,18 +268,18 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public abstract JProgressBar getProgressBar();
 
 	public abstract void disableForm();
-	
+
 	public abstract void enableForm();
-	
+
 	public abstract String getSelectedUser();
-	
+
 	public final Font getMinecraftFont(int size) {
 		Font minecraft;
 		try {
 			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont((float)size);
 		} catch (Exception e) {
 			e.printStackTrace();
-			//Fallback
+			// Fallback
 			minecraft = new Font("Arial", Font.PLAIN, 12);
 		}
 		return minecraft;
@@ -303,7 +303,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				Launcher.getGameUpdater().runGame();
 				break;
 			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
 				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:

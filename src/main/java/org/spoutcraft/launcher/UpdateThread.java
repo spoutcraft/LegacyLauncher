@@ -68,8 +68,8 @@ public class UpdateThread extends Thread {
 	 */
 	private static final AtomicBoolean cleaned = new AtomicBoolean(false);
 	private static final int PRELOAD_CLASSES = 100;
-	
-	//Temporarily hardcoded
+
+	// Temporarily hardcoded
 	private static final String WINDOWS_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/windows_natives.jar";
 	private static final String WINDOWS_NATIVES_MD5 = "9406d7d376b131d20c5717ee9fd89a7f";
 
@@ -120,12 +120,12 @@ public class UpdateThread extends Thread {
 
 			updateAssets();
 
-			//Download assets
+			// Download assets
 			if (cleaned.compareAndSet(false, true)) {
 				Resources.VIP.getYAML();
 				Resources.Special.getYAML();
 				Versions.getMinecraftVersions();
-				
+
 				cleanLogs();
 				cleanTemp();
 				updateFiles();
@@ -142,7 +142,7 @@ public class UpdateThread extends Thread {
 
 		MinecraftClassLoader loader;
 		loader = MinecraftLauncher.getClassLoader(build.getLibraries());
-		
+
 		int loaded = 0;
 		while (!waiting.get()) {
 			int pass = loader.preloadClasses(PRELOAD_CLASSES);
@@ -405,7 +405,6 @@ public class UpdateThread extends Thread {
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar"));
 		}
-
 
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {

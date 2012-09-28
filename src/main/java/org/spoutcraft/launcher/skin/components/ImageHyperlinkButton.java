@@ -30,7 +30,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URI;
 import java.net.URL;
-
 import javax.swing.JButton;
 
 public class ImageHyperlinkButton extends JButton{
@@ -53,6 +52,5 @@ public class ImageHyperlinkButton extends JButton{
 				System.out.println("Failed to open link " + url);
 			}
 		}
-		
 	}
 }

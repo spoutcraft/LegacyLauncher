@@ -37,7 +37,7 @@ import org.spoutcraft.launcher.util.DownloadListener;
 public interface Downloadable {
 	/**
 	 * Downloads the file from the maven repository and saves it in the given location
-	 * 
+	 *
 	 * @param file location to save the file
 	 * @param listener download listener, optional
 	 */
@@ -45,15 +45,15 @@ public interface Downloadable {
 
 	/**
 	 * True if the md5 is a valid match
-	 * 
+	 *
 	 * @param md5
 	 * @return matches
 	 */
 	public boolean valid(String md5);
-	
+
 	/**
 	 * Name of the file
-	 * 
+	 *
 	 * @return file name
 	 */
 	public String name();

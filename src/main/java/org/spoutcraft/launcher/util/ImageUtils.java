@@ -82,9 +82,9 @@ public class ImageUtils {
 
 		buttons.add(drawCropped(contentPane, listener, image, type, 4, 20, 8, 32, x, y + 140, 7)); // LEGS
 		buttons.add(drawCropped(contentPane, listener, image, type, 4, 20, 8, 32, x + 28, y + 140, 7, true));
-		
+
 		List<JButton> modelList = new ArrayList<JButton>(buttons);
-		
+
 		buttons.add(getShadow(contentPane, modelList, x, y, image));
 	}
 
@@ -156,7 +156,7 @@ public class ImageUtils {
 			}
 		}
 	}
-	
+
 	private static final int AVG_COLOR = 0xFF / 2;
 	private static JButton getShadow(JPanel contentPane, List<JButton> buttons, int x, int y, BufferedImage skinImage) {
 		long red = 0, green = 0, blue = 0;
@@ -175,9 +175,9 @@ public class ImageUtils {
 		long sum = ((red / count) + (green / count) + (blue / count)) / 3;
 		try {
 			ImageIcon whiteGlow, blackGlow;
-			blackGlow = new ImageIcon(ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/blackglow.png")));
-			whiteGlow = new ImageIcon(ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/whiteglow.png")));
-			
+			blackGlow = new ImageIcon(ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/char_normal.png")));
+			whiteGlow = new ImageIcon(ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/char_hover.png")));
+
 			ImageIcon main, hover;
 			if (sum < AVG_COLOR) {
 				main = blackGlow;
@@ -186,7 +186,7 @@ public class ImageUtils {
 				main = whiteGlow;
 				hover = blackGlow;
 			}
-			
+
 			JButton tmp = new JButton(main);
 			tmp.setRolloverEnabled(true);
 			tmp.setModel(new RolloverModel(buttons));

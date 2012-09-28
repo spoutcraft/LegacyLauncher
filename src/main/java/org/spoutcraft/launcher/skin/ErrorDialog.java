@@ -74,7 +74,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 		logTrace(builder, e);
 		errorArea.setText(builder.toString());
 	}
-	
+
 	private void logTrace(StringBuilder builder, Throwable e) {
 		Throwable parent = e;
 		String indent = "    ";
@@ -85,7 +85,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 				builder.append(indent).append("Caused By: (").append(parent.getClass().getSimpleName()).append(")").append("\n");
 				builder.append(indent).append("    ").append("[").append(parent.getMessage()).append("]").append("\n");
 			}
-			for(StackTraceElement ele : e.getStackTrace()) {
+			for (StackTraceElement ele : e.getStackTrace()) {
 				builder.append(indent).append("    ").append(ele.toString()).append("\n");
 			}
 			indent += "    ";

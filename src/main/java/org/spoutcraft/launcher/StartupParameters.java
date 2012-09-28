@@ -83,7 +83,7 @@ public final class StartupParameters {
 
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
 	private boolean relaunched = false;
-	
+
 	@Parameter(names = {"-old_launcher"}, description = "Indicates old launcher")
 	private boolean oldLauncher = false;
 
@@ -134,7 +134,7 @@ public final class StartupParameters {
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
-	
+
 	public boolean hasAccount() {
 		return user != null && user.length() > 0 && pass != null && pass.length() > 0;
 	}
@@ -160,7 +160,7 @@ public final class StartupParameters {
 			try {
 				pathToJar = URLDecoder.decode(pathToJar, "UTF-8");
 			} catch (java.io.UnsupportedEncodingException ignore) { }
-			
+
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			log.info("Attempting relaunch with " + memory + " mb of RAM");
 			log.info("Path to Launcher Jar: " + pathToJar);

@@ -63,7 +63,7 @@ public class Settings {
 	public static synchronized void setLauncherChannel(Channel build) {
 		yaml.setProperty("launcher.launcher.type", build.type());
 	}
-	
+
 	public static synchronized Channel getSpoutcraftChannel() {
 		return Channel.getType(yaml.getInt("launcher.client.type", 0));
 	}
@@ -95,11 +95,11 @@ public class Settings {
 	public static synchronized void setMemory(int memory) {
 		yaml.setProperty("launcher.memory", memory);
 	}
-	
+
 	public static synchronized String getDeveloperCode() {
 		return yaml.getString("launcher.devcode", "");
 	}
-	
+
 	public static synchronized void setDeveloperCode(String code) {
 		yaml.setProperty("launcher.devcode", code);
 	}
@@ -111,7 +111,7 @@ public class Settings {
 	public static synchronized void setIgnoreMD5(boolean ignore) {
 		yaml.setProperty("launcher.md5", ignore);
 	}
-	
+
 	public static synchronized String getProxyHost() {
 		return yaml.getString("launcher.proxy_host", null);
 	}
@@ -119,7 +119,7 @@ public class Settings {
 	public static synchronized void setProxyHost(String host) {
 		yaml.setProperty("launcher.proxy_host", host);
 	}
-	
+
 	public static synchronized String getProxyPort() {
 		return yaml.getString("launcher.proxy_port", null);
 	}
@@ -127,7 +127,7 @@ public class Settings {
 	public static synchronized void setProxyPort(String port) {
 		yaml.setProperty("launcher.proxy_port", port);
 	}
-	
+
 	public static synchronized String getProxyUsername() {
 		return yaml.getString("launcher.proxy_user", null);
 	}
@@ -135,7 +135,7 @@ public class Settings {
 	public static synchronized void setProxyUsername(String user) {
 		yaml.setProperty("launcher.proxy_user", user);
 	}
-	
+
 	public static synchronized String getProxyPassword() {
 		return yaml.getString("launcher.proxy_pass", null);
 	}
@@ -147,11 +147,11 @@ public class Settings {
 		}
 		yaml.setProperty("launcher.proxy_pass", b.toString());
 	}
-	
+
 	public static synchronized int getWindowModeId() {
 		return yaml.getInt("launcher.windowmode", WindowMode.WINDOWED.getId());
 	}
-	
+
 	public static synchronized void setWindowModeId(int id) {
 		yaml.setProperty("launcher.windowmode", id);
 	}
