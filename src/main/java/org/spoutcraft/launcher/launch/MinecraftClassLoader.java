@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -28,7 +28,6 @@ package org.spoutcraft.launcher.launch;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -51,7 +50,6 @@ import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -209,17 +207,14 @@ public class MinecraftClassLoader extends URLClassLoader {
 		return null;
 	}
 	
+	Map<String, byte[]> pngResource = new HashMap<String, byte[]>();
 	Map<String, List<URL>> resources = new HashMap<String, List<URL>>();
 	@Override
 	public InputStream getResourceAsStream(String resource) {
 		URL result = getResource(resource);
 		if (result != null) {
 			try {
-				try {
-					return new FileInputStream(result.getFile()); 
-				} catch (IOException e) {
-					return result.openStream();
-				}
+				return result.openStream();
 			} catch (IOException e) {
 				//e.printStackTrace();
 			}

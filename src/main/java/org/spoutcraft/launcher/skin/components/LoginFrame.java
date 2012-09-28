@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -24,8 +24,12 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.gui;
+package org.spoutcraft.launcher.skin.components;
 
+import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
+
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.EOFException;
@@ -33,6 +37,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -48,21 +53,27 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.skin.ErrorDialog;
+import org.spoutcraft.launcher.skin.LegacyLoginFrame;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
-	private static final long serialVersionUID = -2105611446626766230L;
+	private static final long serialVersionUID = 2L;
+	public static final URL spoutcraftIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	protected boolean offline = false;
 
 	public LoginFrame() {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setTitle("Spoutcraft Launcher");
+		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 	}
 
 	public final List<String> getSavedUsernames() {
@@ -254,20 +265,34 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		return cipher;
 	}
 
-	public abstract void init();
-
 	public abstract JProgressBar getProgressBar();
 
-	public abstract void onEvent(Event event);
-	
 	public abstract void disableForm();
 	
 	public abstract void enableForm();
+	
+	public abstract String getSelectedUser();
+	
+	public final Font getMinecraftFont(int size) {
+		Font minecraft;
+		try {
+			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont((float)size);
+		} catch (Exception e) {
+			e.printStackTrace();
+			//Fallback
+			minecraft = new Font("Arial", Font.PLAIN, 12);
+		}
+		return minecraft;
+	}
 
-	public abstract void handleException(Exception e);
+	public final void handleException(Exception e) {
+		e.printStackTrace();
+		ErrorDialog dialog = new ErrorDialog(this, e);
+		dialog.setAlwaysOnTop(true);
+		dialog.setVisible(true);
+	}
 
-	@SuppressWarnings("incomplete-switch")
-	public final void onRawEvent(Event event) {
+	public final void onEvent(Event event) {
 		switch (event) {
 			case GAME_LAUNCH:
 				setVisible(false);
@@ -277,8 +302,37 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				writeUsernameList();
 				Launcher.getGameUpdater().runGame();
 				break;
+			case BAD_LOGIN:
+				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
+				enableForm();
+				break;
+			case ACCOUNT_MIGRATED:
+				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
+				removeAccount(getSelectedUser());
+				enableForm();
+				break;
+			case USER_NOT_PREMIUM:
+				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+				enableForm();
+				break;
+			case MINECRAFT_NETWORK_DOWN:
+				if (!canPlayOffline()) {
+					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
+				} else {
+					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
+					if (result == JOptionPane.YES_OPTION) {
+						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "");
+					} else {
+						enableForm();
+					}
+				}
+				break;
+
+			case PERMISSION_DENIED:
+				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
+				enableForm();
+				break;
 		}
-		onEvent(event);
 	}
 
 	protected static final class UserPasswordInformation {

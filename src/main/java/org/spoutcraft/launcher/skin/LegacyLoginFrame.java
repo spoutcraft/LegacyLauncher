@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -66,15 +66,11 @@ import javax.swing.event.HyperlinkListener;
 
 import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.Event;
-import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.skin.gui.HyperlinkJLabel;
-import org.spoutcraft.launcher.skin.gui.LoginFrame;
+import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
+import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
-
-import static org.spoutcraft.launcher.util.ResourceUtils.*;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
@@ -84,7 +80,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private static final String USERNAME_ACTION = "username";
 	private static final String FORGET_1_ACTION = "Forget1";
 	private static final String FORGET_2_ACTION = "Forget2";
-	public static final URL spoutcraftIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	public static final URL spoutcraftLogo = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
 	public static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
 	private static final long serialVersionUID = 1L;
@@ -113,22 +108,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private final Font arial11 = new Font("Arial", Font.PLAIN, 11);
 	private final Font arial12 = new Font("Arial", Font.PLAIN, 12);
 	private final Font arial14 = new Font("Arial", Font.PLAIN, 14);
-	private final Font minecraft12;
+	private final Font minecraft12 = getMinecraftFont(12);
 
 	public LegacyLoginFrame() {		
-		Font minecraft;
-		try {
-			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont(12F);
-		} catch (Exception e) {
-			e.printStackTrace();
-			//Fallback to arial
-			minecraft = arial12;
-		}
-		minecraft12 = minecraft;
-
-		setTitle("Spoutcraft Launcher");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
-
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		int width, height;
 		if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
@@ -395,6 +377,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		if (Main.isOldLauncher()) {
 			showOutdatedWarning();
 		}
+		System.out.println("Is old launcher: " + Main.isOldLauncher());
 	}
 	private void showOutdatedWarning() {
 	    JLabel label = new JLabel();
@@ -444,9 +427,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(true);
 		forgetPlayer1.setEnabled(true);
 		forgetPlayer2.setEnabled(true);
-	}
-
-	public void init() {
 	}
 
 	public JProgressBar getProgressBar() {
@@ -540,46 +520,9 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	@Override
-	public void onEvent(Event event) {
-		switch (event) {
-			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Incorrect username/password combination");
-				enableForm();
-				break;
-			case ACCOUNT_MIGRATED:
-				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
-				removeAccount(usernameField.getSelectedItem().toString());
-				enableForm();
-				break;
-			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
-				enableForm();
-				break;
-			case MINECRAFT_NETWORK_DOWN:
-				if (!canPlayOffline()) {
-					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
-				} else {
-					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
-					if (result == JOptionPane.YES_OPTION) {
-						Launcher.getGameLauncher().runGame(Launcher.getGameUpdater().getMinecraftUser(), "", "");
-					} else {
-						enableForm();
-					}
-				}
-				break;
-
-			case PERMISSION_DENIED:
-				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
-				enableForm();
-				break;
-		case GAME_LAUNCH:
-			thread.interrupt();
-			break;
-		case SUCESSFUL_LOGIN:
-			break;
-		default:
-			break;
-		}
+	public void dispose() {
+		thread.interrupt();
+		super.dispose();
 	}
 
 	public void stateChanged(String status, float progress) {
@@ -642,10 +585,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	}
 
 	@Override
-	public void handleException(Exception e) {
-		e.printStackTrace();
-		ErrorDialog dialog = new ErrorDialog(this, e);
-		dialog.setAlwaysOnTop(true);
-		dialog.setVisible(true);
+	public String getSelectedUser() {
+		return this.usernameField.getSelectedItem().toString();
 	}
 }

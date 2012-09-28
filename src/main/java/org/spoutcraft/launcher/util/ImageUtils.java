@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -47,6 +47,27 @@ import static org.spoutcraft.launcher.util.ResourceUtils.*;
 public class ImageUtils {
 	private static int SKIN_WIDTH = 64;
 	private static int SKIN_HEIGHT = 32;
+
+	public static BufferedImage scaleImage(BufferedImage img, int width, int height) {
+		int imgWidth = img.getWidth();
+		int imgHeight = img.getHeight();
+		if (imgWidth * height < imgHeight * width) {
+			width = imgWidth * height / imgHeight;
+		} else {
+			height = imgHeight * width / imgWidth;
+		}
+		BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = newImage.createGraphics();
+		try {
+			g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+			g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g.drawImage(img, 0, 0, width, height, null);
+		} finally {
+			g.dispose();
+		}
+		return newImage;
+	}
 
 	public static void drawCharacter(JPanel contentPane, ActionListener listener, String url, int x, int y, List<JButton> buttons) {
 		BufferedImage image = getSkinImage(url);

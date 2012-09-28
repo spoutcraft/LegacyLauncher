@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -24,7 +24,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.gui;
+package org.spoutcraft.launcher.skin.components;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -41,7 +41,7 @@ import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
-import org.spoutcraft.launcher.skin.gui.LoginFrame.UserPasswordInformation;
+import org.spoutcraft.launcher.skin.components.LoginFrame.UserPasswordInformation;
 import org.spoutcraft.launcher.util.Utils;
 
 public class LoginWorker extends SwingWorker<Object, Object> {
@@ -99,19 +99,19 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 				info.password = pass;
 			}
 
-			loginFrame.onRawEvent(Event.SUCESSFUL_LOGIN);
+			loginFrame.onEvent(Event.SUCESSFUL_LOGIN);
 			return true;
 		} catch (AccountMigratedException e) {
 			loginFrame.getProgressBar().setVisible(false);
-			loginFrame.onRawEvent(Event.ACCOUNT_MIGRATED);
+			loginFrame.onEvent(Event.ACCOUNT_MIGRATED);
 		} catch (BadLoginException e) {
 			loginFrame.getProgressBar().setVisible(false);
-			loginFrame.onRawEvent(Event.BAD_LOGIN);
+			loginFrame.onEvent(Event.BAD_LOGIN);
 		} catch (MinecraftUserNotPremiumException e) {
-			loginFrame.onRawEvent(Event.USER_NOT_PREMIUM);
+			loginFrame.onEvent(Event.USER_NOT_PREMIUM);
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (PermissionDeniedException e) {
-			loginFrame.onRawEvent(Event.PERMISSION_DENIED);
+			loginFrame.onEvent(Event.PERMISSION_DENIED);
 			this.cancel(true);
 			loginFrame.getProgressBar().setVisible(false);
 		} catch (MCNetworkException e) {
@@ -147,11 +147,11 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 
 			if (authFailed) {
 				loginFrame.offline = false;
-				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
+				loginFrame.onEvent(Event.MINECRAFT_NETWORK_DOWN);
 			} else {
 				loginFrame.offline = true;
 				Launcher.getGameUpdater().setMinecraftUser(user);
-				loginFrame.onRawEvent(Event.MINECRAFT_NETWORK_DOWN);
+				loginFrame.onEvent(Event.MINECRAFT_NETWORK_DOWN);
 			}
 			this.cancel(true);
 			loginFrame.getProgressBar().setVisible(false);

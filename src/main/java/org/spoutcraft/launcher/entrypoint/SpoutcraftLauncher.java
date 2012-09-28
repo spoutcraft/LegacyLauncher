@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft Launcher.
+ * This file is part of Spoutcraft.
  *
  * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft Launcher is licensed under the SpoutDev License Version 1.
+ * Spoutcraft is licensed under the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is free software: you can redistribute it and/or modify
+ * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the SpoutDev License Version 1.
  *
- * Spoutcraft Launcher is distributed in the hope that it will be useful,
+ * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -55,6 +55,7 @@ import org.apache.commons.io.IOUtils;
 import com.beust.jcommander.JCommander;
 
 import org.spoutcraft.launcher.GameUpdater;
+import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
@@ -65,7 +66,7 @@ import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.LegacyLoginFrame;
-import org.spoutcraft.launcher.skin.gui.LoginFrame;
+import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
@@ -236,8 +237,10 @@ public class SpoutcraftLauncher {
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
-		temp.delete();
+		if (!Main.isOldLauncher()) {
+			temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
+			temp.delete();
+		}
 		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
 		temp.delete();
 	}
