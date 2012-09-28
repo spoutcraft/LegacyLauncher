@@ -52,12 +52,12 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements WindowListener, ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
+	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private DynamicButton user;
 	private LiteTextBox name;
 	private LiteTextBox pass;
-	private HyperlinkJLabel home;
 	public MetroLoginFrame() {
 		initComponents();
 		this.addWindowListener(this);
@@ -79,49 +79,77 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		name.setFont(minecraft);
 		pass.setFont(minecraft);
 		
-		home = new HyperlinkJLabel("Home", "http://www.spout.org/");
+		//Giant Logo
+		JLabel logo = new JLabel();
+		logo.setBounds(8, 15, 400, 109);
+		setIcon(logo, "spoutcraft.png", logo.getWidth(), logo.getHeight());
 		
+		//Home
+		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
 		home.setFont(minecraft.deriveFont((float)20));
-		home.setBounds(630, 65, 75, 24);
+		home.setBounds(545, 35, 65, 20);
 		home.setForeground(Color.WHITE);
 		home.setOpaque(false);
-		home.setTransparency(0.80F);
+		home.setTransparency(0.70F);
+		home.setHoverTransparency(1F);
 		
+		//Forums
+		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.spout.org/");
+		forums.setFont(minecraft.deriveFont((float)20));
+		forums.setBounds(625, 35, 90, 20);
+		forums.setForeground(Color.WHITE);
+		forums.setOpaque(false);
+		forums.setTransparency(0.70F);
+		forums.setHoverTransparency(1F);
+		
+		//Issues
+		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://spout.in/issues");
+		issues.setFont(minecraft.deriveFont((float)20));
+		issues.setBounds(733, 35, 85, 20);
+		issues.setForeground(Color.WHITE);
+		issues.setOpaque(false);
+		issues.setTransparency(0.70F);
+		issues.setHoverTransparency(1F);
+		
+		//Steam
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
 		steam.setToolTipText("Game with us on Steam");
 		steam.setBounds(6, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(steam, "steam_48x48.png", 28);
 		
+		//Youtube
 		JButton youtube = new ImageHyperlinkButton("http://spout.in/youtube");
 		youtube.setToolTipText("Subscribe to our videos");
 		youtube.setBounds(6 + 34, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(youtube, "youtube_48x48.png", 28);
 		
+		//G+
 		JButton googlePlus = new ImageHyperlinkButton("http://spout.in/googleplus");
 		googlePlus.setToolTipText("Follow us on Google+");
 		googlePlus.setBounds(6 + 34 * 2, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(googlePlus, "gplus_48x48.png", 28);
 		
+		//Facebook
 		JButton facebook = new ImageHyperlinkButton("http://spout.in/facebook");
 		facebook.setToolTipText("Like us on Facebook");
 		facebook.setBounds(6 + 34 * 3, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(facebook, "facebook_48x48.png", 28);
 		
+		//Twitter
 		JButton twitter = new ImageHyperlinkButton("http://spout.in/twitter");
 		twitter.setToolTipText("Follow us on Twitter");
 		twitter.setBounds(6 + 34 * 4, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(twitter, "twitter_48x48.png", 28);
 		
+		//Paypal
 		JButton paypal = new ImageHyperlinkButton("http://forums.spout.org/account/upgrades");
 		paypal.setToolTipText("Donate to the Spout project");
 		paypal.setBounds(6 + 34 * 5, FRAME_HEIGHT - 62, 28, 28);
 		setIcon(paypal, "paypal_48x48.png", 28);
 
-		//======== this ========
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
-		//---- button1 ----
 		contentPane.add(user);
 		contentPane.add(name);
 		contentPane.add(pass);
@@ -132,12 +160,23 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(twitter);
 		contentPane.add(paypal);
 		contentPane.add(home);
+		contentPane.add(forums);
+		contentPane.add(issues);
+		contentPane.add(logo);
 		user.setBounds(300, 200, 75, 75);
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
 		try {
 			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void setIcon(JLabel label, String iconName, int w, int h) {
+		try {
+			label.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -224,7 +263,7 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 			dy++;
 		}
-		JComponent c = home;//(JComponent) e.getComponent();
+		JComponent c = (JComponent) e.getComponent();
 		c.setBounds(c.getX() + dx, c.getY() + dy, c.getWidth(), c.getHeight());
 		System.out.println("Icon pos: " + c.getX() + ", " + c.getY());
 	}

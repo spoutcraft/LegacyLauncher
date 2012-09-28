@@ -80,8 +80,8 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	private static final String USERNAME_ACTION = "username";
 	private static final String FORGET_1_ACTION = "Forget1";
 	private static final String FORGET_2_ACTION = "Forget2";
-	public static final URL spoutcraftLogo = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
-	public static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
+	private static final URL spoutcraftLogo = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/spoutcraft.png");
+	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear_icon.png");
 	private static final long serialVersionUID = 1L;
 	private final JPanel contentPane = new JPanel();
 	private final Container loginPane = new Container();

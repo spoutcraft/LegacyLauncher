@@ -31,34 +31,49 @@ import java.awt.event.MouseListener;
 import java.net.URI;
 
 public class HyperlinkJLabel extends TransparentJLabel implements MouseListener {
-	private static final long serialVersionUID = -3801443131566852907L;
+	private static final long CLICK_DELAY = 250L;
+	private static final long serialVersionUID = 1L;
 	private String url;
-
-	public void mouseClicked(MouseEvent arg0) {
-		try {
-			URI uri = new java.net.URI(url);
-			HyperlinkJLabel.browse(uri);
-		} catch (Exception e) {
-			System.err.println("Unable to open browser to " + url);
-		}
-	}
-
+	private long lastClick = System.currentTimeMillis();
 	public HyperlinkJLabel(String text, String url) {
 		super(text);
 		this.url = url;
 		super.addMouseListener(this);
 	}
 
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if (lastClick + CLICK_DELAY > System.currentTimeMillis()) {
+			return;
+		}
+		lastClick = System.currentTimeMillis();
+		try {
+			URI uri = new java.net.URI(url);
+			HyperlinkJLabel.browse(uri);
+		} catch (Exception ex) {
+			System.err.println("Unable to open browser to " + url);
+		}
+		super.mouseClicked(e);
+	}
+
+	@Override
 	public void mouseEntered(MouseEvent e) {
+		super.mouseEntered(e);
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
+		super.mouseExited(e);
 	}
 
-	public void mousePressed(MouseEvent arg0) {
+	@Override
+	public void mousePressed(MouseEvent e) {
+		super.mousePressed(e);
 	}
 
-	public void mouseReleased(MouseEvent arg0) {
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		super.mouseReleased(e);
 	}
 
 	public static void browse(URI uri) {

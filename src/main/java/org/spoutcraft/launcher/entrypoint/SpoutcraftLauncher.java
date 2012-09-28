@@ -66,6 +66,7 @@ import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.LegacyLoginFrame;
+import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -148,7 +149,7 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the Launcher and load login frame
-		LoginFrame frame = new LegacyLoginFrame();
+		LoginFrame frame = new MetroLoginFrame();//new LegacyLoginFrame();
 		try {
 			@SuppressWarnings("unused")
 			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
