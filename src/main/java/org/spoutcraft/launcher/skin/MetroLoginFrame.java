@@ -104,6 +104,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		remember.setBounds(775 + xShift, 455 + yShift, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
+		remember.setBorderPainted(false);
+		remember.setContentAreaFilled(false);
+		remember.setBorder(null);
 		remember.setForeground(Color.WHITE);
 		remember.addKeyListener(this);
 		

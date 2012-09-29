@@ -63,6 +63,7 @@ public class SplashScreen extends JWindow{
 		background.setFocusable(false);
 		background.setContentAreaFilled(false);
 		background.setBorderPainted(false);
+		background.setOpaque(false);
 		container.add(background);
 
 		// Finalize
