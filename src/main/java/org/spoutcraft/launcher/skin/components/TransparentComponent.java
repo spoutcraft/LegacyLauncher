@@ -16,9 +16,17 @@ class TransparentComponent implements MouseListener{
 	private float transparency = 1F;
 	private float hoverTransparency = 1F;
 	private boolean hovering = false;
+	private final boolean repaint;
 	public TransparentComponent(JComponent component) {
 		this.parent = component;
 		parent.addMouseListener(this);
+		repaint = true;
+	}
+	
+	public TransparentComponent(JComponent component, boolean repaint) {
+		this.parent = component;
+		parent.addMouseListener(this);
+		this.repaint = repaint;
 	}
 
 	/**
@@ -100,14 +108,18 @@ class TransparentComponent implements MouseListener{
 	public void mouseEntered(MouseEvent e) {
 		if (e.getComponent() == parent) {
 			hovering = true;
-			parent.repaint();
+			if (repaint) {
+				parent.repaint();
+			}
 		}
 	}
 
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent() == parent) {
 			hovering = false;
-			parent.repaint();
+			if (repaint) {
+				parent.repaint();
+			}
 		}
 	}
 }

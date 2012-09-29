@@ -28,9 +28,12 @@ package org.spoutcraft.launcher.skin.components;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.net.URI;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.JButton;
+
+import org.spoutcraft.launcher.util.Compatibility;
 
 public class ImageHyperlinkButton extends JButton{
 	private static final long serialVersionUID = 1L;
@@ -46,10 +49,11 @@ public class ImageHyperlinkButton extends JButton{
 	private class ButtonClickHandler implements ActionListener {
 		public void actionPerformed(ActionEvent event) {
 			try {
-				Object o = Class.forName("java.awt.Desktop").getMethod("getDesktop", new Class[0]).invoke(null, new Object[0]);
-				o.getClass().getMethod("browse", new Class[]{URI.class}).invoke(o, new Object[]{(new URL(url)).toURI()});
-			} catch (Exception e) {
-				System.out.println("Failed to open link " + url);
+				Compatibility.browse((new URL(url).toURI()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 			}
 		}
 	}

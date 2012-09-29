@@ -26,13 +26,13 @@
  */
 package org.spoutcraft.launcher.skin;
 
+import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,26 +47,30 @@ import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LitePasswordBox;
+import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.skin.components.TransparentButton;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 
-public class MetroLoginFrame extends LoginFrame implements WindowListener, ActionListener, KeyListener{
+public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
 	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
-	private DynamicButton user;
+	private static final String OPTIONS_ACTION = "options";
+	private static final String LOGIN_ACTION = "login";
+	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private LiteTextBox name;
 	private LitePasswordBox pass;
 	private LiteButton login;
 	private JCheckBox remember;
+	private TransparentButton options;
+	private LiteProgressBar progressBar;
+	private OptionsMenu optionsMenu = null;
 	public MetroLoginFrame() {
 		initComponents();
-		this.addWindowListener(this);
-		name.addKeyListener(this);
-		pass.addKeyListener(this);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
@@ -75,35 +79,49 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
-		
-		user = new DynamicButton(getImage("Afforess"), 44);
-		
-		//Setup username box
+
+		// Setup username box
 		name = new LiteTextBox(this, "Username...");
 		name.setBounds(622, 426, 140, 24);
 		name.setFont(minecraft);
+		name.addKeyListener(this);
 		
-		//Setup password box
+		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
 		pass.setBounds(622, 455, 140, 24);
 		pass.setFont(minecraft);
+		pass.addKeyListener(this);
 		
-		//Setup remember checkbox
+		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
 		remember.setBounds(775, 455, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setForeground(Color.WHITE);
+		remember.addKeyListener(this);
 		
-		//Setup login button
+		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(775, 426, 80, 24);
+		login.setBounds(775, 426, 92, 24);
 		login.setFont(minecraft);
+		login.setActionCommand(LOGIN_ACTION);
+		login.addActionListener(this);
+		login.addKeyListener(this);
 
 		// Spoutcraft logo
 		JLabel logo = new JLabel();
 		logo.setBounds(8, 15, 400, 109);
 		setIcon(logo, "spoutcraft.png", logo.getWidth(), logo.getHeight());
+		
+		// Progress Bar
+		progressBar = new LiteProgressBar();
+		progressBar.setBounds(8, 130, 395, 23);
+		progressBar.setVisible(false);
+		progressBar.setStringPainted(true);
+		progressBar.setOpaque(true);
+		progressBar.setTransparency(0.70F);
+		progressBar.setHoverTransparency(0.70F);
+		progressBar.setFont(minecraft);
 
 		// Home Link
 		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
@@ -131,6 +149,15 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		issues.setOpaque(false);
 		issues.setTransparency(0.70F);
 		issues.setHoverTransparency(1F);
+		
+		// Options Button
+		options = new TransparentButton();
+		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
+		options.setBounds(828, 28, 30, 30);
+		options.setTransparency(0.70F);
+		options.setHoverTransparency(1F);
+		options.setActionCommand(OPTIONS_ACTION);
+		options.addActionListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
@@ -164,8 +191,22 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
+		
+		java.util.List<String> savedUsers = getSavedUsernames();
+		int users = Math.min(5, this.getSavedUsernames().size());
+		for (int i = 0; i < users; i++) {
+			String accountName = savedUsers.get(i);
+			String userName = this.getUsername(accountName);
+			
+			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
+			userButton.setFont(minecraft.deriveFont(14F));
 
-		contentPane.add(user);
+			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), (FRAME_HEIGHT - 75) / 2 , 75, 75);
+			contentPane.add(userButton);
+			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
+			userButton.addActionListener(this);
+		}
+
 		contentPane.add(name);
 		contentPane.add(pass);
 		contentPane.add(remember);
@@ -179,7 +220,9 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(forums);
 		contentPane.add(issues);
 		contentPane.add(logo);
-		user.setBounds(300, 200, 75, 75);
+		contentPane.add(options);
+		contentPane.add(progressBar);
+		
 		
 		this.setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
@@ -207,86 +250,75 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 			BufferedImage image = ImageIO.read(stream);
 			return image;
 		} catch (Exception e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
+			try {
+				return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/steve.png"));
+			} catch (IOException e1) {
+				throw new RuntimeException("Error reading backup image", e1);
+			}
 		}
 	}
 
-	public void windowOpened(WindowEvent e) {
-	}
-
-	public void windowClosing(WindowEvent e) {
-	}
-
-	public void windowClosed(WindowEvent e) {
-	}
-
-	public void windowIconified(WindowEvent e) {
-	}
-
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	public void windowActivated(WindowEvent e) {
-	}
-
-	public void windowDeactivated(WindowEvent e) {
-	}
-
 	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof JComponent) {
+			action(e.getActionCommand(), (JComponent)e.getSource());
+		}
 	}
 
-	public void stateChanged(String fileName, float progress) {
-		// TODO Auto-generated method stub
+	private void action(String action, JComponent c) {
+		if (action.equals(OPTIONS_ACTION)) {
+			if (optionsMenu == null || !optionsMenu.isVisible()) {
+				optionsMenu = new OptionsMenu();
+				optionsMenu.setAlwaysOnTop(true);
+				optionsMenu.setVisible(true);
+			}
+		} else if (action.equals(LOGIN_ACTION)) {
+			String pass = new String(this.pass.getPassword());
+			if (getSelectedUser().length() > 0 && pass.length() > 0) {
+				this.doLogin(getSelectedUser(), pass);
+				if (remember.isSelected()) {
+					saveUsername(getSelectedUser(), pass);
+				}
+			}
+		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
+			DynamicButton userButton = (DynamicButton)c;
+			this.name.setText(userButton.getAccount());
+			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
+			this.remember.setSelected(true);
+			action(LOGIN_ACTION, userButton);
+		}
+	}
+
+	public void stateChanged(String status, float progress) {
+		int intProgress = Math.round(progress);
+		progressBar.setValue(intProgress);
+		if (status.length() > 60) {
+			status = status.substring(0, 60) + "...";
+		}
+		progressBar.setString(intProgress + "% " + status);
 	}
 
 	@Override
 	public JProgressBar getProgressBar() {
-		// TODO Auto-generated method stub
-		return null;
+		return progressBar;
 	}
 
 	@Override
 	public void disableForm() {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
 	public void enableForm() {
-		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
 	public String getSelectedUser() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.name.getText();
 	}
 
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-	}
-
-	public void keyPressed(KeyEvent e) {
-		int dx = 0, dy = 0;
-		if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			dx--;
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			dx++;
-		}
-		if (e.getKeyCode() == KeyEvent.VK_UP) {
-			dy--;
-		} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-			dy++;
-		}
-		JComponent c = (JComponent) e.getComponent();
-		c.setBounds(c.getX() + dx, c.getY() + dy, c.getWidth(), c.getHeight());
-		System.out.println("Icon pos: " + c.getX() + ", " + c.getY());
-	}
-
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-	}
-	
+	//Emulates tab focus policy of name -> pass -> remember -> login
 	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
 		public Component getComponentAfter(Container con, Component c) {
 			if (c == name) {
@@ -326,5 +358,22 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 			return name;
 		}
 		
+	}
+
+	public void keyTyped(KeyEvent e) {
+	}
+
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER){
+			//Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
+			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
+				action(LOGIN_ACTION, (JComponent) e.getComponent());
+			} else if (e.getComponent() == remember) {
+				remember.setSelected(!remember.isSelected());
+			}
+		}
+	}
+
+	public void keyReleased(KeyEvent e) {
 	}
 }

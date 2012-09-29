@@ -57,11 +57,7 @@ public enum WindowMode {
 		DisplayMode mode;
 		switch(this) {
 			case WINDOWED:
-				if (OperatingSystem.getOS() == OperatingSystem.WINDOWS_8) {
-					return new Dimension(900, 540);
-				} else {
-					return new Dimension(880, 520);
-				}
+				return new Dimension(900, 540);
 			case FULL_SCREEN:
 			case MAXIMIZED:
 				mode = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDisplayMode();
