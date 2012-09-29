@@ -52,6 +52,7 @@ import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentButton;
 import org.spoutcraft.launcher.util.ImageUtils;
+import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
@@ -79,22 +80,28 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
+		
+		int xShift = 0;
+		int yShift = 0;
+		if (OperatingSystem.getOS().isUnix()) {
+			yShift += 30;
+		}
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(622, 426, 140, 24);
+		name.setBounds(622 + xShift, 426 + yShift, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 		
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(622, 455, 140, 24);
+		pass.setBounds(622 + xShift, 455 + yShift, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 		
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(775, 455, 110, 24);
+		remember.setBounds(775 + xShift, 455 + yShift, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setForeground(Color.WHITE);
@@ -102,7 +109,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(775, 426, 92, 24);
+		login.setBounds(775 + xShift, 426 + yShift, 92, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -124,8 +131,15 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		progressBar.setFont(minecraft);
 
 		// Home Link
+		Font largerMinecraft;
+		if (OperatingSystem.getOS().isUnix()) {
+			largerMinecraft = minecraft.deriveFont((float)18);
+		} else {
+			largerMinecraft = minecraft.deriveFont((float)20);
+		}
+		
 		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
-		home.setFont(minecraft.deriveFont((float)20));
+		home.setFont(largerMinecraft);
 		home.setBounds(545, 35, 65, 20);
 		home.setForeground(Color.WHITE);
 		home.setOpaque(false);
@@ -134,7 +148,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Forums link
 		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.spout.org/");
-		forums.setFont(minecraft.deriveFont((float)20));
+		forums.setFont(largerMinecraft);
 		forums.setBounds(625, 35, 90, 20);
 		forums.setForeground(Color.WHITE);
 		forums.setOpaque(false);
@@ -143,7 +157,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Issues link
 		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://spout.in/issues");
-		issues.setFont(minecraft.deriveFont((float)20));
+		issues.setFont(largerMinecraft);
 		issues.setBounds(733, 35, 85, 20);
 		issues.setForeground(Color.WHITE);
 		issues.setOpaque(false);
@@ -162,31 +176,31 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
 		steam.setToolTipText("Game with us on Steam");
-		steam.setBounds(6, FRAME_HEIGHT - 62, 28, 28);
+		steam.setBounds(6, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("http://spout.in/twitter");
 		twitter.setToolTipText("Follow us on Twitter");
-		twitter.setBounds(6 + 34 * 4, FRAME_HEIGHT - 62, 28, 28);
+		twitter.setBounds(6 + 34 * 4 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
 		JButton facebook = new ImageHyperlinkButton("http://spout.in/facebook");
 		facebook.setToolTipText("Like us on Facebook");
-		facebook.setBounds(6 + 34 * 3, FRAME_HEIGHT - 62, 28, 28);
+		facebook.setBounds(6 + 34 * 3 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
 		// Google+ button
 		JButton gplus = new ImageHyperlinkButton("http://spout.in/gplus");
 		gplus.setToolTipText("Follow us on Google+");
-		gplus.setBounds(6 + 34 * 2, FRAME_HEIGHT - 62, 28, 28);
+		gplus.setBounds(6 + 34 * 2 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(gplus, "gplus.png", 28);
 
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://spout.in/youtube");
 		youtube.setToolTipText("Subscribe to our videos");
-		youtube.setBounds(6 + 34, FRAME_HEIGHT - 62, 28, 28);
+		youtube.setBounds(6 + 34 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(youtube, "youtube.png", 28);
 
 		Container contentPane = getContentPane();
