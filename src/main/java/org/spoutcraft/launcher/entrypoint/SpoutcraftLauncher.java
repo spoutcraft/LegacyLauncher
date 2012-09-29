@@ -125,7 +125,7 @@ public class SpoutcraftLauncher {
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher settings took " + (System.currentTimeMillis() - start)	 + " ms");
+			logger.info("Launcher settings took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -148,8 +148,8 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the launcher and load login frame
-		LoginFrame frame = new MetroLoginFrame();//new LegacyLoginFrame();
-		//LoginFrame frame = new MetroLoginFrame();
+		LoginFrame frame = new LegacyLoginFrame();//new MetroLoginFrame();
+
 		try {
 			@SuppressWarnings("unused")
 			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
@@ -165,7 +165,7 @@ public class SpoutcraftLauncher {
 		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start)	 + " ms");
+			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -177,7 +177,7 @@ public class SpoutcraftLauncher {
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start)	 + " ms");
+			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
