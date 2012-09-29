@@ -26,6 +26,8 @@
  */
 package org.spoutcraft.launcher;
 
+import java.io.FileNotFoundException;
+
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Settings {
@@ -39,6 +41,7 @@ public class Settings {
 		Settings.yaml = settings;
 		try {
 			Settings.yaml.load();
+		} catch (FileNotFoundException ignore) {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
