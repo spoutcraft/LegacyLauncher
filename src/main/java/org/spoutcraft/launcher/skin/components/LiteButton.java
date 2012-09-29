@@ -27,45 +27,53 @@
 package org.spoutcraft.launcher.skin.components;
 
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
-public class LiteTextBox extends JTextField implements FocusListener{
+import javax.swing.JButton;
+
+public class LiteButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
-	protected final JLabel label;
-	public LiteTextBox(JFrame parent, String label) {
-		this.label = new JLabel(label);
-		addFocusListener(this);
-		parent.getContentPane().add(this.label);
+	private boolean clicked = false;
+	public LiteButton(String label) {
+		this.setText(label);
 		this.setBackground(new Color(220, 220, 220));
 		this.setBorder(new LiteBorder(5, getBackground()));
+		this.addMouseListener(this);
 	}
-
+	
 	@Override
-	public void setFont(Font font) {
-		super.setFont(font);
-		if (label != null) {
-			label.setFont(font);
-		}
+	public void paint(Graphics g) {
+		Graphics2D g2d = (Graphics2D)g;
+		Color old = g2d.getColor();
+		//Draw box
+		g2d.setColor(clicked ? Color.BLACK : getBackground());
+		g2d.fillRect(0, 0, getWidth(), getHeight());
+		//Draw label
+		g2d.setColor(clicked ? getBackground() : Color.BLACK);
+		g2d.setFont(getFont());
+		int width = g2d.getFontMetrics().stringWidth(getText());
+		g2d.drawString(getText(), (getWidth() - width) / 2, getFont().getSize() + 4);
+		
+		g2d.setColor(old);
 	}
 
-	@Override
-	public void setBounds(int x, int y, int w, int h) {
-		super.setBounds(x, y, w, h);
-		label.setBounds(x + 5, y + 3, w - 5, h - 5);
+	public void mouseClicked(MouseEvent e) {
 	}
 
-	public void focusGained(FocusEvent e) {
-		label.setVisible(false);
+	public void mousePressed(MouseEvent e) {
+		clicked = true;
 	}
 
-	public void focusLost(FocusEvent e) {
-		if (getText().length() == 0) {
-			label.setVisible(true);
-		}
+	public void mouseReleased(MouseEvent e) {
+		clicked = false;
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
 	}
 }

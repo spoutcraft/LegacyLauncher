@@ -45,6 +45,8 @@ import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
+import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.ImageUtils;
@@ -57,7 +59,9 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 	private static final int FRAME_HEIGHT = 520;
 	private DynamicButton user;
 	private LiteTextBox name;
-	private LiteTextBox pass;
+	private LitePasswordBox pass;
+	private LiteButton login;
+	private JCheckBox remember;
 	public MetroLoginFrame() {
 		initComponents();
 		this.addWindowListener(this);
@@ -70,14 +74,31 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 	}
 
 	private void initComponents() {
+		Font minecraft = getMinecraftFont(12);
+		
 		user = new DynamicButton(getImage("Afforess"), 44);
+		
+		//Setup username box
 		name = new LiteTextBox(this, "Username...");
 		name.setBounds(622, 426, 140, 24);
-		pass = new LiteTextBox(this, "Password...");
-		pass.setBounds(622, 455, 140, 24);
-		Font minecraft = getMinecraftFont(12);
 		name.setFont(minecraft);
+		
+		//Setup password box
+		pass = new LitePasswordBox(this, "Password...");
+		pass.setBounds(622, 455, 140, 24);
 		pass.setFont(minecraft);
+		
+		//Setup remember checkbox
+		remember = new JCheckBox("Remember");
+		remember.setBounds(775, 455, 110, 24);
+		remember.setFont(minecraft);
+		remember.setOpaque(false);
+		remember.setForeground(Color.WHITE);
+		
+		//Setup login button
+		login = new LiteButton("Login");
+		login.setBounds(775, 426, 80, 24);
+		login.setFont(minecraft);
 
 		// Spoutcraft logo
 		JLabel logo = new JLabel();
@@ -147,6 +168,8 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(user);
 		contentPane.add(name);
 		contentPane.add(pass);
+		contentPane.add(remember);
+		contentPane.add(login);
 		contentPane.add(steam);
 		contentPane.add(twitter);
 		contentPane.add(facebook);
@@ -157,6 +180,8 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 		contentPane.add(issues);
 		contentPane.add(logo);
 		user.setBounds(300, 200, 75, 75);
+		
+		this.setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
@@ -260,5 +285,46 @@ public class MetroLoginFrame extends LoginFrame implements WindowListener, Actio
 
 	public void keyReleased(KeyEvent e) {
 		// TODO Auto-generated method stub
+	}
+	
+	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
+		public Component getComponentAfter(Container con, Component c) {
+			if (c == name) {
+				return pass;
+			} else if (c == pass) {
+				return remember;
+			} else if (c == remember) {
+				return login;
+			} else if (c == login) {
+				return name;
+			}
+			return getFirstComponent(con);
+		}
+
+		public Component getComponentBefore(Container con, Component c) {
+			if (c == name) {
+				return login;
+			} else if (c == pass) {
+				return name;
+			} else if (c == remember) {
+				return pass;
+			} else if (c == login) {
+				return remember;
+			}
+			return getFirstComponent(con);
+		}
+
+		public Component getFirstComponent(Container c) {
+			return name;
+		}
+
+		public Component getLastComponent(Container c) {
+			return login;
+		}
+
+		public Component getDefaultComponent(Container c) {
+			return name;
+		}
+		
 	}
 }

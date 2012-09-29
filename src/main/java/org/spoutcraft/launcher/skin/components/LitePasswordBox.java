@@ -32,17 +32,18 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.JPasswordField;
 
-public class LiteTextBox extends JTextField implements FocusListener{
+public class LitePasswordBox extends JPasswordField implements FocusListener{
 	private static final long serialVersionUID = 1L;
-	protected final JLabel label;
-	public LiteTextBox(JFrame parent, String label) {
+	private final JLabel label;
+	public LitePasswordBox(JFrame parent, String label) {
 		this.label = new JLabel(label);
 		addFocusListener(this);
 		parent.getContentPane().add(this.label);
 		this.setBackground(new Color(220, 220, 220));
 		this.setBorder(new LiteBorder(5, getBackground()));
+		this.setEchoChar('*');
 	}
 
 	@Override
@@ -64,7 +65,7 @@ public class LiteTextBox extends JTextField implements FocusListener{
 	}
 
 	public void focusLost(FocusEvent e) {
-		if (getText().length() == 0) {
+		if (getPassword().length == 0) {
 			label.setVisible(true);
 		}
 	}

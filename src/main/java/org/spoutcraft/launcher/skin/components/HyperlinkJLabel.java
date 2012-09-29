@@ -43,7 +43,6 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 		super.addMouseListener(this);
 	}
 
-	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (lastClick + CLICK_DELAY > System.currentTimeMillis()) {
 			return;
@@ -55,27 +54,18 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 		} catch (Exception ex) {
 			System.err.println("Unable to open browser to " + url);
 		}
-		super.mouseClicked(e);
 	}
 
-	@Override
 	public void mouseEntered(MouseEvent e) {
-		super.mouseEntered(e);
 	}
 
-	@Override
 	public void mouseExited(MouseEvent e) {
-		super.mouseExited(e);
 	}
 
-	@Override
 	public void mousePressed(MouseEvent e) {
-		super.mousePressed(e);
 	}
 
-	@Override
 	public void mouseReleased(MouseEvent e) {
-		super.mouseReleased(e);
 	}
 
 	public static void browse(URI uri) {

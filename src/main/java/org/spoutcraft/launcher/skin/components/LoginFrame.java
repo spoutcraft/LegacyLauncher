@@ -349,10 +349,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
+			showJava15Warning();
 			if (Main.isOldLauncher()) {
 				showOutdatedWarning();
 			}
-			showJava15Warning();
 			System.out.println("Is old launcher: " + Main.isOldLauncher());
 		}
 	}
