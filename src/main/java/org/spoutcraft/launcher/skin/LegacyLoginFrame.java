@@ -29,7 +29,6 @@ package org.spoutcraft.launcher.skin;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
@@ -40,8 +39,6 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -51,9 +48,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JProgressBar;
@@ -61,10 +56,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
-
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
@@ -72,7 +63,6 @@ import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
-@SuppressWarnings({"rawtypes", "unchecked"})
 public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
 	private static final String LOGIN_SKIN_2_ACTION = "LoginSkin2";
 	private static final String LOGIN_SKIN_1_ACTION = "LoginSkin1";
@@ -373,40 +363,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 		loginButton.setEnabled(true);
 		thread = new ForgetThread();
 		thread.start();
-
-		if (Main.isOldLauncher()) {
-			showOutdatedWarning();
-		}
-		System.out.println("Is old launcher: " + Main.isOldLauncher());
-	}
-	private void showOutdatedWarning() {
-		JLabel label = new JLabel();
-		label.setFont(arial12);
-
-		StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-		style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + arial12.getSize() + "pt;");
-
-		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a>"
-				+ "<br/>This launcher will continue to work for only a short time longer.</body></html>");
-
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED))
-					try {
-						Desktop.getDesktop().browse(e.getURL().toURI());
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					} catch (URISyntaxException e1) {
-						e1.printStackTrace();
-					}
-			}
-		});
-		ep.setEditable(false);
-		ep.setBackground(label.getBackground());
-
-		JOptionPane.showMessageDialog(this, ep);
 	}
 
 	@Override

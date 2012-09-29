@@ -41,7 +41,7 @@ import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.Channel;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 
 public class SpoutcraftBuild implements Comparable<SpoutcraftBuild>{
 	private final String buildNumber;

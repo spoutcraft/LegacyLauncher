@@ -43,12 +43,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;

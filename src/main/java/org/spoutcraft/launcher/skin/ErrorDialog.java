@@ -39,6 +39,7 @@ import javax.swing.*;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.util.Compatibility;
 
 public class ErrorDialog extends JDialog implements ActionListener{
 	private static final URL spoutcraftIcon = ErrorDialog.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
@@ -58,7 +59,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 		this.cause = t;
 		initComponents();
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 		populateException(this.cause);
 		reportButton.addActionListener(this);
 		reportButton.setActionCommand(REPORT_ACTION);
@@ -204,7 +205,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 			}
 			if (response.startsWith(PASTEBIN_URL)) {
 				try {
-					Desktop.getDesktop().browse((new URL(response)).toURI());
+					Compatibility.browse((new URL(response)).toURI());
 				} catch (Exception e) {
 					System.err.println("Unable to generate error report. Response: " + response);
 					e.printStackTrace();

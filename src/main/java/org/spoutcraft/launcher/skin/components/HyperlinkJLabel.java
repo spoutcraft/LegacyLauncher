@@ -30,6 +30,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 
+import org.spoutcraft.launcher.util.Compatibility;
+
 public class HyperlinkJLabel extends TransparentJLabel implements MouseListener {
 	private static final long CLICK_DELAY = 250L;
 	private static final long serialVersionUID = 1L;
@@ -77,11 +79,6 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 	}
 
 	public static void browse(URI uri) {
-		try {
-			Object o = Class.forName("java.awt.Desktop").getMethod("getDesktop", new Class[0]).invoke(null, new Object[0]);
-			o.getClass().getMethod("browse", new Class[]{URI.class}).invoke(o, new Object[]{uri});
-		} catch (Exception e) {
-			System.out.println("Failed to open link " + uri.toString());
-		}
+		Compatibility.browse(uri);
 	}
 }

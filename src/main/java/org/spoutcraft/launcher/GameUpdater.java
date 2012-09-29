@@ -30,8 +30,8 @@ import java.io.IOException;
 
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.DownloadListener;
 
 public final class GameUpdater extends SpoutcraftDirectories{

@@ -59,11 +59,12 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.WindowMode;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.util.Compatibility;
 
-@SuppressWarnings({ "restriction", "rawtypes", "unchecked" })
+@SuppressWarnings({ "restriction" })
 public class OptionsMenu extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	private static final URL spoutcraftIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
@@ -113,7 +114,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		initComponents();
 
 		setTitle("Launcher Options");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 		setResizable(false);
 
 		populateMemory(memory);

@@ -29,8 +29,8 @@ package org.spoutcraft.launcher;
 import java.io.File;
 import java.util.List;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
-import org.spoutcraft.launcher.rest.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
 

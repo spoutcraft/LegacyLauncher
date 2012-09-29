@@ -34,9 +34,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.SwingWorker;
 
 import org.spoutcraft.launcher.util.ImageUtils;
+import org.spoutcraft.launcher.util.SwingWorker;
 
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
@@ -99,7 +99,6 @@ public class DynamicButton extends JButton implements MouseListener{
 			this.size = size;
 		}
 
-		@Override
 		protected Object doInBackground() throws Exception {
 			try {
 				Thread.sleep(5);
