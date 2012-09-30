@@ -290,6 +290,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		} else if (command.equals(SAVE_ACTION)) {
 			Channel prev = Settings.getSpoutcraftChannel();
 			String build = Settings.getSpoutcraftSelectedBuild();
+			String minecraftVersion = Settings.getMinecraftVersion();
 
 			// Save
 			Settings.setLauncherChannel(Channel.getType(launcherVersion.getSelectedIndex()));
@@ -315,7 +316,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			closeForm();
 
 			// Inform the updating thread
-			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild())) {
+			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild()) || !minecraftVersion.equals(Settings.getMinecraftVersion())) {
 				Launcher.getGameUpdater().onSpoutcraftBuildChange();
 			}
 		} else if (command.equals(SPOUTCRAFT_CHANNEL_ACTION)) {
