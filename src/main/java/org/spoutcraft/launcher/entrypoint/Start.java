@@ -47,6 +47,7 @@ import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Start {
 	private static final ObjectMapper mapper = new ObjectMapper();
@@ -72,6 +73,12 @@ public class Start {
 		}
 
 		migrateFolders();
+
+		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
+		if (settings == null) {
+			throw new NullPointerException("The YAMLProcessor object was null for settings.");
+		}
+		Settings.setYAML(settings);
 
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = getLatestLauncherBuild();
