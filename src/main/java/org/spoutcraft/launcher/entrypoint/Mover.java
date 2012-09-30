@@ -44,6 +44,16 @@ public class Mover {
 	}
 
 	public static void main(String[] args, boolean exe) {
+		try {
+			SpoutcraftLauncher.setupLogger();
+			execute(args, exe);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
+	}
+
+	private static void execute(String[] args, boolean exe) throws Exception{
 		File temp;
 		if (exe) {
 			temp = new File(Utils.getWorkingDirectory(), "temp.exe");
@@ -84,11 +94,6 @@ public class Mover {
 		commands.addAll(Arrays.asList(args));
 		processBuilder.command(commands);
 
-		try {
-			processBuilder.start();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		System.exit(0);
+		processBuilder.start();
 	}
 }

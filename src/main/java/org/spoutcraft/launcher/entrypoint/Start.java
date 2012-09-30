@@ -51,11 +51,19 @@ import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Start {
 	private static final ObjectMapper mapper = new ObjectMapper();
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) {
+		try {
+			launch(args);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void launch(String[] args) throws Exception{
 		// Text for local build (not official build)
 		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
-			SpoutcraftLauncher.main(args);
-			return;
+			//SpoutcraftLauncher.main(args);
+			//return;
 		}
 		// Test for exe relaunch
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
