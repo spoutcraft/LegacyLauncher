@@ -395,7 +395,7 @@ public class UpdateThread extends Thread {
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
 
-		File nativesDir = new File(Launcher.getGameUpdater().getBinDir().getPath(), "natives");
+		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
 		nativesDir.mkdir();
 
 		// Process other downloads

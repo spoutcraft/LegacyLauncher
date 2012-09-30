@@ -81,6 +81,9 @@ public class SpoutcraftLauncher {
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
 		final long startupTime = start;
+		
+		//Prefer IPv4
+		System.setProperty("java.net.preferIPv4Stack" , "true");
 
 		// Required for ROME to work
 		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();

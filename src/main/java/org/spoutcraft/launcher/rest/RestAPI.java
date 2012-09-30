@@ -37,6 +37,7 @@ public class RestAPI {
 	public static final String VERSIONS_URL = REST_URL + "versions/" + PROJECT;
 	public static final String INFO_URL = REST_URL + "info/";
 	public static final String LIBRARY_GET_URL = REST_URL + "library/";
+	public static final String ALL_BUILDS_URL = REST_URL + "builds/" + PROJECT;
 
 	public static String getSpoutcraftURL(Channel channel) {
 		if (channel != Channel.CUSTOM) {

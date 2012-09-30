@@ -294,7 +294,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		if (action.equals(OPTIONS_ACTION)) {
 			if (optionsMenu == null || !optionsMenu.isVisible()) {
 				optionsMenu = new OptionsMenu();
-				optionsMenu.setAlwaysOnTop(true);
+				optionsMenu.setModal(true);
 				optionsMenu.setVisible(true);
 			}
 		} else if (action.equals(LOGIN_ACTION)) {

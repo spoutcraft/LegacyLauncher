@@ -34,6 +34,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -151,7 +152,7 @@ public final class SpoutcraftData {
 	 * @return build
 	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
-	private static String calculateBuild() throws RestfulAPIException {
+	private String calculateBuild() throws RestfulAPIException {
 		int buildArg = Utils.getStartupParameters().getSpoutcraftBuild();
 		if (buildArg > 0) {
 			return String.valueOf(buildArg);
@@ -161,16 +162,51 @@ public final class SpoutcraftData {
 			return Settings.getSpoutcraftSelectedBuild();
 		}
 		InputStream stream = null;
-		String url = RestAPI.getSpoutcraftURL(channel);
-		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
-			Project project = mapper.readValue(stream, Project.class);
-			return String.valueOf(project.getBuild());
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
+		//Use channel selection for latest
+		if (getLatestMinecraftVersion().equals(getMinecraftVersion())) {
+			String url = RestAPI.getSpoutcraftURL(channel);
+			try {
+				URLConnection conn = (new URL(url)).openConnection();
+				stream = conn.getInputStream();
+				Project project = mapper.readValue(stream, Project.class);
+				return String.valueOf(project.getBuild());
+			} catch (IOException e) {
+				throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+			} finally {
+				IOUtils.closeQuietly(stream);
+			}
+		} else {
+			//Find the newest build for the mc version
+			String url = RestAPI.ALL_BUILDS_URL;
+			try {
+				final String mcVersion = getMinecraftVersion();
+				URLConnection conn = (new URL(url)).openConnection();
+				stream = conn.getInputStream();
+				ChannelData data = mapper.readValue(stream, ChannelData.class);
+				HashSet<String> builds = new HashSet<String>(100);
+				for (VersionData v : data.stable) {
+					if (v.minecraftVersion.equals(mcVersion)) {
+						builds.add(v.buildNumber);
+					}
+				}
+				for (VersionData v : data.beta) {
+					if (v.minecraftVersion.equals(mcVersion)) {
+						builds.add(v.buildNumber);
+					}
+				}
+				for (VersionData v : data.dev) {
+					if (v.minecraftVersion.equals(mcVersion)) {
+						builds.add(v.buildNumber);
+					}
+				}
+				ArrayList<String> buildList = new ArrayList<String>(builds);
+				Collections.sort(buildList);
+				return buildList.get(buildList.size() - 1);
+			} catch (IOException e) {
+				throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+			} finally {
+				IOUtils.closeQuietly(stream);
+			}
 		}
 	}
 
@@ -252,5 +288,21 @@ public final class SpoutcraftData {
 		Library[] spoutcraft;
 		@JsonProperty("minecraft")
 		Library[] minecraft;
+	}
+	
+	private static class ChannelData {
+		@JsonProperty("stable")
+		VersionData[] stable;
+		@JsonProperty("beta")
+		VersionData[] beta;
+		@JsonProperty("dev")
+		VersionData[] dev;
+	}
+	
+	private static class VersionData {
+		@JsonProperty("build_number")
+		String buildNumber;
+		@JsonProperty("build_version")
+		String minecraftVersion;
 	}
 }
