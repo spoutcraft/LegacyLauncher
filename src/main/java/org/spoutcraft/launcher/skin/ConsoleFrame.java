@@ -122,11 +122,11 @@ public class ConsoleFrame extends JFrame {
 			public void windowClosing(WindowEvent event) {
 				if (trackProc != null && killProcess) {
 					trackProc.destroy();
+					if (loggerHandler != null) {
+						rootLogger.removeHandler(loggerHandler);
+					}
+					event.getWindow().dispose();
 				}
-				if (loggerHandler != null) {
-					rootLogger.removeHandler(loggerHandler);
-				}
-				event.getWindow().dispose();
 			}
 		});
 	}

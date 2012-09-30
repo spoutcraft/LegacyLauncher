@@ -149,6 +149,7 @@ public class SpoutcraftLauncher {
 
 		if (params.isConsole() || Settings.isDebugMode()) {
 			setupConsole();
+			logger.info("Console Mode Activated");
 		}
 
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
