@@ -353,7 +353,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			if (Main.isOldLauncher()) {
 				showOutdatedWarning();
 			}
-			System.out.println("Is old launcher: " + Main.isOldLauncher());
 		}
 	}
 

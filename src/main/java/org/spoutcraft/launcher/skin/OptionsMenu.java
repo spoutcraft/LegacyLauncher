@@ -291,6 +291,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			Channel prev = Settings.getSpoutcraftChannel();
 			String build = Settings.getSpoutcraftSelectedBuild();
 			String minecraftVersion = Settings.getMinecraftVersion();
+			boolean oldDebug = Settings.isDebugMode();
 
 			// Save
 			Settings.setLauncherChannel(Channel.getType(launcherVersion.getSelectedIndex()));
@@ -318,6 +319,10 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			// Inform the updating thread
 			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild()) || !minecraftVersion.equals(Settings.getMinecraftVersion())) {
 				Launcher.getGameUpdater().onSpoutcraftBuildChange();
+			}
+	
+			if (Settings.isDebugMode() || oldDebug) {
+				SpoutcraftLauncher.setupConsole();
 			}
 		} else if (command.equals(SPOUTCRAFT_CHANNEL_ACTION)) {
 			updateBuildList();

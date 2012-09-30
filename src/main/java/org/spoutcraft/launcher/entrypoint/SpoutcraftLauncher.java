@@ -63,6 +63,7 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.SpoutcraftBuild;
+import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
@@ -74,6 +75,7 @@ import org.spoutcraft.launcher.yml.YAMLProcessor;
 public class SpoutcraftLauncher {
 	private static Logger logger = null;
 	protected static RotatingFileHandler handler = null;
+	protected static ConsoleFrame console;
 	public SpoutcraftLauncher() {
 		main(new String[0]);
 	}
@@ -144,6 +146,10 @@ public class SpoutcraftLauncher {
 		validateBuild(params);
 
 		setLookAndFeel();
+
+		if (params.isConsole() || Settings.isDebugMode()) {
+			setupConsole();
+		}
 
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
@@ -356,6 +362,12 @@ public class SpoutcraftLauncher {
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
 	}
+	public static void setupConsole() {
+		if (console == null) {
+			console = new ConsoleFrame(2500, true);
+			console.setVisible(true);
+		}
+	}
 }
 
 class LogFlushThread extends Thread {
@@ -410,6 +422,9 @@ class LoggerOutputStream extends ByteArrayOutputStream {
 
 		if (record.length() > 0 && !record.equals(separator)) {
 			log.logp(level, "LoggerOutputStream", "log" + level, record);
+			if (SpoutcraftLauncher.console != null) {
+				SpoutcraftLauncher.console.log(record + "\n");
+			}
 		}
 	}
 }

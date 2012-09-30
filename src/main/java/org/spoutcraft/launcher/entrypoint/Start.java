@@ -26,23 +26,30 @@
  */
 package org.spoutcraft.launcher.entrypoint;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.UIManager;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.codehaus.jackson.map.ObjectMapper;
 
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.rest.Project;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public class Start {
+	private static final ObjectMapper mapper = new ObjectMapper();
 	public static void main(String[] args) throws Exception{
 		// Text for local build (not official build)
 		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
@@ -83,13 +90,7 @@ public class Start {
 			}
 
 			ProgressSplashScreen splash = new ProgressSplashScreen();
-			Download download;
-			if (codeSource.getName().endsWith(".exe")) {
-				download = new Download("http://build.spout.org/job/SpoutcraftLauncher/lastSuccessfulBuild/artifact/target/launcher-2.0.0-SNAPSHOT.exe", temp.getPath());
-			} else {
-				download = new Download("http://build.spout.org/job/SpoutcraftLauncher/lastSuccessfulBuild/artifact/target/launcher-2.0.0-SNAPSHOT.jar", temp.getPath());
-			}
-
+			Download download = new Download(RestAPI.getLauncherDownloadURL(Settings.getLauncherChannel(), !codeSource.getName().endsWith(".exe")), temp.getPath());
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
 
@@ -124,25 +125,19 @@ public class Start {
 		}
 	}
 
-	public static int getLatestLauncherBuild() {
-		BufferedReader in = null;
+	public static int getLatestLauncherBuild() throws RestfulAPIException {
+		String url = RestAPI.getLauncherURL(Settings.getLauncherChannel());
+		InputStream stream = null;
 		try {
-			URL url = new URL("http://build.spout.org/view/Legacy/job/SpoutcraftLauncher/lastSuccessfulBuild/buildNumber");
-			in = new BufferedReader(new InputStreamReader(url.openStream()));
-			String str;
-			while ((str = in.readLine()) != null) {
-				return Integer.parseInt(str);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
+			URLConnection conn = (new URL(url)).openConnection();
+			stream = conn.getInputStream();
+			Project project = mapper.readValue(stream, Project.class);
+			return project.getBuild();
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (IOException e) { }
-			}
+			IOUtils.closeQuietly(stream);
 		}
-		return 0;
 	}
 
 	private static void migrateFolders() {

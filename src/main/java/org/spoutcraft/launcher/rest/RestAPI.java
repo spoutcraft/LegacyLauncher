@@ -38,10 +38,25 @@ public class RestAPI {
 	public static final String INFO_URL = REST_URL + "info/";
 	public static final String LIBRARY_GET_URL = REST_URL + "library/";
 	public static final String ALL_BUILDS_URL = REST_URL + "builds/" + PROJECT;
+	public static final String LAUNCHER_BUILDS_URL = REST_URL + "builds/spoutcraftlauncher";
 
 	public static String getSpoutcraftURL(Channel channel) {
 		if (channel != Channel.CUSTOM) {
 			return INFO_URL + channel.toString() + "/" + PROJECT;
+		}
+		throw new IllegalArgumentException("No download URL available for custom channel builds");
+	}
+
+	public static String getLauncherURL(Channel channel) {
+		if (channel != Channel.CUSTOM) {
+			return INFO_URL + channel.toString() + "/" + "spoutcraftlauncher";
+		}
+		throw new IllegalArgumentException("No download URL available for custom channel builds");
+	}
+	
+	public static String getLauncherDownloadURL(Channel channel, boolean jar) {
+		if (channel != Channel.CUSTOM) {
+			return REST_URL + channel.toString() + "/" + "spoutcraftlauncher" + (jar ? ".jar" : ".exe");
 		}
 		throw new IllegalArgumentException("No download URL available for custom channel builds");
 	}

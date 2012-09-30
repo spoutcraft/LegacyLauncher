@@ -87,6 +87,9 @@ public final class StartupParameters {
 	@Parameter(names = {"-old_launcher"}, description = "Indicates old launcher")
 	private boolean oldLauncher = false;
 
+	@Parameter(names = {"-console"}, description = "Shows the console window")
+	private boolean console = false;
+
 	public List<String> getParameters() {
 		return parameters;
 	}
@@ -131,6 +134,9 @@ public final class StartupParameters {
 		}
 		if (oldLauncher) {
 			log.info("Old Launcher detected");
+		}
+		if (console) {
+			log.info("Console frame enabled");
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -238,6 +244,9 @@ public final class StartupParameters {
 		if (Main.isOldLauncher()) {
 			params.add("-old_launcher");
 		}
+		if (console) {
+			params.add("-console");
+		}
 		return params;
 	}
 
@@ -283,6 +292,10 @@ public final class StartupParameters {
 
 	public int getSpoutcraftBuild() {
 		return build;
+	}
+
+	public boolean isConsole() {
+		return console;
 	}
 
 	public void setSpoutcraftBuild(int build) {
