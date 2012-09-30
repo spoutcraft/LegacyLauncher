@@ -51,6 +51,7 @@ public class DynamicButton extends JButton implements MouseListener{
 	private final BufferedImage icon;
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
+	private final TransparentButton remove;
 	private final String account, userName;
 	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, String account, String userName) {
 		this.icon = icon;
@@ -58,15 +59,23 @@ public class DynamicButton extends JButton implements MouseListener{
 		this.account = account;
 		this.userName = userName;
 		underLabel = new DynamicLabel(userName);
+		remove = new TransparentButton();
 		this.setSize(icon.getWidth(), icon.getHeight());
 		this.setBorder(null);
 		setIcon(new ImageIcon(icon));
 		setRolloverEnabled(true);
 		setFocusable(false);
 		addMouseListener(this);
-		
 		underLabel.setForeground(Color.WHITE);
 		parent.getContentPane().add(underLabel);
+		parent.getContentPane().add(remove);
+		
+		remove.setTransparency(0.4F);
+		remove.setHoverTransparency(1F);
+	}
+	
+	public JButton getRemoveIcon() {
+		return remove;
 	}
 
 	public String getUsername() {
@@ -109,6 +118,7 @@ public class DynamicButton extends JButton implements MouseListener{
 	public void setBounds(int x, int y, int w, int h) {
 		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, w, h)));
 		super.setBounds(x, y, w, h);
+		remove.setBounds(x + w + 2, y, 16, 16);
 		
 		//Allow the label to overflow the button width
 		int sw = underLabel.getFontMetrics(underLabel.getFont()).stringWidth(underLabel.getText());
@@ -118,6 +128,8 @@ public class DynamicButton extends JButton implements MouseListener{
 			
 		}
 		underLabel.setBounds(x + (w - sw) / 2, y + h, w, 20);
+		
+		
 	}
 
 	private void updateSize(int size) {

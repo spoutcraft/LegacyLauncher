@@ -38,6 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -63,6 +66,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String OPTIONS_ACTION = "options";
 	private static final String LOGIN_ACTION = "login";
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
+	private static final String REMOVE_USER = "remove";
+	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private LiteTextBox name;
 	private LitePasswordBox pass;
 	private LiteButton login;
@@ -222,6 +227,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
+			setIcon(userButton.getRemoveIcon(), "remove.png", 16);
+			userButton.getRemoveIcon().addActionListener(this);
+			userButton.getRemoveIcon().setActionCommand(REMOVE_USER);
+			removeButtons.put(userButton.getRemoveIcon(), userButton);
 		}
 
 		contentPane.add(name);
@@ -239,9 +248,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(logo);
 		contentPane.add(options);
 		contentPane.add(progressBar);
-		
-		
-		this.setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
+
+		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
@@ -303,6 +311,17 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
 			this.remember.setSelected(true);
 			action(LOGIN_ACTION, userButton);
+		}  else if (action.equals(REMOVE_USER)) {
+			DynamicButton userButton = removeButtons.get((JButton)c);
+			this.removeAccount(userButton.getUsername());
+			userButton.setVisible(false);
+			userButton.setEnabled(false);
+			getContentPane().remove(userButton);
+			c.setVisible(false);
+			c.setEnabled(false);
+			getContentPane().remove(c);
+			removeButtons.remove(c);
+			writeUsernameList();
 		}
 	}
 
