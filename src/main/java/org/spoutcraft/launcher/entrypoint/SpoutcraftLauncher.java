@@ -277,7 +277,7 @@ public class SpoutcraftLauncher {
 	}
 
 	protected static Logger setupLogger() {
-		Logger logger = Logger.getLogger("launcher");
+		final Logger logger = Logger.getLogger("launcher");
 		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();
@@ -298,6 +298,13 @@ public class SpoutcraftLauncher {
 
 		System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
+
+		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			public void uncaughtException(Thread t, Throwable e) {
+		    	logger.log(Level.SEVERE, "Unhandled Exception in " + t, e);
+			}
+		});
+
 		return logger;
 	}
 
@@ -363,6 +370,7 @@ public class SpoutcraftLauncher {
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
 	}
+
 	public static void setupConsole() {
 		if (console == null) {
 			console = new ConsoleFrame(2500, true);
