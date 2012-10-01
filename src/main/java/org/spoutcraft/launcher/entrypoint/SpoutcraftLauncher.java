@@ -111,11 +111,13 @@ public class SpoutcraftLauncher {
 		dirs.getSkinDir().mkdirs();
 		dirs.getSpoutcraftDir().mkdirs();
 
-		YAMLProcessor settings = setupSettings();
-		if (settings == null) {
-			throw new NullPointerException("The YAMLProcessor object was null for settings.");
+		if (Settings.getYAML() == null) {
+			YAMLProcessor settings = setupSettings();
+			if (settings == null) {
+				throw new NullPointerException("The YAMLProcessor object was null for settings.");
+			}
+			Settings.setYAML(settings);
 		}
-		Settings.setYAML(settings);
 		Settings.setLauncherBuild(launcherBuild);
 		setupProxy();
 
