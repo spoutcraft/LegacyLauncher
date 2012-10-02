@@ -22,6 +22,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
@@ -35,6 +36,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -50,6 +52,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import org.apache.commons.io.IOUtils;
+import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.util.Compatibility;
 
 /**
  * Console dialog for showing console messages.
@@ -111,6 +115,8 @@ public class ConsoleFrame extends JFrame {
 		
 		setSize(new Dimension(650, 400));
 		buildUI();
+		
+		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 		
 		if (trackProc != null) {
 			track(trackProc);

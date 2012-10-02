@@ -131,8 +131,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		developerCode.setText(Settings.getDeveloperCode());
 		developerCode.getDocument().addDocumentListener(new DeveloperCodeListener(developerCode));
 
-		Settings.setSpoutcraftChannel(populateChannelVersion(spoutcraftVersion, Settings.getSpoutcraftChannel().type()));
-		Settings.setLauncherChannel(populateChannelVersion(launcherVersion, Settings.getLauncherChannel().type()));
+		Settings.setSpoutcraftChannel(populateChannelVersion(spoutcraftVersion, Settings.getSpoutcraftChannel().type(), true));
+		Settings.setLauncherChannel(populateChannelVersion(launcherVersion, Settings.getLauncherChannel().type(), false));
 		populateMinecraftVersions(minecraftVersion);
 		populateSpoutcraftBuilds(buildCombo);
 		Settings.setWindowModeId(populateWindowMode(windowMode));
@@ -219,12 +219,14 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		return WindowMode.WINDOWED.getId();
 	}
 
-	private Channel populateChannelVersion(JComboBox version, int selection) {
+	private Channel populateChannelVersion(JComboBox version, int selection, boolean custom) {
 		version.addItem("Stable");
 		version.addItem("Beta");
 		if (isValidDeveloperCode()) {
 			version.addItem("Dev");
-			version.addItem("Custom");
+			if (custom) {
+				version.addItem("Custom");
+			}
 		} else if (selection > 1 || selection < 0) {
 			selection = 0;
 		}
