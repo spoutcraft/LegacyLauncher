@@ -413,7 +413,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		ep.setEditable(false);
 		ep.setBackground(label.getBackground());
 
-		JOptionPane.showMessageDialog(this, ep);
+		JOptionPane.showMessageDialog(this, ep, "Outdated Launcher", JOptionPane.WARNING_MESSAGE);
 	}
 
 	protected static final class UserPasswordInformation {
