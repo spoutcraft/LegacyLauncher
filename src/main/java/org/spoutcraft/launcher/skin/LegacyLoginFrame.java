@@ -475,7 +475,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	@Override
 	public void dispose() {
 		thread.interrupt();
-		SpoutcraftLauncher.destroyConsole();
 		super.dispose();
 	}
 

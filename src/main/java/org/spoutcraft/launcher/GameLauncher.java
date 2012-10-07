@@ -37,6 +37,7 @@ import javax.swing.JOptionPane;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
@@ -156,6 +157,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 	}
 
 	public void windowClosing(WindowEvent e) {
+		SpoutcraftLauncher.destroyConsole();
 		if (this.minecraft != null) {
 			this.minecraft.stop();
 			this.minecraft.destroy();

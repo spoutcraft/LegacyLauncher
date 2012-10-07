@@ -339,12 +339,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public JProgressBar getProgressBar() {
 		return progressBar;
 	}
-	
-	@Override
-	public void dispose() {
-		SpoutcraftLauncher.destroyConsole();
-		super.dispose();
-	}
 
 	@Override
 	public void disableForm() {
