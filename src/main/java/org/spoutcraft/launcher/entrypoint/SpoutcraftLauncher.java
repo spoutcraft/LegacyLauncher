@@ -202,15 +202,18 @@ public class SpoutcraftLauncher {
 	}
 
 	private static void checkInternet() {
-		if (!hasInternet()) {
+		if (!pingURL("http://www.google.com")) {
 			JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
+		} else if (!pingURL("http://get.spout.org")) {
+			JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
 	}
 
-	private static boolean hasInternet() {
+	private static boolean pingURL(String urlLoc) {
 		try {
-			final URL url = new URL("http://get.spout.org/");
+			final URL url = new URL(urlLoc);
 			final URLConnection conn = url.openConnection();
 			conn.setConnectTimeout(10000);
 			conn.getInputStream();
