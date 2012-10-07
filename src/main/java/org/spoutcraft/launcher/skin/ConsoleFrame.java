@@ -23,6 +23,10 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
@@ -38,6 +42,8 @@ import java.util.logging.Logger;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
@@ -62,7 +68,7 @@ import org.spoutcraft.launcher.util.Compatibility;
  * 
  * This code reused & relicensed as LGPL v 3 with permission.
  */
-public class ConsoleFrame extends JFrame {
+public class ConsoleFrame extends JFrame implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private static final Logger rootLogger = Logger.getLogger("launcher");
 	private Process trackProc;
@@ -121,6 +127,8 @@ public class ConsoleFrame extends JFrame {
 		if (trackProc != null) {
 			track(trackProc);
 		}
+		
+		addMouseListener(this);
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
@@ -148,8 +156,9 @@ public class ConsoleFrame extends JFrame {
 			JTextArea text = new JTextArea();
 			this.textComponent = text;
 			text.setLineWrap(true);
+			
 		}
-		
+		textComponent.addMouseListener(this);
 		textComponent.setFont(getMonospaceFont());
 		textComponent.setEditable(false);
 		DefaultCaret caret = (DefaultCaret) textComponent.getCaret();
@@ -405,6 +414,55 @@ public class ConsoleFrame extends JFrame {
 			IOUtils.closeQuietly(result);
 		}
 		return result.toString();
+	}
+	
+    public void mousePressed(MouseEvent e){
+        if (e.isPopupTrigger())
+            doPop(e);
+    }
+
+    public void mouseReleased(MouseEvent e){
+        if (e.isPopupTrigger())
+            doPop(e);
+    }
+
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+    private void doPop(MouseEvent e){
+        PopUpDemo menu = new PopUpDemo();
+        menu.show(e.getComponent(), e.getX(), e.getY());
+    }
+
+	private class PopUpDemo extends JPopupMenu {
+		private static final long serialVersionUID = 1L;
+		JMenuItem copy;
+	    JMenuItem clear;
+	    public PopUpDemo(){
+	    	copy = new JMenuItem("Copy");
+	        add(copy);
+	        copy.addActionListener(new ActionListener() {
+	        	 public void actionPerformed(ActionEvent e) {
+	        		 textComponent.copy();
+	        	 }
+	        });
+	        
+	        clear = new JMenuItem("Clear");
+	        add(clear);
+	        clear.addActionListener(new ActionListener() {
+	        	 public void actionPerformed(ActionEvent e) {
+	        		 textComponent.setText("");
+	        	 }
+	        });
+	    }
+	    
+	    
 	}
 
 }
