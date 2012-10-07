@@ -261,11 +261,11 @@ public class SpoutcraftLauncher {
 		}
 		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "libraries.yml");
+		temp = new File(Utils.getWorkingDirectory(), "config/libraries.yml");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "spoutcraft.yml");
+		temp = new File(Utils.getWorkingDirectory(), "config/spoutcraft.yml");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "minecraft.yml");
+		temp = new File(Utils.getWorkingDirectory(), "config/minecraft.yml");
 		temp.delete();
 	}
 
