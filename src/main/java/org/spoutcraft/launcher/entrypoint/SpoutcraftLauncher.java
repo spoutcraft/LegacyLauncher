@@ -385,6 +385,13 @@ public class SpoutcraftLauncher {
 			console.setVisible(true);
 		}
 	}
+	
+	public static void destroyConsole() {
+		if (console != null) {
+			console.setVisible(false);
+			console.dispose();
+		}
+	}
 }
 
 class LogFlushThread extends Thread {

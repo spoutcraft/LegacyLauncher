@@ -44,6 +44,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
@@ -337,6 +338,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	@Override
 	public JProgressBar getProgressBar() {
 		return progressBar;
+	}
+	
+	@Override
+	public void dispose() {
+		SpoutcraftLauncher.destroyConsole();
+		super.dispose();
 	}
 
 	@Override

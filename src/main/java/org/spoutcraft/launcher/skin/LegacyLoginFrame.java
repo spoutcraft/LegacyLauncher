@@ -36,8 +36,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
@@ -57,13 +55,14 @@ import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
-public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener, WindowListener {
+public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyListener {
 	private static final String LOGIN_SKIN_2_ACTION = "LoginSkin2";
 	private static final String LOGIN_SKIN_1_ACTION = "LoginSkin1";
 	private static final String LOGIN_ACTION = "login";
@@ -358,8 +357,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 
 		setFocusTraversalPolicy(new SpoutFocusTraversalPolicy(order));
 
-		addWindowListener(this);
-
 		loginButton.setEnabled(true);
 		thread = new ForgetThread();
 		thread.start();
@@ -478,6 +475,7 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 	@Override
 	public void dispose() {
 		thread.interrupt();
+		SpoutcraftLauncher.destroyConsole();
 		super.dispose();
 	}
 
@@ -489,27 +487,6 @@ public class LegacyLoginFrame extends LoginFrame implements ActionListener, KeyL
 			status = status.substring(0, 60) + "...";
 		}
 		progressBar.setString(intProgress + "% " + status);
-	}
-
-	public void windowOpened(WindowEvent e) {
-	}
-
-	public void windowClosing(WindowEvent e) {
-	}
-
-	public void windowIconified(WindowEvent e) {
-	}
-
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	public void windowActivated(WindowEvent e) {
-	}
-
-	public void windowDeactivated(WindowEvent e) {
-	}
-
-	public void windowClosed(WindowEvent e) {
 	}
 
 	private class ForgetThread extends Thread {

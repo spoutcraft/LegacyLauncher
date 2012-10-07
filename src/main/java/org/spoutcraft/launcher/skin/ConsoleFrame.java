@@ -188,11 +188,12 @@ public class ConsoleFrame extends JFrame {
 		
 		try {
 			int offset = document.getLength();
-			document.insertString(offset, line,
-					(attributes != null && colorEnabled) ? attributes : defaultAttributes);
+			document.insertString(offset, line,	(attributes != null && colorEnabled) ? attributes : defaultAttributes);
 			textComponent.setCaretPosition(document.getLength());
 		} catch (BadLocationException ble) {
 		
+		} catch (NullPointerException npe) {
+			
 		}
 	}
 	
