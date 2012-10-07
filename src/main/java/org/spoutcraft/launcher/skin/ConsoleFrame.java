@@ -436,15 +436,15 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	}
 
     private void doPop(MouseEvent e){
-        PopUpDemo menu = new PopUpDemo();
+    	ContextMenu menu = new ContextMenu();
         menu.show(e.getComponent(), e.getX(), e.getY());
     }
 
-	private class PopUpDemo extends JPopupMenu {
+	private class ContextMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		JMenuItem copy;
 	    JMenuItem clear;
-	    public PopUpDemo(){
+	    public ContextMenu(){
 	    	copy = new JMenuItem("Copy");
 	        add(copy);
 	        copy.addActionListener(new ActionListener() {

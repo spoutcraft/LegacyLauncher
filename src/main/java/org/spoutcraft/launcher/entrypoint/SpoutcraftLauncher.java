@@ -210,7 +210,7 @@ public class SpoutcraftLauncher {
 
 	private static boolean hasInternet() {
 		try {
-			final URL url = new URL("http://www.google.com");
+			final URL url = new URL("http://get.spout.org/");
 			final URLConnection conn = url.openConnection();
 			conn.setConnectTimeout(10000);
 			conn.getInputStream();
