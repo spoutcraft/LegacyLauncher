@@ -261,6 +261,12 @@ public class SpoutcraftLauncher {
 		}
 		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
 		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "libraries.yml");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "spoutcraft.yml");
+		temp.delete();
+		temp = new File(Utils.getWorkingDirectory(), "minecraft.yml");
+		temp.delete();
 	}
 
 	private static void setLookAndFeel() {
