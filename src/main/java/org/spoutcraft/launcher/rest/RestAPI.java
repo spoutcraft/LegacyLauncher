@@ -33,7 +33,7 @@ public class RestAPI {
 	private static final String PROJECT = "spoutcraft";
 
 	// Public
-	public static final String REST_URL = "http://get.spout.org/nuget/";
+	public static final String REST_URL = "http://get.spout.org/api/";
 	public static final String VERSIONS_URL = REST_URL + "versions/" + PROJECT;
 	public static final String INFO_URL = REST_URL + "info/";
 	public static final String LIBRARY_GET_URL = REST_URL + "library/";
