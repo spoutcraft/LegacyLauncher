@@ -416,7 +416,7 @@
 									<bundleName>${project.name}</bundleName>
 									<version>${project.version}</version>
 									<iconFile>${basedir}/src/main/resources/app/icon.icns</iconFile>
-									<dictionaryFile>src/main/resources/app/Info.plist.template</dictionaryFile>
+									<dictionaryFile>${basedir}/src/main/resources/app/Info.plist.template</dictionaryFile>
 									<javaApplicationStub>${basedir}/src/main/resources/app/JavaApplicationStub</javaApplicationStub>
 									<zipFile>${project.build.directory}/${project.build.finalName}.zip</zipFile>
 									<jvmVersion>1.5+</jvmVersion>
@@ -429,7 +429,11 @@
 											</includes>
 										</fileSet>
 									</additionalResources>
-									<excludeArtifactIds>commons-codec,commons-io,jdom</excludeArtifactIds>
+									<excludeArtifactIds>
+										<excludeArtifactId>commons-codec</excludeArtifactId>
+										<excludeArtifactId>commons-io</excludeArtifactId>
+										<excludeArtifactId>jdom</excludeArtifactId>
+									</excludeArtifactIds>
 								</configuration>
 								<phase>package</phase>
 								<goals>
