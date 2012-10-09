@@ -314,7 +314,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			action(LOGIN_ACTION, userButton);
 		}  else if (action.equals(REMOVE_USER)) {
 			DynamicButton userButton = removeButtons.get((JButton)c);
-			this.removeAccount(userButton.getUsername());
+			this.removeAccount(userButton.getAccount());
 			userButton.setVisible(false);
 			userButton.setEnabled(false);
 			getContentPane().remove(userButton);
