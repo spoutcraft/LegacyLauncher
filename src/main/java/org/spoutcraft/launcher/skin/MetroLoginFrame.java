@@ -89,7 +89,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		int xShift = 0;
 		int yShift = 0;
-		if (OperatingSystem.getOS().isUnix()) {
+		if (this.isUndecorated()) {
 			yShift += 30;
 		}
 
