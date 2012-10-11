@@ -2,6 +2,7 @@ package org.spoutcraft.launcher.util;
 
 import java.awt.Image;
 import java.awt.Window;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
 import org.spoutcraft.launcher.Settings;
@@ -37,6 +38,19 @@ public class Compatibility {
 			if (Settings.isDebugMode()) {
 				e.printStackTrace();
 			}
-		}	
+		}
+	}
+	
+	public static boolean setExecutable(File file, boolean executable, boolean owner) {
+		try {
+			Class[] params = {boolean.class, boolean.class};
+			Method setExecutable = File.class.getMethod("setExecutable", params);
+			return (Boolean)setExecutable.invoke(file, executable, owner);
+		} catch (Exception e) {
+			if (Settings.isDebugMode()) {
+				e.printStackTrace();
+			}
+		}
+		return false;
 	}
 }
