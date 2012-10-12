@@ -274,14 +274,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			URLConnection conn = (new URL("https://minotar.net/avatar/" + user + "/100")).openConnection();
 			InputStream stream = conn.getInputStream();
 			BufferedImage image = ImageIO.read(stream);
-			return image;
+			if (image != null) {
+				return image;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			try {
-				return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/steve.png"));
-			} catch (IOException e1) {
-				throw new RuntimeException("Error reading backup image", e1);
-			}
+		}
+		try {
+			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/steve.png"));
+		} catch (IOException e1) {
+			throw new RuntimeException("Error reading backup image", e1);
 		}
 	}
 
