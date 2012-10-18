@@ -271,7 +271,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	private BufferedImage getImage(String user){
 		try {
-			URLConnection conn = (new URL("https://minotar.net/avatar/" + user + "/100")).openConnection();
+			URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
 			InputStream stream = conn.getInputStream();
 			BufferedImage image = ImageIO.read(stream);
 			if (image != null) {
