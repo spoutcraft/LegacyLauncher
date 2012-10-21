@@ -63,10 +63,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 	public void runGame(String user, String session, String downloadTicket) {
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
-
-		Dimension currentSize = Launcher.getLoginFrame().getSize();
-		Point location = Launcher.getLoginFrame().getLocation();
-		Point centeredLoc = new Point(location.x + (currentSize.width - size.width) / 2, location.y + (currentSize.height - size.height) / 2);
+		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getLoginFrame());
 
 		this.setLocation(centeredLoc);
 		this.setSize(size);
