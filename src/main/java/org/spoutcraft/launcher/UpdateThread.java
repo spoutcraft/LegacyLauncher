@@ -343,7 +343,12 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 100F / steps);
-		if (!new File(Launcher.getGameUpdater().getBinDir(), "natives").exists()) {
+		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
+		if (!nativesDir.exists()) {
+			return true;
+		}
+		//Empty dir
+		if (nativesDir.listFiles().length == 0) {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 200F / steps);

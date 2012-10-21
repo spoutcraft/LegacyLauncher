@@ -44,7 +44,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
@@ -61,7 +60,7 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
-	private static final URL gearIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
+	private static final URL gearIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
