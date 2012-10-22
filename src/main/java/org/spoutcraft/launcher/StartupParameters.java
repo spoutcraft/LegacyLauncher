@@ -175,6 +175,9 @@ public final class StartupParameters {
 			ArrayList<String> commands = new ArrayList<String>();
 			if (OperatingSystem.getOS().isWindows()) {
 				commands.add("javaw");
+			} else if (OperatingSystem.getOS().isMac()) {
+				commands.add("java");
+				commands.add("-Xdock:name=\"Spoutcraft\"");
 			} else {
 				commands.add("java");
 			}
