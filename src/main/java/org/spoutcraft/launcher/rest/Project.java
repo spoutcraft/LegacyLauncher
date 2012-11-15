@@ -92,7 +92,7 @@ public class Project{
 
 	@Override
 	public String toString() {
-		return "{ Library [project: " + project + ", releaseChannel: " + releaseChannel + ", build: " + build + ", version: " + version + ", fileName: " + fileName + ", fileType: " + fileType + ", md5: " + md5 + "] }";
+		return "{ Project [project: " + project + ", releaseChannel: " + releaseChannel + ", build: " + build + ", version: " + version + ", fileName: " + fileName + ", fileType: " + fileType + ", md5: " + md5 + "] }";
 	}
 
 }

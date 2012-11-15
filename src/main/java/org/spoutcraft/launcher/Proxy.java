@@ -86,6 +86,7 @@ public final class Proxy {
 			this.pass = pass;
 		}
 
+		@Override
 		protected PasswordAuthentication getPasswordAuthentication() {
 			return new PasswordAuthentication(user, pass);
 		}

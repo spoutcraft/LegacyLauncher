@@ -27,13 +27,10 @@
 package org.spoutcraft.launcher;
 
 import java.awt.Dimension;
-import java.awt.DisplayMode;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Window;
-
-import org.spoutcraft.launcher.util.OperatingSystem;
 
 public enum WindowMode {
 	WINDOWED("Windowed", 0),
