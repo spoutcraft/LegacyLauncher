@@ -67,7 +67,7 @@ public final class Versions {
 				IOUtils.closeQuietly(stream);
 			}
 			//TODO: Fix
-			versions.add(0, "1.4.4");
+			versions.add(0, "1.4.5");
 		}
 		return versions;
 	}

@@ -30,7 +30,7 @@ public enum FileType {
 	JINPUT("a7835a73a130656aba23e34147a55367"),
 	LWJGL("7a07c4285fa9a6b204ba59f011f1cd77"),
 	LWJGL_UTIL("f00470751cfc093ba760ca3cf10a512c"),
-	MINECRAFT("7aa46c8058cba2f38e9d2ddddcc77c72");
+	MINECRAFT("b15e2b2b6b4629f0d99a95b6b44412a0");
 
 	private final String md5;
 	private FileType(String md5) {
