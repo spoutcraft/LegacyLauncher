@@ -5,7 +5,7 @@ Spoutcraft Launcher is the custom launcher for installing and updating Spoutcraf
 Like the project? Feel free to [donate] to help continue development!
 
 ## What is Spoutcraft?
-
+Spoutcraft is a modified version of the Minecraft client, which you can access through the the Spoutcraft Launcher, and when connecting to a server with SpoutPlugin, it allows you to unlock most of the features of SpoutPlugin, such as custom blocks, items, texture packs, etc. It also gives several speed improvements, a minimap, an overview map, custom shaders, etc.
 
 [![Spoutcraft][Logo]][Homepage]  
 [Homepage] | [Forums] | [Twitter] | [Facebook]
@@ -17,13 +17,14 @@ Copyright (c) 2011-2012, Spout LLC <<http://www.spout.org/>>
 
 ## Getting the Source
 The latest and greatest source can be found here on [GitHub][Source].  
-Download the latest builds from our [build server][Builds]. [![Build Status](http://build.spout.org/job/SpoutcraftLauncher/badge/icon)][Jenkins]
+Download the latest builds from our [build server][Builds]. [![Build Status](http://build.spout.org/job/SpoutcraftLauncher/badge/icon)][Builds]
 
 ## Compiling the Source
 Spoutcraft Launcher uses Maven to handle its dependencies.
 
 * Install [Maven 2 or 3](http://maven.apache.org/download.html)
 * Checkout this repo and run: `mvn clean package`
+* To compile an `exe` on a non-Windows platform, add: `-P package-win` to the previous goals.
 
 ## Contributing to the Project
 Track and submit issues and bugs on our [issue tracker][Issues].  
@@ -44,7 +45,7 @@ Track and submit issues and bugs on our [issue tracker][Issues].
 
 **Please follow the above conventions if you want your pull request(s) accepted.**
 
-[Logo]: http://cdn.spout.org/img/logo/spoutcraft.png
+[Logo]: http://cdn.spout.org/logo/spoutcraft_github.png
 [Homepage]: http://www.spout.org
 [Forums]: http://forums.spout.org
 [License]: http://cdn.spout.org/license/spoutv1.txt
