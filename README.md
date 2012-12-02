@@ -2,26 +2,32 @@ Spoutcraft Launcher
 ===================
 Spoutcraft Launcher is the custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.
 
-Visit our [website][Website] or get support on our [forums][Forums].  
-Track and submit issues and bugs on our [issue tracker][Issues].
+Like the project? Feel free to [donate] to help continue development!
 
-[![Follow us on Twitter][Twitter Logo]][Twitter][![Like us on Facebook][Facebook Logo]][Facebook][![Donate to the Spout project][Donate Logo]][Donate]
+## What is Spoutcraft?
+
+
+[![Spoutcraft][Logo]][Homepage]  
+[Homepage] | [Forums] | [Twitter] | [Facebook]
 
 ## The License
 Spoutcraft Launcher is licensed under the [GNU Lesser General Public License Version 3][License], but with a provision that files are released under the MIT license 180 days after they are published. Please see the `LICENSE.txt` file for details.
 
-Copyright (c) 2011-2012, SpoutDev <<http://www.spout.org/>>  
-[![Spout][Author Logo]][Website]
+Copyright (c) 2011-2012, Spout LLC <<http://www.spout.org/>>
 
 ## Getting the Source
-The latest and greatest source can be found on [GitHub].  
-Download the latest builds from [Jenkins]. [![Build Status](http://build.spout.org/job/SpoutcraftLauncher/badge/icon)][Jenkins]
+The latest and greatest source can be found here on [GitHub][Source].  
+Download the latest builds from our [build server][Builds]. [![Build Status](http://build.spout.org/job/SpoutcraftLauncher/badge/icon)][Jenkins]
 
 ## Compiling the Source
 Spoutcraft Launcher uses Maven to handle its dependencies.
 
 * Install [Maven 2 or 3](http://maven.apache.org/download.html)
 * Checkout this repo and run: `mvn clean package`
+
+## Contributing to the Project
+Track and submit issues and bugs on our [issue tracker][Issues].  
+[Share the love!][Donate] Donations help make development possible!
 
 ## Code and Pull Request Formatting
 * Generally follow the Oracle coding standards.
@@ -38,16 +44,13 @@ Spoutcraft Launcher uses Maven to handle its dependencies.
 
 **Please follow the above conventions if you want your pull request(s) accepted.**
 
-[Author Logo]: http://cdn.spout.org/img/logo/spout_305x135.png
-[License]: http://www.spout.org/SpoutDevLicenseV1.txt
-[Website]: http://www.spout.org
+[Logo]: http://cdn.spout.org/img/logo/spoutcraft.png
+[Homepage]: http://www.spout.org
 [Forums]: http://forums.spout.org
-[GitHub]: https://github.com/SpoutDev/SpoutcraftLauncher
-[Jenkins]: http://build.spout.org/job/SpoutcraftLauncher
-[Issues]: http://issues.spout.org/browse/spoutcraft
+[License]: http://cdn.spout.org/license/spoutv1.txt
+[Source]: https://github.com/SpoutDev/SpoutcraftLauncher
+[Builds]: http://build.spout.org/job/SpoutcraftLauncher
+[Issues]: http://issues.spout.org/browse/SPOUTCRAFT
 [Twitter]: http://spout.in/twitter
-[Twitter Logo]: http://cdn.spout.org/img/button/twitter_follow_us.png
 [Facebook]: http://spout.in/facebook
-[Facebook Logo]: http://cdn.spout.org/img/button/facebook_like_us.png
 [Donate]: http://spout.in/donate
-[Donate Logo]: http://cdn.spout.org/img/button/donate_paypal_96x96.png

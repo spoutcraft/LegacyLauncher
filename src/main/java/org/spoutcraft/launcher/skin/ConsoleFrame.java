@@ -1,4 +1,30 @@
 /*
+ * This file is part of Spoutcraft.
+ *
+ * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Spoutcraft is licensed under the Spout License Version 1.
+ *
+ * Spoutcraft is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * In addition, 180 days after any changes are published, you can use the
+ * software, incorporating those changes, under the terms of the MIT license,
+ * as described in the Spout License Version 1.
+ *
+ * Spoutcraft is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License,
+ * the MIT license and the Spout License Version 1 along with this program.
+ * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
+ * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * including the MIT license.
+ */
+/*
  * SK's Minecraft Launcher
  * Copyright (C) 2010, 2011 Albert Pham <http://www.sk89q.com>
  *
@@ -15,7 +41,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
 package org.spoutcraft.launcher.skin;
 
 import java.awt.BorderLayout;
@@ -39,7 +64,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -58,14 +82,15 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import org.apache.commons.io.IOUtils;
+
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.Compatibility;
 
 /**
  * Console dialog for showing console messages.
- * 
+ *
  * @author sk89q
- * 
+ *
  * This code reused & relicensed as LGPL v 3 with permission.
  */
 public class ConsoleFrame extends JFrame implements MouseListener{
@@ -82,10 +107,10 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	private final SimpleAttributeSet errorAttributes;
 	private final SimpleAttributeSet infoAttributes;
 	private final SimpleAttributeSet debugAttributes;
-	
+
 	/**
 	 * Construct the frame.
-	 * 
+	 *
 	 * @param numLines number of lines to show at a time
 	 * @param colorEnabled true to enable a colored console
 	 */
@@ -95,39 +120,38 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 
 	/**
 	 * Construct the frame.
-	 * 
+	 *
 	 * @param numLines number of lines to show at a time
 	 * @param colorEnabled true to enable a colored console
 	 * @param trackProc process to track
 	 * @param killProcess true to kill the process on console close
 	 */
-	public ConsoleFrame(int numLines, boolean colorEnabled,
-			final Process trackProc, final boolean killProcess) {
-		super("Console");
+	public ConsoleFrame(int numLines, boolean colorEnabled, final Process trackProc, final boolean killProcess) {
+		super("Spoutcraft Console");
 		this.numLines = numLines;
 		this.colorEnabled = colorEnabled;
 		this.trackProc = trackProc;
-		
+
 		this.highlightedAttributes = new SimpleAttributeSet();
 		StyleConstants.setForeground(highlightedAttributes, Color.BLACK);
 		StyleConstants.setBackground(highlightedAttributes, Color.YELLOW);
-		
+
 		this.errorAttributes = new SimpleAttributeSet();
 		StyleConstants.setForeground(errorAttributes, new Color(200, 0, 0));
 		this.infoAttributes = new SimpleAttributeSet();
 		StyleConstants.setForeground(infoAttributes, new Color(200, 0, 0));
 		this.debugAttributes = new SimpleAttributeSet();
 		StyleConstants.setForeground(debugAttributes, Color.DARK_GRAY);
-		
+
 		setSize(new Dimension(650, 400));
 		buildUI();
-		
+
 		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
-		
+
 		if (trackProc != null) {
 			track(trackProc);
 		}
-		
+
 		addMouseListener(this);
 
 		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
@@ -144,7 +168,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 			}
 		});
 	}
-	
+
 	/**
 	 * Build the interface.
 	 */
@@ -156,7 +180,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 			JTextArea text = new JTextArea();
 			this.textComponent = text;
 			text.setLineWrap(true);
-			
+
 		}
 		textComponent.addMouseListener(this);
 		textComponent.setFont(getMonospaceFont());
@@ -165,26 +189,26 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		document = textComponent.getDocument();
 		document.addDocumentListener(new LimitLinesDocumentListener(numLines, true));
-		
+
 		JScrollPane scrollText = new JScrollPane(textComponent);
 		scrollText.setBorder(null);
 		scrollText.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
-		
+
 		add(scrollText, BorderLayout.CENTER);
 	}
 
 	/**
 	 * Log a message.
-	 * 
+	 *
 	 * @param line line
 	 */
 	public void log(String line) {
 		log(line, null);
 	}
-	
+
 	/**
 	 * Log a message given the {@link AttributeSet}.
-	 * 
+	 *
 	 * @param line line
 	 * @param attributes attribute set, or null for none
 	 */
@@ -194,30 +218,28 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 				attributes = highlightedAttributes;
 			}
 		}
-		
+
 		try {
 			int offset = document.getLength();
 			document.insertString(offset, line,	(attributes != null && colorEnabled) ? attributes : defaultAttributes);
 			textComponent.setCaretPosition(document.getLength());
 		} catch (BadLocationException ble) {
-		
 		} catch (NullPointerException npe) {
-			
 		}
 	}
-	
+
 	/**
 	 * Get an output stream that can be written to.
-	 * 
+	 *
 	 * @return output stream
 	 */
 	public ConsoleOutputStream getOutputStream() {
 		return getOutputStream((AttributeSet) null);
 	}
-	
+
 	/**
 	 * Get an output stream with the given attribute set.
-	 * 
+	 *
 	 * @param attributes attributes
 	 * @return output stream
 	 */
@@ -227,7 +249,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 
 	/**
 	 * Get an output stream using the give color.
-	 * 
+	 *
 	 * @param color color to use
 	 * @return output stream
 	 */
@@ -236,11 +258,11 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		StyleConstants.setForeground(attributes, color);
 		return getOutputStream(attributes);
 	}
-	
+
 	/**
 	 * Consume an input stream and print it to the dialog. The consumer
 	 * will be in a separate daemon thread.
-	 * 
+	 *
 	 * @param from stream to read
 	 */
 	public void consume(InputStream from) {
@@ -250,7 +272,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	/**
 	 * Consume an input stream and print it to the dialog. The consumer
 	 * will be in a separate daemon thread.
-	 * 
+	 *
 	 * @param from stream to read
 	 * @param color color to use
 	 */
@@ -261,17 +283,17 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	/**
 	 * Consume an input stream and print it to the dialog. The consumer
 	 * will be in a separate daemon thread.
-	 * 
+	 *
 	 * @param from stream to read
 	 * @param attributes attributes
 	 */
 	public void consume(InputStream from, AttributeSet attributes) {
 		consume(from, getOutputStream(attributes));
 	}
-	
+
 	/**
 	 * Internal method to consume a stream.
-	 * 
+	 *
 	 * @param from stream to consume
 	 * @param outputStream console stream to write to
 	 */
@@ -302,7 +324,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 
 	/**
 	 * Track a process in a separate daemon thread.
-	 * 
+	 *
 	 * @param process process
 	 */
 	private void track(Process process) {
@@ -328,21 +350,21 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		for (Handler handler : rootLogger.getHandlers()) {
 			rootLogger.removeHandler(handler);
 		}
-		
+
 		loggerHandler = new ConsoleLoggerHandler();
 		rootLogger.addHandler(loggerHandler);
 	}
-	
+
 	/**
 	 * Used to send console messages to the console.
 	 */
 	public class ConsoleOutputStream extends ByteArrayOutputStream {
 		private AttributeSet attributes;
-		
+
 		private ConsoleOutputStream(AttributeSet attributes) {
 			this.attributes = attributes;
 		}
-		
+
 		@Override
 		public void flush() {
 			String data = toString();
@@ -382,26 +404,27 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		public void close() throws SecurityException {
 		}
 	}
-	
+
 	private static String[] monospaceFontNames = {"Consolas", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Lucida Console"};
-	
+
 	/**
 	 * Get a supported monospace font.
-	 * 
+	 *
 	 * @return font
 	 */
 	public static Font getMonospaceFont() {
 		for (String fontName : monospaceFontNames) {
 			Font font = Font.decode(fontName + "-11");
-			if (!font.getFamily().equalsIgnoreCase("Dialog"))
+			if (!font.getFamily().equalsIgnoreCase("Dialog")) {
 				return font;
+			}
 		}
 		return new Font("Monospace", Font.PLAIN, 11);
 	}
-	
+
 	/**
 	 * Get a stack trace as a string.
-	 * 
+	 *
 	 * @param t exception
 	 * @return stack trace
 	 */
@@ -415,16 +438,18 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		}
 		return result.toString();
 	}
-	
-    public void mousePressed(MouseEvent e){
-        if (e.isPopupTrigger())
-            doPop(e);
-    }
 
-    public void mouseReleased(MouseEvent e){
-        if (e.isPopupTrigger())
-            doPop(e);
-    }
+	public void mousePressed(MouseEvent e){
+		if (e.isPopupTrigger()) {
+			doPop(e);
+		}
+	}
+
+	public void mouseReleased(MouseEvent e){
+		if (e.isPopupTrigger()) {
+			doPop(e);
+		}
+	}
 
 	public void mouseClicked(MouseEvent e) {
 	}
@@ -435,34 +460,31 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 	}
 
-    private void doPop(MouseEvent e){
-    	ContextMenu menu = new ContextMenu();
-        menu.show(e.getComponent(), e.getX(), e.getY());
-    }
+	private void doPop(MouseEvent e){
+		ContextMenu menu = new ContextMenu();
+		menu.show(e.getComponent(), e.getX(), e.getY());
+	}
 
 	private class ContextMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		JMenuItem copy;
-	    JMenuItem clear;
-	    public ContextMenu(){
-	    	copy = new JMenuItem("Copy");
-	        add(copy);
-	        copy.addActionListener(new ActionListener() {
-	        	 public void actionPerformed(ActionEvent e) {
-	        		 textComponent.copy();
-	        	 }
-	        });
-	        
-	        clear = new JMenuItem("Clear");
-	        add(clear);
-	        clear.addActionListener(new ActionListener() {
-	        	 public void actionPerformed(ActionEvent e) {
-	        		 textComponent.setText("");
-	        	 }
-	        });
-	    }
-	    
-	    
-	}
+		JMenuItem clear;
+		public ContextMenu() {
+			copy = new JMenuItem("Copy");
+			add(copy);
+			copy.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					textComponent.copy();
+				}
+			});
 
+			clear = new JMenuItem("Clear");
+			add(clear);
+			clear.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					textComponent.setText("");
+				}
+			});
+		}
+	}
 }
