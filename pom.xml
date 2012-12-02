@@ -90,7 +90,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.7</version>
+			<version>1.6</version><!-- Stay on 1.6 for Java 5 compatibility -->
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
