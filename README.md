@@ -32,20 +32,19 @@ Track and submit issues and bugs on our [issue tracker][Issues].
 
 ## Code and Pull Request Formatting
 * Generally follow the Oracle coding standards.
-* Use tabs for indentation, not spaces.
-* No trailing whitespaces.
+* No spaces, only tabs for indentation.
+* No trailing whitespaces on new lines.
 * 200 column limit for readability.
 * Pull requests must compile, work, and be formatted properly.
 * Sign-off on ALL your commits - this indicates you agree to the terms of our license.
 * No merges should be included in pull requests unless the pull request's purpose is a merge.
 * Number of commits in a pull request should be kept to *one commit* and all additional commits must be *squashed*.
 * You may have more than one commit in a pull request if the commits are separate changes, otherwise squash them.
-* When modifying Notch code (Minecraft code), include //Spout start and //Spout end
 * For clarification, see the full pull request guidelines [here](http://spout.in/prguide).
 
 **Please follow the above conventions if you want your pull request(s) accepted.**
 
-[Logo]: http://cdn.spout.org/logo/spoutcraft_github.png
+[Logo]: http://cdn.spout.org/spoutcraft-github.png
 [Homepage]: http://www.spout.org
 [Forums]: http://forums.spout.org
 [License]: http://cdn.spout.org/license/spoutv1.txt
