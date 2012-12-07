@@ -28,10 +28,13 @@ package org.spoutcraft.launcher.skin;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.net.URL;
@@ -63,11 +66,13 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.Utils;
 
 @SuppressWarnings({ "restriction" })
 public class OptionsMenu extends JDialog implements ActionListener{
 	private static final long serialVersionUID = 1L;
 	private static final URL spoutcraftIcon = SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
+	private static final String LOGS_ACTION = "logs";
 	private static final String CANCEL_ACTION = "cancel";
 	private static final String RESET_ACTION = "reset";
 	private static final String SAVE_ACTION = "save";
@@ -104,6 +109,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 	private JComboBox buildCombo;
 	private JLabel serverLabel;
 	private JTextField directJoin;
+	private JButton logsButton;
 	private JButton resetButton;
 	private JButton cancelButton;
 	private JButton saveButton;
@@ -119,6 +125,9 @@ public class OptionsMenu extends JDialog implements ActionListener{
 
 		populateMemory(memory);
 
+		logsButton.addActionListener(this);
+		logsButton.setActionCommand(LOGS_ACTION);
+		
 		cancelButton.addActionListener(this);
 		cancelButton.setActionCommand(CANCEL_ACTION);
 
@@ -288,7 +297,17 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		if (command.equals(CANCEL_ACTION)) {
 			closeForm();
 		} else if (command.equals(RESET_ACTION)) {
-
+			
+		} else if (command.equals(LOGS_ACTION)) {
+			Desktop.getDesktop();			
+			if (Desktop.isDesktopSupported()) {			
+			File logDirectory = new File(Utils.getWorkingDirectory(), "logs");						
+			try {
+				Desktop.getDesktop().open(logDirectory);
+			} catch (IOException e) {				
+				e.printStackTrace();
+			}
+			}
 		} else if (command.equals(SAVE_ACTION)) {
 			Channel prev = Settings.getSpoutcraftChannel();
 			String build = Settings.getSpoutcraftSelectedBuild();
@@ -380,6 +399,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		buildCombo = new JComboBox();
 		serverLabel = new JLabel();
 		directJoin = new JTextField();
+		logsButton = new JButton();
 		resetButton = new JButton();
 		cancelButton = new JButton();
 		saveButton = new JButton();
@@ -451,6 +471,10 @@ public class OptionsMenu extends JDialog implements ActionListener{
 									.add(windowModeLabel)
 									.addPreferredGap(LayoutStyle.RELATED)
 									.add(windowMode, GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)))
+																
+									//.add(gamePaneLayout.createSequentialGroup()							
+									//.add(logsButton)
+									//.addPreferredGap(LayoutStyle.RELATED)
 							.addContainerGap())
 				);
 				gamePaneLayout.setVerticalGroup(
@@ -688,8 +712,11 @@ public class OptionsMenu extends JDialog implements ActionListener{
 			mainOptions.addTab("Developer", developerPane);
 		}
 
+		//---- logsButton ----
+		logsButton.setText("Logs");
+		
 		//---- resetButton ----
-		resetButton.setText("Reset to Defaults");
+		resetButton.setText("Reset");
 
 		//---- cancelButton ----
 		cancelButton.setText("Cancel");
@@ -705,6 +732,8 @@ public class OptionsMenu extends JDialog implements ActionListener{
 					.addContainerGap()
 					.add(resetButton)
 					.addPreferredGap(LayoutStyle.RELATED)
+					.add(logsButton)
+					.addPreferredGap(LayoutStyle.RELATED)
 					.add(cancelButton)
 					.addPreferredGap(LayoutStyle.UNRELATED)
 					.add(saveButton, GroupLayout.DEFAULT_SIZE, 55, Short.MAX_VALUE)
@@ -718,6 +747,7 @@ public class OptionsMenu extends JDialog implements ActionListener{
 					.addPreferredGap(LayoutStyle.RELATED)
 					.add(contentPaneLayout.createParallelGroup(GroupLayout.BASELINE)
 						.add(resetButton)
+						.add(logsButton)
 						.add(cancelButton)
 						.add(saveButton))
 					.addContainerGap())
