@@ -54,6 +54,17 @@ public class Compatibility {
 		}
 	}
 
+	public static void open(File file) {
+		try {
+			Object o = Class.forName("java.awt.Desktop").getMethod("getDesktop", new Class[0]).invoke(null, new Object[0]);
+			o.getClass().getMethod("open", new Class[]{URI.class}).invoke(o, new Object[]{file});
+		} catch (Exception e) {
+			if (Settings.isDebugMode()) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	@SuppressWarnings("rawtypes")
 	public static void setIconImage(Window window, Image image) {
 		try {

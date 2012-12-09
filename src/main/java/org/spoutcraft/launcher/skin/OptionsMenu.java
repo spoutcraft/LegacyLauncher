@@ -299,14 +299,11 @@ public class OptionsMenu extends JDialog implements ActionListener{
 		} else if (command.equals(RESET_ACTION)) {
 			
 		} else if (command.equals(LOGS_ACTION)) {
-			Desktop.getDesktop();			
-			if (Desktop.isDesktopSupported()) {			
-			File logDirectory = new File(Utils.getWorkingDirectory(), "logs");						
 			try {
-				Desktop.getDesktop().open(logDirectory);
-			} catch (IOException e) {				
+				File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+				Compatibility.open(logDirectory);
+			} catch (Exception e) {
 				e.printStackTrace();
-			}
 			}
 		} else if (command.equals(SAVE_ACTION)) {
 			Channel prev = Settings.getSpoutcraftChannel();
