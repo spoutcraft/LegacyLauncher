@@ -92,7 +92,7 @@ public final class SpoutcraftData {
 	public String getMinecraftVersion() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			//TODO: fix
+			//TODO: Fix by implementing get.spout.org API for MC
 			return "1.3.2";
 			//return getLatestMinecraftVersion();
 		} else {

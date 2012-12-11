@@ -67,7 +67,7 @@ public final class Versions {
 				IOUtils.closeQuietly(stream);
 			}
 			//TODO: Fix by implementing get.spout.org API for MC
-			//versions.add(0, "1.4.5");
+			versions.add(0, "1.4.5");
 		}
 		return versions;
 	}
