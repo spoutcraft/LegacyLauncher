@@ -42,6 +42,12 @@ public enum FileType {
 	}
 
 	public String getMD5(String version) {
+		if (this == MINECRAFT && "1.4.7".equals(version)) {
+			return "8e80fb01b321c6b3c7efca397a3eea35";
+		}
+		if (this == MINECRAFT && "1.4.6".equals(version)) {
+			return "48677dc4c2b98c29918722b5ab27b4fd";
+		}
 		if (this == MINECRAFT && "1.4.5".equals(version)) {
 			return "b15e2b2b6b4629f0d99a95b6b44412a0";
 		}
