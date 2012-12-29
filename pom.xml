@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -7,11 +6,12 @@
 	<name>Spoutcraft</name>
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>launcher</artifactId>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>3.0.0-SNAPSHOT</version>
 	<url>http://www.spout.org</url>
 	<inceptionYear>2011</inceptionYear>
 	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
+	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<currentYear>2012</currentYear>
@@ -25,15 +25,15 @@
 
 	<!-- Company information -->
 	<organization>
-		<name>SpoutDev</name>
+		<name>Spout LLC</name>
 		<url>http://www.spout.org</url>
 	</organization>
 
 	<!-- License information -->
 	<licenses>
 		<license>
-			<name>SpoutDev License Version 1</name>
-			<url>http://www.spout.org/SpoutDevLicenseV1.txt</url>
+			<name>Spout License Version 1</name>
+			<url>http://cdn.spout.org/license/spoutv1.txt</url>
 			<distribution>repo</distribution>
 			<comments>GNU Lesser General Public License Version 3, but with a provision that files are released under the MIT license 180 days after they are published</comments>
 		</license>
@@ -49,13 +49,13 @@
 	<!-- Build server -->
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://build.spout.org/job/SpoutcraftLauncher</url>
+		<url>http://build.spout.org/job/Spoutcraft</url>
 	</ciManagement>
 
 	<!-- Issue tracker -->
 	<issueManagement>
 		<system>jira</system>
-		<url>http://issues.spout.org/browse/SpoutcraftLauncher</url>
+		<url>http://issues.spout.org/browse/SPOUTCRAFT</url>
 	</issueManagement>
 
 	<!-- Dependency repositories -->
@@ -78,63 +78,43 @@
 		</pluginRepository>
 	</pluginRepositories>
 
-	<!-- Distribution management -->
-	<distributionManagement>
-		<!-- Publish releases here -->
-		<repository>
-			<id>spout-releases</id>
-			<url>http://nexus.spout.org/content/repositories/releases</url>
-		</repository>
-		<!-- Publish snapshots here -->
-		<snapshotRepository>
-			<id>spout-snapshots</id>
-			<url>http://nexus.spout.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
-
-	<!-- Dependencies -->
+	<!-- Project dependencies -->
 	<dependencies>
 		<!-- Included in final JAR -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
-			<version>2.1</version>
+			<version>2.1</version><!-- Stay on 2.1 for Java 5 compatibility -->
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.6</version>
+			<version>1.6</version><!-- Stay on 1.6 for Java 5 compatibility -->
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-core-asl</artifactId>
-			<version>1.9.9</version>
+			<version>1.9.11</version>
 			<scope>compile</scope>
 		</dependency> 
 		<dependency>
 			<groupId>org.codehaus.jackson</groupId>
 			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.9</version>
+			<version>1.9.11</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.beust</groupId>
 			<artifactId>jcommander</artifactId>
-			<version>1.29</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
+			<version>1.30</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.10</version>
+			<version>1.11</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -149,6 +129,13 @@
 			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
+		<!-- Old layout (to remove later) -->
+		<dependency>
+			<groupId>org.jdom</groupId>
+			<artifactId>jdom</artifactId>
+			<version>1.1</version>
+			<scope>compile</scope>
+		</dependency>
 		<dependency>
 			<groupId>rome</groupId>
 			<artifactId>rome</artifactId>
@@ -159,17 +146,18 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.10</version>
+			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
-	<!-- Build settings -->
+	<!-- Build configuration -->
 	<build>
 		<defaultGoal>clean install</defaultGoal>
 
-		<!-- Resources -->
+		<!-- Resources to include -->
 		<resources>
+			<!-- Static resources -->
 			<resource>
 				<directory>${project.basedir}</directory>
 				<targetPath>.</targetPath>
@@ -178,14 +166,7 @@
 					<include>LICENSE.txt</include>
 				</includes>
 			</resource>
-			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-				<targetPath>org/spoutcraft/launcher/resources</targetPath>
-				<filtering>true</filtering>
-				<includes>
-					<include>version</include>
-				</includes>
-			</resource>
+			<!-- Filtered resources -->
 			<resource>
 				<directory>${project.basedir}/src/main/resources</directory>
 				<targetPath>org/spoutcraft/launcher/resources</targetPath>
@@ -200,7 +181,16 @@
 					<exclude>jalopy.xml</exclude>
 				</excludes>
 			</resource>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<targetPath>org/spoutcraft/launcher/resources</targetPath>
+				<filtering>true</filtering>
+				<includes>
+					<include>version</include>
+				</includes>
+			</resource>
 		</resources>
+
 		<!-- Build plugins -->
 		<plugins>
 			<!-- License headers plugin -->
@@ -243,7 +233,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.5.1</version>
+				<version>3.0</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
@@ -268,7 +258,7 @@
 					</archive>
 				</configuration>
 			</plugin>
-			<!-- JAR dependency addition plugin -->
+			<!-- Dependency addition plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -317,6 +307,7 @@
 			</plugin>
 			<!-- JAR signing plugin -->
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jarsigner-plugin</artifactId>
 				<version>1.2</version>
 				<executions>
@@ -339,7 +330,7 @@
 
 	<!-- Build profiles -->
 	<profiles>
-		<!-- Package Windows exe -->
+		<!-- Package for Windows -->
 		<profile>
 			<id>package-win</id>
 			<activation>
@@ -395,14 +386,14 @@
 				</plugins>
 			</build>
 		</profile>
-		<!-- Package Mac app -->
+		<!-- Package for Mac -->
 		<profile>
 			<id>package-mac</id>
-			<!--<activation>
+			<activation>
 				<os>
 					<family>mac</family>
 				</os>
-			</activation>-->
+			</activation>
 			<build>
 				<plugins>
 					<plugin>
@@ -415,24 +406,24 @@
 									<mainClass>${mainClass}</mainClass>
 									<bundleName>${project.name}</bundleName>
 									<version>${project.version}</version>
-									<iconFile>${basedir}/src/main/resources/app/icon.icns</iconFile>
-									<dictionaryFile>${basedir}/src/main/resources/app/Info.plist.template</dictionaryFile>
-									<javaApplicationStub>${basedir}/src/main/resources/app/JavaApplicationStub</javaApplicationStub>
-									<zipFile>${project.build.directory}/${project.build.finalName}.zip</zipFile>
+									<iconFile>${project.basedir}/src/main/resources/app/icon.icns</iconFile>
+									<dictionaryFile>${project.basedir}/src/main/resources/app/Info.plist.template</dictionaryFile>
+									<javaApplicationStub>${project.basedir}/src/main/resources/app/JavaApplicationStub</javaApplicationStub>
+									<zipFile>${project.build.directory}/${project.build.finalName}-app.zip</zipFile>
+									<internetEnable>true</internetEnable>
 									<jvmVersion>1.5+</jvmVersion>
 									<vmOptions>-Xms512M -Xmx1024M -Xdock:name=Spoutcraft -Xdock:icon="icon.icns"</vmOptions>
-									<additionalResources>
-										<fileSet>
-											<directory>${basedir}</directory>
-											<includes>
-												<include>LICENSE.txt</include>
-											</includes>
-										</fileSet>
-									</additionalResources>
 									<excludeArtifactIds>
-										<excludeArtifactId>commons-codec</excludeArtifactId>
 										<excludeArtifactId>commons-io</excludeArtifactId>
+										<excludeArtifactId>commons-codec</excludeArtifactId>
+										<excludeArtifactId>jackson-core-asl</excludeArtifactId>
+										<excludeArtifactId>jackson-mapper-asl</excludeArtifactId>
+										<excludeArtifactId>jcommander</excludeArtifactId>
 										<excludeArtifactId>jdom</excludeArtifactId>
+										<excludeArtifactId>rome</excludeArtifactId>
+										<excludeArtifactId>snakeyaml</excludeArtifactId>
+										<excludeArtifactId>swing-layout</excludeArtifactId>
+										<excludeArtifactId>swing-worker</excludeArtifactId>
 									</excludeArtifactIds>
 								</configuration>
 								<phase>package</phase>

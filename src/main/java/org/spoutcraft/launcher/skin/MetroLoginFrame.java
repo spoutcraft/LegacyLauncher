@@ -1,8 +1,8 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft is licensed under the SpoutDev License Version 1.
+ * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -11,7 +11,7 @@
  *
  * In addition, 180 days after any changes are published, you can use the
  * software, incorporating those changes, under the terms of the MIT license,
- * as described in the SpoutDev License Version 1.
+ * as described in the Spout License Version 1.
  *
  * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +19,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the SpoutDev License Version 1 along with this program.
+ * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
@@ -40,7 +40,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -85,7 +84,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
-		
+
 		int xShift = 0;
 		int yShift = 0;
 		if (this.isUndecorated()) {
@@ -97,13 +96,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		name.setBounds(622 + xShift, 426 + yShift, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
-		
+
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
 		pass.setBounds(622 + xShift, 455 + yShift, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
-		
+
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
 		remember.setBounds(775 + xShift, 455 + yShift, 110, 24);
@@ -114,7 +113,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		remember.setBorder(null);
 		remember.setForeground(Color.WHITE);
 		remember.addKeyListener(this);
-		
+
 		// Setup login button
 		login = new LiteButton("Login");
 		login.setBounds(775 + xShift, 426 + yShift, 92, 24);
@@ -127,7 +126,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		JLabel logo = new JLabel();
 		logo.setBounds(8, 15, 400, 109);
 		setIcon(logo, "spoutcraft.png", logo.getWidth(), logo.getHeight());
-		
+
 		// Progress Bar
 		progressBar = new LiteProgressBar();
 		progressBar.setBounds(8, 130, 395, 23);
@@ -145,7 +144,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else {
 			largerMinecraft = minecraft.deriveFont((float)20);
 		}
-		
+
 		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.spout.org/");
 		home.setFont(largerMinecraft);
 		home.setBounds(545, 35, 65, 20);
@@ -171,7 +170,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		issues.setOpaque(false);
 		issues.setTransparency(0.70F);
 		issues.setHoverTransparency(1F);
-		
+
 		// Options Button
 		options = new TransparentButton();
 		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
@@ -213,13 +212,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
-		
+
 		java.util.List<String> savedUsers = getSavedUsernames();
 		int users = Math.min(5, this.getSavedUsernames().size());
 		for (int i = 0; i < users; i++) {
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
-			
+
 			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
@@ -280,7 +279,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			e.printStackTrace();
 		}
 		try {
-			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/steve.png"));
+			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
 		} catch (IOException e1) {
 			throw new RuntimeException("Error reading backup image", e1);
 		}
@@ -343,12 +342,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void disableForm() {
-		
 	}
 
 	@Override
 	public void enableForm() {
-		
 	}
 
 	@Override
@@ -356,7 +353,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return this.name.getText();
 	}
 
-	//Emulates tab focus policy of name -> pass -> remember -> login
+	// Emulates tab focus policy of name -> pass -> remember -> login
 	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
 		public Component getComponentAfter(Container con, Component c) {
 			if (c == name) {
@@ -395,7 +392,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		public Component getDefaultComponent(Container c) {
 			return name;
 		}
-		
+
 	}
 
 	public void keyTyped(KeyEvent e) {
@@ -403,7 +400,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
-			//Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
+			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
 			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
 				action(LOGIN_ACTION, (JComponent) e.getComponent());
 			} else if (e.getComponent() == remember) {

@@ -1,8 +1,8 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, SpoutDev <http://www.spout.org/>
- * Spoutcraft is licensed under the SpoutDev License Version 1.
+ * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
@@ -11,7 +11,7 @@
  *
  * In addition, 180 days after any changes are published, you can use the
  * software, incorporating those changes, under the terms of the MIT license,
- * as described in the SpoutDev License Version 1.
+ * as described in the Spout License Version 1.
  *
  * Spoutcraft is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -19,7 +19,7 @@
  * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the SpoutDev License Version 1 along with this program.
+ * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
@@ -106,10 +106,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		for (String key : usernames.keySet()) {
 			if (key.equalsIgnoreCase(user)) {
 				UserPasswordInformation info = usernames.get(key);
-				return "http://cdn.spout.org/legacy/skin/" + info.username + ".png";
+				return "http://cdn.spout.org/game/vanilla/skin/" + info.username + ".png";
 			}
 		}
-		return "http://cdn.spout.org/legacy/skin/" + user + ".png";
+		return "http://cdn.spout.org/game/vanilla/skin/" + user + ".png";
 	}
 
 	public final String getUsername(String account) {
@@ -370,10 +370,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
 					+ "Spoutcraft requires Java 6 or greater to run, Download"
 					+ "<br>java updates from http://spout.in/javaupdates</body></html>");
-			
+
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
-			
+
 			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 			final String title = "Java 1.6 Required!";
 			final String[] options = {"Ok", "Copy URL to clipboard"};
