@@ -82,7 +82,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public LoginFrame() {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Spoutcraft");
+		setTitle("Spoutcraft SP");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 	}
 
@@ -312,19 +312,25 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				writeUsernameList();
 				Launcher.getGameUpdater().runGame();
 				break;
-			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
-				enableForm();
-				break;
-			case ACCOUNT_MIGRATED:
-				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
-				removeAccount(getSelectedUser());
-				enableForm();
-				break;
-			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
-				enableForm();
-				break;
+            case BAD_LOGIN:
+                JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
+                writeUsernameList();
+                Launcher.getGameUpdater().runGame();
+                //enableForm();
+                break;
+            case ACCOUNT_MIGRATED:
+                JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
+                writeUsernameList();
+                Launcher.getGameUpdater().runGame();
+                //removeAccount(getSelectedUser());
+                //enableForm();
+                break;
+            case USER_NOT_PREMIUM:
+                JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+                writeUsernameList();
+                Launcher.getGameUpdater().runGame();
+                //enableForm();
+                break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");

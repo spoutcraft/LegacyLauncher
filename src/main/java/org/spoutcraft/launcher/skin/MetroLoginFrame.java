@@ -300,11 +300,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(LOGIN_ACTION)) {
 			String pass = new String(this.pass.getPassword());
-			if (getSelectedUser().length() > 0 && pass.length() > 0) {
-				this.doLogin(getSelectedUser(), pass);
-				if (remember.isSelected()) {
-					saveUsername(getSelectedUser(), pass);
-				}
+			this.doLogin(getSelectedUser(), pass);
+			if (remember.isSelected()) {
+				saveUsername(getSelectedUser(), pass);
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton)c;
