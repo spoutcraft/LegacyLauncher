@@ -43,7 +43,7 @@ import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.launch.MinecraftAppletEnglober;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.skin.LegacyLoginFrame;
+import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -59,7 +59,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(true);
 		this.addWindowListener(this);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(LegacyLoginFrame.spoutcraftIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 	}
 
 	public void runGame(String user, String session, String downloadTicket) {

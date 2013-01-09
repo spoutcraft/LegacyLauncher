@@ -129,19 +129,6 @@
 			<version>1.1</version>
 			<scope>compile</scope>
 		</dependency>
-		<!-- Old layout (to remove later) -->
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>rome</groupId>
-			<artifactId>rome</artifactId>
-			<version>1.0</version>
-			<scope>compile</scope>
-		</dependency>
 		<!-- Testing only -->
 		<dependency>
 			<groupId>junit</groupId>
