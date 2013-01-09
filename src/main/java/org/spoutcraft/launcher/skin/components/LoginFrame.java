@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -75,7 +76,7 @@ import org.spoutcraft.launcher.util.Utils;
 public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private static final long serialVersionUID = 2L;
 	public static final URL spoutcraftIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
-	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
+	protected Map<String, UserPasswordInformation> usernames = new LinkedHashMap<String, UserPasswordInformation>();
 	protected boolean offline = false;
 
 	public LoginFrame() {
