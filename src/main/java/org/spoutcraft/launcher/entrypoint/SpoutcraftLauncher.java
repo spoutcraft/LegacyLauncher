@@ -87,10 +87,6 @@ public class SpoutcraftLauncher {
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
-		// Required for ROME to work
-		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();
-		Thread.currentThread().setContextClassLoader(cl);
-
 		cleanup();
 
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));

@@ -77,9 +77,9 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 			}
 			float height = getFont().getSize();
 			g2d.setColor(Color.WHITE);
-			g2d.drawString(white, startWidth, height);
+			g2d.drawString(white, startWidth, height * 1.5F);
 			g2d.setColor(Color.BLACK);
-			g2d.drawString(this.getString().substring(chars), whiteWidth + startWidth, height);
+			g2d.drawString(this.getString().substring(chars), whiteWidth + startWidth, height * 1.5F);
 		}
 
 		transparency.cleanup(g2d);
