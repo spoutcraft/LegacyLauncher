@@ -64,15 +64,15 @@ public class Utils {
 	private static File workDir = null;
 	private static StartupParameters params = null;
 
-	public static File getWorkingDirectory() {
+	public static File getLauncherDirectory() {
 		if (workDir == null) {
-			workDir = getWorkingDirectory("spoutcraft");
+			workDir = getWorkingDirectory("technic");
 		}
 		return workDir;
 	}
 
 	public static File getAssetsDirectory() {
-		return new File(getWorkingDirectory(), "assets");
+		return new File(getLauncherDirectory(), "assets");
 	}
 
 	public static void setStartupParameters(StartupParameters params) {
@@ -85,7 +85,7 @@ public class Utils {
 
 	public static File getWorkingDirectory(String applicationName) {
 		if (getStartupParameters() != null && getStartupParameters().isPortable()) {
-			return new File("spoutcraft");
+			return new File("technic");
 		}
 
 		String userHome = System.getProperty("user.home", ".");

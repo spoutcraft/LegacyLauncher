@@ -175,7 +175,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	@SuppressWarnings("unused")
 	private final void readSavedUsernames() {
 		try {
-			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
+			File lastLogin = new File(Utils.getLauncherDirectory(), "lastlogin");
 			if (!lastLogin.exists()) {
 				return;
 			}
@@ -222,7 +222,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public final void writeUsernameList() {
 		DataOutputStream dos = null;
 		try {
-			File lastLogin = new File(Utils.getWorkingDirectory(), "lastlogin");
+			File lastLogin = new File(Utils.getLauncherDirectory(), "lastlogin");
 
 			Cipher cipher = getCipher(1, "passwordfile");
 
@@ -398,6 +398,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a></body></html>");
 
 		ep.addHyperlinkListener(new HyperlinkListener() {
+			@Override
 			public void hyperlinkUpdate(HyperlinkEvent e) {
 				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
 					try {

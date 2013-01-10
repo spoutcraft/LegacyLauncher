@@ -34,6 +34,7 @@ public class SkinSecurityException extends RuntimeException {
 		this.message = message;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}

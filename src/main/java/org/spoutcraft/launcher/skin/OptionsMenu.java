@@ -287,6 +287,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		action(e.getActionCommand());
 	}
@@ -298,7 +299,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 		} else if (command.equals(LOGS_ACTION)) {
 			try {
-				File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+				File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 				Compatibility.open(logDirectory);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -759,12 +760,15 @@ class DeveloperCodeListener implements DocumentListener {
 		this.field = field;
 	}
 
+	@Override
 	public void insertUpdate(DocumentEvent e) {
 	}
 
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 	}
 
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 	}
 }

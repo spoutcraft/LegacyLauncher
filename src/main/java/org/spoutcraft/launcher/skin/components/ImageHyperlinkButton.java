@@ -47,6 +47,7 @@ public class ImageHyperlinkButton extends JButton{
 	}
 
 	private class ButtonClickHandler implements ActionListener {
+		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {
 				Compatibility.browse((new URL(url).toURI()));

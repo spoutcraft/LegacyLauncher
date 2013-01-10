@@ -64,7 +64,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -301,6 +300,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		final InputStream in = from;
 		final PrintWriter out = new PrintWriter(outputStream, true);
 		Thread thread = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				byte[] buffer = new byte[1024];
 				try {
@@ -330,6 +330,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	private void track(Process process) {
 		final PrintWriter out = new PrintWriter(getOutputStream(Color.MAGENTA), true);
 		Thread thread = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					int code = trackProc.waitFor();
@@ -439,24 +440,29 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		return result.toString();
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e){
 		if (e.isPopupTrigger()) {
 			doPop(e);
 		}
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e){
 		if (e.isPopupTrigger()) {
 			doPop(e);
 		}
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
@@ -473,6 +479,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 			copy = new JMenuItem("Copy");
 			add(copy);
 			copy.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					textComponent.copy();
 				}
@@ -481,6 +488,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 			clear = new JMenuItem("Clear");
 			add(clear);
 			clear.addActionListener(new ActionListener() {
+				@Override
 				public void actionPerformed(ActionEvent e) {
 					textComponent.setText("");
 				}

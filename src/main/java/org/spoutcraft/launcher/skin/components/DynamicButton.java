@@ -149,20 +149,25 @@ public class DynamicButton extends JButton implements MouseListener{
 		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, width + size, height + size)));
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		updateSize(hoverIncrease);
 		underLabel.setVisible(true);
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 		updateSize(-hoverIncrease);
 		underLabel.setVisible(false);
@@ -212,6 +217,7 @@ public class DynamicButton extends JButton implements MouseListener{
 			this.increase = increase;
 		}
 
+		@Override
 		protected Object doInBackground() throws Exception {
 			try {
 				Thread.sleep(5);
@@ -248,6 +254,7 @@ public class DynamicButton extends JButton implements MouseListener{
 			this.size = size;
 		}
 
+		@Override
 		protected Object doInBackground() throws Exception {
 			try {
 				Thread.sleep(5);

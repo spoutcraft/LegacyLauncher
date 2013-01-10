@@ -35,7 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.UIManager;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -80,8 +79,6 @@ public class Start {
 			return;
 		}
 
-		migrateFolders();
-
 		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
@@ -94,9 +91,9 @@ public class Start {
 			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
-				temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+				temp = new File(Utils.getLauncherDirectory(), "temp.exe");
 			} else {
-				temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+				temp = new File(Utils.getLauncherDirectory(), "temp.jar");
 			}
 
 			try {
@@ -155,28 +152,13 @@ public class Start {
 		}
 	}
 
-	private static void migrateFolders() {
-		File brokenSpoutcraftDir = Utils.getWorkingDirectory("Spoutcraft");
-		if (brokenSpoutcraftDir.exists()) {
-			File correctSpoutcraftDir = Utils.getWorkingDirectory();
-			OperatingSystem os = OperatingSystem.getOS();
-			if (os.isUnix() || os.isMac()) {
-				try {
-					FileUtils.copyDirectory(brokenSpoutcraftDir, correctSpoutcraftDir);
-					FileUtils.deleteDirectory(brokenSpoutcraftDir);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
 	private static class LauncherDownloadListener implements DownloadListener {
 		private final ProgressSplashScreen screen;
 		LauncherDownloadListener(ProgressSplashScreen screen) {
 			this.screen = screen;
 		}
 
+		@Override
 		public void stateChanged(String text, float progress) {
 			screen.updateProgress((int)progress);
 		}

@@ -33,6 +33,7 @@ public class UnknownMinecraftException extends RuntimeException {
 		cause = ex;
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}

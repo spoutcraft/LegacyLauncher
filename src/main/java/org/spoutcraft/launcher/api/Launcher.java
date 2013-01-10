@@ -74,7 +74,7 @@ public class Launcher {
 
 	public static boolean clearCache() {
 		try {
-			FileUtils.deleteDirectory(instance.updater.getUpdateDir());
+			FileUtils.deleteDirectory(instance.updater.getTempDir());
 			FileUtils.deleteDirectory(instance.updater.getBinDir());
 			return true;
 		} catch (IOException e) {

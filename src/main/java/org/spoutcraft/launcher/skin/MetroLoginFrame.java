@@ -285,6 +285,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
 			action(e.getActionCommand(), (JComponent)e.getSource());
@@ -326,8 +327,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
+	@Override
 	public void stateChanged(final String status, final float progress) {
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				int intProgress = Math.round(progress);
 				progressBar.setValue(intProgress);
@@ -360,6 +363,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	// Emulates tab focus policy of name -> pass -> remember -> login
 	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
+		@Override
 		public Component getComponentAfter(Container con, Component c) {
 			if (c == name) {
 				return pass;
@@ -373,6 +377,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			return getFirstComponent(con);
 		}
 
+		@Override
 		public Component getComponentBefore(Container con, Component c) {
 			if (c == name) {
 				return login;
@@ -386,23 +391,28 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			return getFirstComponent(con);
 		}
 
+		@Override
 		public Component getFirstComponent(Container c) {
 			return name;
 		}
 
+		@Override
 		public Component getLastComponent(Container c) {
 			return login;
 		}
 
+		@Override
 		public Component getDefaultComponent(Container c) {
 			return name;
 		}
 
 	}
 
+	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
+	@Override
 	public void keyPressed(KeyEvent e) {
 		if (e.getKeyCode() == KeyEvent.VK_ENTER){
 			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
@@ -414,6 +424,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
+	@Override
 	public void keyReleased(KeyEvent e) {
 	}
 }

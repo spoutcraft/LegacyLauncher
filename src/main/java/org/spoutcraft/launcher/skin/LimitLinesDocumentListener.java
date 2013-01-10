@@ -86,19 +86,23 @@ public class LimitLinesDocumentListener implements DocumentListener {
 		this.maximumLines = maximumLines;
 	}
 
+	@Override
 	public void insertUpdate(final DocumentEvent e) {
 		// Changes to the Document can not be done within the listener
 		// so we need to add the processing to the end of the EDT
 		SwingUtilities.invokeLater(new Runnable() {
+			@Override
 			public void run() {
 				removeLines(e);
 			}
 		});
 	}
 
+	@Override
 	public void removeUpdate(DocumentEvent e) {
 	}
 
+	@Override
 	public void changedUpdate(DocumentEvent e) {
 	}
 

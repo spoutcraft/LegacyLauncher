@@ -49,7 +49,7 @@ import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class MirrorUtils {
 	private static boolean updated = false;
-	private static File mirrorsYML = new File(Utils.getWorkingDirectory(), "config" + File.separator + "mirrors.yml");
+	private static File mirrorsYML = new File(Utils.getLauncherDirectory(), "config" + File.separator + "mirrors.yml");
 	private static final String baseURL = "http://get.spout.org/";
 	private static List<String> mirrors = null;
 
@@ -166,6 +166,7 @@ class MirrorComparator implements Comparator<String> {
 	public MirrorComparator(Map<String, Integer> mirrors) {
 		this.mirrors = mirrors;
 	}
+	@Override
 	public int compare(String o1, String o2) {
 		return getValue(o2) - getValue(o1);
 	}

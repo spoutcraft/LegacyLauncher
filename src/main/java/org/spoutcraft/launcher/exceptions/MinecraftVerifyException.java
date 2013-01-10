@@ -45,10 +45,12 @@ public class MinecraftVerifyException extends Exception {
 		this.message = null;
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

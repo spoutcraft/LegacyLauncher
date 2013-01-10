@@ -51,7 +51,7 @@ import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
 
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
@@ -92,10 +92,9 @@ public class MinecraftClassLoader extends URLClassLoader {
 	}
 
 	private File getTempDirectory() {
-		SpoutcraftDirectories dir = new SpoutcraftDirectories();
 		int index = 0;
 		while (true) {
-			File tempDir = new File(dir.getBinDir(), "temp_" + index);
+			File tempDir = new File(Launcher.getGameUpdater().getBinDir(), "temp_" + index);
 			if (!tempDir.isDirectory() && !tempDir.exists()) {
 				tempDir.mkdirs();
 				return tempDir;
@@ -278,10 +277,12 @@ public class MinecraftClassLoader extends URLClassLoader {
 			this.iterator = iterator;
 		}
 
+		@Override
 		public boolean hasMoreElements() {
 			return iterator.hasNext();
 		}
 
+		@Override
 		public URL nextElement() {
 			return iterator.next();
 		}

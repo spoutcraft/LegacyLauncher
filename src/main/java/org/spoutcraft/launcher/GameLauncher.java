@@ -32,7 +32,6 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.io.File;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -144,9 +143,6 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		validate();
 		this.setVisible(true);
-		//TODO Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
-		//TODO Someone fix this better (or not, no harm as it just works)
-		new File(Utils.getWorkingDirectory(), "resources").mkdirs();
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());
 		minecraft.start();
@@ -154,9 +150,11 @@ public class GameLauncher extends JFrame implements WindowListener {
 		return;
 	}
 
+	@Override
 	public void windowOpened(WindowEvent e) {
 	}
 
+	@Override
 	public void windowClosing(WindowEvent e) {
 		SpoutcraftLauncher.destroyConsole();
 		if (this.minecraft != null) {
@@ -172,18 +170,23 @@ public class GameLauncher extends JFrame implements WindowListener {
 		System.exit(0);
 	}
 
+	@Override
 	public void windowClosed(WindowEvent e) {
 	}
 
+	@Override
 	public void windowIconified(WindowEvent e) {
 	}
 
+	@Override
 	public void windowDeiconified(WindowEvent e) {
 	}
 
+	@Override
 	public void windowActivated(WindowEvent e) {
 	}
 
+	@Override
 	public void windowDeactivated(WindowEvent e) {
 	}
 }

@@ -44,10 +44,12 @@ public class BadLoginException extends Exception {
 		this(null, "Bad login");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

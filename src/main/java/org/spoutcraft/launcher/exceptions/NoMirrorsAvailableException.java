@@ -46,10 +46,12 @@ public class NoMirrorsAvailableException extends IOException {
 		this(null, "No mirrors are available");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

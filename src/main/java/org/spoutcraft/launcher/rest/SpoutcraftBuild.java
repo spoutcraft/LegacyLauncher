@@ -80,6 +80,7 @@ public class SpoutcraftBuild implements Comparable<SpoutcraftBuild>{
 		return "Build: "  + buildNumber + " (MC: " + minecraftVersion + ")";
 	}
 
+	@Override
 	public int compareTo(SpoutcraftBuild o) {
 		return o.buildNumber.compareTo(buildNumber);
 	}

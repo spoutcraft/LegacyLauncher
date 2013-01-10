@@ -60,7 +60,6 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
@@ -87,10 +86,6 @@ public class SpoutcraftLauncher {
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
-		// Required for ROME to work
-		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();
-		Thread.currentThread().setContextClassLoader(cl);
-
 		cleanup();
 
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
@@ -107,9 +102,10 @@ public class SpoutcraftLauncher {
 		params.logParameters(logger);
 
 		// Setup directories
-		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
-		dirs.getSkinDir().mkdirs();
-		dirs.getSpoutcraftDir().mkdirs();
+		GameUpdater updater = new GameUpdater();
+		updater.setWorkingDir("spoutcraft");
+//		dirs.getSkinDir().mkdirs();
+//		dirs.getConfigDir().mkdirs();
 
 		if (Settings.getYAML() == null) {
 			YAMLProcessor settings = setupSettings();
@@ -162,8 +158,8 @@ public class SpoutcraftLauncher {
 		LoginFrame frame = new MetroLoginFrame();
 
 		try {
-			@SuppressWarnings("unused")
-			Launcher launcher = new Launcher(new GameUpdater(), new GameLauncher(), frame);
+			new Launcher(updater, new GameLauncher(), frame);
+			Launcher.getGameUpdater().start();
 		} catch (IOException failure) {
 			failure.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog(frame, failure);
@@ -173,7 +169,6 @@ public class SpoutcraftLauncher {
 			dialog.setVisible(true);
 			return;
 		}
-		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
@@ -246,23 +241,23 @@ public class SpoutcraftLauncher {
 	}
 
 	private static void cleanup() {
-		File temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+		File temp = new File(Utils.getLauncherDirectory(), "temp.jar");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+		temp = new File(Utils.getLauncherDirectory(), "temp.exe");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
+		temp = new File(Utils.getLauncherDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
 		if (!Main.isOldLauncher()) {
-			temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
+			temp = new File(Utils.getLauncherDirectory(), "launcherVersion");
 			temp.delete();
 		}
-		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
+		temp = new File(Utils.getLauncherDirectory(), "mc.patch");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "config/libraries.yml");
+		temp = new File(Utils.getLauncherDirectory(), "config/libraries.yml");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "config/spoutcraft.yml");
+		temp = new File(Utils.getLauncherDirectory(), "config/spoutcraft.yml");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "config/minecraft.yml");
+		temp = new File(Utils.getLauncherDirectory(), "config/minecraft.yml");
 		temp.delete();
 	}
 
@@ -289,7 +284,7 @@ public class SpoutcraftLauncher {
 
 	protected static Logger setupLogger() {
 		final Logger logger = Logger.getLogger("launcher");
-		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+		File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();
 		}
@@ -311,6 +306,7 @@ public class SpoutcraftLauncher {
 		System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
 
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+			@Override
 			public void uncaughtException(Thread t, Throwable e) {
 		    	logger.log(Level.SEVERE, "Unhandled Exception in " + t, e);
 			}
@@ -344,7 +340,7 @@ public class SpoutcraftLauncher {
 	}
 
 	protected static YAMLProcessor setupSettings() {
-		File file = new File(Utils.getWorkingDirectory(), "config" + File.separator + "settings.yml");
+		File file = new File(Utils.getLauncherDirectory(), "config" + File.separator + "settings.yml");
 
 		if (!file.exists()) {
 			try {

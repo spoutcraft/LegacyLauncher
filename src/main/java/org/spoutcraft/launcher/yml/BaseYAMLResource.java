@@ -49,11 +49,13 @@ public class BaseYAMLResource implements YAMLResource {
 		this.action = action;
 	}
 
+	@Override
 	public synchronized YAMLProcessor getYAML() {
 		updateYAML();
 		return cached;
 	}
 
+	@Override
 	public synchronized boolean updateYAML() {
 		if (cached == null) {
 			InputStream stream = null;

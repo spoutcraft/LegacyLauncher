@@ -121,15 +121,19 @@ class TransparentComponent implements MouseListener{
 		return g;
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 		if (e.getComponent() == parent) {
 			hovering = true;
@@ -139,6 +143,7 @@ class TransparentComponent implements MouseListener{
 		}
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 		if (e.getComponent() == parent) {
 			hovering = false;

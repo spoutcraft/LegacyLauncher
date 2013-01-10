@@ -85,18 +85,22 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 		transparency.cleanup(g2d);
 	}
 
+	@Override
 	public float getTransparency() {
 		return transparency.getTransparency();
 	}
 
+	@Override
 	public void setTransparency(float t) {
 		transparency.setTransparency(t);
 	}
 
+	@Override
 	public float getHoverTransparency() {
 		return transparency.getHoverTransparency();
 	}
 
+	@Override
 	public void setHoverTransparency(float t) {
 		transparency.setHoverTransparency(t);
 	}

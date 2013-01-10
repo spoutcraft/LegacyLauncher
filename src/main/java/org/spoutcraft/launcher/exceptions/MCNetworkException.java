@@ -44,10 +44,12 @@ public class MCNetworkException extends Exception {
 		this(null, "Could not connect to minecraft.net");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

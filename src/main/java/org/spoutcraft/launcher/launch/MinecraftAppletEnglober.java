@@ -100,6 +100,7 @@ public class MinecraftAppletEnglober extends Applet implements AppletStub {
 		return active;
 	}
 
+	@Override
 	public void appletResize(int width, int height) {
 		minecraftApplet.resize(width, height);
 	}

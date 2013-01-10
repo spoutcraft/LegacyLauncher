@@ -67,6 +67,7 @@ public abstract class SwingWorker<T, V> extends org.jdesktop.swingworker.SwingWo
 	 * @param chunks intermediate results to process
 	 * @see #publish
 	 */
+	@Override
 	protected void process(List<V> chunks) {
 		super.process(chunks);
 	}

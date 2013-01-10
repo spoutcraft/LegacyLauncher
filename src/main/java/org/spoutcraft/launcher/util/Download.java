@@ -63,6 +63,7 @@ public class Download implements Runnable {
 		return exception;
 	}
 
+	@Override
 	@SuppressWarnings("unused")
 	public void run(){
 		ReadableByteChannel rbc = null;
@@ -176,6 +177,7 @@ public class Download implements Runnable {
 			this.is = is;
 		}
 
+		@Override
 		public void run() {
 			try {
 				is.set(urlconnection.getInputStream());

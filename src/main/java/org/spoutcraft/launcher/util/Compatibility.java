@@ -80,7 +80,7 @@ public class Compatibility {
 
 	public static boolean setExecutable(File file, boolean executable, boolean owner) {
 		try {
-			Class[] params = {boolean.class, boolean.class};
+			Class<?>[] params = {boolean.class, boolean.class};
 			Method setExecutable = File.class.getMethod("setExecutable", params);
 			return (Boolean)setExecutable.invoke(file, executable, owner);
 		} catch (Exception e) {

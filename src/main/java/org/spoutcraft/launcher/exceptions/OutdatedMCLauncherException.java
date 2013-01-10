@@ -44,10 +44,12 @@ public class OutdatedMCLauncherException extends Exception {
 		this(null, "Outdated laucher exception");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

@@ -42,7 +42,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
@@ -131,7 +130,6 @@ public class UpdateThread extends Thread {
 
 				cleanLogs();
 				cleanTemp();
-				updateFiles();
 			}
 
 			Validator validate = new Validator();
@@ -207,31 +205,8 @@ public class UpdateThread extends Thread {
 		return split[split.length - 1];
 	}
 
-	private void updateFiles() {
-		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
-		File oldConfig = new File(Utils.getWorkingDirectory(), "spoutcraft");
-		if (oldConfig.exists() && oldConfig.isDirectory()) {
-			moveDirectory(oldConfig, dirs.getSpoutcraftDir());
-			FileUtils.deleteQuietly(oldConfig);
-		}
-	}
-
-	private void moveDirectory(File dir, File newDir) {
-		if (!dir.exists()) {
-			dir.mkdirs();
-		}
-		for (File file : dir.listFiles()) {
-			if (file.isDirectory()) {
-				moveDirectory(file, new File(newDir, file.getName()));
-			} else {
-				file.renameTo(new File(newDir, file.getName()));
-			}
-		}
-	}
-
 	private void cleanTemp() {
-		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
-		File binDir = dirs.getBinDir();
+		File binDir = Launcher.getGameUpdater().getBinDir();
 		for (File f : binDir.listFiles()) {
 			if (f.isDirectory()) {
 				if (f.getName().startsWith("temp_")) {
@@ -242,7 +217,7 @@ public class UpdateThread extends Thread {
 	}
 
 	private void cleanLogs() {
-		File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
+		File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 		if (logDirectory.exists() && logDirectory.isDirectory()) {
 			for (File log : logDirectory.listFiles()) {
 				if (!log.getName().endsWith(".log")) {
@@ -306,10 +281,10 @@ public class UpdateThread extends Thread {
 	}
 
 	public boolean isSpoutcraftUpdateAvailable(SpoutcraftData build) throws RestfulAPIException {
-		if (!Utils.getWorkingDirectory().exists()) {
+		if (!Utils.getLauncherDirectory().exists()) {
 			return true;
 		}
-		if (!Launcher.getGameUpdater().getSpoutcraftDir().exists()) {
+		if (!Launcher.getGameUpdater().getConfigDir().exists()) {
 			return true;
 		}
 
@@ -383,11 +358,11 @@ public class UpdateThread extends Thread {
 
 	public void updateMinecraft(SpoutcraftData build) throws IOException {
 		Launcher.getGameUpdater().getBinDir().mkdir();
-		Launcher.getGameUpdater().getBinCacheDir().mkdir();
-		if (Launcher.getGameUpdater().getUpdateDir().exists()) {
-			FileUtils.deleteDirectory(Launcher.getGameUpdater().getUpdateDir());
+		Launcher.getGameUpdater().getCacheDir().mkdir();
+		if (Launcher.getGameUpdater().getTempDir().exists()) {
+			FileUtils.deleteDirectory(Launcher.getGameUpdater().getTempDir());
 		}
-		Launcher.getGameUpdater().getUpdateDir().mkdir();
+		Launcher.getGameUpdater().getTempDir().mkdir();
 
 		String minecraftMD5 = FileType.MINECRAFT.getMD5();
 		String jinputMD5 = FileType.JINPUT.getMD5();
@@ -396,9 +371,9 @@ public class UpdateThread extends Thread {
 
 		// Processs minecraft.jar
 		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
+			String output = Launcher.getGameUpdater().getTempDir() + File.separator + "minecraft.jar";
 			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, build, listener);
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
@@ -407,21 +382,21 @@ public class UpdateThread extends Thread {
 		nativesDir.mkdir();
 
 		// Process other downloads
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "jinput.jar");
+		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar"));
 		}
 
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl.jar");
+		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar"));
 		}
 
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl_util.jar");
+		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		} else {
@@ -462,13 +437,13 @@ public class UpdateThread extends Thread {
 		}
 
 		// Download natives
-		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
+		File nativesJar = new File(Launcher.getGameUpdater().getTempDir(), "natives.jar");
 		DownloadUtils.downloadFile(url, nativesJar.getPath(), null, md5, listener);
 
 		// Extract natives
 		List<String> ignores = new ArrayList<String>();
 		ignores.add("META-INF");
-		File tempNatives = new File(Launcher.getGameUpdater().getUpdateDir(), "natives");
+		File tempNatives = new File(Launcher.getGameUpdater().getTempDir(), "natives");
 		Utils.extractJar(new JarFile(nativesJar), tempNatives, ignores);
 		FileUtils.moveDirectory(tempNatives, new File(Launcher.getGameUpdater().getBinDir(), "natives"));
 	}
@@ -476,14 +451,14 @@ public class UpdateThread extends Thread {
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
 		cleanupBinFoldersFor(build);
 
-		Launcher.getGameUpdater().getUpdateDir().mkdirs();
-		Launcher.getGameUpdater().getBinCacheDir().mkdirs();
-		Launcher.getGameUpdater().getSpoutcraftDir().mkdirs();
+		Launcher.getGameUpdater().getTempDir().mkdirs();
+		Launcher.getGameUpdater().getCacheDir().mkdirs();
+		Launcher.getGameUpdater().getConfigDir().mkdirs();
 		File cacheDir = new File(Launcher.getGameUpdater().getBinDir(), "cache");
 		cacheDir.mkdir();
 
-		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		File updateMC = new File(Launcher.getGameUpdater().getUpdateDir().getPath() + File.separator + "minecraft.jar");
+		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File updateMC = new File(Launcher.getGameUpdater().getTempDir().getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {
 			Utils.copy(mcCache, updateMC);
 		}
@@ -508,7 +483,7 @@ public class UpdateThread extends Thread {
 		String url = build.getSpoutcraftURL();
 
 		if (!spoutcraft.exists()) {
-			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getUpdateDir() + File.separator + "spoutcraft.jar", null, build.getMD5(), listener);
+			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "spoutcraft.jar", null, build.getMD5(), listener);
 			if (download.getResult() == Result.SUCCESS) {
 				Utils.copy(download.getOutFile(), spoutcraft);
 			}
@@ -578,6 +553,7 @@ public class UpdateThread extends Thread {
 
 	private class DownloadListenerWrapper implements DownloadListener {
 		private final AtomicReference<DownloadListener> wrapped = new AtomicReference<DownloadListener>(null);
+		@Override
 		public void stateChanged(String fileName, float progress) {
 			fileName = (new File(fileName)).getName();
 			DownloadListener listener = wrapped.get();

@@ -48,10 +48,12 @@ public class InvalidDescriptionFileException extends Exception {
 		this(null, "Invalid skin.yml");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

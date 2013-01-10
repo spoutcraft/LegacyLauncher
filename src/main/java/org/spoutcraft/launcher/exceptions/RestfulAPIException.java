@@ -49,10 +49,12 @@ public class RestfulAPIException extends IOException{
 		this(null, null);
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}

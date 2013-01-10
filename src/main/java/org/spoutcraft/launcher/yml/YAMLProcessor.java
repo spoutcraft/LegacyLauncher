@@ -338,6 +338,7 @@ public class YAMLProcessor extends YAMLNode {
 	private static class FancyRepresenter extends Representer {
 		public FancyRepresenter() {
 			this.nullRepresenter = new Represent() {
+				@Override
 				public Node representData(Object o) {
 					return representScalar(Tag.NULL, "");
 				}

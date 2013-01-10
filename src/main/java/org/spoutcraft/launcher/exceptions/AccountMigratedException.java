@@ -44,10 +44,12 @@ public class AccountMigratedException extends BadLoginException {
 		this(null, "Account migrated, please use your email address instead.");
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return this.message;
 	}

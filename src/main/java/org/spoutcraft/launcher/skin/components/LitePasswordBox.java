@@ -60,10 +60,12 @@ public class LitePasswordBox extends JPasswordField implements FocusListener{
 		label.setBounds(x + 5, y + 3, w - 5, h - 5);
 	}
 
+	@Override
 	public void focusGained(FocusEvent e) {
 		label.setVisible(false);
 	}
 
+	@Override
 	public void focusLost(FocusEvent e) {
 		if (getPassword().length == 0) {
 			label.setVisible(true);

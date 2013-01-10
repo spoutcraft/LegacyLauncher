@@ -60,20 +60,25 @@ public class LiteButton extends JButton implements MouseListener{
 		g2d.setColor(old);
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 		clicked = true;
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 		clicked = false;
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 }

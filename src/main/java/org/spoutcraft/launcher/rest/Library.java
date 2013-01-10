@@ -48,6 +48,7 @@ public final class Library implements Downloadable{
 		this.md5 = md5;
 	}
 
+	@Override
 	public void download(File location, DownloadListener listener) throws DownloadException{
 		StringBuilder builder = new StringBuilder(RestAPI.LIBRARY_GET_URL);
 		String url =  builder.append(groupId).append("/").append(artifactId).append("/").append(version).toString();
@@ -58,10 +59,12 @@ public final class Library implements Downloadable{
 		}
 	}
 
+	@Override
 	public boolean valid(String m5d) {
 		return md5.equalsIgnoreCase(m5d);
 	}
 
+	@Override
 	public String name() {
 		return artifactId + "-" + version;
 	}

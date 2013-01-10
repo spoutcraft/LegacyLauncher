@@ -47,10 +47,12 @@ public class PermissionDeniedException extends DownloadException {
 		this(null, null);
 	}
 
+	@Override
 	public Throwable getCause() {
 		return this.cause;
 	}
 
+	@Override
 	public String getMessage() {
 		return message;
 	}

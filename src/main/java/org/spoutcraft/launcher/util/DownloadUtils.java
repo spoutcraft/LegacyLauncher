@@ -70,7 +70,7 @@ public class DownloadUtils {
 			throw new WrappedIOException("Failed to download " + url, download != null ? download.getException() : null);
 		}
 		if (cacheName != null) {
-			Utils.copy(outputFile, new File(Launcher.getGameUpdater().getBinCacheDir(), cacheName));
+			Utils.copy(outputFile, new File(Launcher.getGameUpdater().getCacheDir(), cacheName));
 		}
 		return download;
 	}

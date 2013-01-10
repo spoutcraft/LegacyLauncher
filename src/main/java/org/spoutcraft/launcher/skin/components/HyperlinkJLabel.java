@@ -43,6 +43,7 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 		super.addMouseListener(this);
 	}
 
+	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (lastClick + CLICK_DELAY > System.currentTimeMillis()) {
 			return;
@@ -56,15 +57,19 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 		}
 	}
 
+	@Override
 	public void mouseEntered(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseExited(MouseEvent e) {
 	}
 
+	@Override
 	public void mousePressed(MouseEvent e) {
 	}
 
+	@Override
 	public void mouseReleased(MouseEvent e) {
 	}
 

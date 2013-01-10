@@ -42,7 +42,6 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
@@ -66,9 +65,9 @@ public final class SpoutcraftData {
 	 *
 	 * @throws RestfulAPIException
 	 */
-	public SpoutcraftData() throws RestfulAPIException {
+	public SpoutcraftData(GameUpdater updater) throws RestfulAPIException {
 		build = calculateBuild();
-		installedBuild = calculateInstall();
+		installedBuild = calculateInstall(updater);
 		hash = calcaulateMD5(build);
 		libs = Collections.unmodifiableList(calculateLibraries(build));
 	}
@@ -244,8 +243,8 @@ public final class SpoutcraftData {
 	 * @return build, or -1 if could not retrieve information
 	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
-	private static String calculateInstall() throws RestfulAPIException {
-		File spoutcraft = new File((new SpoutcraftDirectories()).getBinDir(), "spoutcraft.jar");
+	private static String calculateInstall(GameUpdater updater) throws RestfulAPIException {
+		File spoutcraft = new File(updater.getBinDir(), "spoutcraft.jar");
 		if (spoutcraft.exists()) {
 			String md5 = MD5Utils.getMD5(spoutcraft);
 			InputStream stream = null;

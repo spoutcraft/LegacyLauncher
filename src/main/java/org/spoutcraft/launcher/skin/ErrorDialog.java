@@ -188,6 +188,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 		setLocationRelativeTo(getOwner());
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		action(e.getActionCommand());
 	}
