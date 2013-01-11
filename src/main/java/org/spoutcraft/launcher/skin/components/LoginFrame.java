@@ -43,6 +43,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -68,15 +69,14 @@ import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
-import org.spoutcraft.launcher.skin.LegacyLoginFrame;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private static final long serialVersionUID = 2L;
-	public static final URL spoutcraftIcon = LegacyLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
-	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
+	public static final URL spoutcraftIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
+	protected Map<String, UserPasswordInformation> usernames = new LinkedHashMap<String, UserPasswordInformation>();
 	protected boolean offline = false;
 
 	public LoginFrame() {
@@ -402,8 +402,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		style.append("font-size:" + arial12.getSize() + "pt;");
 
 		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a>"
-				+ "<br/>This launcher will continue to work for only a short time longer.</body></html>");
+				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a></body></html>");
 
 		ep.addHyperlinkListener(new HyperlinkListener() {
 			public void hyperlinkUpdate(HyperlinkEvent e) {
@@ -420,6 +419,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		ep.setBackground(label.getBackground());
 
 		JOptionPane.showMessageDialog(this, ep, "Outdated Launcher", JOptionPane.WARNING_MESSAGE);
+		dispose();
+		System.exit(0);
 	}
 
 	protected static final class UserPasswordInformation {

@@ -324,13 +324,18 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	public void stateChanged(String status, float progress) {
-		int intProgress = Math.round(progress);
-		progressBar.setValue(intProgress);
-		if (status.length() > 60) {
-			status = status.substring(0, 60) + "...";
-		}
-		progressBar.setString(intProgress + "% " + status);
+	public void stateChanged(final String status, final float progress) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				int intProgress = Math.round(progress);
+				progressBar.setValue(intProgress);
+				String text = status;
+				if (text.length() > 60) {
+					text = text.substring(0, 60) + "...";
+				}
+				progressBar.setString(intProgress + "% " + text);
+			}
+		});
 	}
 
 	@Override

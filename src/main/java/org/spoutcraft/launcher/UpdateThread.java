@@ -108,6 +108,9 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException{
 		while (!valid.get()) {
+			
+			
+			
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable(build);
 

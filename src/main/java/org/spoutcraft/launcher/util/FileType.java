@@ -30,7 +30,7 @@ public enum FileType {
 	JINPUT("a7835a73a130656aba23e34147a55367"),
 	LWJGL("7a07c4285fa9a6b204ba59f011f1cd77"),
 	LWJGL_UTIL("f00470751cfc093ba760ca3cf10a512c"),
-	MINECRAFT("48677dc4c2b98c29918722b5ab27b4fd");
+	MINECRAFT("8e80fb01b321c6b3c7efca397a3eea35");
 
 	private final String md5;
 	private FileType(String md5) {
@@ -43,7 +43,7 @@ public enum FileType {
 
 	public String getMD5(String version) {
 		if (this == MINECRAFT && "1.4.7".equals(version)) {
-			return "48677dc4c2b98c29918722b5ab27b4fd";
+			return "8e80fb01b321c6b3c7efca397a3eea35";
 		}
 		if (this == MINECRAFT && "1.4.6".equals(version)) {
 			return "48677dc4c2b98c29918722b5ab27b4fd";

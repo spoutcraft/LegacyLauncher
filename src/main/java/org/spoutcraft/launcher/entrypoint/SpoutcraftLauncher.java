@@ -65,7 +65,6 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
-import org.spoutcraft.launcher.skin.LegacyLoginFrame;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -87,10 +86,6 @@ public class SpoutcraftLauncher {
 
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack" , "true");
-
-		// Required for ROME to work
-		ClassLoader cl = SpoutcraftLauncher.class.getClassLoader();
-		Thread.currentThread().setContextClassLoader(cl);
 
 		cleanup();
 
@@ -160,12 +155,7 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the launcher and load login frame
-		LoginFrame frame;
-		if (Main.isOldLauncher()) {
-			frame = new LegacyLoginFrame();
-		} else {
-			frame = new MetroLoginFrame();
-		}
+		LoginFrame frame = new MetroLoginFrame();
 
 		try {
 			@SuppressWarnings("unused")
