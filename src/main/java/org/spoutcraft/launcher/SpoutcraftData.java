@@ -49,11 +49,12 @@ import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
 
-public final class SpoutcraftData {
+public final class SpoutcraftData extends Modpack {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private final String installedBuild;
 	private final String build;
@@ -88,6 +89,7 @@ public final class SpoutcraftData {
 		return libs;
 	}
 
+	@Override
 	public String getMinecraftVersion() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
