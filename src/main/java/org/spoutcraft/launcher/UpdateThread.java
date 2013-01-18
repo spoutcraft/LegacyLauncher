@@ -48,7 +48,9 @@ import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.Mod;
 import org.spoutcraft.launcher.technic.Modpack;
+import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -296,7 +298,7 @@ public class UpdateThread extends Thread {
 
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
 		progress += 100F;
-		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
+		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
 		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
 			return true;
 		}
@@ -314,6 +316,27 @@ public class UpdateThread extends Thread {
 			progress += 100F;
 		}
 
+		return false;
+	}
+
+	public boolean isModpackUpdateAvailable(Modpack build) throws RestfulAPIException {
+		if (!Utils.getLauncherDirectory().exists()) {
+			return true;
+		}
+		if (!Launcher.getGameUpdater().getConfigDir().exists()) {
+			return true;
+		}
+		
+		float progress = 100F;
+		int steps = 2;
+		stateChanged("Checking for " + build.getName() + " update...", progress / steps);
+		progress += 100F;
+		File modpack = new File(Launcher.getGameUpdater().getWorkingDir(), "modpack.yml");
+		if (!modpack.exists() || !TechnicRestAPI.getModpackMD5(build.getName()).equals(MD5Utils.getMD5(modpack))) {
+			return true;
+		}
+
+		stateChanged("No update for " + build.getName() + " found.", progress / steps);
 		return false;
 	}
 
@@ -464,6 +487,50 @@ public class UpdateThread extends Thread {
 		if (mcCache.exists()) {
 			Utils.copy(mcCache, updateMC);
 		}
+
+		File modpackJar = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
+
+		stateChanged("Looking Up Mirrors...", 0F);
+		String url = TechnicRestAPI.getModpackURL(modpack.getName(), modpack.getBuild());
+
+		if (!modpackJar.exists()) {
+			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "modpack.jar", null, build.getMD5(), listener);
+			if (download.getResult() == Result.SUCCESS) {
+				Utils.copy(download.getOutFile(), modpackJar);
+			}
+		}
+
+		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
+		libDir.mkdir();
+
+		List<Library> libraries = build.getLibraries();
+		for (Library lib : libraries) {
+			File libraryFile = new File(libDir, lib.name() + ".jar");
+			if (libraryFile.exists()) {
+				String computedMD5 = MD5Utils.getMD5(libraryFile);
+				if (!lib.valid(computedMD5)) {
+					logger.warning("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
+					libraryFile.delete();
+				}
+			}
+			File cachedLibraryFile = new File(cacheDir, lib.name() + ".jar");
+			if (cachedLibraryFile.exists()) {
+				String computedMD5 = MD5Utils.getMD5(cachedLibraryFile);
+				if (lib.valid(computedMD5)) {
+					Utils.copy(cachedLibraryFile, libraryFile);
+				}
+			}
+			if (!libraryFile.exists()) {
+				lib.download(libraryFile, listener);
+			}
+		}
+
+		File workingDir = Launcher.getGameUpdater().getWorkingDir();
+		File temp = Launcher.getGameUpdater().getTempDir();
+		List<Mod> mods = build.getMods();
+		for (Mod mod : mods) {
+			File modFile = new File(temp, mod.name + "-" + mod.version + ".zip");
+		}
 	}
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
 		cleanupBinFolders();
@@ -480,7 +547,7 @@ public class UpdateThread extends Thread {
 			Utils.copy(mcCache, updateMC);
 		}
 
-		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
+		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
 		if (spoutcraft.exists() && Integer.parseInt(build.getInstalledBuild()) > 0) {
 			// Save our installed copy
 			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
@@ -500,7 +567,7 @@ public class UpdateThread extends Thread {
 		String url = build.getSpoutcraftURL();
 
 		if (!spoutcraft.exists()) {
-			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "spoutcraft.jar", null, build.getMD5(), listener);
+			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "modpack.jar", null, build.getMD5(), listener);
 			if (download.getResult() == Result.SUCCESS) {
 				Utils.copy(download.getOutFile(), spoutcraft);
 			}
@@ -538,7 +605,7 @@ public class UpdateThread extends Thread {
 				return;
 			}
 
-			HashSet<String> neededBinFiles = new HashSet<String>(Arrays.asList(new String[]{"spoutcraft.jar", "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar"}));
+			HashSet<String> neededBinFiles = new HashSet<String>(Arrays.asList(new String[]{"modpack.jar", "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar"}));
 			for (File file : Launcher.getGameUpdater().getBinDir().listFiles()) {
 				if (!file.isFile()) {
 					continue;

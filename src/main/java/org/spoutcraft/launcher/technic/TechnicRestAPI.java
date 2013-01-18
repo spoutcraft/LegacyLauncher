@@ -1,6 +1,5 @@
 package org.spoutcraft.launcher.technic;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -9,10 +8,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.util.DownloadUtils;
 
 public class TechnicRestAPI {
 
@@ -48,7 +44,7 @@ public class TechnicRestAPI {
 		return MODPACKS_URL + modpack;
 	}
 
-	public static List<String> getModpacks() throws RestfulAPIException {
+	public static List<ModpackBuilds> getModpacks() throws RestfulAPIException {
 		InputStream stream = null;
 		String url = MODPACKS_URL;
 		try {
@@ -60,14 +56,6 @@ public class TechnicRestAPI {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
-		}
-	}
-
-	public static void downloadMod(File location, String mod, String build, DownloadListener listener) throws DownloadException {
-		try {
-			DownloadUtils.downloadFile(getModDownloadURL(mod, build), location.getPath(), location.getName(), getModMD5(mod, build), listener);
-		} catch (IOException e) {
-			throw new DownloadException(e);
 		}
 	}
 
@@ -93,7 +81,7 @@ public class TechnicRestAPI {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
 			Modpack result = mapper.readValue(stream, Modpack.class);
-			return result.setBuild(build);
+			return result.setInfo(modpack, build);
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {

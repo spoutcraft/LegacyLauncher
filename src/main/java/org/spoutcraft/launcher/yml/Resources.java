@@ -31,15 +31,15 @@ import org.spoutcraft.launcher.util.Utils;
 
 public enum Resources implements YAMLResource {
 	Special ("http://get.spout.org/special.yml",
-			new File(Utils.getLauncherDirectory(), "config" + File.separator + "special.yml"),
+			new File(Utils.getLauncherDirectory(), "spoutcraft" + File.separator + "special.yml"),
 			null),
 
 	VIP ("http://get.spout.org/vip.yml",
-			new File(Utils.getLauncherDirectory(), "config" + File.separator + "vip.yml"),
+			new File(Utils.getLauncherDirectory(), "spoutcraft" + File.separator + "vip.yml"),
 			null),
 
 	Assets ("http://get.spout.org/assets.yml",
-			new File(Utils.getLauncherDirectory(), "config" + File.separator + "assets.yml"),
+			new File(Utils.getLauncherDirectory(), "spoutcraft" + File.separator + "assets.yml"),
 			null),
 	;
 

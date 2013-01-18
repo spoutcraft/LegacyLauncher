@@ -42,7 +42,7 @@ public class MinecraftLauncher {
 		if (loader == null) {
 			File mcBinFolder = Launcher.getGameUpdater().getBinDir();
 
-			File spoutcraftJar = new File(mcBinFolder, "spoutcraft.jar");
+			File spoutcraftJar = new File(mcBinFolder, "modpack.jar");
 			File minecraftJar = new File(mcBinFolder, "minecraft.jar");
 			File jinputJar = new File(mcBinFolder, "jinput.jar");
 			File lwglJar = new File(mcBinFolder, "lwjgl.jar");

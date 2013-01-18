@@ -19,4 +19,9 @@ public class Mod {
 	public String getVersion() {
 		return version;
 	}
+
+	@Override
+	public String toString() {
+		return "{ Mod [name: " + name + ", version: " + version + "] }";
+	}
 }

@@ -341,7 +341,7 @@ public class SpoutcraftLauncher {
 	}
 
 	protected static YAMLProcessor setupSettings() {
-		File file = new File(Utils.getLauncherDirectory(), "config" + File.separator + "settings.yml");
+		File file = new File(Utils.getLauncherDirectory(), "settings.yml");
 
 		if (!file.exists()) {
 			try {

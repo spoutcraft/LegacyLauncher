@@ -66,14 +66,14 @@ public class Validator{
 			return true;
 		}
 
-		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
+		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
 		if (spoutcraft.exists()) {
 			if (!compareSpoutcraftMD5s(build, spoutcraft)) {
-				err("Invalid spoutcraft.jar");
+				err("Invalid modpack.jar");
 				return spoutcraft.delete();
 			}
 		} else {
-			err("There is no spoutcraft.jar");
+			err("There is no modpack.jar");
 			return true;
 		}
 

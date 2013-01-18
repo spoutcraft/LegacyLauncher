@@ -48,6 +48,7 @@ import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
@@ -71,6 +72,7 @@ public final class SpoutcraftData extends Modpack {
 		libs = Collections.unmodifiableList(calculateLibraries(build));
 	}
 
+	@Override
 	public String getMD5() {
 		return hash;
 	}
@@ -93,9 +95,7 @@ public final class SpoutcraftData extends Modpack {
 	public String getMinecraftVersion() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			//TODO: Fix by implementing get.spout.org API for MC
-			//return "1.4.7";
-			return getLatestMinecraftVersion();
+			return Versions.getLatestMinecraftVersion();
 		} else {
 			return selected;
 		}
@@ -148,7 +148,7 @@ public final class SpoutcraftData extends Modpack {
 		}
 		InputStream stream = null;
 		//Use channel selection for latest
-		if (getLatestMinecraftVersion().equals(getMinecraftVersion())) {
+		if (Versions.getLatestMinecraftVersion().equals(getMinecraftVersion())) {
 			int build;
 			String url = RestAPI.getSpoutcraftURL(channel);
 			try {
@@ -228,7 +228,7 @@ public final class SpoutcraftData extends Modpack {
 	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static String calculateInstall(GameUpdater updater) throws RestfulAPIException {
-		File spoutcraft = new File(updater.getBinDir(), "spoutcraft.jar");
+		File spoutcraft = new File(updater.getBinDir(), "modpack.jar");
 		if (spoutcraft.exists()) {
 			String md5 = MD5Utils.getMD5(spoutcraft);
 			InputStream stream = null;
