@@ -93,7 +93,7 @@ public class TechnicRestAPI {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
 			Modpack result = mapper.readValue(stream, Modpack.class);
-			return result;
+			return result.setBuild(build);
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {

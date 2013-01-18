@@ -335,7 +335,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 			// Inform the updating thread
 			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild()) || !minecraftVersion.equals(Settings.getMinecraftVersion())) {
-				Launcher.getGameUpdater().onSpoutcraftBuildChange();
+				Launcher.getGameUpdater().onModpackBuildChange();
 			}
 
 			if (Settings.isDebugMode() || oldDebug) {

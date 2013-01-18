@@ -48,10 +48,8 @@ import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public final class SpoutcraftData extends Modpack {
@@ -77,6 +75,7 @@ public final class SpoutcraftData extends Modpack {
 		return hash;
 	}
 
+	@Override
 	public String getBuild() {
 		return build;
 	}
@@ -85,6 +84,7 @@ public final class SpoutcraftData extends Modpack {
 		return installedBuild;
 	}
 
+	@Override
 	public List<Library> getLibraries() {
 		return libs;
 	}
@@ -101,26 +101,8 @@ public final class SpoutcraftData extends Modpack {
 		}
 	}
 
-	public String getLatestMinecraftVersion() {
-		return Versions.getLatestMinecraftVersion();
-	}
-
-	public String getMinecraftURL(String user) {
-		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
-	}
-
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
 		return RestAPI.getDownloadURL(build);
-	}
-
-	public String getPatchURL() {
-		String mirrorURL = "patch/minecraft_";
-		mirrorURL += getLatestMinecraftVersion();
-		mirrorURL += "-" + getMinecraftVersion() + ".patch";
-		String fallbackURL = "http://get.spout.org/patch/minecraft_";
-		fallbackURL += getLatestMinecraftVersion();
-		fallbackURL += "-" + getMinecraftVersion() + ".patch";
-		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
 	/**

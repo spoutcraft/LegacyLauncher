@@ -32,6 +32,7 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.Directories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.DownloadListener;
 
 public final class GameUpdater extends Directories {
@@ -46,20 +47,20 @@ public final class GameUpdater extends Directories {
 	private String minecraftSession = "";
 
 	private DownloadListener listener;
-	private SpoutcraftData build;
+	private Modpack modpack;
 	private long validationTime;
 	private UpdateThread updateThread;
 
 	public GameUpdater() {
 	}
 
-	public SpoutcraftData getBuild() {
-		return build;
+	public Modpack getBuild() {
+		return modpack;
 	}
 
-	public void start() throws RestfulAPIException {
-		build = new SpoutcraftData(this);
-		updateThread = new UpdateThread(build, null);
+	public void start(Modpack modpack) throws RestfulAPIException {
+		this.modpack = modpack;
+		updateThread = new UpdateThread(modpack, null);
 		updateThread.start();
 	}
 
@@ -71,17 +72,17 @@ public final class GameUpdater extends Directories {
 		updateThread.setWaiting(waiting);
 	}
 
-	public void onSpoutcraftBuildChange() {
-		SpoutcraftData prev = this.build;
+	public void onModpackBuildChange() {
+		Modpack prev = this.modpack;
 		try {
-			this.build = new SpoutcraftData(this);
-			if (!this.build.getBuild().equals(prev.getBuild())) {
+			this.modpack = new SpoutcraftData(this);
+			if (!this.modpack.getBuild().equals(prev.getBuild())) {
 				DownloadListener old = updateThread.getDownloadListener();
 				updateThread.setDownloadListener(null);
 				updateThread.interrupt();
 				MinecraftLauncher.resetClassLoader();
-				updateThread = new UpdateThread(build, old);
-				start();
+				updateThread = new UpdateThread(modpack, old);
+				start(modpack);
 			}
 		} catch (IOException e) {
 			Launcher.getLoginFrame().handleException(e);

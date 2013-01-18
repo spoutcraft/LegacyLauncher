@@ -48,6 +48,7 @@ import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -84,8 +85,8 @@ public class UpdateThread extends Thread {
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
-	private final SpoutcraftData build;
-	public UpdateThread(SpoutcraftData build, DownloadListener listener) {
+	private final Modpack build;
+	public UpdateThread(Modpack build, DownloadListener listener) {
 		super("Update Thread");
 		setDaemon(true);
 		this.build = build;
@@ -107,17 +108,17 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException{
 		while (!valid.get()) {
-			
-			
-			
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
-			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable(build);
 
 			if (minecraftUpdate) {
 				updateMinecraft(build);
 			}
-			if (spoutcraftUpdate) {
-				updateSpoutcraft(build);
+
+			if (build instanceof SpoutcraftData) {
+				boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable((SpoutcraftData) build);
+				if (spoutcraftUpdate) {
+					updateSpoutcraft((SpoutcraftData) build);
+				}
 			}
 
 			updateAssets();
@@ -132,13 +133,14 @@ public class UpdateThread extends Thread {
 				cleanTemp();
 			}
 
-			Validator validate = new Validator();
-			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
-				validate.run(build);
-				valid.set(validate.isValid());
-			} else {
-				valid.set(true);
-			}
+//			Validator validate = new Validator();
+//			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
+//				validate.run(build);
+//				valid.set(validate.isValid());
+//			} else {
+//				valid.set(true);
+//			}
+			valid.set(true);
 		}
 
 		MinecraftClassLoader loader;
@@ -315,7 +317,7 @@ public class UpdateThread extends Thread {
 		return false;
 	}
 
-	public boolean isMinecraftUpdateAvailable(SpoutcraftData build) {
+	public boolean isMinecraftUpdateAvailable(Modpack build) {
 		int steps = 7;
 		if (!Launcher.getGameUpdater().getBinDir().exists()) {
 			return true;
@@ -356,7 +358,7 @@ public class UpdateThread extends Thread {
 		return installed == null || !installed.equals(required);
 	}
 
-	public void updateMinecraft(SpoutcraftData build) throws IOException {
+	public void updateMinecraft(Modpack build) throws IOException {
 		Launcher.getGameUpdater().getBinDir().mkdir();
 		Launcher.getGameUpdater().getCacheDir().mkdir();
 		if (Launcher.getGameUpdater().getTempDir().exists()) {
@@ -448,8 +450,23 @@ public class UpdateThread extends Thread {
 		FileUtils.moveDirectory(tempNatives, new File(Launcher.getGameUpdater().getBinDir(), "natives"));
 	}
 
+	public void updateModpack(Modpack modpack) throws IOException {
+		cleanupBinFolders(); //TODO look at what this actually does
+
+		Launcher.getGameUpdater().getTempDir().mkdirs();
+		Launcher.getGameUpdater().getCacheDir().mkdirs();
+		Launcher.getGameUpdater().getConfigDir().mkdirs();
+		File cacheDir = new File(Launcher.getGameUpdater().getBinDir(), "cache");
+		cacheDir.mkdir();
+
+		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File updateMC = new File(Launcher.getGameUpdater().getTempDir().getPath() + File.separator + "minecraft.jar");
+		if (mcCache.exists()) {
+			Utils.copy(mcCache, updateMC);
+		}
+	}
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
-		cleanupBinFoldersFor(build);
+		cleanupBinFolders();
 
 		Launcher.getGameUpdater().getTempDir().mkdirs();
 		Launcher.getGameUpdater().getCacheDir().mkdirs();
@@ -515,7 +532,7 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	public void cleanupBinFoldersFor(SpoutcraftData build) {
+	public void cleanupBinFolders() {
 		try {
 			if (!Launcher.getGameUpdater().getBinDir().exists()) {
 				return;

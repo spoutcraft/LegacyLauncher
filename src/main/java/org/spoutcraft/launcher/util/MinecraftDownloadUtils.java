@@ -29,18 +29,19 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 import org.spoutcraft.diff.JBPatch;
-import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class MinecraftDownloadUtils {
-	public static void downloadMinecraft(String user, String output, SpoutcraftData build, DownloadListener listener) throws IOException {
+	public static void downloadMinecraft(String user, String output, Modpack modpack, DownloadListener listener) throws IOException {
 		int tries = 3;
 		File outputFile = null;
 		while (tries > 0) {
 			System.out.println("Starting download of minecraft, with " + tries + " tries remaining");
 			tries--;
-			Download download = new Download(build.getMinecraftURL(user), output);
+			Download download = new Download(modpack.getMinecraftURL(user), output);
 			download.setListener(listener);
 			download.run();
 			if (download.getResult() != Result.SUCCESS) {
@@ -58,15 +59,15 @@ public class MinecraftDownloadUtils {
 				System.out.println("Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
 				if (resultMD5.equals(minecraftMD5) || minecraftMD5 == null) {
 					//Patch Minecraft
-					if (!build.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
+					if (!Versions.getLatestMinecraftVersion().equals(modpack.getMinecraftVersion())) {
 						File patch = new File(Launcher.getGameUpdater().getWorkingDir(), "mc.patch");
-						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
+						Download patchDownload = DownloadUtils.downloadFile(modpack.getPatchURL(), patch.getPath(), null, null, listener);
 						if (patchDownload.getResult() == Result.SUCCESS) {
 							File patchedMinecraft = new File(Launcher.getGameUpdater().getTempDir(), "patched_minecraft.jar");
 							patchedMinecraft.delete();
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
 							//minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getMinecraftVersion());
-							minecraftMD5 = FileType.MINECRAFT.getMD5(build.getMinecraftVersion());
+							minecraftMD5 = FileType.MINECRAFT.getMD5(modpack.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 
 							if (minecraftMD5.equals(resultMD5)) {
@@ -88,6 +89,6 @@ public class MinecraftDownloadUtils {
 		if (outputFile == null) {
 			throw new IOException("Failed to download Minecraft!");
 		}
-		Utils.copy(outputFile, new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar"));
+		Utils.copy(outputFile, new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + modpack.getMinecraftVersion() + ".jar"));
 	}
 }

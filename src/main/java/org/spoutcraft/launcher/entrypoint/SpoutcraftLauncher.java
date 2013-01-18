@@ -58,6 +58,7 @@ import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
+import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
@@ -159,7 +160,7 @@ public class SpoutcraftLauncher {
 
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
-			Launcher.getGameUpdater().start();
+			updater.start(new SpoutcraftData(updater));
 		} catch (IOException failure) {
 			failure.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog(frame, failure);
