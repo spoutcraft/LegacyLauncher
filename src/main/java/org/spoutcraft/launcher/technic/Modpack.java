@@ -53,6 +53,10 @@ public class Modpack {
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
+	public String getYMLURL() {
+		return TechnicRestAPI.getModpackYMLURL(this.getName());
+	}
+
 	public String getForgeVersion() {
 		return forgeVersion;
 	}

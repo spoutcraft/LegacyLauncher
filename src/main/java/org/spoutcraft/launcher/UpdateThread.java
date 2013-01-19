@@ -340,7 +340,7 @@ public class UpdateThread extends Thread {
 		stateChanged("Checking for " + build.getName() + " update...", progress / steps);
 		progress += 100F;
 		File modpack = new File(Launcher.getGameUpdater().getWorkingDir(), "modpack.yml");
-		if (!modpack.exists() || !TechnicRestAPI.getModpackMD5(build.getName()).equals(MD5Utils.getMD5(modpack))) {
+		if (!modpack.exists() || !build.getMD5().equals(MD5Utils.getMD5(modpack))) {
 			return true;
 		}
 
@@ -482,7 +482,7 @@ public class UpdateThread extends Thread {
 	}
 
 	public void updateModpack(Modpack modpack) throws IOException {
-		cleanupBinFolders(); //TODO look at what this actually does
+		cleanupBinFolders();
 
 		Launcher.getGameUpdater().getTempDir().mkdirs();
 		Launcher.getGameUpdater().getCacheDir().mkdirs();
@@ -496,16 +496,13 @@ public class UpdateThread extends Thread {
 			Utils.copy(mcCache, updateMC);
 		}
 
-		File modpackJar = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
-
-		stateChanged("Looking Up Mirrors...", 0F);
-		String url = TechnicRestAPI.getModpackURL(modpack.getName(), modpack.getBuild());
-
-		if (!modpackJar.exists()) {
-			modpackJar.mkdirs();
+		File workingDir = Launcher.getGameUpdater().getWorkingDir();
+		File modpackYml = new File(temp, "modpack.yml");
+		Download yml = DownloadUtils.downloadFile(TechnicRestAPI.getModpackYMLURL(modpack.getName()), modpackYml.getAbsolutePath(), null, modpack.getMD5(), listener);
+		if (yml.getResult() == Result.SUCCESS) {
+			Utils.copy(yml.getOutFile(), new File(workingDir, "modpack.yml"));
 		}
 
-		File workingDir = Launcher.getGameUpdater().getWorkingDir();
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {
 			String name = mod.getName();
