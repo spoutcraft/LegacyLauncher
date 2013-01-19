@@ -125,14 +125,13 @@ public class UpdateThread extends Thread {
 				if (spoutcraftUpdate) {
 					updateSpoutcraft((SpoutcraftData) build);
 				}
+				updateAssets();
 			} else {
 				boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
 				if (modpackUpdate) {
 					updateModpack(build);
 				}
 			}
-
-			updateAssets();
 
 			// Download assets
 			if (cleaned.compareAndSet(false, true)) {
