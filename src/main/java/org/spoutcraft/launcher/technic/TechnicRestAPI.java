@@ -2,7 +2,9 @@ package org.spoutcraft.launcher.technic;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -15,17 +17,17 @@ public class TechnicRestAPI {
 	private static final ObjectMapper mapper = new ObjectMapper();
 
 	public static final String REST_URL = "http://www.sctgaming.com/Technic/API/";
-	public static final String MODPACKS_URL = REST_URL + "modpacks/";
+	public static final String MODPACKS_URL = REST_URL + "modpack/";
 	public static final String CACHE_URL = REST_URL + "cache/";
 	public static final String MOD_URL = CACHE_URL + "mod/";
 	public static final String MIRROR_URL = "http://mirror.technicpack.net/Technic/";
 
 	public static String getModDownloadURL(String mod, String build) {
-		return CACHE_URL + mod + "/" + build;
+		return MIRROR_URL + "mods/" + mod + "/" + mod + "-" + build + ".zip";
 	}
 
 	public static String getModMD5URL(String mod, String build) {
-		return getModDownloadURL(mod, build) + "/MD5";
+		return CACHE_URL + "mod/" + mod + "/" + build + "/MD5";
 	}
 
 	public static String getModpackURL(String modpack, String build) {
@@ -94,7 +96,7 @@ public class TechnicRestAPI {
 		String url = getModpackBuildsURL(modpack);
 		try {
 			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
+			stream = conn.openStream();
 			ModpackBuilds result = mapper.readValue(stream, ModpackBuilds.class);
 			return result;
 		} catch (IOException e) {
@@ -102,6 +104,14 @@ public class TechnicRestAPI {
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
+	}
+
+	public static String getLatestBuild(String modpack) throws RestfulAPIException {
+		return getModpackBuilds(modpack).getLatest();
+	}
+
+	public static String getRecommendedBuild(String modpack) throws RestfulAPIException {
+		return getModpackBuilds(modpack).getRecommended();
 	}
 
 	public static String getModpackMD5(String modpack) throws RestfulAPIException {
@@ -119,7 +129,22 @@ public class TechnicRestAPI {
 		}
 	}
 
-	private class TechnicMD5 {
+//	private static InputStream getJSONStream(URL url) throws RestfulAPIException {
+//		InputStream stream = null;
+//		try {
+//			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+//			conn.setRequestProperty("Content-Type", "application/json");
+//			conn.setRequestMethod("GET");
+//			conn.connect();
+//			stream = conn.getInputStream();
+//			return stream;
+//		} catch (IOException e) {
+//			throw new RestfulAPIException("Error accessing URL [" + url.getPath() + "]", e);
+//		} finally {
+//			IOUtils.closeQuietly(stream);
+//		}
+//	}
+	private static class TechnicMD5 {
 		@JsonProperty("MD5")
 		String md5;
 

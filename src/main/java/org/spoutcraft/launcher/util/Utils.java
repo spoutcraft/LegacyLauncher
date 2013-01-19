@@ -49,6 +49,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JProgressBar;
 
@@ -72,7 +73,7 @@ public class Utils {
 	}
 
 	public static File getAssetsDirectory() {
-		return new File(getLauncherDirectory(), "spoutcraft" + File.pathSeparator + "assets");
+		return new File(getLauncherDirectory(), "spoutcraft" + File.separator + "assets");
 	}
 
 	public static void setStartupParameters(StartupParameters params) {

@@ -41,6 +41,10 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.progress.ProgressMonitor;
+
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
@@ -120,6 +124,11 @@ public class UpdateThread extends Thread {
 				boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable((SpoutcraftData) build);
 				if (spoutcraftUpdate) {
 					updateSpoutcraft((SpoutcraftData) build);
+				}
+			} else {
+				boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
+				if (modpackUpdate) {
+					updateModpack(build);
 				}
 			}
 
@@ -479,8 +488,8 @@ public class UpdateThread extends Thread {
 		Launcher.getGameUpdater().getTempDir().mkdirs();
 		Launcher.getGameUpdater().getCacheDir().mkdirs();
 		Launcher.getGameUpdater().getConfigDir().mkdirs();
-		File cacheDir = new File(Launcher.getGameUpdater().getBinDir(), "cache");
-		cacheDir.mkdir();
+
+		File temp = Launcher.getGameUpdater().getTempDir();
 
 		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		File updateMC = new File(Launcher.getGameUpdater().getTempDir().getPath() + File.separator + "minecraft.jar");
@@ -494,42 +503,34 @@ public class UpdateThread extends Thread {
 		String url = TechnicRestAPI.getModpackURL(modpack.getName(), modpack.getBuild());
 
 		if (!modpackJar.exists()) {
-			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "modpack.jar", null, build.getMD5(), listener);
-			if (download.getResult() == Result.SUCCESS) {
-				Utils.copy(download.getOutFile(), modpackJar);
-			}
-		}
-
-		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
-		libDir.mkdir();
-
-		List<Library> libraries = build.getLibraries();
-		for (Library lib : libraries) {
-			File libraryFile = new File(libDir, lib.name() + ".jar");
-			if (libraryFile.exists()) {
-				String computedMD5 = MD5Utils.getMD5(libraryFile);
-				if (!lib.valid(computedMD5)) {
-					logger.warning("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
-					libraryFile.delete();
-				}
-			}
-			File cachedLibraryFile = new File(cacheDir, lib.name() + ".jar");
-			if (cachedLibraryFile.exists()) {
-				String computedMD5 = MD5Utils.getMD5(cachedLibraryFile);
-				if (lib.valid(computedMD5)) {
-					Utils.copy(cachedLibraryFile, libraryFile);
-				}
-			}
-			if (!libraryFile.exists()) {
-				lib.download(libraryFile, listener);
-			}
+			modpackJar.mkdirs();
 		}
 
 		File workingDir = Launcher.getGameUpdater().getWorkingDir();
-		File temp = Launcher.getGameUpdater().getTempDir();
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {
-			File modFile = new File(temp, mod.name + "-" + mod.version + ".zip");
+			String name = mod.getName();
+			String build = mod.getVersion();
+
+			File modFile = new File(temp, name + "-" + build + ".zip");
+
+			Download download = DownloadUtils.downloadFile(TechnicRestAPI.getModDownloadURL(name, build), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
+			if (download.getResult() == Result.SUCCESS) {
+				try {
+					ZipFile zipFile = new ZipFile(download.getOutFile());
+					zipFile.setRunInThread(true);
+					zipFile.extractAll(workingDir.getAbsolutePath());
+
+					ProgressMonitor monitor = zipFile.getProgressMonitor();
+					while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
+						long totalProgress = monitor.getWorkCompleted() / monitor.getTotalWork();
+						stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
+					}
+				} catch (ZipException e) {
+					Launcher.getLogger().log(Level.SEVERE, "An error occurred while extracting file: " + modFile.getAbsolutePath());
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {

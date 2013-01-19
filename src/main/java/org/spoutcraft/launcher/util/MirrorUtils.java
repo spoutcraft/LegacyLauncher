@@ -45,11 +45,12 @@ import java.util.Set;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class MirrorUtils {
 	private static boolean updated = false;
-	private static File mirrorsYML = new File(Utils.getLauncherDirectory(), "config" + File.separator + "mirrors.yml");
+	private static File mirrorsYML = new File(Utils.getLauncherDirectory(), "mirrors.yml");
 	private static final String baseURL = "http://get.spout.org/";
 	private static List<String> mirrors = null;
 

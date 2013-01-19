@@ -78,6 +78,10 @@ public final class SpoutcraftData extends Modpack {
 	}
 
 	@Override
+	public String getName() {
+		return "spoutcraft";
+	}
+	@Override
 	public String getBuild() {
 		return build;
 	}

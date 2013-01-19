@@ -67,6 +67,8 @@ import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.technic.Modpack;
+import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
@@ -104,9 +106,6 @@ public class SpoutcraftLauncher {
 
 		// Setup directories
 		GameUpdater updater = new GameUpdater();
-		updater.setWorkingDir("spoutcraft");
-//		dirs.getSkinDir().mkdirs();
-//		dirs.getConfigDir().mkdirs();
 
 		if (Settings.getYAML() == null) {
 			YAMLProcessor settings = setupSettings();
@@ -160,7 +159,10 @@ public class SpoutcraftLauncher {
 
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
-			updater.start(new SpoutcraftData(updater));
+			String pack = "tekkit";
+			String build = TechnicRestAPI.getLatestBuild(pack);
+			Modpack modpack = TechnicRestAPI.getModpack(pack, build);
+			updater.start(modpack);
 		} catch (IOException failure) {
 			failure.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog(frame, failure);

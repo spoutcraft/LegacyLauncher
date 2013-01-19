@@ -1,11 +1,10 @@
 package org.spoutcraft.launcher.technic;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 
-@JsonDeserialize(using = ModDeserializer.class)
 public class Mod {
-	public String name;
-	public String version;
+	private final String name;
+	private final String version;
 
 	public Mod(String name, String version) {
 		this.name = name;
@@ -20,6 +19,9 @@ public class Mod {
 		return version;
 	}
 
+	public String getMD5() throws RestfulAPIException {
+		return TechnicRestAPI.getModMD5(name, version);
+	}
 	@Override
 	public String toString() {
 		return "{ Mod [name: " + name + ", version: " + version + "] }";

@@ -1,8 +1,8 @@
 package org.spoutcraft.launcher.technic;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
@@ -13,13 +13,13 @@ import org.spoutcraft.launcher.util.MirrorUtils;
 public class Modpack {
 
 	@JsonProperty("libraries")
-	private String[] libraries;
+	private String libraries;
 	@JsonProperty("minecraft")
 	private String minecraftVersion;
 	@JsonProperty("forge")
 	private String forgeVersion;
 	@JsonProperty("mods")
-	private Mod[] mods;
+	private Map<String, String> mods;
 
 	private String name;
 	private String build;
@@ -33,10 +33,6 @@ public class Modpack {
 	//TODO Make these two library methods the same somehow
 	public List<Library> getLibraries() {
 		return new ArrayList<Library>();
-	}
-
-	public List<String> getModLibraries() {
-		return Arrays.asList(libraries);
 	}
 
 	public String getMinecraftVersion() {
@@ -62,7 +58,11 @@ public class Modpack {
 	}
 
 	public List<Mod> getMods() {
-		return Arrays.asList(mods);
+		List<Mod> modList = new ArrayList<Mod>(mods.size());
+		for (String name : mods.keySet()) {
+			modList.add(new Mod(name, mods.get(name)));
+		}
+		return modList;
 	}
 
 	public String getName() {
@@ -81,4 +81,5 @@ public class Modpack {
 	public String getMD5() throws RestfulAPIException {
 		return TechnicRestAPI.getModpackMD5(this.getName());
 	}
+
 }

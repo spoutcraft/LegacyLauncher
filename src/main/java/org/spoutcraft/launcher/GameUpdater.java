@@ -60,6 +60,7 @@ public final class GameUpdater extends Directories {
 
 	public void start(Modpack modpack) throws RestfulAPIException {
 		this.modpack = modpack;
+		this.setWorkingDir(modpack.getName());
 		updateThread = new UpdateThread(modpack, null);
 		updateThread.start();
 	}
