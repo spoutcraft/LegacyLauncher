@@ -181,31 +181,33 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addActionListener(this);
 
 		// Steam button
-		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
+		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
 		steam.setToolTipText("Game with us on Steam");
 		steam.setBounds(6, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
-		JButton twitter = new ImageHyperlinkButton("http://spout.in/twitter");
+		JButton twitter = new ImageHyperlinkButton("https://twitter.com/TechnicPack");
 		twitter.setToolTipText("Follow us on Twitter");
-		twitter.setBounds(6 + 34 * 4 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		twitter.setBounds(6 + 34 * 3 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
-		JButton facebook = new ImageHyperlinkButton("http://spout.in/facebook");
+		JButton facebook = new ImageHyperlinkButton("https://www.facebook.com/TechnicPack");
 		facebook.setToolTipText("Like us on Facebook");
-		facebook.setBounds(6 + 34 * 3 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
+		facebook.setBounds(6 + 34 * 2 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
 		// Google+ button
+		/*
 		JButton gplus = new ImageHyperlinkButton("http://spout.in/gplus");
 		gplus.setToolTipText("Follow us on Google+");
 		gplus.setBounds(6 + 34 * 2 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(gplus, "gplus.png", 28);
+		*/
 
 		// YouTube button
-		JButton youtube = new ImageHyperlinkButton("http://spout.in/youtube");
+		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
 		youtube.setToolTipText("Subscribe to our videos");
 		youtube.setBounds(6 + 34 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
 		setIcon(youtube, "youtube.png", 28);
@@ -239,7 +241,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(steam);
 		contentPane.add(twitter);
 		contentPane.add(facebook);
-		contentPane.add(gplus);
+		//contentPane.add(gplus);
 		contentPane.add(youtube);
 		contentPane.add(home);
 		contentPane.add(forums);
