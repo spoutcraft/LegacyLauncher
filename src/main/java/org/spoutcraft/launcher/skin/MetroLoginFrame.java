@@ -153,6 +153,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		home.setTransparency(0.70F);
 		home.setHoverTransparency(1F);
 
+		/*
 		// Forums link
 		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.technicpack.net/");
 		forums.setFont(largerMinecraft);
@@ -161,6 +162,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setOpaque(false);
 		forums.setTransparency(0.70F);
 		forums.setHoverTransparency(1F);
+		*/
+		
+		// Forums link
+		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
+		forums.setToolTipText("Visit the forums");
+		forums.setBounds(FRAME_WIDTH - 190, 20, 170, 95);
+		setIcon(forums, "forums.png", forums.getWidth(), forums.getHeight());
+		
+		// Donate link
+		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
+		donate.setToolTipText("Donate to the modders");
+		donate.setBounds(FRAME_WIDTH - 190,  forums.getHeight() + 30, 170, 95);
+		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
 
 		// Issues link
 		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://forums.technicpack.net/forums/bug-reports.81/");
@@ -174,7 +188,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Options Button
 		options = new TransparentButton();
 		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
-		options.setBounds(828, 28, 30, 30);
+		options.setBounds(pass.getX() - 45, pass.getY() - 5, 30, 30);
 		options.setTransparency(0.70F);
 		options.setHoverTransparency(1F);
 		options.setActionCommand(OPTIONS_ACTION);
@@ -243,9 +257,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(facebook);
 		//contentPane.add(gplus);
 		contentPane.add(youtube);
-		contentPane.add(home);
+		//contentPane.add(home);
 		contentPane.add(forums);
-		contentPane.add(issues);
+		contentPane.add(donate);
+		//contentPane.add(issues);
 		contentPane.add(logo);
 		contentPane.add(options);
 		contentPane.add(progressBar);
@@ -256,6 +271,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private void setIcon(JButton button, String iconName, int size) {
 		try {
 			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void setIcon(JButton label, String iconName, int w, int h) {
+		try {
+			label.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h)));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
