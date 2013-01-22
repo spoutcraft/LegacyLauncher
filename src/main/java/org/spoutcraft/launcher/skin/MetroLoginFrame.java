@@ -228,6 +228,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.setBounds(FRAME_WIDTH - 40, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
+		options.addKeyListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
@@ -380,7 +381,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
-			this.setTitle(packSelector.getSelectedPack().getDisplayName());
 			updateFrameTitle();
 			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
@@ -538,9 +538,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				remember.setSelected(!remember.isSelected());
 			}
 		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			getModpackSelector().selectPreviousPack();
+			action(PACKLEFT_ACTION, null);
 		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			getModpackSelector().selectNextPack();
+			action(PACKRIGHT_ACTION, null);
 		}
 	}
 
