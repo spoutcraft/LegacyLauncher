@@ -380,7 +380,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
-			this.setTitle(packSelector.getSelectedPack().getDisplayName());
 			updateFrameTitle();
 			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
