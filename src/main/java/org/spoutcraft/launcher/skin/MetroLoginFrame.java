@@ -44,6 +44,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
@@ -54,6 +56,7 @@ import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentButton;
+import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -338,6 +341,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				optionsMenu.setVisible(true);
 			}
 		} else if (action.equals(LOGIN_ACTION)) {
+			String modpack = getModpackSelector().getSelectedPack();
+			String build;
+			try {
+				build = TechnicRestAPI.getRecommendedBuild(modpack);
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(modpack, build));
+			} catch (RestfulAPIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
 				this.doLogin(getSelectedUser(), pass);
@@ -459,6 +472,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			} else if (e.getComponent() == remember) {
 				remember.setSelected(!remember.isSelected());
 			}
+		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+			getModpackSelector().selectPreviousPack();
+		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+			getModpackSelector().selectNextPack();
 		}
 	}
 

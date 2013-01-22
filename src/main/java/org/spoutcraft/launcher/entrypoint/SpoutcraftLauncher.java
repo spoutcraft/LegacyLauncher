@@ -65,7 +65,6 @@ import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.util.OperatingSystem;

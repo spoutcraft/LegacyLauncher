@@ -1,27 +1,22 @@
 package org.spoutcraft.launcher.technic.skin;
 
-import java.awt.Container;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 
-import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
-import org.spoutcraft.launcher.util.ImageUtils;
-import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class ModpackSelector extends JComponent {
 	private static final long serialVersionUID = 1L;
 
-	private final JFrame frame;
+	private final LoginFrame frame;
 	private List<PackButton> buttons = new ArrayList<PackButton>();
 
 	private final int bigWidth = 180;
@@ -31,29 +26,51 @@ public class ModpackSelector extends JComponent {
 	private final int smallWidth = (int) (bigWidth * smallScale);
 	private final int smallHeight = (int) (bigHeight * smallScale);
 
-	public ModpackSelector(JFrame frame) {
+	private int index;
+
+	public ModpackSelector(LoginFrame frame) {
 		this.frame = frame;
+		this.index = 0;
 	}
 
 
 	public void setupModpackButtons() throws IOException {
-		ModpackInfo[] modpacks = TechnicRestAPI.getModpacks();
-		for (int i = 0; i < modpacks.length; i++) {
-			buttons.add(new PackButton(modpacks[i]));
+		List<ModpackInfo> modpacks = TechnicRestAPI.getModpacks();
+		for (ModpackInfo info : modpacks) {
+			buttons.add(new PackButton(info));
 		}
 		selectPack(0);
 	}
 
+	private int getIndex() {
+		return this.index;
+	}
+
 	public void selectPack(int index) {
+		if (index >= buttons.size()) {
+			this.index = 0;
+		} else if (index < 0) {
+			this.index = buttons.size();
+		} else {
+			this.index = index;
+		}
+		this.removeAll();
 		// Set the big button in the middle
 		int bigX = (getWidth() / 2) - (bigWidth / 2);
 		int bigY = (getHeight() / 2) - (bigHeight / 2);
-		this.add(buttons.get(index).createButton(bigX, bigY, bigWidth, bigHeight));
+		this.add(buttons.get(getIndex()).createButton(bigX, bigY, bigWidth, bigHeight));
+
+		// Label the pack by name
+		JLabel label = new JLabel(buttons.get(getIndex()).getModpackInfo().getDisplayName());
+		label.setFont(frame.getMinecraftFont(18));
+		label.setBounds(bigX, bigY - 25, bigWidth, 20);
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		this.add(label);
 
 		int smallY = getHeight() / 2 - smallHeight / 2;
 
-		// Start the iterator at the selected pack
-		ListIterator<PackButton> iterator = buttons.listIterator(index);
+		// Start the iterator just after the selected pack
+		ListIterator<PackButton> iterator = buttons.listIterator(getIndex() + 1);
 		// Add the first 3 buttons to the right
 		for (int i = 0; i < 3; i++) {
 			// If you run out of packs, start the iterator back at 0
@@ -67,16 +84,30 @@ public class ModpackSelector extends JComponent {
 		}
 
 		// Start the iterator at the selected pack
-		iterator = buttons.listIterator(index);
+		iterator = buttons.listIterator(getIndex());
 		// Add the last 3 buttons to the left
-		for (int i = 3; i > 0; i--) {
+		for (int i = 1; i < 4; i++) {
 			// If you run out of packs, start the iterator back at the last element
 			if (!iterator.hasPrevious()) {
-				iterator = buttons.listIterator(buttons.size() - 1);
+				iterator = buttons.listIterator(buttons.size());
 			}
 			PackButton button = iterator.previous();
-			int smallX = bigX - spacing - (i * (smallWidth + spacing));
+			int smallX = bigX - (i * (smallWidth + spacing));
 			this.add(button.createButton(smallX, smallY, smallWidth, smallHeight));
 		}
+
+		frame.repaint();
+	}
+
+	public void selectNextPack() {
+		selectPack(getIndex() + 1);
+	}
+
+	public void selectPreviousPack() {
+		selectPack(getIndex() - 1);
+	}
+
+	public String getSelectedPack() {
+		return buttons.get(index).getModpackInfo().getName();
 	}
 }

@@ -3,6 +3,7 @@ package org.spoutcraft.launcher.technic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -44,10 +45,10 @@ public class TechnicRestAPI {
 	}
 
 	public static String getModpackImgURL(String modpack) {
-		return MIRROR_URL + modpack + "/resources/logo.png";
+		return MIRROR_URL + modpack + "/resources/logo_180.png";
 	}
 
-	public static ModpackInfo[] getModpacks() throws RestfulAPIException {
+	public static List<ModpackInfo> getModpacks() throws RestfulAPIException {
 		InputStream stream = null;
 		String url = MODPACKS_URL;
 		try {

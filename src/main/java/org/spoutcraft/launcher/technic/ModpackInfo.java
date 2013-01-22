@@ -23,6 +23,19 @@ public class ModpackInfo {
 	@JsonProperty("builds")
 	private String[] builds;
 
+	private String displayName = "Technic";
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
 	public String getRecommended() {
 		return recommended;
 	}

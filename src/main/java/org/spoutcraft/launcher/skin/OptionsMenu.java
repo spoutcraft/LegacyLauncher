@@ -56,6 +56,7 @@ import org.spoutcraft.launcher.Channel;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.WindowMode;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -335,7 +336,12 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 			// Inform the updating thread
 			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild()) || !minecraftVersion.equals(Settings.getMinecraftVersion())) {
-				Launcher.getGameUpdater().onModpackBuildChange();
+				try {
+					Launcher.getGameUpdater().onModpackBuildChange(new SpoutcraftData(Launcher.getGameUpdater()));
+				} catch (RestfulAPIException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 
 			if (Settings.isDebugMode() || oldDebug) {

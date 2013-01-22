@@ -73,10 +73,10 @@ public final class GameUpdater extends Directories {
 		updateThread.setWaiting(waiting);
 	}
 
-	public void onModpackBuildChange() {
+	public void onModpackBuildChange(Modpack pack) {
 		Modpack prev = this.modpack;
 		try {
-			this.modpack = new SpoutcraftData(this);
+			this.modpack = pack;
 			if (!this.modpack.getBuild().equals(prev.getBuild())) {
 				DownloadListener old = updateThread.getDownloadListener();
 				updateThread.setDownloadListener(null);
