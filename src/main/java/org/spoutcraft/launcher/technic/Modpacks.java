@@ -1,8 +1,5 @@
 package org.spoutcraft.launcher.technic;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 
@@ -11,12 +8,12 @@ public class Modpacks {
 	@JsonProperty("modpacks")
 	private String[] modpacks;
 
-	public List<ModpackBuilds> getModpacks() throws RestfulAPIException {
-		List<ModpackBuilds> modpackObjs = new ArrayList<ModpackBuilds>(modpacks.length);
-		for (String name : modpacks) {
-			modpackObjs.add(TechnicRestAPI.getModpackBuilds(name));
+	public ModpackInfo[] getModpacks() throws RestfulAPIException {
+		ModpackInfo[] modpackInfos = new ModpackInfo[modpacks.length];
+		for (int i = 0; i < modpacks.length; i++) {
+			modpackInfos[i] = TechnicRestAPI.getModpackInfo(modpacks[i]);
 		}
-		return modpackObjs;
+		return modpackInfos;
 	}
 
 	@Override

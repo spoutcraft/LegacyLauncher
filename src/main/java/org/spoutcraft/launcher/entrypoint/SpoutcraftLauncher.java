@@ -58,7 +58,6 @@ import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
-import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
@@ -155,10 +154,11 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the launcher and load login frame
-		LoginFrame frame = new MetroLoginFrame();
+		MetroLoginFrame frame = new MetroLoginFrame();
 
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
+			frame.getModpackSelector().setupModpackButtons();
 			String pack = "tekkitlite";
 			String build = TechnicRestAPI.getLatestBuild(pack);
 			Modpack modpack = TechnicRestAPI.getModpack(pack, build);

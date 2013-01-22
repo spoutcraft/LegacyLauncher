@@ -40,6 +40,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
@@ -53,6 +54,7 @@ import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentButton;
+import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
@@ -74,6 +76,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private TransparentButton options;
 	private LiteProgressBar progressBar;
 	private OptionsMenu optionsMenu = null;
+	private ModpackSelector packSelector;
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -122,7 +125,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		login.addActionListener(this);
 		login.addKeyListener(this);
 
-		// Spoutcraft logo
+		// Technic logo
 		JLabel logo = new JLabel();
 		logo.setBounds(8, 15, 400, 109);
 		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
@@ -173,7 +176,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
 		donate.setToolTipText("Donate to the modders");
-		donate.setBounds(FRAME_WIDTH - 190,  forums.getHeight() + 30, 170, 95);
+		donate.setBounds(forums.getX() - 180,  forums.getY(), 170, 95);
 		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
 
 		// Issues link
@@ -229,6 +232,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
+		// Pack Selector
+		packSelector = new ModpackSelector(this);
+		packSelector.setBounds(0, (FRAME_HEIGHT / 2) - 85, FRAME_WIDTH, 170);
+
+		// User Faces
 		java.util.List<String> savedUsers = getSavedUsernames();
 		int users = Math.min(5, this.getSavedUsernames().size());
 		for (int i = 0; i < users; i++) {
@@ -238,7 +246,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
-			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), (FRAME_HEIGHT - 75) / 2 , 75, 75);
+			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), FRAME_HEIGHT - 75 , 75, 75);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
@@ -248,6 +256,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			removeButtons.put(userButton.getRemoveIcon(), userButton);
 		}
 
+		contentPane.add(packSelector);
 		contentPane.add(name);
 		contentPane.add(pass);
 		contentPane.add(remember);
@@ -266,6 +275,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(progressBar);
 
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
+	}
+
+	public ModpackSelector getModpackSelector() {
+		return packSelector;
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {

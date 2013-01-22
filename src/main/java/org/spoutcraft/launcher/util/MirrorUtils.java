@@ -45,7 +45,6 @@ import java.util.Set;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.Resources;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class MirrorUtils {

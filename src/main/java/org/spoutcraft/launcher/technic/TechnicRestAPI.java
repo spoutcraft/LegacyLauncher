@@ -2,10 +2,7 @@ package org.spoutcraft.launcher.technic;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -42,11 +39,15 @@ public class TechnicRestAPI {
 		return MIRROR_URL + modpack + "/modpack.yml";
 	}
 
-	public static String getModpackBuildsURL(String modpack) {
+	public static String getModpackInfoURL(String modpack) {
 		return MODPACKS_URL + modpack;
 	}
 
-	public static List<ModpackBuilds> getModpacks() throws RestfulAPIException {
+	public static String getModpackImgURL(String modpack) {
+		return MIRROR_URL + modpack + "/resources/logo.png";
+	}
+
+	public static ModpackInfo[] getModpacks() throws RestfulAPIException {
 		InputStream stream = null;
 		String url = MODPACKS_URL;
 		try {
@@ -91,13 +92,13 @@ public class TechnicRestAPI {
 		}
 	}
 
-	public static ModpackBuilds getModpackBuilds(String modpack) throws RestfulAPIException {
+	public static ModpackInfo getModpackInfo(String modpack) throws RestfulAPIException {
 		InputStream stream = null;
-		String url = getModpackBuildsURL(modpack);
+		String url = getModpackInfoURL(modpack);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openStream();
-			ModpackBuilds result = mapper.readValue(stream, ModpackBuilds.class);
+			ModpackInfo result = mapper.readValue(stream, ModpackInfo.class);
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
@@ -107,11 +108,11 @@ public class TechnicRestAPI {
 	}
 
 	public static String getLatestBuild(String modpack) throws RestfulAPIException {
-		return getModpackBuilds(modpack).getLatest();
+		return getModpackInfo(modpack).getLatest();
 	}
 
 	public static String getRecommendedBuild(String modpack) throws RestfulAPIException {
-		return getModpackBuilds(modpack).getRecommended();
+		return getModpackInfo(modpack).getRecommended();
 	}
 
 	public static String getModpackMD5(String modpack) throws RestfulAPIException {
@@ -129,21 +130,6 @@ public class TechnicRestAPI {
 		}
 	}
 
-//	private static InputStream getJSONStream(URL url) throws RestfulAPIException {
-//		InputStream stream = null;
-//		try {
-//			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-//			conn.setRequestProperty("Content-Type", "application/json");
-//			conn.setRequestMethod("GET");
-//			conn.connect();
-//			stream = conn.getInputStream();
-//			return stream;
-//		} catch (IOException e) {
-//			throw new RestfulAPIException("Error accessing URL [" + url.getPath() + "]", e);
-//		} finally {
-//			IOUtils.closeQuietly(stream);
-//		}
-//	}
 	private static class TechnicMD5 {
 		@JsonProperty("MD5")
 		String md5;

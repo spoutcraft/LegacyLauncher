@@ -135,8 +135,10 @@ public class UpdateThread extends Thread {
 
 			// Download assets
 			if (cleaned.compareAndSet(false, true)) {
-				Resources.VIP.getYAML();
-				Resources.Special.getYAML();
+				if (build instanceof SpoutcraftData) {
+					Resources.VIP.getYAML();
+					Resources.Special.getYAML();
+				}
 				Versions.getMinecraftVersions();
 
 				cleanLogs();
