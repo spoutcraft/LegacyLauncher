@@ -91,7 +91,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setResizable(false);
 		packBackground = new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT);
 		getContentPane().add(packBackground);
-		this.setTitle("Test");
 	}
 
 	private void initComponents() {
@@ -382,10 +381,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
 			this.setTitle(packSelector.getSelectedPack().getDisplayName());
+			updateFrameTitle();
 			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
-			this.setTitle(packSelector.getSelectedPack().getDisplayName());
+			updateFrameTitle();
 			setBackgroundImage(packBackground);
 		} else if (action.equals(LOGIN_ACTION)) {
 			String modpack = getModpackSelector().getSelectedPack().getName();
@@ -457,6 +457,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	@Override
 	public String getSelectedUser() {
 		return this.name.getText();
+	}
+	
+	public void updateFrameTitle() {
+		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getDisplayName());
 	}
 	
 	public void setBackgroundImage(BackgroundImage packBackground) {

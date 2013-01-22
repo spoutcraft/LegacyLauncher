@@ -161,6 +161,7 @@ public class SpoutcraftLauncher {
 			new Launcher(updater, new GameLauncher(), frame);
 			frame.getModpackSelector().setupModpackButtons();
 			frame.setBackgroundImage(frame.getBackgroundImage());
+			frame.updateFrameTitle();
 			String pack = "tekkitlite";
 			String build = TechnicRestAPI.getLatestBuild(pack);
 			Modpack modpack = TechnicRestAPI.getModpack(pack, build);
