@@ -48,12 +48,33 @@ public class Modpack {
 	private Map<String, String> mods;
 
 	private String name;
+	private String displayName;
 	private String build;
 
-	public Modpack setInfo(String name, String build) {
-		this.name = name;
+	private ModpackInfo info;
+
+	public Modpack setInfo(ModpackInfo info, String build) {
+		this.info = info;
+		this.name = info.getName();
+		this.displayName = info.getDisplayName();
 		this.build = build;
 		return this;
+	}
+
+	public ModpackInfo getInfo() {
+		return info;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public String getBuild() {
+		return build;
 	}
 
 	//TODO Make these two library methods the same somehow
@@ -93,14 +114,6 @@ public class Modpack {
 			modList.add(new Mod(name, mods.get(name)));
 		}
 		return modList;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getBuild() {
-		return build;
 	}
 
 	@Override

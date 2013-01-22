@@ -67,7 +67,9 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 	public void runGame(String user, String session, String downloadTicket, Modpack modpack) {
 		if (modpack != null) {
-			this.setTitle(modpack.getName());
+			System.out.println(modpack.getDisplayName());
+			System.out.println(modpack.getName());
+			this.setTitle(modpack.getDisplayName());
 		}
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getLoginFrame());

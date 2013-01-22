@@ -55,7 +55,6 @@ import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.skin.components.PackSwitcher;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
@@ -144,14 +143,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
 		
 		// Pack Select Left
-		PackSwitcher switchLeft = new PackSwitcher();
+		JButton switchLeft = new JButton();
 		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchLeft.setActionCommand(PACKLEFT_ACTION);
 		switchLeft.addActionListener(this);
 		setIcon(switchLeft, "selectLeft.png", switchLeft.getWidth(), switchLeft.getHeight());
 		
 		// Pack Select Right
-		PackSwitcher switchRight = new PackSwitcher();
+		JButton switchRight = new JButton();
 		switchRight.setBounds(FRAME_WIDTH - 28, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
@@ -392,7 +391,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String build;
 			try {
 				build = TechnicRestAPI.getRecommendedBuild(modpack);
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(modpack, build));
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(getModpackSelector().getSelectedPack(), build));
 			} catch (RestfulAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

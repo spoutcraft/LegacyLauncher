@@ -77,7 +77,7 @@ public class ModpackSelector extends JComponent {
 		if (index >= buttons.size()) {
 			this.index = 0;
 		} else if (index < 0) {
-			this.index = buttons.size();
+			this.index = buttons.size() - 1;
 		} else {
 			this.index = index;
 		}
