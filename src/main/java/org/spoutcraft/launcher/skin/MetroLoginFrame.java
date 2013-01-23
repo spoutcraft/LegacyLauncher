@@ -66,7 +66,6 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
-	private static final URL gearIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
@@ -221,8 +220,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		issues.setHoverTransparency(1F);
 
 		// Options Button
-		JButton options = new JButton();
-		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
+		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 40, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
@@ -274,10 +272,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
+			DynamicButton userButton = new DynamicButton(this, getImage(userName), 10, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
-			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), FRAME_HEIGHT - 75 , 75, 75);
+			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 75), FRAME_HEIGHT - 60, 50, 50);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);

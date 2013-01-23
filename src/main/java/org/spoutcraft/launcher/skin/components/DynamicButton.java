@@ -127,7 +127,7 @@ public class DynamicButton extends JButton implements MouseListener{
 			w = sw;
 			
 		}
-		underLabel.setBounds(x + (w - sw) / 2, y + h, w, 20);
+		underLabel.setBounds(x + (w - sw) / 2, y - 20, w, 20);
 		
 		
 	}
