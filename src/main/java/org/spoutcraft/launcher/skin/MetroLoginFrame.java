@@ -55,10 +55,10 @@ import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.skin.components.PackSwitcher;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
+import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -66,7 +66,6 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 
 public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
 	private static final long serialVersionUID = 1L;
-	private static final URL gearIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
@@ -144,18 +143,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
 		
 		// Pack Select Left
-		PackSwitcher switchLeft = new PackSwitcher();
+		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
 		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchLeft.setActionCommand(PACKLEFT_ACTION);
 		switchLeft.addActionListener(this);
-		setIcon(switchLeft, "selectLeft.png", switchLeft.getWidth(), switchLeft.getHeight());
 		
 		// Pack Select Right
-		PackSwitcher switchRight = new PackSwitcher();
+		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
 		switchRight.setBounds(FRAME_WIDTH - 28, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
-		setIcon(switchRight, "selectRight.png", switchRight.getWidth(), switchRight.getHeight());
 		
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
@@ -223,11 +220,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		issues.setHoverTransparency(1F);
 
 		// Options Button
-		JButton options = new JButton();
-		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(gearIcon)));
+		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 40, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
+		options.addKeyListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
@@ -275,10 +272,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
+			DynamicButton userButton = new DynamicButton(this, getImage(userName), 10, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
-			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), FRAME_HEIGHT - 75 , 75, 75);
+			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 75), FRAME_HEIGHT - 60, 50, 50);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
@@ -322,6 +319,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return packBackground;
 	}
 
+	private ImageIcon getIcon(String iconName, int w, int h) {
+		try {
+			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	private void setIcon(JButton button, String iconName, int size) {
 		try {
 			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
@@ -381,17 +386,15 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
 			updateFrameTitle();
-			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
 			updateFrameTitle();
-			setBackgroundImage(packBackground);
 		} else if (action.equals(LOGIN_ACTION)) {
 			String modpack = getModpackSelector().getSelectedPack().getName();
 			String build;
 			try {
 				build = TechnicRestAPI.getRecommendedBuild(modpack);
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(modpack, build));
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(getModpackSelector().getSelectedPack(), build));
 			} catch (RestfulAPIException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -462,8 +465,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getDisplayName());
 	}
 	
-	public void setBackgroundImage(BackgroundImage packBackground) {
-		packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+	public void updateBackground() {
+		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {
@@ -537,9 +540,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				remember.setSelected(!remember.isSelected());
 			}
 		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			getModpackSelector().selectPreviousPack();
+			action(PACKLEFT_ACTION, null);
 		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			getModpackSelector().selectNextPack();
+			action(PACKRIGHT_ACTION, null);
 		}
 	}
 

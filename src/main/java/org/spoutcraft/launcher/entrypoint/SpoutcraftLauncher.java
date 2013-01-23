@@ -48,7 +48,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -68,6 +67,7 @@ import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.Modpack;
+import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -160,11 +160,12 @@ public class SpoutcraftLauncher {
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
 			frame.getModpackSelector().setupModpackButtons();
-			frame.setBackgroundImage(frame.getBackgroundImage());
+			frame.updateBackground();
 			frame.updateFrameTitle();
 			String pack = "tekkitlite";
+			ModpackInfo info = TechnicRestAPI.getModpackInfo(pack);
 			String build = TechnicRestAPI.getLatestBuild(pack);
-			Modpack modpack = TechnicRestAPI.getModpack(pack, build);
+			Modpack modpack = TechnicRestAPI.getModpack(info, build);
 			updater.start(modpack);
 		} catch (IOException failure) {
 			failure.printStackTrace();

@@ -108,9 +108,9 @@ public class TechnicRestAPI {
 		}
 	}
 
-	public static Modpack getModpack(String modpack, String build) throws RestfulAPIException {
+	public static Modpack getModpack(ModpackInfo modpack, String build) throws RestfulAPIException {
 		InputStream stream = null;
-		String url = getModpackURL(modpack, build);
+		String url = getModpackURL(modpack.getName(), build);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();

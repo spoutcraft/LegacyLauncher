@@ -26,6 +26,7 @@
  */
 package org.spoutcraft.launcher.technic.skin;
 
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -38,20 +39,30 @@ import org.spoutcraft.launcher.util.ImageUtils;
 public class PackButton {
 
 	private final BufferedImage image;
+	private final ImageIcon background;
 	private final ModpackInfo info;
 	
 	public PackButton(ModpackInfo info) throws IOException {
 		this.info = info;
 		image = info.getImg();
-//		image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/packsizeforolloth.png"));
+		// Fix magic numbers, frame height and width
+		background = new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
+	}
+
+	public ImageIcon getBackground() {
+		return background;
 	}
 
 	public JLabel createButton(int x, int y, int width, int height) {
 		JLabel button = new JLabel();
 		button.setBounds(x, y, width, height);
 		button.setIcon(new ImageIcon(ImageUtils.scaleImage(image, width, height)));
-		System.out.println("Button created for " + info.getName() + " pack!");
 		return button;
+	}
+
+	public void assignButton(JLabel button, int x, int y, int width, int height) {
+		button.setBounds(x, y, width, height);
+		button.setIcon(new ImageIcon(ImageUtils.scaleImage(image, width, height)));
 	}
 
 	public ModpackInfo getModpackInfo() {
