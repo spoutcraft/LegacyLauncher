@@ -58,6 +58,7 @@ import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
+import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -143,18 +144,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
 		
 		// Pack Select Left
-		JButton switchLeft = new JButton();
+		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
 		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchLeft.setActionCommand(PACKLEFT_ACTION);
 		switchLeft.addActionListener(this);
-		setIcon(switchLeft, "selectLeft.png", switchLeft.getWidth(), switchLeft.getHeight());
 		
 		// Pack Select Right
-		JButton switchRight = new JButton();
+		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
 		switchRight.setBounds(FRAME_WIDTH - 28, FRAME_HEIGHT / 2 - 100, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
-		setIcon(switchRight, "selectRight.png", switchRight.getWidth(), switchRight.getHeight());
 		
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
@@ -322,6 +321,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return packBackground;
 	}
 
+	private ImageIcon getIcon(String iconName, int w, int h) {
+		try {
+			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	private void setIcon(JButton button, String iconName, int size) {
 		try {
 			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
@@ -381,11 +388,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if (action.equals(PACKLEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
 			updateFrameTitle();
-			setBackgroundImage(packBackground);
 		} else if (action.equals(PACKRIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
 			updateFrameTitle();
-			setBackgroundImage(packBackground);
 		} else if (action.equals(LOGIN_ACTION)) {
 			String modpack = getModpackSelector().getSelectedPack().getName();
 			String build;
@@ -462,8 +467,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getDisplayName());
 	}
 	
-	public void setBackgroundImage(BackgroundImage packBackground) {
-		packBackground.setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+	public void updateBackground() {
+		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {

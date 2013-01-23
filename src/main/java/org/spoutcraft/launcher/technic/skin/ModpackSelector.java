@@ -36,28 +36,48 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 
 public class ModpackSelector extends JComponent {
 	private static final long serialVersionUID = 1L;
 
-	private final LoginFrame frame;
+	private final MetroLoginFrame frame;
 	private List<PackButton> buttons = new ArrayList<PackButton>();
+	private List<JLabel> jButtons = new ArrayList<JLabel>(7);
+	private JLabel label;
 
+	private final int height = 170;
+	private final int width = 880;
 	private final int bigWidth = 180;
 	private final int bigHeight = 110;
 	private final float smallScale = 0.7F;
 	private final int spacing = 15;
 	private final int smallWidth = (int) (bigWidth * smallScale);
 	private final int smallHeight = (int) (bigHeight * smallScale);
+	private final int bigX = (width / 2) - (bigWidth / 2);
+	private final int bigY = (height / 2) - (bigHeight / 2);
+	private final int smallY = (height / 2) - (smallHeight / 2);
 
 	private int index;
 
-	public ModpackSelector(LoginFrame frame) {
+	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
 		this.index = 0;
+
+		label = new JLabel();
+		label.setFont(frame.getMinecraftFont(18));
+		label.setForeground(Color.white);
+		label.setHorizontalAlignment(SwingConstants.CENTER);
+		label.setBounds(bigX, bigY - 25, bigWidth, 20);
+		this.add(label);
+
+		for (int i = 0; i < 7; i++) {
+			JLabel button = new JLabel();
+			jButtons.add(button);
+			this.add(button);
+		}
 	}
 
 
@@ -81,21 +101,15 @@ public class ModpackSelector extends JComponent {
 		} else {
 			this.index = index;
 		}
-		this.removeAll();
+
+		// Set the background image based on the pack
+		frame.getBackgroundImage().setIcon(buttons.get(getIndex()).getBackground());
+
 		// Set the big button in the middle
-		int bigX = (getWidth() / 2) - (bigWidth / 2);
-		int bigY = (getHeight() / 2) - (bigHeight / 2);
-		this.add(buttons.get(getIndex()).createButton(bigX, bigY, bigWidth, bigHeight));
+		buttons.get(getIndex()).assignButton(jButtons.get(0), bigX, bigY, bigWidth, bigHeight);
 
 		// Label the pack by name
-		JLabel label = new JLabel(buttons.get(getIndex()).getModpackInfo().getDisplayName());
-		label.setFont(frame.getMinecraftFont(18));
-		label.setForeground(Color.white);
-		label.setBounds(bigX, bigY - 25, bigWidth, 20);
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		this.add(label);
-
-		int smallY = getHeight() / 2 - smallHeight / 2;
+		label.setText(buttons.get(getIndex()).getModpackInfo().getDisplayName());
 
 		// Start the iterator just after the selected pack
 		ListIterator<PackButton> iterator = buttons.listIterator(getIndex() + 1);
@@ -107,24 +121,23 @@ public class ModpackSelector extends JComponent {
 			}
 			PackButton button = iterator.next();
 			int smallX = bigX + bigWidth + spacing + (i * (smallWidth + spacing));
-			this.add(button.createButton(smallX, smallY, smallWidth, smallHeight));
+			button.assignButton(jButtons.get(i + 1), smallX, smallY, smallWidth, smallHeight);
 
 		}
 
 		// Start the iterator at the selected pack
 		iterator = buttons.listIterator(getIndex());
 		// Add the last 3 buttons to the left
-		for (int i = 1; i < 4; i++) {
+		for (int i = 0; i < 3; i++) {
 			// If you run out of packs, start the iterator back at the last element
 			if (!iterator.hasPrevious()) {
 				iterator = buttons.listIterator(buttons.size());
 			}
 			PackButton button = iterator.previous();
-			int smallX = bigX - (i * (smallWidth + spacing));
-			this.add(button.createButton(smallX, smallY, smallWidth, smallHeight));
+			int smallX = bigX - ((i + 1)* (smallWidth + spacing));
+			button.assignButton(jButtons.get(i + 4), smallX, smallY, smallWidth, smallHeight);
 		}
-
-		frame.repaint();
+		this.repaint();
 	}
 
 	public void selectNextPack() {
