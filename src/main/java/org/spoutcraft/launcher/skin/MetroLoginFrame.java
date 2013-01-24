@@ -102,27 +102,21 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
 
-		int xShift = 0;
-		int yShift = 0;
-		if (this.isUndecorated()) {
-			yShift += 30;
-		}
-
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(602 + xShift, 384 + yShift, 140, 24);
+		name.setBounds(602, 414, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(602 + xShift, 413 + yShift, 140, 24);
+		pass.setBounds(602, 443, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(755 + xShift, 413 + yShift, 110, 24);
+		remember.setBounds(755, 443, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -133,7 +127,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(755 + xShift, 384 + yShift, 92, 24);
+		login.setBounds(755, 414, 92, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -146,18 +140,18 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
-		selectorBackground.setBounds(0, FRAME_HEIGHT / 2 - 100, FRAME_WIDTH, 168);
+		selectorBackground.setBounds(0, FRAME_HEIGHT / 2 - 84, FRAME_WIDTH, 168);
 		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
 		
 		// Pack Select Left
 		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
-		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 100, 22, 168);
+		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 84, 22, 168);
 		switchLeft.setActionCommand(PACKLEFT_ACTION);
 		switchLeft.addActionListener(this);
 		
 		// Pack Select Right
 		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
-		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 100, 22, 168);
+		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 84, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
 		
@@ -194,17 +188,17 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		home.setTransparency(0.70F);
 		home.setHoverTransparency(1F);
 
-		/*
-		// Forums link
-		HyperlinkJLabel forums = new HyperlinkJLabel("Forums", "http://forums.technicpack.net/");
-		forums.setFont(largerMinecraft);
-		forums.setBounds(625, 35, 90, 20);
-		forums.setForeground(Color.WHITE);
-		forums.setOpaque(false);
-		forums.setTransparency(0.70F);
-		forums.setHoverTransparency(1F);
-		*/
 		
+//		// Forums link
+//		HyperlinkJLabel forums = new HyperlinkJLabel("DEATHRAT MAKE MORE RICE", "http://forums.technicpack.net/");
+//		forums.setFont(largerMinecraft);
+//		forums.setBounds(625, 35, 90, 20);
+//		forums.setForeground(Color.WHITE);
+//		forums.setOpaque(false);
+//		forums.setTransparency(0.70F);
+//		forums.setHoverTransparency(1F);
+//		
+//		
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
@@ -252,19 +246,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
 		steam.setToolTipText("Game with us on Steam");
-		steam.setBounds(6, 6 + yShift, 28, 28);
+		steam.setBounds(6, 6, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("https://twitter.com/TechnicPack");
 		twitter.setToolTipText("Follow us on Twitter");
-		twitter.setBounds(6 + 34 * 3 + xShift, 6 + yShift, 28, 28);
+		twitter.setBounds(6 + 34 * 3, 6, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
 		JButton facebook = new ImageHyperlinkButton("https://www.facebook.com/TechnicPack");
 		facebook.setToolTipText("Like us on Facebook");
-		facebook.setBounds(6 + 34 * 2 + xShift, 6 + yShift, 28, 28);
+		facebook.setBounds(6 + 34 * 2, 6, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
 		// Google+ button
@@ -278,7 +272,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
 		youtube.setToolTipText("Subscribe to our videos");
-		youtube.setBounds(6 + 34 + xShift, 6 + yShift, 28, 28);
+		youtube.setBounds(6 + 34, 6, 28, 28);
 		setIcon(youtube, "youtube.png", 28);
 
 		Container contentPane = getContentPane();
@@ -323,7 +317,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		//contentPane.add(gplus);
 		contentPane.add(youtube);
 		//contentPane.add(home);
-		//contentPane.add(forums);
+//		contentPane.add(forums);
 		//contentPane.add(donate);
 		//contentPane.add(issues);
 		contentPane.add(logo);
@@ -423,22 +417,20 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			getModpackSelector().selectNextPack();
 			updateFrameTitle();
 		} else if (action.equals(LOGIN_ACTION)) {
-			String modpack = getModpackSelector().getSelectedPack().getName();
-			String build;
-			try {
-				build = TechnicRestAPI.getRecommendedBuild(modpack);
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(getModpackSelector().getSelectedPack(), build));
-			} catch (RestfulAPIException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
 				this.doLogin(getSelectedUser(), pass);
 				if (remember.isSelected()) {
 					saveUsername(getSelectedUser(), pass);
 				}
+			}
+			String modpack = getModpackSelector().getSelectedPack().getName();
+			String build;
+			try {
+				build = TechnicRestAPI.getRecommendedBuild(modpack);
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(getModpackSelector().getSelectedPack(), build));
+			} catch (RestfulAPIException e) {
+				e.printStackTrace();
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton)c;

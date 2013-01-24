@@ -521,7 +521,7 @@ public class UpdateThread extends Thread {
 
 					ProgressMonitor monitor = zipFile.getProgressMonitor();
 					while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
-						long totalProgress = monitor.getWorkCompleted() / monitor.getTotalWork();
+						long totalProgress = monitor.getWorkCompleted() / (monitor.getTotalWork() + 1);
 						stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
 					}
 				} catch (ZipException e) {
