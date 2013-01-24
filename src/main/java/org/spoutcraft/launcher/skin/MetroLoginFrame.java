@@ -102,21 +102,30 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
 
+		// Login Strip
+		TransparentJLabel loginStrip = new TransparentJLabel();
+		// 379 is the center of the bottom
+		loginStrip.setBounds(0, 360, FRAME_WIDTH, 107);
+		loginStrip.setTransparency(0.95F);
+		loginStrip.setHoverTransparency(0.95F);
+		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
+
+		int loginY = 25;
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(602, 414, 140, 24);
+		name.setBounds(602, loginStrip.getY() + loginY, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(602, 443, 140, 24);
+		pass.setBounds(602, loginStrip.getY() + loginY + 31, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(755, 443, 110, 24);
+		remember.setBounds(755, loginStrip.getY() + loginY + 31, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -127,7 +136,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(755, 414, 92, 24);
+		login.setBounds(755, loginStrip.getY() + loginY, 92, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -154,13 +163,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 84, 22, 168);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
-		
-		// Login Strip
-		TransparentJLabel loginStrip = new TransparentJLabel();
-		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 55, FRAME_WIDTH, 107);
-		loginStrip.setTransparency(0.95F);
-		loginStrip.setHoverTransparency(0.95F);
-		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
