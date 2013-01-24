@@ -33,6 +33,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseWheelEvent;
+import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -67,7 +69,7 @@ import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
 
-public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
+public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
@@ -97,6 +99,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		packBackground = new BackgroundImage(this, FRAME_WIDTH, FRAME_HEIGHT);
 		this.addMouseListener(packBackground);
 		this.addMouseMotionListener(packBackground);
+		this.addMouseWheelListener(this);
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
 	}
@@ -583,5 +586,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if (e.getWheelRotation() > 0) {
+			action(PACKRIGHT_ACTION, null);
+		} else if (e.getWheelRotation() < 0) {
+			action(PACKLEFT_ACTION, null);
+		}
 	}
 }
