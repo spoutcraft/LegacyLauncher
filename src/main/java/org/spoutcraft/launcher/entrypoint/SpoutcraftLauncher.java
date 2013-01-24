@@ -194,7 +194,7 @@ public class SpoutcraftLauncher {
 		if (!pingURL("http://www.google.com")) {
 			JOptionPane.showMessageDialog(null, "You must have an internet connection to use The Technic Launcher", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
-		} else if (!pingURL("http://mirror.technicpack.net")) {
+		} else if (!pingURL("http://mirror.technicpack.net/Technic/")) {
 			JOptionPane.showMessageDialog(null, "The Technic webservers are currently not responding. Try again later.", "Technic Servers Down", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
