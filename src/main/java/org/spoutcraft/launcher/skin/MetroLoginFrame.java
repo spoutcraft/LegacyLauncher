@@ -225,6 +225,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
+		options.setRolloverIcon(getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 34 * 2, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
@@ -232,6 +233,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Exit Button
 		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quit.png", 28, 28));
+		exit.setRolloverIcon(getIcon("quitHover.png", 28, 28));
 		exit.setBounds(FRAME_WIDTH - 34, 6, 28, 28);
 		exit.setActionCommand(EXIT_ACTION);
 		exit.addActionListener(this);
