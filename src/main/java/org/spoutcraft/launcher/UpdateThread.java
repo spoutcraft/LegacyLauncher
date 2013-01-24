@@ -348,6 +348,11 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 		YAMLProcessor yaml = new YAMLProcessor(installed, false, YAMLFormat.EXTENDED);
+		try {
+			yaml.load();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		if (!build.getBuild().equals(yaml.getProperty("build"))) {
 			return true;
 		}
