@@ -103,19 +103,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(602 + xShift, 379 + yShift, 140, 24);
+		name.setBounds(602 + xShift, 384 + yShift, 140, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(602 + xShift, 408 + yShift, 140, 24);
+		pass.setBounds(602 + xShift, 413 + yShift, 140, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(755 + xShift, 408 + yShift, 110, 24);
+		remember.setBounds(755 + xShift, 413 + yShift, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -126,7 +126,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup login button
 		login = new LiteButton("Login");
-		login.setBounds(755 + xShift, 379 + yShift, 92, 24);
+		login.setBounds(755 + xShift, 384 + yShift, 92, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -156,7 +156,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
-		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 60, FRAME_WIDTH, 107);
+		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 55, FRAME_WIDTH, 107);
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());

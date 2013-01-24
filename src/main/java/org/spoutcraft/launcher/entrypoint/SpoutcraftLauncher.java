@@ -106,6 +106,7 @@ public class SpoutcraftLauncher {
 
 		// Setup directories
 		GameUpdater updater = new GameUpdater();
+		Utils.getAssetsDirectory().mkdirs();
 
 		if (Settings.getYAML() == null) {
 			YAMLProcessor settings = setupSettings();

@@ -35,9 +35,9 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackInfo {
 	@JsonProperty("name")
@@ -84,17 +84,27 @@ public class ModpackInfo {
 
 	public BufferedImage getImg() throws IOException {
 		BufferedImage image;
-		File temp = new File(Launcher.getGameUpdater().getTempDir(), "logo.png");
-		Download download = DownloadUtils.downloadFile(getImgURL(), temp.getAbsolutePath());
-		image = ImageIO.read(download.getOutFile());
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
+		if (temp.exists()) {
+			image = ImageIO.read(temp);
+		} else {
+			temp.mkdirs();
+			Download download = DownloadUtils.downloadFile(getImgURL(), temp.getAbsolutePath());
+			image = ImageIO.read(download.getOutFile());
+		}
 		return image;
 	}
 	
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
-		File temp = new File(Launcher.getGameUpdater().getTempDir(), "background.jpg");
-		Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
-		image = ImageIO.read(download.getOutFile());
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
+		if (temp.exists()) {
+			image = ImageIO.read(temp);
+		} else {
+			temp.mkdirs();
+			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
+			image = ImageIO.read(download.getOutFile());
+		}
 		return image;
 	}
 	@Override
