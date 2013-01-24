@@ -282,7 +282,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 	public abstract String getSelectedUser();
 
-	public final Font getMinecraftFont(int size) {
+	public static final Font getMinecraftFont(int size) {
 		Font minecraft;
 		try {
 			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont((float)size);

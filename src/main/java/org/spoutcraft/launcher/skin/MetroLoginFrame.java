@@ -59,6 +59,7 @@ import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
+import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -69,6 +70,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
+	private static final String PACKOPTIONS_ACTION = "packoptions";
 	private static final String EXIT_ACTION = "exit";
 	private static final String PACKLEFT_ACTION = "packleft";
 	private static final String PACKRIGHT_ACTION = "packright";
@@ -82,6 +84,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private JCheckBox remember;
 	private LiteProgressBar progressBar;
 	private OptionsMenu optionsMenu = null;
+	private ModpackOptions packOptions = null;
 	private ModpackSelector packSelector;
 	private BackgroundImage packBackground;
 	public MetroLoginFrame() {
@@ -231,6 +234,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addActionListener(this);
 		options.addKeyListener(this);
 		
+		// Pack Options Button
+		ImageButton packOptionsBtn = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
+		packOptionsBtn.setRolloverIcon(getIcon("gearInverted.png", 28, 28));
+		packOptionsBtn.setBounds(FRAME_WIDTH / 2 + 58, 175, 28, 28);
+		packOptionsBtn.setActionCommand(PACKOPTIONS_ACTION);
+		packOptionsBtn.addActionListener(this);
+		
+		
 		// Exit Button
 		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quit.png", 28, 28));
 		exit.setRolloverIcon(getIcon("quitHover.png", 28, 28));
@@ -299,6 +310,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		contentPane.add(switchLeft);
 		contentPane.add(switchRight);
+		contentPane.add(packOptionsBtn);
 		contentPane.add(packSelector);
 		contentPane.add(selectorBackground);
 		contentPane.add(name);
@@ -332,7 +344,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return packBackground;
 	}
 
-	private ImageIcon getIcon(String iconName, int w, int h) {
+	public static ImageIcon getIcon(String iconName, int w, int h) {
 		try {
 			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
 		} catch (IOException e) {
@@ -356,7 +368,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	private void setIcon(JLabel label, String iconName, int w, int h) {
+	public static void setIcon(JLabel label, String iconName, int w, int h) {
 		try {
 			label.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h)));
 		} catch (IOException e) {
@@ -395,6 +407,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				optionsMenu = new OptionsMenu();
 				optionsMenu.setModal(true);
 				optionsMenu.setVisible(true);
+			}
+		} else if (action.equals(PACKOPTIONS_ACTION)) {
+			if (packOptions == null || !packOptions.isVisible()) {
+				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
+				packOptions.setModal(true);
+				packOptions.setVisible(true);
 			}
 		} else if (action.equals(EXIT_ACTION)) {
 			System.exit(0);

@@ -70,8 +70,8 @@ public class ModpackInfo {
 		return latest;
 	}
 
-	public List<String> getBuilds() {
-		return Arrays.asList(builds);
+	public String[] getBuilds() {
+		return builds;
 	}
 
 	public String getImgURL() {
