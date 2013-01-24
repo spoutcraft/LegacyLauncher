@@ -74,10 +74,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
-	private static final String PACKOPTIONS_ACTION = "packoptions";
+	private static final String PACK_OPTIONS_ACTION = "packoptions";
 	private static final String EXIT_ACTION = "exit";
-	private static final String PACKLEFT_ACTION = "packleft";
-	private static final String PACKRIGHT_ACTION = "packright";
+	private static final String PACK_LEFT_ACTION = "packleft";
+	private static final String PACK_RIGHT_ACTION = "packright";
 	private static final String LOGIN_ACTION = "login";
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
@@ -160,13 +160,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Pack Select Left
 		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
 		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 83, 22, 167);
-		switchLeft.setActionCommand(PACKLEFT_ACTION);
+		switchLeft.setActionCommand(PACK_LEFT_ACTION);
 		switchLeft.addActionListener(this);
 		
 		// Pack Select Right
 		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
 		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 83, 22, 167);
-		switchRight.setActionCommand(PACKRIGHT_ACTION);
+		switchRight.setActionCommand(PACK_RIGHT_ACTION);
 		switchRight.addActionListener(this);
 
 		// Progress Bar
@@ -237,7 +237,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Pack Options Button
 		ImageButton packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
 		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 87, FRAME_HEIGHT / 2 - 47, 14, 14);
-		packOptionsBtn.setActionCommand(PACKOPTIONS_ACTION);
+		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 		
 		
@@ -410,7 +410,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				optionsMenu.setModal(true);
 				optionsMenu.setVisible(true);
 			}
-		} else if (action.equals(PACKOPTIONS_ACTION)) {
+		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
 				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
 				packOptions.setModal(true);
@@ -418,12 +418,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(EXIT_ACTION)) {
 			System.exit(0);
-		} else if (action.equals(PACKLEFT_ACTION)) {
+		} else if (action.equals(PACK_LEFT_ACTION)) {
 			getModpackSelector().selectPreviousPack();
-			updateFrameTitle();
-		} else if (action.equals(PACKRIGHT_ACTION)) {
+		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
-			updateFrameTitle();
 		} else if (action.equals(LOGIN_ACTION)) {
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
@@ -499,14 +497,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return this.name.getText();
 	}
 	
-	public void updateFrameTitle() {
-		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getInfo().getDisplayName());
-	}
-	
-	public void updateBackground() {
-		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack().getInfo())));
-	}
-	
 	public Image newBackgroundImage(ModpackInfo modpack) {
 		try {
 			Image image = modpack.getBackground().getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
@@ -578,9 +568,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				remember.setSelected(!remember.isSelected());
 			}
 		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			action(PACKLEFT_ACTION, null);
+			action(PACK_LEFT_ACTION, null);
 		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			action(PACKRIGHT_ACTION, null);
+			action(PACK_RIGHT_ACTION, null);
 		}
 	}
 
@@ -590,10 +580,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (e.getWheelRotation() > 0) {
-			action(PACKRIGHT_ACTION, null);
-		} else if (e.getWheelRotation() < 0) {
-			action(PACKLEFT_ACTION, null);
-		}
+		getModpackSelector().selectPack(getModpackSelector().getIndex() + (e.getWheelRotation() * -1));
 	}
 }

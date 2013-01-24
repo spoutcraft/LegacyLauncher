@@ -26,6 +26,8 @@
  */
 package org.spoutcraft.launcher.technic.skin;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,8 +40,9 @@ import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 
-public class ModpackSelector extends JComponent {
+public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
+	private static final String PACK_SELECT_ACTION = "packselect";
 
 	private final MetroLoginFrame frame;
 	private List<InstalledPack> installedPacks = new ArrayList<InstalledPack>();
@@ -61,20 +64,24 @@ public class ModpackSelector extends JComponent {
 
 	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
-		this.index = 0;
+		this.index = -1;
 
 		for (int i = 0; i < 7; i++) {
-			PackButton button = new PackButton(i);
+			PackButton button = new PackButton();
 			buttons.add(button);
-			
+			button.setActionCommand(PACK_SELECT_ACTION);
+			button.addActionListener(this);
 			if (i == 3) {
 				button.setBounds(bigX, bigY, bigWidth, bigHeight);
+				button.setIndex(0);
 			} else if (i < 3) {
-				int smallX = bigX - ((i + 1)* (smallWidth + spacing));
+				int smallX = bigX - ((i + 1) * (smallWidth + spacing));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+				button.setIndex((i + 1) * -1);
 			} else if (i > 3) {
 				int smallX = bigX + bigWidth + spacing + ((i - 4) * (smallWidth + spacing));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+				button.setIndex(i - 3);
 			}
 			
 			this.add(button);
@@ -89,27 +96,33 @@ public class ModpackSelector extends JComponent {
 		selectPack(0);
 	}
 
-	private int getIndex() {
+	public int getIndex() {
 		return this.index;
 	}
 
 	public void selectPack(int index) {
 		if (index >= installedPacks.size()) {
-			this.index = 0;
+			selectPack(index - installedPacks.size());
 		} else if (index < 0) {
-			this.index = installedPacks.size() - 1;
+			selectPack(installedPacks.size() + index);
+		} else if (this.index == index) {
+			return;
 		} else {
 			this.index = index;
 		}
 
+		InstalledPack selected = installedPacks.get(getIndex());
 		// Set the background image based on the pack
-		frame.getBackgroundImage().setIcon(installedPacks.get(getIndex()).getBackground());
+		frame.getBackgroundImage().setIcon(selected.getBackground());
 
 		// Set the icon image based on the pack
-		frame.setIconImage(installedPacks.get(getIndex()).getIcon());
+		frame.setIconImage(selected.getIcon());
 
+		// Set the frame title based on the pack
+		frame.setTitle(selected.getInfo().getDisplayName());
+		
 		// Set the big button image in the middle
-		buttons.get(3).setIcon(installedPacks.get(getIndex()).getImage(bigWidth, bigHeight));
+		buttons.get(3).setIcon(selected.getImage(bigWidth, bigHeight));
 
 		// Start the iterator at the selected pack
 		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
@@ -149,5 +162,18 @@ public class ModpackSelector extends JComponent {
 	public InstalledPack getSelectedPack() {
 		return installedPacks.get(index);
 	}
-	
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof JComponent) {
+			action(e.getActionCommand(), (JComponent)e.getSource());
+		}
+	}
+
+	public void action(String action, JComponent c) {
+		if (action.equals(PACK_SELECT_ACTION) && c instanceof PackButton) {
+			PackButton button = (PackButton) c;
+			selectPack(getIndex() + button.getIndex()); 
+		}
+	}
 }

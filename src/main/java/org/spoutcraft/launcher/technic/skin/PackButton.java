@@ -2,10 +2,13 @@ package org.spoutcraft.launcher.technic.skin;
 
 public class PackButton extends ImageButton {
 	private static final long serialVersionUID = 1L;
-	private final int index;
+	private int index;
 
-	public PackButton(int index) {
+	public PackButton() {
 		super();
+	}
+
+	public void setIndex(int index) {
 		this.index = index;
 	}
 
