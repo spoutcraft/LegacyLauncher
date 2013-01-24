@@ -73,7 +73,7 @@ public class Utils {
 	}
 
 	public static File getAssetsDirectory() {
-		return new File(getLauncherDirectory(), "spoutcraft" + File.separator + "assets");
+		return new File(getLauncherDirectory(), "assets");
 	}
 
 	public static void setStartupParameters(StartupParameters params) {
