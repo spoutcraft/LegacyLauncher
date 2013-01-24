@@ -155,13 +155,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Pack Select Left
 		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
-		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 84, 22, 168);
+		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 83, 22, 167);
 		switchLeft.setActionCommand(PACKLEFT_ACTION);
 		switchLeft.addActionListener(this);
 		
 		// Pack Select Right
 		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
-		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 84, 22, 168);
+		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 83, 22, 167);
 		switchRight.setActionCommand(PACKRIGHT_ACTION);
 		switchRight.addActionListener(this);
 
@@ -232,9 +232,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addKeyListener(this);
 		
 		// Pack Options Button
-		ImageButton packOptionsBtn = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
-		packOptionsBtn.setRolloverIcon(getIcon("gearInverted.png", 28, 28));
-		packOptionsBtn.setBounds(FRAME_WIDTH / 2 + 58, 175, 28, 28);
+		ImageButton packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
+		packOptionsBtn.setRolloverIcon(getIcon("packGearHover.png", 14, 14));
+		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 87, FRAME_HEIGHT / 2 - 47, 14, 14);
 		packOptionsBtn.setActionCommand(PACKOPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 		
