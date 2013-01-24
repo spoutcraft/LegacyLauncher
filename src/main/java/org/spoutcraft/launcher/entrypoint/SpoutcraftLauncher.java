@@ -163,11 +163,6 @@ public class SpoutcraftLauncher {
 			frame.getModpackSelector().setupModpackButtons();
 			frame.updateBackground();
 			frame.updateFrameTitle();
-			String pack = "tekkitlite";
-			ModpackInfo info = TechnicRestAPI.getModpackInfo(pack);
-			String build = TechnicRestAPI.getLatestBuild(pack);
-			Modpack modpack = TechnicRestAPI.getModpack(info, build);
-			updater.start(modpack);
 		} catch (IOException failure) {
 			failure.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog(frame, failure);

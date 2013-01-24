@@ -58,10 +58,10 @@ public final class GameUpdater extends Directories {
 		return modpack;
 	}
 
-	public void start(Modpack modpack) throws RestfulAPIException {
+	public void start(Modpack modpack, UpdateThread updateThread) throws RestfulAPIException {
 		this.modpack = modpack;
+		this.updateThread = updateThread;
 		this.setWorkingDir(modpack.getName());
-		updateThread = new UpdateThread(modpack, null);
 		updateThread.start();
 	}
 
@@ -77,13 +77,17 @@ public final class GameUpdater extends Directories {
 		Modpack prev = this.modpack;
 		try {
 			this.modpack = pack;
-			if (!this.modpack.getBuild().equals(prev.getBuild())) {
+			if (prev == null || !this.modpack.getBuild().equals(prev.getBuild())) {
+				if (updateThread == null) {
+					updateThread = new UpdateThread(pack, listener);
+				}
 				DownloadListener old = updateThread.getDownloadListener();
 				updateThread.setDownloadListener(null);
 				updateThread.interrupt();
+				updateThread = new UpdateThread(pack, old);
+	
 				MinecraftLauncher.resetClassLoader();
-				updateThread = new UpdateThread(modpack, old);
-				start(modpack);
+				start(pack, updateThread);
 			}
 		} catch (IOException e) {
 			Launcher.getLoginFrame().handleException(e);
@@ -140,7 +144,6 @@ public final class GameUpdater extends Directories {
 
 	public void setDownloadListener(DownloadListener listener) {
 		this.listener = listener;
-		updateThread.setDownloadListener(listener);
 	}
 
 	public void stateChanged(String message, float progress) {
