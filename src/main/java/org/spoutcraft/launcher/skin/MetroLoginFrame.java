@@ -57,10 +57,10 @@ import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
-import org.spoutcraft.launcher.technic.skin.InstalledPack;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
@@ -246,18 +246,21 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
+		steam.setRolloverIcon(getIcon("steamInverted.png", 28, 28));
 		steam.setToolTipText("Game with us on Steam");
 		steam.setBounds(6, 6, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("https://twitter.com/TechnicPack");
+		twitter.setRolloverIcon(getIcon("twitterInverted.png", 28, 28));
 		twitter.setToolTipText("Follow us on Twitter");
 		twitter.setBounds(6 + 34 * 3, 6, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
 		JButton facebook = new ImageHyperlinkButton("https://www.facebook.com/TechnicPack");
+		facebook.setRolloverIcon(getIcon("facebookInverted.png", 28, 28));
 		facebook.setToolTipText("Like us on Facebook");
 		facebook.setBounds(6 + 34 * 2, 6, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
@@ -272,6 +275,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
+		youtube.setRolloverIcon(getIcon("youtubeInverted.png", 28, 28));
 		youtube.setToolTipText("Subscribe to our videos");
 		youtube.setBounds(6 + 34, 6, 28, 28);
 		setIcon(youtube, "youtube.png", 28);

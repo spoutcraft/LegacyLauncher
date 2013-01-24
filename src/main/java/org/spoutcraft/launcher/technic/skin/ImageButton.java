@@ -11,9 +11,13 @@ public class ImageButton extends JButton {
 	}
 
 	public ImageButton(ImageIcon image, ImageIcon rollover) {
+		this();
 		this.setIcon(image);
-		this.setSelectedIcon(image);
 		this.setRolloverIcon(rollover);
+		
+	}
+
+	public ImageButton() {
 		this.setBorderPainted(false);
 		this.setFocusPainted(false);
 		this.setContentAreaFilled(false);

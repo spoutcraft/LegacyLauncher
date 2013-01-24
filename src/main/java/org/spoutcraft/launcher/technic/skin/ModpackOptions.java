@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.technic.InstalledPack;
 
 public class ModpackOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;

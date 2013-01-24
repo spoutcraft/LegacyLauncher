@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 
@@ -42,8 +42,8 @@ public class ModpackSelector extends JComponent {
 	private static final long serialVersionUID = 1L;
 
 	private final MetroLoginFrame frame;
-	private List<InstalledPack> buttons = new ArrayList<InstalledPack>();
-	private List<JLabel> jButtons = new ArrayList<JLabel>(7);
+	private List<InstalledPack> installedPacks = new ArrayList<InstalledPack>();
+	private List<PackButton> buttons = new ArrayList<PackButton>(7);
 
 	private final int height = 170;
 	private final int width = 880;
@@ -64,17 +64,27 @@ public class ModpackSelector extends JComponent {
 		this.index = 0;
 
 		for (int i = 0; i < 7; i++) {
-			JLabel button = new JLabel();
-			jButtons.add(button);
+			PackButton button = new PackButton(i);
+			buttons.add(button);
+			
+			if (i == 3) {
+				button.setBounds(bigX, bigY, bigWidth, bigHeight);
+			} else if (i < 3) {
+				int smallX = bigX - ((i + 1)* (smallWidth + spacing));
+				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+			} else if (i > 3) {
+				int smallX = bigX + bigWidth + spacing + ((i - 4) * (smallWidth + spacing));
+				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+			}
+			
 			this.add(button);
 		}
 	}
 
-
 	public void setupModpackButtons() throws IOException {
 		List<ModpackInfo> modpacks = TechnicRestAPI.getModpacks();
 		for (ModpackInfo info : modpacks) {
-			buttons.add(new InstalledPack(info));
+			installedPacks.add(new InstalledPack(info));
 		}
 		selectPack(0);
 	}
@@ -84,49 +94,47 @@ public class ModpackSelector extends JComponent {
 	}
 
 	public void selectPack(int index) {
-		if (index >= buttons.size()) {
+		if (index >= installedPacks.size()) {
 			this.index = 0;
 		} else if (index < 0) {
-			this.index = buttons.size() - 1;
+			this.index = installedPacks.size() - 1;
 		} else {
 			this.index = index;
 		}
 
 		// Set the background image based on the pack
-		frame.getBackgroundImage().setIcon(buttons.get(getIndex()).getBackground());
+		frame.getBackgroundImage().setIcon(installedPacks.get(getIndex()).getBackground());
 
 		// Set the icon image based on the pack
-		frame.setIconImage(buttons.get(getIndex()).getIcon());
+		frame.setIconImage(installedPacks.get(getIndex()).getIcon());
 
-		// Set the big button in the middle
-		buttons.get(getIndex()).assignButton(jButtons.get(0), bigX, bigY, bigWidth, bigHeight);
-
-		// Start the iterator just after the selected pack
-		ListIterator<InstalledPack> iterator = buttons.listIterator(getIndex() + 1);
-		// Add the first 3 buttons to the right
-		for (int i = 0; i < 3; i++) {
-			// If you run out of packs, start the iterator back at 0
-			if (!iterator.hasNext()) {
-				iterator = buttons.listIterator(0);
-			}
-			InstalledPack button = iterator.next();
-			int smallX = bigX + bigWidth + spacing + (i * (smallWidth + spacing));
-			button.assignButton(jButtons.get(i + 1), smallX, smallY, smallWidth, smallHeight);
-
-		}
+		// Set the big button image in the middle
+		buttons.get(3).setIcon(installedPacks.get(getIndex()).getImage(bigWidth, bigHeight));
 
 		// Start the iterator at the selected pack
-		iterator = buttons.listIterator(getIndex());
-		// Add the last 3 buttons to the left
+		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
+		// Add the first 3 buttons to the left
 		for (int i = 0; i < 3; i++) {
 			// If you run out of packs, start the iterator back at the last element
 			if (!iterator.hasPrevious()) {
-				iterator = buttons.listIterator(buttons.size());
+				iterator = installedPacks.listIterator(installedPacks.size());
 			}
-			InstalledPack button = iterator.previous();
-			int smallX = bigX - ((i + 1)* (smallWidth + spacing));
-			button.assignButton(jButtons.get(i + 4), smallX, smallY, smallWidth, smallHeight);
+			InstalledPack pack = iterator.previous();
+			buttons.get(i).setIcon(pack.getImage(smallWidth, smallHeight));
 		}
+
+		// Start the iterator just after the selected pack
+		iterator = installedPacks.listIterator(getIndex() + 1);
+		// Add the last 3 buttons to the right
+		for (int i = 4; i < 7; i++) {
+			// If you run out of packs, start the iterator back at 0
+			if (!iterator.hasNext()) {
+				iterator = installedPacks.listIterator(0);
+			}
+			InstalledPack pack = iterator.next();
+			buttons.get(i).setIcon(pack.getImage(smallWidth, smallHeight));
+		}
+
 		this.repaint();
 	}
 
@@ -139,7 +147,7 @@ public class ModpackSelector extends JComponent {
 	}
 
 	public InstalledPack getSelectedPack() {
-		return buttons.get(index);
+		return installedPacks.get(index);
 	}
 	
 }

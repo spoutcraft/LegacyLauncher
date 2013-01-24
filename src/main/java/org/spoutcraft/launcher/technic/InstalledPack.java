@@ -24,16 +24,14 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.skin;
+package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 
-import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.util.ImageUtils;
 
 public class InstalledPack {
@@ -59,9 +57,8 @@ public class InstalledPack {
 		return icon;
 	}
 
-	public void assignButton(JLabel button, int x, int y, int width, int height) {
-		button.setBounds(x, y, width, height);
-		button.setIcon(new ImageIcon(ImageUtils.scaleImage(image, width, height)));
+	public ImageIcon getImage(int width, int height) {
+		return new ImageIcon(ImageUtils.scaleImage(image, width, height));
 	}
 
 	public ModpackInfo getInfo() {
