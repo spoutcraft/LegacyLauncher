@@ -44,6 +44,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
@@ -427,16 +428,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					saveUsername(getSelectedUser(), pass);
 				}
 			}
-			String modpack = getModpackSelector().getSelectedPack().getModpackInfo().getName();
-			String build;
 			try {
-				build = TechnicRestAPI.getRecommendedBuild(modpack);
 				InstalledPack pack = getModpackSelector().getSelectedPack();
-				if (pack.getSettings().getBuild() != null) {
-					build = pack.getSettings().getBuild();
+				String build = Settings.getModpackBuild(pack.getInfo().getName());
+				if (build == null) {
+					build = pack.getInfo().getRecommended();
+					Settings.setModpackBuild(pack.getInfo().getName(), build);
+					Settings.getYAML().save();
 				}
 				
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getModpackInfo(), build));
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getInfo(), build));
 			} catch (RestfulAPIException e) {
 				e.printStackTrace();
 			}
@@ -495,11 +496,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 	
 	public void updateFrameTitle() {
-		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getModpackInfo().getDisplayName());
+		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getInfo().getDisplayName());
 	}
 	
 	public void updateBackground() {
-		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack().getModpackInfo())));
+		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack().getInfo())));
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {

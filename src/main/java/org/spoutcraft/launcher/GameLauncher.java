@@ -69,8 +69,6 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 	public void runGame(String user, String session, String downloadTicket, Modpack modpack) {
 		if (modpack != null) {
-			System.out.println(modpack.getDisplayName());
-			System.out.println(modpack.getName());
 			this.setTitle(modpack.getDisplayName());
 			File icon = new File(Utils.getAssetsDirectory(), modpack.getName() + File.separator + "icon.png");
 			if (icon.exists()) {

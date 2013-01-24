@@ -78,13 +78,12 @@ public final class GameUpdater extends Directories {
 		try {
 			this.modpack = pack;
 			if (prev == null || !this.modpack.getBuild().equals(prev.getBuild())) {
-				if (updateThread == null) {
-					updateThread = new UpdateThread(pack, listener);
+				if (updateThread != null) {
+					updateThread.setDownloadListener(null);
+					updateThread.interrupt();
 				}
-				DownloadListener old = updateThread.getDownloadListener();
-				updateThread.setDownloadListener(null);
-				updateThread.interrupt();
-				updateThread = new UpdateThread(pack, old);
+
+				updateThread = new UpdateThread(pack, listener);
 	
 				MinecraftLauncher.resetClassLoader();
 				start(pack, updateThread);

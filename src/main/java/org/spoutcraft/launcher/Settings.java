@@ -182,4 +182,12 @@ public class Settings {
 	public static synchronized void setInstalledMC(String version) {
 		yaml.setProperty("launcher.client.minecraft", version);
 	}
+
+	public static synchronized void setModpackBuild(String modpack, String build) {
+		yaml.setProperty("modpacks." + modpack + ".build", build);
+	}
+
+	public static synchronized String getModpackBuild(String modpack) {
+		return yaml.getString("modpacks." + modpack + ".build");
+	}
 }

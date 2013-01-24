@@ -34,7 +34,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 import org.spoutcraft.launcher.technic.ModpackInfo;
-import org.spoutcraft.launcher.technic.ModpackSettings;
 import org.spoutcraft.launcher.util.ImageUtils;
 
 public class InstalledPack {
@@ -43,7 +42,6 @@ public class InstalledPack {
 	private final ImageIcon background;
 	private final Image icon;
 	private final ModpackInfo info;
-	private final ModpackSettings settings;
 	
 	public InstalledPack(ModpackInfo info) throws IOException {
 		this.info = info;
@@ -51,7 +49,6 @@ public class InstalledPack {
 		// Fix magic numbers, frame height and width
 		background = new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
 		icon = info.getIcon();
-		settings = new ModpackSettings(info);
 	}
 
 	public ImageIcon getBackground() {
@@ -67,11 +64,7 @@ public class InstalledPack {
 		button.setIcon(new ImageIcon(ImageUtils.scaleImage(image, width, height)));
 	}
 
-	public ModpackInfo getModpackInfo() {
+	public ModpackInfo getInfo() {
 		return info;
-	}
-	
-	public ModpackSettings getSettings() {
-		return settings;
 	}
 }

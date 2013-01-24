@@ -66,6 +66,7 @@ import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.yml.Resources;
+import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class UpdateThread extends Thread {
@@ -341,11 +342,15 @@ public class UpdateThread extends Thread {
 		int steps = 2;
 		stateChanged("Checking for " + build.getName() + " update...", progress / steps);
 		progress += 100F;
-		File modpack = new File(Launcher.getGameUpdater().getWorkingDir(), "modpack.yml");
-		if (!modpack.exists() || !build.getMD5().equals(MD5Utils.getMD5(modpack))) {
+
+		File installed = new File(Launcher.getGameUpdater().getBinDir(), "installed");
+		if (!installed.exists()) {
 			return true;
 		}
-
+		YAMLProcessor yaml = new YAMLProcessor(installed, false, YAMLFormat.EXTENDED);
+		if (!build.getBuild().equals(yaml.getProperty("build"))) {
+			return true;
+		}
 		stateChanged("No update for " + build.getName() + " found.", progress / steps);
 		return false;
 	}
@@ -485,6 +490,7 @@ public class UpdateThread extends Thread {
 
 	public void updateModpack(Modpack modpack) throws IOException {
 		cleanupBinFolders();
+		cleanupModsFolders();
 
 		Launcher.getGameUpdater().getTempDir().mkdirs();
 		Launcher.getGameUpdater().getCacheDir().mkdirs();
@@ -499,11 +505,6 @@ public class UpdateThread extends Thread {
 		}
 
 		File workingDir = Launcher.getGameUpdater().getWorkingDir();
-		File modpackYml = new File(temp, "modpack.yml");
-		Download yml = DownloadUtils.downloadFile(TechnicRestAPI.getModpackYMLURL(modpack.getName()), modpackYml.getAbsolutePath(), null, modpack.getMD5(), listener);
-		if (yml.getResult() == Result.SUCCESS) {
-			Utils.copy(yml.getOutFile(), new File(workingDir, "modpack.yml"));
-		}
 
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {
@@ -530,6 +531,14 @@ public class UpdateThread extends Thread {
 				}
 			}
 		}
+
+		File installed = new File(Launcher.getGameUpdater().getBinDir(), "installed");
+		if (!installed.exists()) {
+			installed.createNewFile();
+		}
+		YAMLProcessor yaml = new YAMLProcessor(installed, false, YAMLFormat.EXTENDED);
+		yaml.setProperty("build", modpack.getBuild());
+		yaml.save();
 	}
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
 		cleanupBinFolders();
@@ -620,6 +629,33 @@ public class UpdateThread extends Thread {
 		}
 	}
 
+	public void cleanupModsFolders() {
+		try {
+			File working = Launcher.getGameUpdater().getWorkingDir();
+			File mods = new File(working, "mods");
+			if (mods.exists()) {
+				FileUtils.cleanDirectory(mods);
+			}
+
+			File coremods = new File(working, "coremods");
+			if (coremods.exists()) {
+				FileUtils.cleanDirectory(coremods);
+			}
+
+			File config = new File(working, "config");
+			if (config.exists()) {
+				FileUtils.cleanDirectory(config);
+			}
+
+			File resources = new File(working, "resources");
+			if (resources.exists()) {
+				FileUtils.cleanDirectory(resources);
+			}
+		} catch (IOException e) {
+			System.err.println("Error while cleaning mods folders: ");
+			e.printStackTrace();
+		}
+	}
 	public DownloadListener getDownloadListener() {
 		return listener;
 	}

@@ -26,7 +26,6 @@
  */
 package org.spoutcraft.launcher.technic.skin;
 
-import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +33,6 @@ import java.util.ListIterator;
 
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import javax.swing.SwingConstants;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.ModpackInfo;
@@ -46,7 +44,6 @@ public class ModpackSelector extends JComponent {
 	private final MetroLoginFrame frame;
 	private List<InstalledPack> buttons = new ArrayList<InstalledPack>();
 	private List<JLabel> jButtons = new ArrayList<JLabel>(7);
-	private JLabel label;
 
 	private final int height = 170;
 	private final int width = 880;

@@ -14,9 +14,9 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
-import org.spoutcraft.launcher.technic.ModpackInfo;
 
 public class ModpackOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -26,7 +26,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String SAVE_ACTION = "save";
 	private static final String BUILD_ACTION = "build";
 	private JLabel buildLabel;
-	private JLabel optionsBackground;
+	private JLabel background;
 	private InstalledPack installedPack;
 	private int mouseX = 0, mouseY = 0;
 	
@@ -44,17 +44,16 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private void initComponents() {
 		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
 		
-		optionsBackground = new JLabel();
-		optionsBackground.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
-		MetroLoginFrame.setIcon(optionsBackground, "optionsBackground.png", 
-				optionsBackground.getWidth(), optionsBackground.getHeight());
+		background = new JLabel();
+		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
+		MetroLoginFrame.setIcon(background, "optionsBackground.png", background.getWidth(), background.getHeight());
 		
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 		
 		JLabel optionsTitle = new JLabel();
 		optionsTitle.setBounds(10, 10, FRAME_WIDTH, 25);
-		optionsTitle.setText(installedPack.getModpackInfo().getDisplayName() + " Options");
+		optionsTitle.setText(installedPack.getInfo().getDisplayName() + " Options");
 		optionsTitle.setForeground(Color.white);
 		optionsTitle.setFont(minecraft.deriveFont(14F));
 		
@@ -71,12 +70,12 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildLabel.setForeground(Color.white);
 		buildLabel.setFont(minecraft);
 		
-		JComboBox buildSelector = new JComboBox(installedPack.getModpackInfo().getBuilds());
+		JComboBox buildSelector = new JComboBox(installedPack.getInfo().getBuilds());
 		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
 		buildSelector.setActionCommand(BUILD_ACTION);
 		buildSelector.addActionListener(this);
 		
-		String build = installedPack.getSettings().getBuild();
+		String build = Settings.getModpackBuild(installedPack.getInfo().getName());
 		buildSelector.setSelectedItem((String) build);
 		
 		LiteButton save = new LiteButton("Save and Close");
@@ -90,7 +89,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		contentPane.add(buildLabel);
 		contentPane.add(buildSelector);
 		contentPane.add(save);
-		contentPane.add(optionsBackground);
+		contentPane.add(background);
 		
 		setLocationRelativeTo(this.getOwner());
 	}
@@ -106,11 +105,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
-			installedPack.getSettings().getYAML().save();
+			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION) && c instanceof JComboBox) {
 			String build = (String) ((JComboBox) c).getSelectedItem();
-			installedPack.getSettings().setBuild(build);
+			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
 		}
 	}
 
