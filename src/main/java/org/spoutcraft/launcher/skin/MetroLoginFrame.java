@@ -106,7 +106,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
 		// 379 is the center of the bottom
-		loginStrip.setBounds(0, 360, FRAME_WIDTH, 107);
+		loginStrip.setBounds(0, 379, FRAME_WIDTH, 107);
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
@@ -295,7 +295,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			DynamicButton userButton = new DynamicButton(this, getImage(userName), 10, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
-			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 75), FRAME_HEIGHT - 60, 50, 50);
+			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 60) - 30, FRAME_HEIGHT - 25, 45, 45);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
