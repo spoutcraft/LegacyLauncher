@@ -168,7 +168,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
-		progressBar.setBounds(8, 130, 395, 23);
+		progressBar.setBounds((FRAME_WIDTH / 2) - (395 / 2), 130, 395, 23);
 		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
@@ -226,7 +226,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
-		options.setRolloverIcon(getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 34 * 2, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
@@ -234,15 +233,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Pack Options Button
 		ImageButton packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
-		packOptionsBtn.setRolloverIcon(getIcon("packGearHover.png", 14, 14));
 		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 87, FRAME_HEIGHT / 2 - 47, 14, 14);
 		packOptionsBtn.setActionCommand(PACKOPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 		
 		
 		// Exit Button
-		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quit.png", 28, 28));
-		exit.setRolloverIcon(getIcon("quitHover.png", 28, 28));
+		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quitHover.png", 28, 28));
 		exit.setBounds(FRAME_WIDTH - 34, 6, 28, 28);
 		exit.setActionCommand(EXIT_ACTION);
 		exit.addActionListener(this);
