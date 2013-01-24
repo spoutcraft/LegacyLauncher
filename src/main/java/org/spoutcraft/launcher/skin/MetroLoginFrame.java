@@ -89,7 +89,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
-		packBackground = new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT);
+		packBackground = new BackgroundImage(this, FRAME_WIDTH, FRAME_HEIGHT);
+		this.addMouseListener(packBackground);
+		this.addMouseMotionListener(packBackground);
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
 	}

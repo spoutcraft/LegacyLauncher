@@ -27,6 +27,9 @@
 package org.spoutcraft.launcher.skin.components;
 
 import java.awt.Image;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,14 +45,19 @@ import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
 import org.apache.commons.io.IOUtils;
+import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.util.BlurUtils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
-public class BackgroundImage extends JLabel {
+public class BackgroundImage extends JLabel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
-	public BackgroundImage(int width, int height) {
+	private final MetroLoginFrame frame;
+	private int mouseX = 0, mouseY = 0;
+
+	public BackgroundImage(MetroLoginFrame frame, int width, int height) {
+		this.frame = frame;
 		setVerticalAlignment(SwingConstants.CENTER);
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setBounds(0, 0, width, height);
@@ -103,5 +111,46 @@ public class BackgroundImage extends JLabel {
 			return "evening";
 		}
 		return "night";
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		frame.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
