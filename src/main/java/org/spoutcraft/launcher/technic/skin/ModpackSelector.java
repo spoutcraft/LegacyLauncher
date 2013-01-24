@@ -44,7 +44,7 @@ public class ModpackSelector extends JComponent {
 	private static final long serialVersionUID = 1L;
 
 	private final MetroLoginFrame frame;
-	private List<PackButton> buttons = new ArrayList<PackButton>();
+	private List<InstalledPack> buttons = new ArrayList<InstalledPack>();
 	private List<JLabel> jButtons = new ArrayList<JLabel>(7);
 	private JLabel label;
 
@@ -66,13 +66,6 @@ public class ModpackSelector extends JComponent {
 		this.frame = frame;
 		this.index = 0;
 
-		label = new JLabel();
-		label.setFont(frame.getMinecraftFont(18));
-		label.setForeground(Color.white);
-		label.setHorizontalAlignment(SwingConstants.CENTER);
-		label.setBounds(bigX, bigY - 25, bigWidth, 20);
-		this.add(label);
-
 		for (int i = 0; i < 7; i++) {
 			JLabel button = new JLabel();
 			jButtons.add(button);
@@ -84,7 +77,7 @@ public class ModpackSelector extends JComponent {
 	public void setupModpackButtons() throws IOException {
 		List<ModpackInfo> modpacks = TechnicRestAPI.getModpacks();
 		for (ModpackInfo info : modpacks) {
-			buttons.add(new PackButton(info));
+			buttons.add(new InstalledPack(info));
 		}
 		selectPack(0);
 	}
@@ -111,18 +104,15 @@ public class ModpackSelector extends JComponent {
 		// Set the big button in the middle
 		buttons.get(getIndex()).assignButton(jButtons.get(0), bigX, bigY, bigWidth, bigHeight);
 
-		// Label the pack by name
-		label.setText(buttons.get(getIndex()).getModpackInfo().getDisplayName());
-
 		// Start the iterator just after the selected pack
-		ListIterator<PackButton> iterator = buttons.listIterator(getIndex() + 1);
+		ListIterator<InstalledPack> iterator = buttons.listIterator(getIndex() + 1);
 		// Add the first 3 buttons to the right
 		for (int i = 0; i < 3; i++) {
 			// If you run out of packs, start the iterator back at 0
 			if (!iterator.hasNext()) {
 				iterator = buttons.listIterator(0);
 			}
-			PackButton button = iterator.next();
+			InstalledPack button = iterator.next();
 			int smallX = bigX + bigWidth + spacing + (i * (smallWidth + spacing));
 			button.assignButton(jButtons.get(i + 1), smallX, smallY, smallWidth, smallHeight);
 
@@ -136,7 +126,7 @@ public class ModpackSelector extends JComponent {
 			if (!iterator.hasPrevious()) {
 				iterator = buttons.listIterator(buttons.size());
 			}
-			PackButton button = iterator.previous();
+			InstalledPack button = iterator.previous();
 			int smallX = bigX - ((i + 1)* (smallWidth + spacing));
 			button.assignButton(jButtons.get(i + 4), smallX, smallY, smallWidth, smallHeight);
 		}
@@ -151,8 +141,8 @@ public class ModpackSelector extends JComponent {
 		selectPack(getIndex() - 1);
 	}
 
-	public ModpackInfo getSelectedPack() {
-		return buttons.get(index).getModpackInfo();
+	public InstalledPack getSelectedPack() {
+		return buttons.get(index);
 	}
 	
 }

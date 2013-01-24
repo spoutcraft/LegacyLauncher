@@ -59,6 +59,7 @@ import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
+import org.spoutcraft.launcher.technic.skin.InstalledPack;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
@@ -157,7 +158,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
-		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 55, FRAME_WIDTH, 107);
+		loginStrip.setBounds(0, FRAME_HEIGHT - 107 - 25, FRAME_WIDTH, 107);
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
@@ -424,11 +425,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					saveUsername(getSelectedUser(), pass);
 				}
 			}
-			String modpack = getModpackSelector().getSelectedPack().getName();
+			String modpack = getModpackSelector().getSelectedPack().getModpackInfo().getName();
 			String build;
 			try {
 				build = TechnicRestAPI.getRecommendedBuild(modpack);
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(getModpackSelector().getSelectedPack(), build));
+				InstalledPack pack = getModpackSelector().getSelectedPack();
+				if (pack.getSettings().getBuild() != null) {
+					build = pack.getSettings().getBuild();
+				}
+				
+				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getModpackInfo(), build));
 			} catch (RestfulAPIException e) {
 				e.printStackTrace();
 			}
@@ -487,11 +493,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 	
 	public void updateFrameTitle() {
-		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getDisplayName());
+		this.setTitle("Technic Launcher: " + packSelector.getSelectedPack().getModpackInfo().getDisplayName());
 	}
 	
 	public void updateBackground() {
-		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack())));
+		getBackgroundImage().setIcon(new ImageIcon(newBackgroundImage(packSelector.getSelectedPack().getModpackInfo())));
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {

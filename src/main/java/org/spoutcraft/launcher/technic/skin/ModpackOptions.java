@@ -24,13 +24,14 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final int FRAME_HEIGHT = 300;
 	private static final String QUIT_ACTION = "quit";
 	private static final String SAVE_ACTION = "save";
+	private static final String BUILD_ACTION = "build";
 	private JLabel buildLabel;
 	private JLabel optionsBackground;
-	private ModpackInfo modpackInfo;
+	private InstalledPack installedPack;
 	private int mouseX = 0, mouseY = 0;
 	
-	public ModpackOptions(ModpackInfo modpackInfo) {
-		this.modpackInfo = modpackInfo;
+	public ModpackOptions(InstalledPack installedPack) {
+		this.installedPack = installedPack;
 		setTitle("Modpack Options");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		addMouseListener(this);
@@ -53,7 +54,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		
 		JLabel optionsTitle = new JLabel();
 		optionsTitle.setBounds(10, 10, FRAME_WIDTH, 25);
-		optionsTitle.setText(modpackInfo.getDisplayName() + " Options");
+		optionsTitle.setText(installedPack.getModpackInfo().getDisplayName() + " Options");
 		optionsTitle.setForeground(Color.white);
 		optionsTitle.setFont(minecraft.deriveFont(14F));
 		
@@ -70,14 +71,19 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildLabel.setForeground(Color.white);
 		buildLabel.setFont(minecraft);
 		
+		JComboBox buildSelector = new JComboBox(installedPack.getModpackInfo().getBuilds());
+		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
+		buildSelector.setActionCommand(BUILD_ACTION);
+		buildSelector.addActionListener(this);
+		
+		String build = installedPack.getSettings().getBuild();
+		buildSelector.setSelectedItem((String) build);
+		
 		LiteButton save = new LiteButton("Save and Close");
 		save.setFont(minecraft.deriveFont(14F));
 		save.setBounds(10, FRAME_HEIGHT - 40, 280, 30);
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
-		
-		JComboBox buildSelector = new JComboBox(modpackInfo.getBuilds());
-		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
 		
 		contentPane.add(optionsTitle);
 		contentPane.add(optionsQuit);
@@ -100,7 +106,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
+			installedPack.getSettings().getYAML().save();
 			dispose();
+		} else if (action.equals(BUILD_ACTION) && c instanceof JComboBox) {
+			String build = (String) ((JComboBox) c).getSelectedItem();
+			installedPack.getSettings().setBuild(build);
 		}
 	}
 
