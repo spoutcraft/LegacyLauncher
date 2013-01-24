@@ -32,6 +32,8 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -70,6 +72,10 @@ public class GameLauncher extends JFrame implements WindowListener {
 			System.out.println(modpack.getDisplayName());
 			System.out.println(modpack.getName());
 			this.setTitle(modpack.getDisplayName());
+			File icon = new File(Utils.getAssetsDirectory(), modpack.getName() + File.separator + "icon.png");
+			if (icon.exists()) {
+				this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon.getAbsolutePath()));
+			}
 		}
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getLoginFrame());

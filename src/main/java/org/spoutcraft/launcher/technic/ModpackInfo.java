@@ -82,6 +82,10 @@ public class ModpackInfo {
 		return TechnicRestAPI.getModpackBackgroundURL(name);
 	}
 
+	public String getIconURL() {
+		return TechnicRestAPI.getModpackIconURL(name);
+	}
+
 	public BufferedImage getImg() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
@@ -103,6 +107,19 @@ public class ModpackInfo {
 		} else {
 			temp.mkdirs();
 			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
+			image = ImageIO.read(download.getOutFile());
+		}
+		return image;
+	}
+
+	public BufferedImage getIcon() throws IOException { 
+		BufferedImage image;
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "icon.png");
+		if (temp.exists()) {
+			image = ImageIO.read(temp);
+		} else {
+			temp.mkdirs();
+			Download download = DownloadUtils.downloadFile(getIconURL(), temp.getAbsolutePath());
 			image = ImageIO.read(download.getOutFile());
 		}
 		return image;

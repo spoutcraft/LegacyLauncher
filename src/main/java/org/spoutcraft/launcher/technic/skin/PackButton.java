@@ -40,6 +40,7 @@ public class PackButton {
 
 	private final BufferedImage image;
 	private final ImageIcon background;
+	private final Image icon;
 	private final ModpackInfo info;
 	
 	public PackButton(ModpackInfo info) throws IOException {
@@ -47,10 +48,15 @@ public class PackButton {
 		image = info.getImg();
 		// Fix magic numbers, frame height and width
 		background = new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
+		icon = info.getIcon();
 	}
 
 	public ImageIcon getBackground() {
 		return background;
+	}
+
+	public Image getIcon() {
+		return icon;
 	}
 
 	public JLabel createButton(int x, int y, int width, int height) {

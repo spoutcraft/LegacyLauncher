@@ -105,6 +105,9 @@ public class ModpackSelector extends JComponent {
 		// Set the background image based on the pack
 		frame.getBackgroundImage().setIcon(buttons.get(getIndex()).getBackground());
 
+		// Set the icon image based on the pack
+		frame.setIconImage(buttons.get(getIndex()).getIcon());
+
 		// Set the big button in the middle
 		buttons.get(getIndex()).assignButton(jButtons.get(0), bigX, bigY, bigWidth, bigHeight);
 
