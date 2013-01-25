@@ -190,4 +190,12 @@ public class Settings {
 	public static synchronized String getModpackBuild(String modpack) {
 		return yaml.getString("modpacks." + modpack + ".build");
 	}
+
+	public static synchronized void setLastModpack(String modpack) {
+		yaml.setProperty("launcher.lastmodpack", modpack);
+	}
+
+	public static synchronized String getLastModpack() {
+		return yaml.getString("launcher.lastmodpack");
+	}
 }

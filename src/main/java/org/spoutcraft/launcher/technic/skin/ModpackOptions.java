@@ -105,10 +105,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildLabel.setForeground(Color.white);
 		buildLabel.setFont(minecraft);
 		
-		buildSelector = new JComboBox(installedPack.getInfo().getBuilds());
+		buildSelector = new JComboBox();
 		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
 		buildSelector.setActionCommand(BUILD_ACTION);
 		buildSelector.addActionListener(this);
+		populateBuilds(buildSelector);
 		
 		build = Settings.getModpackBuild(installedPack.getInfo().getName());
 		if (build == null) {
@@ -146,12 +147,12 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		
 		if (build.equals("latest")) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem((String) installedPack.getInfo().getLatest());
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getLatest()));
 			versionLatest.setSelected(true);
 			build = LATEST;
 		} else if (build.equals("recommended") || build == null) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem((String) installedPack.getInfo().getRecommended());
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getRecommended()));
 			versionRec.setSelected(true);
 			build = RECOMMENDED;
 		} else {
@@ -192,19 +193,69 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
 			Settings.getYAML().save();
 			dispose();
-		} else if (action.equals(BUILD_ACTION) && c instanceof JComboBox) {
-			build = (String) ((JComboBox) c).getSelectedItem();
+		} else if (action.equals(BUILD_ACTION)) {
+			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();
 		} else if (action.equals(REC_ACTION)) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem((String) installedPack.getInfo().getRecommended());
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getRecommended()));
 			build = RECOMMENDED;
 		} else if (action.equals(LATEST_ACTION)) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem((String) installedPack.getInfo().getLatest());
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getLatest()));
 			build = LATEST;
 		} else if (action.equals(MANUAL_ACTION)) {
 			buildSelector.setEnabled(true);
-			build = (String) buildSelector.getSelectedItem();
+			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();
+		}
+	}
+
+	private void populateBuilds(JComboBox buildSelector) {
+		for (String build : installedPack.getInfo().getBuilds()) {
+			String display = build;
+			if (build.equals(installedPack.getInfo().getLatest())) {
+				display += " - Latest";
+			} else if (build.equals(installedPack.getInfo().getRecommended())) {
+				display += " - Recommended";
+			}
+			BuildLabel label = new BuildLabel(build, display);
+			buildSelector.addItem(label);
+		}
+	}
+
+	private class BuildLabel {
+		private final String build;
+		private final String display;
+
+		public BuildLabel(String build) {
+			this(build, build);
+		}
+
+		public BuildLabel(String build, String display) {
+			this.build = build;
+			this.display = display;
+		}
+
+		public String getBuild() {
+			return build;
+		}
+
+		@Override
+		public String toString() {
+			return display;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof BuildLabel) {
+				BuildLabel label = (BuildLabel) obj;
+				return (getBuild().equals(label.getBuild()));
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return build.hashCode();
 		}
 	}
 

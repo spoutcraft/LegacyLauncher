@@ -453,6 +453,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				}
 				
 				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getInfo(), build));
+				Settings.setLastModpack(pack.getInfo().getName());
+				Settings.getYAML().save();
 			} catch (RestfulAPIException e) {
 				e.printStackTrace();
 			}

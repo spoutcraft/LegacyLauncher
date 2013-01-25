@@ -17,6 +17,11 @@ public class AddPack extends InstalledPack {
 	}
 
 	@Override
+	public String getName() {
+		return "addpack";
+	}
+
+	@Override
 	public String getDisplayName() {
 		return "Add New Pack";
 	}
