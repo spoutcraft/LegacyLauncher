@@ -64,6 +64,7 @@ import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
+import org.spoutcraft.launcher.technic.skin.LauncherOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.ImageUtils;
@@ -88,7 +89,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private LiteButton login;
 	private JCheckBox remember;
 	private LiteProgressBar progressBar;
-	private OptionsMenu optionsMenu = null;
+	private LauncherOptions launcherOptions = null;
 	private ModpackOptions packOptions = null;
 	private ModpackSelector packSelector;
 	private BackgroundImage packBackground;
@@ -407,10 +408,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	private void action(String action, JComponent c) {
 		if (action.equals(OPTIONS_ACTION)) {
-			if (optionsMenu == null || !optionsMenu.isVisible()) {
-				optionsMenu = new OptionsMenu();
-				optionsMenu.setModal(true);
-				optionsMenu.setVisible(true);
+			if (launcherOptions == null || !launcherOptions.isVisible()) {
+				launcherOptions = new LauncherOptions();
+				launcherOptions.setModal(true);
+				launcherOptions.setVisible(true);
 			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
