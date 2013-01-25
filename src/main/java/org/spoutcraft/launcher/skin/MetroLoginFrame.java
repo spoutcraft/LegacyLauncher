@@ -59,6 +59,7 @@ import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
+import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
@@ -412,6 +413,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
+				if(getModpackSelector().getSelectedPack() instanceof AddPack) {
+					return;
+				}
 				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
 				packOptions.setModal(true);
 				packOptions.setVisible(true);
@@ -432,6 +436,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 			try {
 				InstalledPack pack = getModpackSelector().getSelectedPack();
+				if (pack instanceof AddPack) {
+					return;
+				}
 				String build = Settings.getModpackBuild(pack.getInfo().getName());
 				if (build == null) {
 					build = pack.getInfo().getRecommended();
@@ -444,6 +451,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				e.printStackTrace();
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
+			InstalledPack pack = getModpackSelector().getSelectedPack();
+			if (pack instanceof AddPack) {
+				return;
+			}
 			DynamicButton userButton = (DynamicButton)c;
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
@@ -580,6 +591,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		getModpackSelector().selectPack(getModpackSelector().getIndex() + (e.getWheelRotation() * -1));
+		if (e.getWheelRotation() < 0) {
+			getModpackSelector().selectNextPack();
+		} else if (e.getWheelRotation() > 0){
+			getModpackSelector().selectPreviousPack();
+		}
 	}
 }

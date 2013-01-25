@@ -27,28 +27,27 @@
 package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 
-import org.spoutcraft.launcher.util.ImageUtils;
-
 public class InstalledPack {
 
-	private final BufferedImage image;
+	private final Image image;
 	private final ImageIcon background;
 	private final Image icon;
 	private final ModpackInfo info;
 	
 	public InstalledPack(ModpackInfo info) throws IOException {
-		this.info = info;
-		image = info.getImg();
-		// Fix magic numbers, frame height and width
-		background = new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
-		icon = info.getIcon();
+		this(info, info.getIcon(), info.getImg(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
 	}
 
+	public InstalledPack(ModpackInfo info, Image icon, Image image, ImageIcon background) {
+		this.icon = icon;
+		this.info = info;
+		this.image = image;
+		this.background = background;
+	}
 	public ImageIcon getBackground() {
 		return background;
 	}
@@ -58,7 +57,11 @@ public class InstalledPack {
 	}
 
 	public ImageIcon getImage(int width, int height) {
-		return new ImageIcon(ImageUtils.scaleImage(image, width, height));
+		return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+	}
+
+	public String getDisplayName() {
+		return info.getDisplayName();
 	}
 
 	public ModpackInfo getInfo() {

@@ -54,12 +54,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		
 		JLabel optionsTitle = new JLabel();
 		optionsTitle.setBounds(10, 10, FRAME_WIDTH, 25);
-		optionsTitle.setText(installedPack.getInfo().getDisplayName() + " Options");
+		optionsTitle.setText(installedPack.getDisplayName() + " Options");
 		optionsTitle.setForeground(Color.white);
 		optionsTitle.setFont(minecraft.deriveFont(14F));
 		
-		ImageButton optionsQuit = new ImageButton(MetroLoginFrame.getIcon("quit.png", 28, 28), 
-				MetroLoginFrame.getIcon("quit.png", 28, 28));
+		ImageButton optionsQuit = new ImageButton(MetroLoginFrame.getIcon("quit.png", 28, 28), MetroLoginFrame.getIcon("quit.png", 28, 28));
 		optionsQuit.setRolloverIcon(MetroLoginFrame.getIcon("quitHover.png", 28, 28));
 		optionsQuit.setBounds(FRAME_WIDTH - 38, 10, 28, 28);
 		optionsQuit.setActionCommand(QUIT_ACTION);

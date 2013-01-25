@@ -36,6 +36,7 @@ import java.util.ListIterator;
 import javax.swing.JComponent;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
@@ -93,6 +94,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		for (ModpackInfo info : modpacks) {
 			installedPacks.add(new InstalledPack(info));
 		}
+		installedPacks.add(new AddPack());
 		selectPack(0);
 	}
 
@@ -119,7 +121,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		frame.setIconImage(selected.getIcon());
 
 		// Set the frame title based on the pack
-		frame.setTitle(selected.getInfo().getDisplayName());
+		frame.setTitle(selected.getDisplayName());
 		
 		// Set the big button image in the middle
 		buttons.get(3).setIcon(selected.getImage(bigWidth, bigHeight));
