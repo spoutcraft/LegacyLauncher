@@ -110,11 +110,10 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildSelector.setActionCommand(BUILD_ACTION);
 		buildSelector.addActionListener(this);
 		
-		String build = Settings.getModpackBuild(installedPack.getInfo().getName());
+		build = Settings.getModpackBuild(installedPack.getInfo().getName());
 		if (build == null) {
-			build = installedPack.getInfo().getRecommended();
+			build = RECOMMENDED;
 		}
-		buildSelector.setSelectedItem((String) build);
 		
 		ButtonGroup group = new ButtonGroup();
 		
@@ -147,12 +146,17 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		
 		if (build.equals("latest")) {
 			buildSelector.setEnabled(false);
+			buildSelector.setSelectedItem((String) installedPack.getInfo().getLatest());
 			versionLatest.setSelected(true);
+			build = LATEST;
 		} else if (build.equals("recommended") || build == null) {
 			buildSelector.setEnabled(false);
+			buildSelector.setSelectedItem((String) installedPack.getInfo().getRecommended());
 			versionRec.setSelected(true);
+			build = RECOMMENDED;
 		} else {
 			versionManual.setSelected(true);
+			buildSelector.setSelectedItem((String) build);
 		}
 
 		LiteButton save = new LiteButton("Save and Close");
@@ -192,9 +196,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			build = (String) ((JComboBox) c).getSelectedItem();
 		} else if (action.equals(REC_ACTION)) {
 			buildSelector.setEnabled(false);
+			buildSelector.setSelectedItem((String) installedPack.getInfo().getRecommended());
 			build = RECOMMENDED;
 		} else if (action.equals(LATEST_ACTION)) {
 			buildSelector.setEnabled(false);
+			buildSelector.setSelectedItem((String) installedPack.getInfo().getLatest());
 			build = LATEST;
 		} else if (action.equals(MANUAL_ACTION)) {
 			buildSelector.setEnabled(true);
