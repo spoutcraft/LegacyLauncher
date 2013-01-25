@@ -60,6 +60,10 @@ public class InstalledPack {
 		return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
 	}
 
+	public String getName() {
+		return info.getName();
+	}
+
 	public String getDisplayName() {
 		return info.getDisplayName();
 	}

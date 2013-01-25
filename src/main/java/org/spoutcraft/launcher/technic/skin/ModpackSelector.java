@@ -103,6 +103,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		return this.index;
 	}
 
+	public void selectPack(String pack) {
+		for (int i = 0; i < installedPacks.size(); i++) {
+			InstalledPack installed = installedPacks.get(i);
+			if (installed.getName().equals(pack)) {
+				selectPack(i);
+			}
+		}
+	}
+
 	public void selectPack(int index) {
 		if (index >= installedPacks.size()) {
 			selectPack(index - installedPacks.size());
