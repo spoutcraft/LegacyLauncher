@@ -44,6 +44,7 @@ import org.spoutcraft.launcher.technic.TechnicRestAPI;
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
+	private ImportOptions importOptions = null;
 
 	private final MetroLoginFrame frame;
 	private List<InstalledPack> installedPacks = new ArrayList<InstalledPack>();
@@ -175,7 +176,22 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	public void action(String action, JComponent c) {
 		if (action.equals(PACK_SELECT_ACTION) && c instanceof PackButton) {
 			PackButton button = (PackButton) c;
-			selectPack(getIndex() + button.getIndex()); 
+			
+			if (button.getIndex() == 0 && getSelectedPack() instanceof AddPack) {
+				if (importOptions == null || !importOptions.isVisible()) {
+					importOptions = new ImportOptions();
+					importOptions.setModal(true);
+					importOptions.setVisible(true);
+				}
+			} else {
+				selectPack(getIndex() + button.getIndex()); 
+			}
+			
+			if (getSelectedPack() instanceof AddPack) {
+				MetroLoginFrame.hideModpackOptions();
+			} else {
+				MetroLoginFrame.showModpackOptions();
+			}
 		}
 	}
 }

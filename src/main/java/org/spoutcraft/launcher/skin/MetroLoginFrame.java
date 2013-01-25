@@ -92,6 +92,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ModpackOptions packOptions = null;
 	private ModpackSelector packSelector;
 	private BackgroundImage packBackground;
+	private static ImageButton packOptionsBtn;
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -236,7 +237,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addKeyListener(this);
 		
 		// Pack Options Button
-		ImageButton packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
+		packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
 		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 87, FRAME_HEIGHT / 2 - 47, 14, 14);
 		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
@@ -506,6 +507,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	@Override
 	public String getSelectedUser() {
 		return this.name.getText();
+	}
+	
+	public static void hideModpackOptions() {
+		packOptionsBtn.setVisible(false);
+	}
+	
+	public static void showModpackOptions() {
+		packOptionsBtn.setVisible(true);
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {

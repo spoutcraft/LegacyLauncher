@@ -30,6 +30,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
@@ -44,6 +46,15 @@ public class LiteTextBox extends JTextField implements FocusListener{
 		this.setBackground(new Color(220, 220, 220));
 		this.setBorder(new LiteBorder(5, getBackground()));
 	}
+	
+	public LiteTextBox(JDialog parent, String label) {
+		this.label = new JLabel(label);
+		addFocusListener(this);
+		parent.getContentPane().add(this.label);
+		this.setBackground(new Color(220, 220, 220));
+		this.setBorder(new LiteBorder(5, getBackground()));
+	}
+
 
 	@Override
 	public void setFont(Font font) {
