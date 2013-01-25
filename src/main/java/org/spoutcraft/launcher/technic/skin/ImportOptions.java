@@ -8,25 +8,28 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.util.Utils;
 
 public class ImportOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String QUIT_ACTION = "quit";
 	private static final String IMPORT_ACTION = "import";
+	private static final String CHANGE_FOLDER = "folder";
 	private static final int FRAME_WIDTH = 520;
 	private static final int FRAME_HEIGHT = 222;
 	private JLabel msgLabel;
 	private JLabel background;
+	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
 	
 	public ImportOptions() {
@@ -67,12 +70,22 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		
 		LiteButton save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(10, FRAME_HEIGHT - 50, FRAME_WIDTH - 20, 30);
+		save.setBounds(FRAME_WIDTH - 130, FRAME_HEIGHT - 50, 120, 30);
 		save.setActionCommand(IMPORT_ACTION);
 		save.addActionListener(this);
 		
+		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+		LiteButton folder = new LiteButton("Change Folder");
+		folder.setFont(minecraft.deriveFont(14F));
+		folder.setBounds(FRAME_WIDTH - 270, FRAME_HEIGHT - 50, 130, 30);
+		folder.setActionCommand(CHANGE_FOLDER);
+		folder.addActionListener(this);
+		
 		contentPane.add(optionsQuit);
 		contentPane.add(msgLabel);
+		contentPane.add(folder);
 		contentPane.add(url);
 		contentPane.add(save);
 		contentPane.add(background);
@@ -90,6 +103,14 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private void action(String action, JComponent c) {
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
+		} else if (action.equals(CHANGE_FOLDER)) {
+			int result = fileChooser.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				file.exists();
+				// File is chosen here
+			}
 		}
 	}
 
@@ -133,7 +154,4 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		// TODO Auto-generated method stub
 		
 	}
-	
-	
-
 }
