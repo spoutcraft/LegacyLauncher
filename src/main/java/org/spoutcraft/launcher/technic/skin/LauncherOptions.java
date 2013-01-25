@@ -122,10 +122,10 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		maxMemory = Math.max(512, maxMemory);
 
 		if (maxMemory >= Memory.MAX_32_BIT_MEMORY && !bit64) {
-			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" + "You have more than 1.5GB of memory available, but<br/>"
+			memory.setToolTipText("<html>Sets the amount of memory assigned to Minecraft<br/>" + "You have more than 1.5GB of memory available, but<br/>"
 					+ "you must have 64bit java installed to use it.</html>");
 		} else {
-			memory.setToolTipText("<html>Sets the amount of memory assigned to Spoutcraft<br/>" + "More memory is not always better.<br/>"
+			memory.setToolTipText("<html>Sets the amount of memory assigned to Minecraft<br/>" + "More memory is not always better.<br/>"
 					+ "More memory will also cause your CPU to work more.</html>");
 		}
 
