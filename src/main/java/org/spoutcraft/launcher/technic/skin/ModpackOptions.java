@@ -35,10 +35,12 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JRadioButton;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
@@ -52,9 +54,16 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String QUIT_ACTION = "quit";
 	private static final String SAVE_ACTION = "save";
 	private static final String BUILD_ACTION = "build";
+	private static final String REC_ACTION = "rec";
+	private static final String LATEST_ACTION = "latest";
+	private static final String MANUAL_ACTION = "manual";
+	public static final String RECOMMENDED = "recommended";
+	public static final String LATEST = "latest";
+	private String build;
 	private JLabel buildLabel;
 	private JLabel background;
 	private InstalledPack installedPack;
+	private JComboBox buildSelector;
 	private int mouseX = 0, mouseY = 0;
 	
 	public ModpackOptions(InstalledPack installedPack) {
@@ -96,14 +105,56 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildLabel.setForeground(Color.white);
 		buildLabel.setFont(minecraft);
 		
-		JComboBox buildSelector = new JComboBox(installedPack.getInfo().getBuilds());
+		buildSelector = new JComboBox(installedPack.getInfo().getBuilds());
 		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
 		buildSelector.setActionCommand(BUILD_ACTION);
 		buildSelector.addActionListener(this);
 		
 		String build = Settings.getModpackBuild(installedPack.getInfo().getName());
+		if (build == null) {
+			build = installedPack.getInfo().getRecommended();
+		}
 		buildSelector.setSelectedItem((String) build);
 		
+		ButtonGroup group = new ButtonGroup();
+		
+		JRadioButton versionRec = new JRadioButton("Always use recommended builds");
+		versionRec.setBounds(10, buildLabel.getY() + buildLabel.getHeight() + 10, FRAME_WIDTH - 20, 30);
+		versionRec.setFont(minecraft);
+		versionRec.setForeground(Color.white);
+		versionRec.setContentAreaFilled(false);
+		versionRec.setActionCommand(REC_ACTION);
+		versionRec.addActionListener(this);
+		group.add(versionRec);
+		
+		JRadioButton versionLatest = new JRadioButton("Always use latest builds");
+		versionLatest.setBounds(10, versionRec.getY() + versionRec.getHeight(), FRAME_WIDTH - 20, 30);
+		versionLatest.setFont(minecraft);
+		versionLatest.setForeground(Color.white);
+		versionLatest.setContentAreaFilled(false);
+		versionLatest.setActionCommand(LATEST_ACTION);
+		versionLatest.addActionListener(this);
+		group.add(versionLatest);
+		
+		JRadioButton versionManual = new JRadioButton("Manually select a build");
+		versionManual.setBounds(10, versionLatest.getY() + versionLatest.getHeight(), FRAME_WIDTH - 20, 30);
+		versionManual.setFont(minecraft);
+		versionManual.setForeground(Color.white);
+		versionManual.setContentAreaFilled(false);
+		versionManual.setActionCommand(MANUAL_ACTION);
+		versionManual.addActionListener(this);
+		group.add(versionManual);
+		
+		if (build.equals("latest")) {
+			buildSelector.setEnabled(false);
+			versionLatest.setSelected(true);
+		} else if (build.equals("recommended") || build == null) {
+			buildSelector.setEnabled(false);
+			versionRec.setSelected(true);
+		} else {
+			versionManual.setSelected(true);
+		}
+
 		LiteButton save = new LiteButton("Save and Close");
 		save.setFont(minecraft.deriveFont(14F));
 		save.setBounds(10, FRAME_HEIGHT - 40, 280, 30);
@@ -114,6 +165,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		contentPane.add(optionsQuit);
 		contentPane.add(buildLabel);
 		contentPane.add(buildSelector);
+		contentPane.add(versionRec);
+		contentPane.add(versionLatest);
+		contentPane.add(versionManual);
 		contentPane.add(save);
 		contentPane.add(background);
 		
@@ -131,11 +185,20 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
+			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
 			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION) && c instanceof JComboBox) {
-			String build = (String) ((JComboBox) c).getSelectedItem();
-			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
+			build = (String) ((JComboBox) c).getSelectedItem();
+		} else if (action.equals(REC_ACTION)) {
+			buildSelector.setEnabled(false);
+			build = RECOMMENDED;
+		} else if (action.equals(LATEST_ACTION)) {
+			buildSelector.setEnabled(false);
+			build = LATEST;
+		} else if (action.equals(MANUAL_ACTION)) {
+			buildSelector.setEnabled(true);
+			build = (String) buildSelector.getSelectedItem();
 		}
 	}
 

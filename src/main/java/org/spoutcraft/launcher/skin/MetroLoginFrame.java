@@ -445,6 +445,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					build = pack.getInfo().getRecommended();
 					Settings.setModpackBuild(pack.getInfo().getName(), build);
 					Settings.getYAML().save();
+				} else if (build.equals(ModpackOptions.LATEST)) {
+					build = pack.getInfo().getLatest();
+				} else if (build.equals(ModpackOptions.RECOMMENDED)) {
+					build = pack.getInfo().getRecommended();
 				}
 				
 				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getInfo(), build));
