@@ -150,6 +150,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			InstalledPack pack = iterator.next();
 			buttons.get(i).setIcon(pack.getImage(smallWidth, smallHeight));
 		}
+		
+		if (getSelectedPack() instanceof AddPack) {
+			MetroLoginFrame.hideModpackOptions();
+		} else {
+			MetroLoginFrame.showModpackOptions();
+		}
 
 		this.repaint();
 	}
@@ -185,12 +191,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				}
 			} else {
 				selectPack(getIndex() + button.getIndex()); 
-			}
-			
-			if (getSelectedPack() instanceof AddPack) {
-				MetroLoginFrame.hideModpackOptions();
-			} else {
-				MetroLoginFrame.showModpackOptions();
 			}
 		}
 	}
