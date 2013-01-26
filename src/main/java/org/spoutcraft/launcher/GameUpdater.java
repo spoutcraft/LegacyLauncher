@@ -64,6 +64,7 @@ public final class GameUpdater extends Directories {
 		this.installedPack = installedPack;
 		this.modpack = installedPack.getModpack();
 		this.updateThread = updateThread;
+		System.setProperty("minecraft.applet.TargetDirectory", installedPack.getPackDirectory().getAbsolutePath());
 		updateThread.start();
 	}
 

@@ -102,7 +102,6 @@ public class UpdateThread extends Thread {
 		setDaemon(true);
 		this.pack = pack;
 		this.build = pack.getModpack();
-		System.setProperty("minecraft.applet.TargetDirectory", pack.getPackDirectory().getAbsolutePath());
 		setDownloadListener(listener);
 	}
 
