@@ -77,6 +77,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private LiteButton openFolder;
 	private File installedDirectory;
 	private JFileChooser fileChooser;
+	private boolean directoryChanged = false;
 	private int mouseX = 0, mouseY = 0;
 	
 	public ModpackOptions(InstalledPack installedPack) {
@@ -234,7 +235,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
 			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
-			installedPack.setPackDirectory(installedDirectory);
+			if (directoryChanged == true) {
+				installedPack.setPackDirectory(installedDirectory);
+			}
 			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION)) {
@@ -261,6 +264,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 				File file = fileChooser.getSelectedFile();
 				packLocation.setText(file.getPath());
 				installedDirectory = file;
+				directoryChanged = true;
 				if (file.exists()) {
 					openFolder.setVisible(true);
 				}
