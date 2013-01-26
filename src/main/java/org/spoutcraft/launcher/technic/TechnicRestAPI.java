@@ -142,6 +142,21 @@ public class TechnicRestAPI {
 		}
 	}
 
+	public static CustomModpack getCustomModpack(String packURL) throws RestfulAPIException {
+		InputStream stream = null;
+		String url = packURL;
+		try {
+			URL conn = new URL(url);
+			stream = conn.openStream();
+			CustomModpack result = mapper.readValue(stream, CustomModpack.class);
+			return result;
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+
 	public static String getLatestBuild(String modpack) throws RestfulAPIException {
 		return getModpackInfo(modpack).getLatest();
 	}
