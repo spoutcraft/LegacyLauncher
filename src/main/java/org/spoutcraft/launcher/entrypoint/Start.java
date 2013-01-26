@@ -61,7 +61,12 @@ public class Start {
 
 	private static void launch(String[] args) throws Exception{
 		// Text for local build (not official build)
-		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
+//		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
+//			SpoutcraftLauncher.main(args);
+//			return;
+//		}
+		
+		if (true) {
 			SpoutcraftLauncher.main(args);
 			return;
 		}
