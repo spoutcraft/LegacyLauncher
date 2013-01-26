@@ -87,7 +87,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private LiteTextBox name;
 	private LitePasswordBox pass;
-	private LiteButton login;
+	private static LiteButton login;
 	private JCheckBox remember;
 	private LiteProgressBar progressBar;
 	private LauncherOptions launcherOptions = null;
@@ -521,6 +521,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	
 	public static void showModpackOptions() {
 		packOptionsBtn.setVisible(true);
+	}
+	
+	public static void lockLoginButton() {
+		login.setText("Launching...");
+		login.setEnabled(false);
 	}
 	
 	public Image newBackgroundImage(ModpackInfo modpack) {
