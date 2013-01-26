@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Technic Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2013-2013, Technic <http://www.technicpack.net/>
+ * Technic Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Technic Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Technic Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -24,6 +24,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
+
 package org.spoutcraft.launcher.exceptions;
 
 public class BadLoginException extends Exception {
