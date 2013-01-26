@@ -73,6 +73,10 @@ public class Utils {
 		return workDir;
 	}
 
+	public static File getCacheDirectory() {
+		return new File(getLauncherDirectory(), "cache");
+	}
+	
 	public static File getAssetsDirectory() {
 		return new File(getLauncherDirectory(), "assets");
 	}
