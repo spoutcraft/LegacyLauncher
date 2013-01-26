@@ -42,8 +42,10 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -67,7 +69,13 @@ public class GameLauncher extends JFrame implements WindowListener {
 		runGame(user, session, downloadTicket, null);
 	}
 
-	public void runGame(String user, String session, String downloadTicket, Modpack modpack) {
+	public void runGame(String user, String session, String downloadTicket, InstalledPack pack) {
+		Modpack modpack = null;
+		try {
+			modpack = pack.getModpack();
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+		}
 		if (modpack != null) {
 			this.setTitle(modpack.getDisplayName());
 			File icon = new File(Utils.getAssetsDirectory(), modpack.getName() + File.separator + "icon.png");
@@ -91,7 +99,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		Applet applet = null;
 		try {
-			applet = MinecraftLauncher.getMinecraftApplet(Launcher.getGameUpdater().getBuild().getLibraries());
+			applet = MinecraftLauncher.getMinecraftApplet(Launcher.getGameUpdater().getBuild().getLibraries(), pack);
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {

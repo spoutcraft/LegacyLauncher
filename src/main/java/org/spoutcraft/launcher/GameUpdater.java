@@ -32,6 +32,7 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.Directories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.DownloadListener;
 
@@ -48,6 +49,7 @@ public final class GameUpdater extends Directories {
 
 	private DownloadListener listener;
 	private Modpack modpack;
+	private InstalledPack installedPack;
 	private long validationTime;
 	private UpdateThread updateThread;
 
@@ -58,10 +60,10 @@ public final class GameUpdater extends Directories {
 		return modpack;
 	}
 
-	public void start(Modpack modpack, UpdateThread updateThread) throws RestfulAPIException {
-		this.modpack = modpack;
+	public void start(InstalledPack installedPack, UpdateThread updateThread) throws RestfulAPIException {
+		this.installedPack = installedPack;
+		this.modpack = installedPack.getModpack();
 		this.updateThread = updateThread;
-		this.setWorkingDir(modpack.getName());
 		updateThread.start();
 	}
 
@@ -73,20 +75,20 @@ public final class GameUpdater extends Directories {
 		updateThread.setWaiting(waiting);
 	}
 
-	public void onModpackBuildChange(Modpack pack) {
+	public void onModpackBuildChange(InstalledPack installedPack) {
 		Modpack prev = this.modpack;
 		try {
-			this.modpack = pack;
+			this.modpack = installedPack.getModpack();
 			if (prev == null || !this.modpack.getBuild().equals(prev.getBuild())) {
 				if (updateThread != null) {
 					updateThread.setDownloadListener(null);
 					updateThread.interrupt();
 				}
 
-				updateThread = new UpdateThread(pack, listener);
+				updateThread = new UpdateThread(installedPack, listener);
 	
 				MinecraftLauncher.resetClassLoader();
-				start(pack, updateThread);
+				start(installedPack, updateThread);
 			}
 		} catch (IOException e) {
 			Launcher.getLoginFrame().handleException(e);
@@ -152,6 +154,6 @@ public final class GameUpdater extends Directories {
 	}
 
 	public void runGame() {
-		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, this.modpack);
+		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, this.installedPack);
 	}
 }

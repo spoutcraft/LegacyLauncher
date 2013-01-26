@@ -198,4 +198,12 @@ public class Settings {
 	public static synchronized String getLastModpack() {
 		return yaml.getString("launcher.lastmodpack");
 	}
+	
+	public static synchronized void setPackDirectory(String modpack, String directory) {
+		yaml.setProperty("modpacks." + modpack + ".directory", directory);
+	}
+
+	public static synchronized String getPackDirectory(String modpack) {
+		return yaml.getString("modpacks." + modpack + ".directory");
+	}
 }

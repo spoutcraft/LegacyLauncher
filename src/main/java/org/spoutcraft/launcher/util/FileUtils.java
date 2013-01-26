@@ -191,7 +191,7 @@ public class FileUtils {
 			if (file.isDirectory()) {
 				File newDir = new File(dest, file.getName());
 				newDir.mkdir();
-				moveDirectory(dir, dest);
+				moveDirectory(file, newDir);
 				continue;
 			}
 			file.renameTo(new File(dest, file.getName()));

@@ -52,6 +52,7 @@ import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.Mod;
 import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.technic.TechnicRestAPI;
@@ -93,10 +94,14 @@ public class UpdateThread extends Thread {
 	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
 	private final Modpack build;
-	public UpdateThread(Modpack build, DownloadListener listener) {
+	private final InstalledPack pack;
+	
+	public UpdateThread(InstalledPack pack, DownloadListener listener) throws RestfulAPIException {
 		super("Update Thread");
 		setDaemon(true);
-		this.build = build;
+		this.pack = pack;
+		this.build = pack.getModpack();
+		System.setProperty("minecraft.applet.TargetDirectory", pack.getPackDirectory().getAbsolutePath());
 		setDownloadListener(listener);
 	}
 
@@ -120,18 +125,10 @@ public class UpdateThread extends Thread {
 			if (minecraftUpdate) {
 				updateMinecraft(build);
 			}
-
-			if (build instanceof SpoutcraftData) {
-				boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable((SpoutcraftData) build);
-				if (spoutcraftUpdate) {
-					updateSpoutcraft((SpoutcraftData) build);
-				}
-				updateAssets();
-			} else {
-				boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
-				if (modpackUpdate) {
-					updateModpack(build);
-				}
+			
+			boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
+			if (modpackUpdate) {
+				updateModpack(build);
 			}
 
 			// Download assets
@@ -157,7 +154,7 @@ public class UpdateThread extends Thread {
 		}
 
 		MinecraftClassLoader loader;
-		loader = MinecraftLauncher.getClassLoader(build.getLibraries());
+		loader = MinecraftLauncher.getClassLoader(build.getLibraries(), pack);
 
 		int loaded = 0;
 		while (!waiting.get()) {
@@ -221,7 +218,7 @@ public class UpdateThread extends Thread {
 	}
 
 	private void cleanTemp() {
-		File binDir = Launcher.getGameUpdater().getBinDir();
+		File binDir = pack.getBinDir();
 		for (File f : binDir.listFiles()) {
 			if (f.isDirectory()) {
 				if (f.getName().startsWith("temp_")) {
@@ -295,46 +292,11 @@ public class UpdateThread extends Thread {
 		return valid.get();
 	}
 
-	public boolean isSpoutcraftUpdateAvailable(SpoutcraftData build) throws RestfulAPIException {
-		if (!Utils.getLauncherDirectory().exists()) {
-			return true;
-		}
-		if (!Launcher.getGameUpdater().getConfigDir().exists()) {
-			return true;
-		}
-
-		List<Library> libraries = build.getLibraries();
-		int steps = libraries.size() + 2;
-		float progress = 100F;
-
-		stateChanged("Checking for mod pack update...", progress / steps);
-		progress += 100F;
-		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
-		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
-			return true;
-		}
-		stateChanged("Checking for mod pack update...", progress / steps);
-		progress += 100F;
-		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
-		libDir.mkdir();
-
-		for (Library lib : libraries) {
-			File libraryFile = new File(libDir, lib.name() + ".jar");
-			if (!libraryFile.exists()) {
-				return true;
-			}
-			stateChanged("Checking for mod pack update...", progress / steps);
-			progress += 100F;
-		}
-
-		return false;
-	}
-
 	public boolean isModpackUpdateAvailable(Modpack build) throws RestfulAPIException {
 		if (!Utils.getLauncherDirectory().exists()) {
 			return true;
 		}
-		if (!Launcher.getGameUpdater().getConfigDir().exists()) {
+		if (!pack.getConfigDir().exists()) {
 			return true;
 		}
 		
@@ -343,7 +305,7 @@ public class UpdateThread extends Thread {
 		stateChanged("Checking for " + build.getName() + " update...", progress / steps);
 		progress += 100F;
 
-		File installed = new File(Launcher.getGameUpdater().getBinDir(), "installed");
+		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
 			return true;
 		}
@@ -362,11 +324,11 @@ public class UpdateThread extends Thread {
 
 	public boolean isMinecraftUpdateAvailable(Modpack build) {
 		int steps = 7;
-		if (!Launcher.getGameUpdater().getBinDir().exists()) {
+		if (!pack.getBinDir().exists()) {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 100F / steps);
-		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
+		File nativesDir = new File(pack.getBinDir(), "natives");
 		if (!nativesDir.exists()) {
 			return true;
 		}
@@ -375,22 +337,22 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 200F / steps);
-		File minecraft = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
+		File minecraft = new File(pack.getBinDir(), "minecraft.jar");
 		if (!minecraft.exists()) {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 300F / steps);
-		File lib = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
+		File lib = new File(pack.getBinDir(), "jinput.jar");
 		if (!lib.exists()) {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 400F / steps);
-		lib = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
+		lib = new File(pack.getBinDir(), "lwjgl.jar");
 		if (!lib.exists()) {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 500F / steps);
-		lib = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
+		lib = new File(pack.getBinDir(), "lwjgl_util.jar");
 		if (!lib.exists()) {
 			return true;
 		}
@@ -402,12 +364,12 @@ public class UpdateThread extends Thread {
 	}
 
 	public void updateMinecraft(Modpack build) throws IOException {
-		Launcher.getGameUpdater().getBinDir().mkdir();
-		Launcher.getGameUpdater().getCacheDir().mkdir();
-		if (Launcher.getGameUpdater().getTempDir().exists()) {
-			FileUtils.deleteDirectory(Launcher.getGameUpdater().getTempDir());
+		pack.getBinDir().mkdir();
+		pack.getCacheDir().mkdir();
+		if (pack.getTempDir().exists()) {
+			FileUtils.deleteDirectory(pack.getTempDir());
 		}
-		Launcher.getGameUpdater().getTempDir().mkdir();
+		pack.getTempDir().mkdir();
 
 		String minecraftMD5 = FileType.MINECRAFT.getMD5();
 		String jinputMD5 = FileType.JINPUT.getMD5();
@@ -416,36 +378,36 @@ public class UpdateThread extends Thread {
 
 		// Processs minecraft.jar
 		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			String output = Launcher.getGameUpdater().getTempDir() + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, build, listener);
+			String output = pack.getTempDir() + File.separator + "minecraft.jar";
+			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, listener);
 		}
-		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
+		Utils.copy(mcCache, new File(pack.getBinDir(), "minecraft.jar"));
 
-		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
+		File nativesDir = new File(pack.getBinDir(), "natives");
 		nativesDir.mkdir();
 
 		// Process other downloads
-		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "jinput.jar");
+		mcCache = new File(pack.getCacheDir(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", pack.getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
 		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar"));
+			Utils.copy(mcCache, new File(pack.getBinDir(), "jinput.jar"));
 		}
 
-		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "lwjgl.jar");
+		mcCache = new File(pack.getCacheDir(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", pack.getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar"));
+			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl.jar"));
 		}
 
-		mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "lwjgl_util.jar");
+		mcCache = new File(pack.getCacheDir(), "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", pack.getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar"));
+			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl_util.jar"));
 		}
 
 		try {
@@ -482,34 +444,34 @@ public class UpdateThread extends Thread {
 		}
 
 		// Download natives
-		File nativesJar = new File(Launcher.getGameUpdater().getTempDir(), "natives.jar");
+		File nativesJar = new File(pack.getTempDir(), "natives.jar");
 		DownloadUtils.downloadFile(url, nativesJar.getPath(), null, md5, listener);
 
 		// Extract natives
 		List<String> ignores = new ArrayList<String>();
 		ignores.add("META-INF");
-		File tempNatives = new File(Launcher.getGameUpdater().getTempDir(), "natives");
+		File tempNatives = new File(pack.getTempDir(), "natives");
 		Utils.extractJar(new JarFile(nativesJar), tempNatives, ignores);
-		FileUtils.moveDirectory(tempNatives, new File(Launcher.getGameUpdater().getBinDir(), "natives"));
+		FileUtils.moveDirectory(tempNatives, new File(pack.getBinDir(), "natives"));
 	}
 
 	public void updateModpack(Modpack modpack) throws IOException {
 		cleanupBinFolders();
 		cleanupModsFolders();
 
-		Launcher.getGameUpdater().getTempDir().mkdirs();
-		Launcher.getGameUpdater().getCacheDir().mkdirs();
-		Launcher.getGameUpdater().getConfigDir().mkdirs();
+		pack.getTempDir().mkdirs();
+		pack.getCacheDir().mkdirs();
+		pack.getConfigDir().mkdirs();
 
-		File temp = Launcher.getGameUpdater().getTempDir();
+		File temp = pack.getTempDir();
 
-		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		File updateMC = new File(Launcher.getGameUpdater().getTempDir().getPath() + File.separator + "minecraft.jar");
+		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File updateMC = new File(pack.getTempDir().getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {
 			Utils.copy(mcCache, updateMC);
 		}
 
-		File workingDir = Launcher.getGameUpdater().getWorkingDir();
+		File workingDir = pack.getPackDirectory();
 
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {
@@ -537,7 +499,7 @@ public class UpdateThread extends Thread {
 			}
 		}
 
-		File installed = new File(Launcher.getGameUpdater().getBinDir(), "installed");
+		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
 			installed.createNewFile();
 		}
@@ -545,81 +507,15 @@ public class UpdateThread extends Thread {
 		yaml.setProperty("build", modpack.getBuild());
 		yaml.save();
 	}
-	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
-		cleanupBinFolders();
-
-		Launcher.getGameUpdater().getTempDir().mkdirs();
-		Launcher.getGameUpdater().getCacheDir().mkdirs();
-		Launcher.getGameUpdater().getConfigDir().mkdirs();
-		File cacheDir = new File(Launcher.getGameUpdater().getBinDir(), "cache");
-		cacheDir.mkdir();
-
-		File mcCache = new File(Launcher.getGameUpdater().getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		File updateMC = new File(Launcher.getGameUpdater().getTempDir().getPath() + File.separator + "minecraft.jar");
-		if (mcCache.exists()) {
-			Utils.copy(mcCache, updateMC);
-		}
-
-		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "modpack.jar");
-		if (spoutcraft.exists() && Integer.parseInt(build.getInstalledBuild()) > 0) {
-			// Save our installed copy
-			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
-			if (!spoutcraftCache.exists()) {
-				Utils.copy(spoutcraft, spoutcraftCache);
-			}
-			spoutcraft.delete();
-			// Check for an old copy of this build if it is already saved
-			spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getBuild() + ".jar");
-			if (spoutcraftCache.exists()) {
-				Utils.copy(spoutcraftCache, spoutcraft);
-			}
-		}
-
-		stateChanged("Looking Up Mirrors...", 0F);
-
-		String url = build.getSpoutcraftURL();
-
-		if (!spoutcraft.exists()) {
-			Download download = DownloadUtils.downloadFile(url, Launcher.getGameUpdater().getTempDir() + File.separator + "modpack.jar", null, build.getMD5(), listener);
-			if (download.getResult() == Result.SUCCESS) {
-				Utils.copy(download.getOutFile(), spoutcraft);
-			}
-		}
-
-		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
-		libDir.mkdir();
-
-		List<Library> libraries = build.getLibraries();
-		for (Library lib : libraries) {
-			File libraryFile = new File(libDir, lib.name() + ".jar");
-			if (libraryFile.exists()) {
-				String computedMD5 = MD5Utils.getMD5(libraryFile);
-				if (!lib.valid(computedMD5)) {
-					logger.warning("MD5 check of " + libraryFile.getName() + " failed. Deleting and Redownloading.");
-					libraryFile.delete();
-				}
-			}
-			File cachedLibraryFile = new File(cacheDir, lib.name() + ".jar");
-			if (cachedLibraryFile.exists()) {
-				String computedMD5 = MD5Utils.getMD5(cachedLibraryFile);
-				if (lib.valid(computedMD5)) {
-					Utils.copy(cachedLibraryFile, libraryFile);
-				}
-			}
-			if (!libraryFile.exists()) {
-				lib.download(libraryFile, listener);
-			}
-		}
-	}
 
 	public void cleanupBinFolders() {
 		try {
-			if (!Launcher.getGameUpdater().getBinDir().exists()) {
+			if (pack.getBinDir().exists()) {
 				return;
 			}
 
 			HashSet<String> neededBinFiles = new HashSet<String>(Arrays.asList(new String[]{"modpack.jar", "minecraft.jar", "lwjgl.jar", "lwjgl_util.jar", "jinput.jar"}));
-			for (File file : Launcher.getGameUpdater().getBinDir().listFiles()) {
+			for (File file : pack.getBinDir().listFiles()) {
 				if (!file.isFile()) {
 					continue;
 				}
@@ -636,7 +532,7 @@ public class UpdateThread extends Thread {
 
 	public void cleanupModsFolders() {
 		try {
-			File working = Launcher.getGameUpdater().getWorkingDir();
+			File working = pack.getPackDirectory();
 			File mods = new File(working, "mods");
 			if (mods.exists()) {
 				FileUtils.cleanDirectory(mods);

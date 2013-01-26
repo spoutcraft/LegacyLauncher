@@ -34,18 +34,23 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -57,13 +62,20 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String REC_ACTION = "rec";
 	private static final String LATEST_ACTION = "latest";
 	private static final String MANUAL_ACTION = "manual";
+	private static final String CHANGEFOLDER_ACTION = "changefolder";
+	private static final String OPENFOLDER_ACTION = "openfolder";
 	public static final String RECOMMENDED = "recommended";
 	public static final String LATEST = "latest";
 	private String build;
+	private String locationString;
 	private JLabel buildLabel;
 	private JLabel background;
 	private InstalledPack installedPack;
 	private JComboBox buildSelector;
+	private LiteTextBox packLocation;
+	private LiteButton openFolder;
+	private File installedDirectory;
+	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
 	
 	public ModpackOptions(InstalledPack installedPack) {
@@ -159,6 +171,33 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			versionManual.setSelected(true);
 			buildSelector.setSelectedItem((String) build);
 		}
+		
+		installedDirectory = installedPack.getPackDirectory();
+		
+		packLocation = new LiteTextBox(this, "");
+		packLocation.setBounds(10, versionManual.getY() + versionManual.getHeight() + 10, FRAME_WIDTH - 20, 25);
+		packLocation.setFont(minecraft.deriveFont(10F));
+		packLocation.setText(installedDirectory.getPath());
+		packLocation.setEnabled(false);
+		
+		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+		
+		LiteButton changeFolder = new LiteButton("Change Folder");
+		changeFolder.setBounds(FRAME_WIDTH / 2 + 10, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 20, 25);
+		changeFolder.setFont(minecraft);
+		changeFolder.setActionCommand(CHANGEFOLDER_ACTION);
+		changeFolder.addActionListener(this);
+		
+		openFolder = new LiteButton("Open Folder");
+		openFolder.setBounds(10, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 20, 25);
+		openFolder.setFont(minecraft);
+		openFolder.setActionCommand(OPENFOLDER_ACTION);
+		openFolder.addActionListener(this);
+		
+		if (!installedDirectory.exists()) {
+			openFolder.setVisible(false);
+		}
 
 		LiteButton save = new LiteButton("Save and Close");
 		save.setFont(minecraft.deriveFont(14F));
@@ -173,6 +212,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		contentPane.add(versionRec);
 		contentPane.add(versionLatest);
 		contentPane.add(versionManual);
+		contentPane.add(packLocation);
+		contentPane.add(changeFolder);
+		contentPane.add(openFolder);
 		contentPane.add(save);
 		contentPane.add(background);
 		
@@ -191,6 +233,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
 			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
+			installedPack.setPackDirectory(installedDirectory);
 			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION)) {
@@ -206,6 +249,21 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		} else if (action.equals(MANUAL_ACTION)) {
 			buildSelector.setEnabled(true);
 			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();
+		} else if (action.equals(OPENFOLDER_ACTION)) {
+			if (installedDirectory.exists()) {
+				Compatibility.open(installedDirectory);
+			}
+		} else if (action.equals(CHANGEFOLDER_ACTION)) {
+			int result = fileChooser.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				packLocation.setText(file.getPath());
+				installedDirectory = file;
+				if (file.exists()) {
+					openFolder.setVisible(true);
+				}
+			}
 		}
 	}
 

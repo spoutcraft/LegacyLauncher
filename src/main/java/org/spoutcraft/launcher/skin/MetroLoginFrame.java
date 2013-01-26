@@ -436,28 +436,26 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					saveUsername(getSelectedUser(), pass);
 				}
 			}
-			try {
-				InstalledPack pack = getModpackSelector().getSelectedPack();
-				if (pack instanceof AddPack) {
-					return;
-				}
-				String build = Settings.getModpackBuild(pack.getInfo().getName());
-				if (build == null) {
-					build = pack.getInfo().getRecommended();
-					Settings.setModpackBuild(pack.getInfo().getName(), build);
-					Settings.getYAML().save();
-				} else if (build.equals(ModpackOptions.LATEST)) {
-					build = pack.getInfo().getLatest();
-				} else if (build.equals(ModpackOptions.RECOMMENDED)) {
-					build = pack.getInfo().getRecommended();
-				}
-				
-				Launcher.getGameUpdater().onModpackBuildChange(TechnicRestAPI.getModpack(pack.getInfo(), build));
-				Settings.setLastModpack(pack.getInfo().getName());
-				Settings.getYAML().save();
-			} catch (RestfulAPIException e) {
-				e.printStackTrace();
+
+			InstalledPack pack = getModpackSelector().getSelectedPack();
+			if (pack instanceof AddPack) {
+				return;
 			}
+			String build = Settings.getModpackBuild(pack.getInfo().getName());
+			if (build == null) {
+				build = pack.getInfo().getRecommended();
+				Settings.setModpackBuild(pack.getInfo().getName(), build);
+				Settings.getYAML().save();
+			} else if (build.equals(ModpackOptions.LATEST)) {
+				build = pack.getInfo().getLatest();
+			} else if (build.equals(ModpackOptions.RECOMMENDED)) {
+				build = pack.getInfo().getRecommended();
+			}
+
+			Launcher.getGameUpdater().onModpackBuildChange(pack);
+			Settings.setLastModpack(pack.getInfo().getName());
+			Settings.getYAML().save();
+
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			InstalledPack pack = getModpackSelector().getSelectedPack();
 			if (pack instanceof AddPack) {

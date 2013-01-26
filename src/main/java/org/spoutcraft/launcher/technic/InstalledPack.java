@@ -27,16 +27,30 @@
 package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 
 import javax.swing.ImageIcon;
 
-public class InstalledPack {
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.technic.skin.ModpackOptions;
+import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.util.FileUtils;
 
+public class InstalledPack {
 	private final Image image;
 	private final ImageIcon background;
 	private final Image icon;
 	private final ModpackInfo info;
+	private File installedDirectory;
+	private File binDir;
+	private File cacheDir;
+	private File configDir;
+	private File savesDir;
+	private File tempDir;
+	private File resourceDir;
+	private File coremodsDir;
 	
 	public InstalledPack(ModpackInfo info) throws IOException {
 		this(info, info.getIcon(), info.getImg(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
@@ -47,6 +61,16 @@ public class InstalledPack {
 		this.info = info;
 		this.image = image;
 		this.background = background;
+		
+		String location = Settings.getPackDirectory(getName());
+		
+		if (location == null) {
+			installedDirectory = new File(Utils.getLauncherDirectory(), getName());
+		} else {
+			installedDirectory = new File(location);
+		}
+		
+		initDirectories();
 	}
 	public ImageIcon getBackground() {
 		return background;
@@ -70,5 +94,73 @@ public class InstalledPack {
 
 	public ModpackInfo getInfo() {
 		return info;
+	}
+	
+	public String getBuild() {
+		String build = Settings.getModpackBuild(getName());
+		if (build.equals(ModpackOptions.LATEST)) {
+			build = info.getLatest();
+		} else if (build.equals(ModpackOptions.RECOMMENDED)) {
+			build = info.getRecommended();
+		}
+		
+		return build;
+	}
+	
+	public Modpack getModpack() throws RestfulAPIException {
+		return TechnicRestAPI.getModpack(info, getBuild());
+	}
+	
+	public void initDirectories() {
+		binDir = new File(installedDirectory, "bin");
+		cacheDir = new File(installedDirectory, "cache");
+		configDir = new File(installedDirectory, "config");
+		savesDir = new File(installedDirectory, "saves");
+		tempDir = new File(installedDirectory, "temp");
+		resourceDir = new File(installedDirectory, "resources");
+		coremodsDir = new File(installedDirectory, "coremods");
+		
+		binDir.mkdirs();
+		cacheDir.mkdirs();
+		configDir.mkdirs();
+		savesDir.mkdirs();
+		tempDir.mkdirs();
+		resourceDir.mkdirs();
+		coremodsDir.mkdirs();
+	}
+	
+	public void setPackDirectory(File packPath) {
+		FileUtils.moveDirectory(installedDirectory, packPath);
+		Settings.setPackDirectory(getName(), packPath.getPath());
+		installedDirectory = packPath;
+		initDirectories();
+	}
+	
+	public File getPackDirectory() {
+		return installedDirectory;
+	}
+	
+	public File getBinDir() {
+		return binDir;
+	}
+	
+	public File getCacheDir() {
+		return cacheDir;
+	}
+	
+	public File getConfigDir() {
+		return configDir;
+	}
+	
+	public File getSavesDir() {
+		return savesDir;
+	}
+	
+	public File getTempDir() {
+		return tempDir;
+	}
+	
+	public File getresourceDir() {
+		return resourceDir;
 	}
 }

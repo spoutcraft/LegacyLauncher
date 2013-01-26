@@ -336,12 +336,12 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 			// Inform the updating thread
 			if (prev != Settings.getSpoutcraftChannel() || !build.equals(Settings.getSpoutcraftSelectedBuild()) || !minecraftVersion.equals(Settings.getMinecraftVersion())) {
-				try {
-					Launcher.getGameUpdater().onModpackBuildChange(new SpoutcraftData(Launcher.getGameUpdater()));
-				} catch (RestfulAPIException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+//				try {
+//					//Launcher.getGameUpdater().onModpackBuildChange(new SpoutcraftData(Launcher.getGameUpdater()));
+//				} catch (RestfulAPIException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			}
 
 			if (Settings.isDebugMode() || oldDebug) {

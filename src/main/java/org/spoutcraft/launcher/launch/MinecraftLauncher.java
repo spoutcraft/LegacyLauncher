@@ -35,12 +35,13 @@ import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.UnknownMinecraftException;
 import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.technic.InstalledPack;
 
 public class MinecraftLauncher {
 	private static MinecraftClassLoader loader = null;
-	public static MinecraftClassLoader getClassLoader(List<Library> libraries) {
+	public static MinecraftClassLoader getClassLoader(List<Library> libraries, InstalledPack pack) {
 		if (loader == null) {
-			File mcBinFolder = Launcher.getGameUpdater().getBinDir();
+			File mcBinFolder = pack.getBinDir();
 
 			File spoutcraftJar = new File(mcBinFolder, "modpack.jar");
 			File minecraftJar = new File(mcBinFolder, "minecraft.jar");
@@ -64,7 +65,7 @@ public class MinecraftLauncher {
 				files[index + 3] = lwglJar;
 				files[index + 4] = lwjgl_utilJar;
 
-				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files);
+				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files, pack);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -78,11 +79,11 @@ public class MinecraftLauncher {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet(List<Library> libraries) throws CorruptedMinecraftJarException, MinecraftVerifyException {
-		File mcBinFolder = Launcher.getGameUpdater().getBinDir();
+	public static Applet getMinecraftApplet(List<Library> libraries, InstalledPack pack) throws CorruptedMinecraftJarException, MinecraftVerifyException {
+		File mcBinFolder = pack.getBinDir();
 
 		try {
-			ClassLoader classLoader = getClassLoader(libraries);
+			ClassLoader classLoader = getClassLoader(libraries, pack);
 
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);

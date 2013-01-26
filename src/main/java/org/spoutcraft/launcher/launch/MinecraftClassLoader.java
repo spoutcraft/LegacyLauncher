@@ -52,6 +52,7 @@ import java.util.zip.ZipException;
 import org.apache.commons.io.FileUtils;
 
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
@@ -59,11 +60,11 @@ public class MinecraftClassLoader extends URLClassLoader {
 	private HashSet<String> preloaded = new HashSet<String>();
 	private HashMap<String, File> classLocations = new HashMap<String, File>(10000);
 
-	public MinecraftClassLoader(ClassLoader parent, File spoutcraft, File[] libraries) {
+	public MinecraftClassLoader(ClassLoader parent, File spoutcraft, File[] libraries, InstalledPack pack) {
 		super(new URL[0], parent);
 
 		// Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)
-		File tempDir = getTempDirectory();
+		File tempDir = getTempDirectory(pack);
 		for (File f : libraries) {
 			try {
 				File replacement = new File(tempDir, f.getName());
@@ -91,10 +92,10 @@ public class MinecraftClassLoader extends URLClassLoader {
 		}
 	}
 
-	private File getTempDirectory() {
+	private File getTempDirectory(InstalledPack pack) {
 		int index = 0;
 		while (true) {
-			File tempDir = new File(Launcher.getGameUpdater().getBinDir(), "temp_" + index);
+			File tempDir = new File(pack.getBinDir(), "temp_" + index);
 			if (!tempDir.isDirectory() && !tempDir.exists()) {
 				tempDir.mkdirs();
 				return tempDir;
