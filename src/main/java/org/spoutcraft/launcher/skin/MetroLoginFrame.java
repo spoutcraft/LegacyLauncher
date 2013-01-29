@@ -83,14 +83,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private LiteTextBox name;
 	private LitePasswordBox pass;
-	private static LiteButton login;
+	private LiteButton login;
 	private JCheckBox remember;
 	private LiteProgressBar progressBar;
 	private LauncherOptions launcherOptions = null;
 	private ModpackOptions packOptions = null;
 	private ModpackSelector packSelector;
 	private BackgroundImage packBackground;
-	private static ImageButton packOptionsBtn;
+	private ImageButton packOptionsBtn;
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -423,6 +423,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getModpackSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
+			if (!login.isEnabled()) {
+				return;
+			}
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
 				this.doLogin(getSelectedUser(), pass);
@@ -488,15 +491,15 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return this.name.getText();
 	}
 	
-	public static void hideModpackOptions() {
+	public void hideModpackOptions() {
 		packOptionsBtn.setVisible(false);
 	}
 	
-	public static void showModpackOptions() {
+	public void showModpackOptions() {
 		packOptionsBtn.setVisible(true);
 	}
 	
-	public static void lockLoginButton() {
+	public void lockLoginButton() {
 		login.setText("Launching...");
 		login.setEnabled(false);
 	}

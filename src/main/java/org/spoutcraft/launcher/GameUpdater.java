@@ -66,6 +66,7 @@ public final class GameUpdater extends Directories {
 		MinecraftLauncher.resetClassLoader();
 		System.setProperty("minecraft.applet.TargetDirectory", installedPack.getPackDirectory().getAbsolutePath());
 		updateThread.start();
+		Launcher.getFrame().lockLoginButton();
 	}
 
 	public boolean isFinished() {

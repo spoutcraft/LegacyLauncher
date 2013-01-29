@@ -36,6 +36,7 @@ import java.util.ListIterator;
 
 import javax.swing.JComponent;
 
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
@@ -162,9 +163,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		}
 		
 		if (getSelectedPack() instanceof AddPack) {
-			MetroLoginFrame.hideModpackOptions();
+			Launcher.getFrame().hideModpackOptions();
 		} else {
-			MetroLoginFrame.showModpackOptions();
+			Launcher.getFrame().showModpackOptions();
 		}
 
 		this.repaint();
