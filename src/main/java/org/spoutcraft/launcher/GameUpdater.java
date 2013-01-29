@@ -31,7 +31,6 @@ import org.spoutcraft.launcher.api.Directories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.util.DownloadListener;
 
 public final class GameUpdater extends Directories {
@@ -46,22 +45,16 @@ public final class GameUpdater extends Directories {
 	private String minecraftSession = "";
 
 	private DownloadListener listener;
-	private Modpack modpack;
 	private long validationTime;
 	private UpdateThread updateThread;
 
 	public GameUpdater() {
 	}
 
-	public Modpack getBuild() {
-		return modpack;
-	}
-
 	public void start(InstalledPack installedPack) throws RestfulAPIException {
 		if (updateThread != null) {
 			return;
 		}
-		this.modpack = installedPack.getModpack();
 		this.updateThread = new UpdateThread(installedPack, listener);
 		MinecraftLauncher.resetClassLoader();
 		System.setProperty("minecraft.applet.TargetDirectory", installedPack.getPackDirectory().getAbsolutePath());

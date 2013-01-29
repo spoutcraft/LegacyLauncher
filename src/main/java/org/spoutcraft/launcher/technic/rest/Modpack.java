@@ -54,6 +54,20 @@ public class Modpack {
 
 	private ModpackInfo info;
 
+	public Modpack() {
+		
+	}
+
+	public Modpack(CustomInfo info) {
+		//TODO: Need mods added somehow?
+		this.minecraftVersion = info.getMinecraftVersion();
+		this.libraries = "";
+		this.forgeVersion = "";
+		this.name = info.getName();
+		this.displayName = info.getDisplayName();
+		this.build = info.getVersion();
+	}
+
 	public Modpack setInfo(ModpackInfo info, String build) {
 		this.info = info;
 		this.name = info.getName();

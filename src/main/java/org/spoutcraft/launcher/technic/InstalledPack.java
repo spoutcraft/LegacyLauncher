@@ -41,7 +41,7 @@ import org.spoutcraft.launcher.util.FileUtils;
 
 public abstract class InstalledPack {
 	// Images
-	private final Image image;
+	private final Image logo;
 	private final ImageIcon background;
 	private final Image icon;
 
@@ -55,9 +55,9 @@ public abstract class InstalledPack {
 	private File resourceDir;
 	private File coremodsDir;
 
-	public InstalledPack(Image icon, Image image, ImageIcon background) {
+	public InstalledPack(Image icon, Image logo, ImageIcon background) {
 		this.icon = icon;
-		this.image = image;
+		this.logo = logo;
 		this.background = background;
 	}
 
@@ -77,8 +77,8 @@ public abstract class InstalledPack {
 		return icon;
 	}
 
-	public ImageIcon getImage(int width, int height) {
-		return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
+	public ImageIcon getLogo(int width, int height) {
+		return new ImageIcon(logo.getScaledInstance(width, height, Image.SCALE_SMOOTH));
 	}
 
 	public abstract String getName();

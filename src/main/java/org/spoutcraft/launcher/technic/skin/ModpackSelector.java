@@ -144,7 +144,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		frame.setTitle(selected.getDisplayName());
 		
 		// Set the big button image in the middle
-		buttons.get(3).setIcon(selected.getImage(bigWidth, bigHeight));
+		buttons.get(3).setIcon(selected.getLogo(bigWidth, bigHeight));
 
 		// Start the iterator at the selected pack
 		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
@@ -155,7 +155,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				iterator = installedPacks.listIterator(installedPacks.size());
 			}
 			InstalledPack pack = iterator.previous();
-			buttons.get(i).setIcon(pack.getImage(smallWidth, smallHeight));
+			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
 		}
 
 		// Start the iterator just after the selected pack
@@ -167,7 +167,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				iterator = installedPacks.listIterator(0);
 			}
 			InstalledPack pack = iterator.next();
-			buttons.get(i).setIcon(pack.getImage(smallWidth, smallHeight));
+			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
 		}
 		
 		if (getSelectedPack() instanceof AddPack) {

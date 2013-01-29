@@ -73,7 +73,7 @@ public class ModpackInfo {
 		return builds;
 	}
 
-	public String getImgURL() {
+	public String getLogoURL() {
 		return TechnicRestAPI.getModpackImgURL(name);
 	}
 	
@@ -85,14 +85,14 @@ public class ModpackInfo {
 		return TechnicRestAPI.getModpackIconURL(name);
 	}
 
-	public BufferedImage getImg() throws IOException {
+	public BufferedImage getLogo() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
 		if (temp.exists()) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
-			Download download = DownloadUtils.downloadFile(getImgURL(), temp.getAbsolutePath());
+			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
 			image = ImageIO.read(download.getOutFile());
 		}
 		return image;
@@ -123,6 +123,7 @@ public class ModpackInfo {
 		}
 		return image;
 	}
+
 	@Override
 	public String toString() {
 		return "{ ModpackBuilds [name: " + name + ", recommended: " + recommended + ", latest: " + latest + ", builds: " + builds + "] }";

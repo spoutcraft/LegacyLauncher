@@ -16,7 +16,7 @@ public class RestPack extends InstalledPack {
 	private final ModpackInfo info;
 
 	public RestPack(ModpackInfo info) throws IOException {
-		super(info.getIcon(), info.getImg(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
+		super(info.getIcon(), info.getLogo(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
 		this.info = info;
 		init();
 	}
@@ -53,10 +53,10 @@ public class RestPack extends InstalledPack {
 	@Override
 	public Modpack getModpack() {
 		try {
-			return TechnicRestAPI.getModpack(getInfo(), getBuild());
+			return TechnicRestAPI.getModpack(info, getBuild());
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 }

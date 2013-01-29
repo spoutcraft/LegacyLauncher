@@ -26,7 +26,16 @@
  */
 package org.spoutcraft.launcher.technic.rest;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.Utils;
 
 public class CustomInfo {
 	@JsonProperty("name")
@@ -56,6 +65,9 @@ public class CustomInfo {
 	@JsonProperty("mirror_url")
 	private String mirrorUrl;
 
+	@JsonProperty("minecraft")
+	private String minecraftVersion;
+
 	public String getName() {
 		return name;
 	}
@@ -66,6 +78,10 @@ public class CustomInfo {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public String getMinecraftVersion() {
+		return minecraftVersion;
 	}
 
 	public String getUser() {
@@ -90,5 +106,31 @@ public class CustomInfo {
 
 	public String getMirrorURL() {
 		return mirrorUrl;
+	}
+
+	public BufferedImage getLogo() throws IOException {
+		BufferedImage image;
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
+		if (temp.exists()) {
+			image = ImageIO.read(temp);
+		} else {
+			temp.mkdirs();
+			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
+			image = ImageIO.read(download.getOutFile());
+		}
+		return image;
+	}
+
+	public BufferedImage getBackground() throws IOException {
+		BufferedImage image;
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
+		if (temp.exists()) {
+			image = ImageIO.read(temp);
+		} else {
+			temp.mkdirs();
+			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
+			image = ImageIO.read(download.getOutFile());
+		}
+		return image;
 	}
 }

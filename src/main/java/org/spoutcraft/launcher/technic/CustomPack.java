@@ -1,45 +1,49 @@
 package org.spoutcraft.launcher.technic;
 
+import java.awt.Image;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.technic.rest.CustomInfo;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 
 public class CustomPack extends InstalledPack {
+	private final CustomInfo info;
 
-	public CustomPack(CustomInfo custom) {
-		super(null, null, null);
-		// TODO Auto-generated constructor stub
+	public CustomPack(CustomInfo info) throws IOException {
+		super(info.getLogo(), info.getLogo(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
+		this.info = info;
+		init();
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return info.getName();
 	}
 
 	@Override
 	public String getDisplayName() {
-		// TODO Auto-generated method stub
-		return null;
+		return info.getDisplayName();
 	}
 
 	@Override
 	public String getRecommended() {
-		// TODO Auto-generated method stub
-		return null;
+		return info.getVersion();
 	}
 
 	@Override
 	public String getLatest() {
-		// TODO Auto-generated method stub
-		return null;
+		return info.getVersion();
 	}
 
 	@Override
 	public List<String> getBuilds() {
-		// TODO Auto-generated method stub
-		return null;
+		List<String> builds = new ArrayList<String>(1);
+		builds.add(getLatest());
+		return builds;
 	}
 
 	@Override
@@ -47,5 +51,4 @@ public class CustomPack extends InstalledPack {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

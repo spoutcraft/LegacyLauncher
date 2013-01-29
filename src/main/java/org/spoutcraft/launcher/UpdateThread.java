@@ -329,7 +329,7 @@ public class UpdateThread extends Thread {
 		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = pack.getTempDir() + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, listener);
+			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, build, listener);
 		}
 		Utils.copy(mcCache, new File(pack.getBinDir(), "minecraft.jar"));
 
