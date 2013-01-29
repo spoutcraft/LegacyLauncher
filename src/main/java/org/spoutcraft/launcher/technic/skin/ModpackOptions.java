@@ -68,7 +68,6 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	public static final String RECOMMENDED = "recommended";
 	public static final String LATEST = "latest";
 	private String build;
-	private String locationString;
 	private JLabel buildLabel;
 	private JLabel background;
 	private InstalledPack installedPack;

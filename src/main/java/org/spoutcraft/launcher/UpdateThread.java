@@ -34,8 +34,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.jar.JarFile;
@@ -51,7 +49,6 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.Mod;
@@ -92,7 +89,6 @@ public class UpdateThread extends Thread {
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
 	private final AtomicBoolean finished = new AtomicBoolean(false);
-	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
 	private final Modpack build;
 	private final InstalledPack pack;
@@ -112,7 +108,7 @@ public class UpdateThread extends Thread {
 				runTasks();
 				break;
 			} catch (Exception e) {
-				Launcher.getLoginFrame().handleException(e);
+				Launcher.getFrame().handleException(e);
 				return;
 			}
 		}
@@ -167,54 +163,6 @@ public class UpdateThread extends Thread {
 		}
 		logger.info("Preloaded " + loaded + " classes in advance");
 		finished.set(true);
-	}
-
-	private void updateAssets() {
-		YAMLProcessor assets = Resources.Assets.getYAML();
-		updateAssets(assets.getMap(), Utils.getAssetsDirectory());
-	}
-
-	@SuppressWarnings("unchecked")
-	private void updateAssets(Map<String, Object> assets, File directory) {
-		directory.mkdirs();
-		for (Entry<String, Object> entry : assets.entrySet()) {
-			String key = entry.getKey();
-			Object value = entry.getValue();
-			if (value instanceof Map<?, ?>) {
-				updateAssets((Map<String, Object>)value, new File(directory, key));
-			} else if (value instanceof String) {
-				String url = (String)value;
-				String name = getFileName(url);
-				File asset = new File(directory, name);
-
-				stateChanged("Verifying Asset: " + name, 0);
-
-				boolean needDownload = true;
-				if (asset.exists() && !(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
-					String md5 = MD5Utils.getMD5(asset);
-					logger.info("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
-					needDownload = md5 == null || !md5.equals(key);
-				} else if (asset.exists() && (params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
-					needDownload = false;
-				}
-
-				if (needDownload) {
-					try {
-						DownloadUtils.downloadFile(url, asset.getPath(), null, key, listener);
-					} catch (IOException e) {
-						logger.log(Level.SEVERE, "Failed to download asset [" + url + "]", e);
-					}
-				}
-				stateChanged("Verified Asset: " + name, 100);
-			} else {
-				logger.warning("Unknown asset type for " + key + ". Type is " + value);
-			}
-		}
-	}
-
-	private String getFileName(String url) {
-		String[] split = url.split("/");
-		return split[split.length - 1];
 	}
 
 	private void cleanTemp() {
@@ -458,6 +406,7 @@ public class UpdateThread extends Thread {
 	public void updateModpack(Modpack modpack) throws IOException {
 		cleanupBinFolders();
 		cleanupModsFolders();
+		File workingDir = pack.getPackDirectory();
 
 		pack.getTempDir().mkdirs();
 		pack.getCacheDir().mkdirs();
@@ -470,8 +419,6 @@ public class UpdateThread extends Thread {
 		if (mcCache.exists()) {
 			Utils.copy(mcCache, updateMC);
 		}
-
-		File workingDir = pack.getPackDirectory();
 
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {

@@ -47,9 +47,6 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
@@ -63,7 +60,6 @@ import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.ModpackInfo;
-import org.spoutcraft.launcher.technic.TechnicRestAPI;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.LauncherOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
@@ -416,9 +412,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
-				if(getModpackSelector().getSelectedPack() instanceof AddPack) {
-					return;
-				}
 				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
 				packOptions.setModal(true);
 				packOptions.setVisible(true);
@@ -437,26 +430,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					saveUsername(getSelectedUser(), pass);
 				}
 			}
-
-			InstalledPack pack = getModpackSelector().getSelectedPack();
-			if (pack instanceof AddPack) {
-				return;
-			}
-			String build = Settings.getModpackBuild(pack.getInfo().getName());
-			if (build == null) {
-				build = pack.getInfo().getRecommended();
-				Settings.setModpackBuild(pack.getInfo().getName(), build);
-				Settings.getYAML().save();
-			} else if (build.equals(ModpackOptions.LATEST)) {
-				build = pack.getInfo().getLatest();
-			} else if (build.equals(ModpackOptions.RECOMMENDED)) {
-				build = pack.getInfo().getRecommended();
-			}
-
-			Launcher.getGameUpdater().onModpackBuildChange(pack);
-			Settings.setLastModpack(pack.getInfo().getName());
-			Settings.getYAML().save();
-
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			InstalledPack pack = getModpackSelector().getSelectedPack();
 			if (pack instanceof AddPack) {

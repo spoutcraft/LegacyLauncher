@@ -69,7 +69,6 @@ import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;
@@ -311,7 +310,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				break;
 			case SUCESSFUL_LOGIN:
 				writeUsernameList();
-				MetroLoginFrame.lockLoginButton();
 				Launcher.getGameUpdater().runGame();
 				break;
 			case BAD_LOGIN:

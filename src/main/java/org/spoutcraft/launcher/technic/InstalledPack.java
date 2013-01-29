@@ -65,13 +65,10 @@ public class InstalledPack {
 		
 		String location = Settings.getPackDirectory(getName());
 		
-		if (location == null) {
-			installedDirectory = new File(Utils.getLauncherDirectory(), getName());
-		} else {
+		if (location != null) {
 			installedDirectory = new File(location);
+			initDirectories();
 		}
-		
-		initDirectories();
 	}
 	public ImageIcon getBackground() {
 		return background;
@@ -99,9 +96,9 @@ public class InstalledPack {
 	
 	public String getBuild() {
 		String build = Settings.getModpackBuild(getName());
-		if (build.equals(ModpackOptions.LATEST)) {
+		if (ModpackOptions.LATEST.equals(build)) {
 			build = info.getLatest();
-		} else if (build.equals(ModpackOptions.RECOMMENDED)) {
+		} else if (ModpackOptions.LATEST.equals(build) || build == null) {
 			build = info.getRecommended();
 		}
 		
@@ -131,13 +128,18 @@ public class InstalledPack {
 	}
 	
 	public void setPackDirectory(File packPath) {
-		FileUtils.moveDirectory(installedDirectory, packPath);
+		if (installedDirectory != null) {
+			FileUtils.moveDirectory(installedDirectory, packPath);
+		}
 		Settings.setPackDirectory(getName(), packPath.getPath());
 		installedDirectory = packPath;
 		initDirectories();
 	}
 	
 	public File getPackDirectory() {
+		if (installedDirectory == null) {
+			setPackDirectory(new File(Utils.getLauncherDirectory(), getName()));
+		}
 		return installedDirectory;
 	}
 	

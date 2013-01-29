@@ -52,7 +52,6 @@ import java.util.zip.ZipException;
 
 import org.apache.commons.io.FileUtils;
 
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.util.Utils;
 

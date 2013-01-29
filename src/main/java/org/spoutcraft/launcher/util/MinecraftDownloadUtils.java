@@ -30,10 +30,8 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 import org.spoutcraft.diff.JBPatch;
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class MinecraftDownloadUtils {

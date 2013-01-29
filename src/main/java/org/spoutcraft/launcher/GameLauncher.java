@@ -47,7 +47,6 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.Modpack;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -71,21 +70,23 @@ public class GameLauncher extends JFrame implements WindowListener {
 	}
 
 	public void runGame(String user, String session, String downloadTicket, InstalledPack pack) {
-		Modpack modpack = null;
 		try {
-			modpack = pack.getModpack();
-		} catch (RestfulAPIException e) {
-			e.printStackTrace();
+			Launcher.getGameUpdater().start(pack);
+			Settings.setLastModpack(pack.getInfo().getName());
+			Settings.getYAML().save();
+		} catch (RestfulAPIException e1) {
+			e1.printStackTrace();
 		}
-		if (modpack != null) {
-			this.setTitle(modpack.getDisplayName());
-			File icon = new File(Utils.getAssetsDirectory(), modpack.getName() + File.separator + "icon.png");
+		
+		if (pack != null) {
+			this.setTitle(pack.getDisplayName());
+			File icon = new File(Utils.getAssetsDirectory(), pack.getName() + File.separator + "icon.png");
 			if (icon.exists()) {
 				this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon.getAbsolutePath()));
 			}
 		}
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
-		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getLoginFrame());
+		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getFrame());
 
 		this.setLocation(centeredLoc);
 		this.setSize(size);
@@ -108,7 +109,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the appplication.");
 			this.setVisible(false);
 			this.dispose();
-			Launcher.getLoginFrame().enableForm();
+			Launcher.getFrame().enableForm();
 			return;
 		}
 		if (applet == null) {
@@ -116,7 +117,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			this.setVisible(false);
 			JOptionPane.showMessageDialog(getParent(), message);
 			this.dispose();
-			Launcher.getLoginFrame().enableForm();
+			Launcher.getFrame().enableForm();
 			return;
 		}
 
@@ -169,7 +170,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());
 		minecraft.start();
-		Launcher.getLoginFrame().onEvent(Event.GAME_LAUNCH);
+		Launcher.getFrame().onEvent(Event.GAME_LAUNCH);
 		return;
 	}
 
