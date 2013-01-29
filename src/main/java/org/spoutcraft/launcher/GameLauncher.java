@@ -72,7 +72,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 	public void runGame(String user, String session, String downloadTicket, InstalledPack pack) {
 		try {
 			Launcher.getGameUpdater().start(pack);
-			Settings.setLastModpack(pack.getInfo().getName());
+			Settings.setLastModpack(pack.getName());
 			Settings.getYAML().save();
 		} catch (RestfulAPIException e1) {
 			e1.printStackTrace();

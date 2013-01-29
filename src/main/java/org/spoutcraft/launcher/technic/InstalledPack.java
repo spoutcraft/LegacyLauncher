@@ -29,21 +29,23 @@ package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
 import java.io.File;
-import java.io.IOException;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.util.FileUtils;
 
-public class InstalledPack {
+public abstract class InstalledPack {
+	// Images
 	private final Image image;
 	private final ImageIcon background;
 	private final Image icon;
-	private final ModpackInfo info;
+
+	// Directories
 	private File installedDirectory;
 	private File binDir;
 	private File cacheDir;
@@ -52,17 +54,14 @@ public class InstalledPack {
 	private File tempDir;
 	private File resourceDir;
 	private File coremodsDir;
-	
-	public InstalledPack(ModpackInfo info) throws IOException {
-		this(info, info.getIcon(), info.getImg(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
-	}
 
-	public InstalledPack(ModpackInfo info, Image icon, Image image, ImageIcon background) {
+	public InstalledPack(Image icon, Image image, ImageIcon background) {
 		this.icon = icon;
-		this.info = info;
 		this.image = image;
 		this.background = background;
-		
+	}
+
+	protected void init() {
 		String location = Settings.getPackDirectory(getName());
 		
 		if (location != null) {
@@ -82,33 +81,29 @@ public class InstalledPack {
 		return new ImageIcon(image.getScaledInstance(width, height, Image.SCALE_SMOOTH));
 	}
 
-	public String getName() {
-		return info.getName();
-	}
+	public abstract String getName();
 
-	public String getDisplayName() {
-		return info.getDisplayName();
-	}
+	public abstract String getDisplayName();
 
-	public ModpackInfo getInfo() {
-		return info;
-	}
-	
+	public abstract String getRecommended();
+
+	public abstract String getLatest();
+
+	public abstract List<String> getBuilds();
+
+	public abstract Modpack getModpack();
+
 	public String getBuild() {
 		String build = Settings.getModpackBuild(getName());
 		if (ModpackOptions.LATEST.equals(build)) {
-			build = info.getLatest();
+			build = getLatest();
 		} else if (ModpackOptions.LATEST.equals(build) || build == null) {
-			build = info.getRecommended();
+			build = getRecommended();
 		}
 		
 		return build;
 	}
-	
-	public Modpack getModpack() throws RestfulAPIException {
-		return TechnicRestAPI.getModpack(info, getBuild());
-	}
-	
+
 	public void initDirectories() {
 		binDir = new File(installedDirectory, "bin");
 		cacheDir = new File(installedDirectory, "cache");

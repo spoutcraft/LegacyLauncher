@@ -28,6 +28,8 @@
 package org.spoutcraft.launcher;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
@@ -206,5 +208,25 @@ public class Settings {
 
 	public static synchronized String getPackDirectory(String modpack) {
 		return yaml.getString("modpacks." + modpack + ".directory");
+	}
+
+	public static synchronized boolean isPackCustom(String modpack) {
+		return yaml.getBoolean("modpacks." + modpack + ".custom");
+	}
+
+	public static synchronized void setPackCustom(String modpack, boolean custom) {
+		yaml.setProperty("modpacks." + modpack + ".custom", custom);
+	}
+
+	public static synchronized String getCustomURL(String modpack) {
+		return yaml.getString("modpacks." + modpack + ".custom_url");
+	}
+
+	public static synchronized void setCustomURL(String modpack, String url) {
+		yaml.setProperty("modpacks." + modpack + ".custom_url", url);
+	}
+
+	public static synchronized List<String> getInstalledPacks() {
+		return yaml.getStringList("modpacks", new ArrayList<String>());
 	}
 }

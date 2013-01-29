@@ -36,12 +36,14 @@ import java.util.ListIterator;
 
 import javax.swing.JComponent;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.ModpackInfo;
-import org.spoutcraft.launcher.technic.TechnicRestAPI;
+import org.spoutcraft.launcher.technic.RestPack;
+import org.spoutcraft.launcher.technic.rest.ModpackInfo;
+import org.spoutcraft.launcher.technic.rest.TechnicRestAPI;
 
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -95,7 +97,13 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	public void setupModpackButtons() throws IOException {
 		List<ModpackInfo> modpacks = TechnicRestAPI.getModpacks();
 		for (ModpackInfo info : modpacks) {
-			installedPacks.add(new InstalledPack(info));
+			installedPacks.add(new RestPack(info));
+		}
+
+		for (String pack : Settings.getInstalledPacks()) {
+			if (Settings.isPackCustom(pack)) {
+//				installedPacks.add(new CustomPack()); Load all the custom packs in here
+			}
 		}
 		installedPacks.add(new AddPack());
 		selectPack(0);

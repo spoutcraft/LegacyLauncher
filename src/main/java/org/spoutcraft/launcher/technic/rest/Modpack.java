@@ -25,7 +25,7 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic;
+package org.spoutcraft.launcher.technic.rest;
 
 import java.util.ArrayList;
 import java.util.List;

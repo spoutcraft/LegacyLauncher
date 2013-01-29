@@ -124,7 +124,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildSelector.addActionListener(this);
 		populateBuilds(buildSelector);
 		
-		build = Settings.getModpackBuild(installedPack.getInfo().getName());
+		build = Settings.getModpackBuild(installedPack.getName());
 		if (build == null) {
 			build = RECOMMENDED;
 		}
@@ -160,12 +160,12 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		
 		if (build.equals("latest")) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getLatest()));
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getLatest()));
 			versionLatest.setSelected(true);
 			build = LATEST;
 		} else if (build.equals("recommended") || build == null) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getRecommended()));
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getRecommended()));
 			versionRec.setSelected(true);
 			build = RECOMMENDED;
 		} else {
@@ -233,7 +233,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
-			Settings.setModpackBuild(installedPack.getInfo().getName(), build);
+			Settings.setModpackBuild(installedPack.getName(), build);
 			if (directoryChanged == true) {
 				installedPack.setPackDirectory(installedDirectory);
 			}
@@ -243,11 +243,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();
 		} else if (action.equals(REC_ACTION)) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getRecommended()));
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getRecommended()));
 			build = RECOMMENDED;
 		} else if (action.equals(LATEST_ACTION)) {
 			buildSelector.setEnabled(false);
-			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getLatest()));
+			buildSelector.setSelectedItem(new BuildLabel(installedPack.getLatest()));
 			build = LATEST;
 		} else if (action.equals(MANUAL_ACTION)) {
 			buildSelector.setEnabled(true);
@@ -272,11 +272,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	}
 
 	private void populateBuilds(JComboBox buildSelector) {
-		for (String build : installedPack.getInfo().getBuilds()) {
+		for (String build : installedPack.getBuilds()) {
 			String display = build;
-			if (build.equals(installedPack.getInfo().getLatest())) {
+			if (build.equals(installedPack.getLatest())) {
 				display += " - Latest";
-			} else if (build.equals(installedPack.getInfo().getRecommended())) {
+			} else if (build.equals(installedPack.getRecommended())) {
 				display += " - Recommended";
 			}
 			BuildLabel label = new BuildLabel(build, display);

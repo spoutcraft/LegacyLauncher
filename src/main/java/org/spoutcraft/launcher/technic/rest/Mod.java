@@ -25,7 +25,7 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic;
+package org.spoutcraft.launcher.technic.rest;
 
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 

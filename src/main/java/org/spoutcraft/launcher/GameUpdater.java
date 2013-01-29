@@ -31,7 +31,7 @@ import org.spoutcraft.launcher.api.Directories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.Modpack;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.util.DownloadListener;
 
 public final class GameUpdater extends Directories {

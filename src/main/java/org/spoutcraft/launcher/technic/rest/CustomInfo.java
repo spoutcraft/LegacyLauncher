@@ -24,11 +24,11 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic;
+package org.spoutcraft.launcher.technic.rest;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class CustomModpack {
+public class CustomInfo {
 	@JsonProperty("name")
 	private String displayName;
 

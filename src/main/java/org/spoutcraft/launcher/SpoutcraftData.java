@@ -50,7 +50,7 @@ import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.technic.Modpack;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
 

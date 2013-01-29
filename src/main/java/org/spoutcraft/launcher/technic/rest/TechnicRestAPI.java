@@ -25,7 +25,7 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic;
+package org.spoutcraft.launcher.technic.rest;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -143,13 +143,13 @@ public class TechnicRestAPI {
 		}
 	}
 
-	public static CustomModpack getCustomModpack(String packURL) throws RestfulAPIException {
+	public static CustomInfo getCustomModpack(String packURL) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = packURL;
 		try {
 			URL conn = new URL(url);
 			stream = conn.openStream();
-			CustomModpack result = mapper.readValue(stream, CustomModpack.class);
+			CustomInfo result = mapper.readValue(stream, CustomInfo.class);
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);

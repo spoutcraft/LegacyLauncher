@@ -28,10 +28,13 @@ package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 
 public class AddPack extends InstalledPack {
 	private final static Image icon = MetroLoginFrame.getIcon("icon.png", 32, 32).getImage();
@@ -39,7 +42,7 @@ public class AddPack extends InstalledPack {
 	private final static ImageIcon background = new ImageIcon(MetroLoginFrame.getIcon("background.jpg", 880, 520).getImage().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
 
 	public AddPack() throws IOException {
-		super(null, icon, image, background);
+		super(icon, image, background);
 	}
 
 	@Override
@@ -49,6 +52,26 @@ public class AddPack extends InstalledPack {
 
 	@Override
 	public String getDisplayName() {
-		return "Add New Pack";
+		return "Add Pack";
+	}
+
+	@Override
+	public String getRecommended() {
+		return "";
+	}
+
+	@Override
+	public String getLatest() {
+		return "";
+	}
+
+	@Override
+	public List<String> getBuilds() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Modpack getModpack() {
+		return null;
 	}
 }
