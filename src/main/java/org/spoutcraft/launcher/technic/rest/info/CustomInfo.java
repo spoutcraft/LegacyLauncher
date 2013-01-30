@@ -24,8 +24,7 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
-package org.spoutcraft.launcher.technic.rest;
+package org.spoutcraft.launcher.technic.rest.info;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,25 +33,41 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.Utils;
 
-public class ModpackInfo {
+public class CustomInfo {
 	@JsonProperty("name")
+	private String displayName;
+
+	@JsonProperty("user")
+	private String user;
+
+	@JsonProperty("friendly_name")
 	private String name;
-	@JsonProperty("recommended")
-	private String recommended;
-	@JsonProperty("latest")
-	private String latest;
-	@JsonProperty("builds")
-	private String[] builds;
 
-	private String displayName = "Technic";
+	@JsonProperty("version")
+	private String version;
 
-	public void setDisplayName(String displayName) {
-		this.displayName = displayName;
-	}
+	@JsonProperty("url")
+	private String url;
+
+	@JsonProperty("logo")
+	private String logoUrl;
+
+	@JsonProperty("background")
+	private String backgroundUrl;
+
+	@JsonProperty("mirror")
+	private boolean hasMirror;
+	
+	@JsonProperty("mirror_url")
+	private String mirrorUrl;
+
+	@JsonProperty("minecraft")
+	private String minecraftVersion;
 
 	public String getName() {
 		return name;
@@ -61,28 +76,41 @@ public class ModpackInfo {
 	public String getDisplayName() {
 		return displayName;
 	}
-	public String getRecommended() {
-		return recommended;
+
+	public String getVersion() {
+		return version;
 	}
 
-	public String getLatest() {
-		return latest;
+	public String getMinecraftVersion() {
+		return minecraftVersion;
 	}
 
-	public String[] getBuilds() {
-		return builds;
+	public String getUser() {
+		return user;
+	}
+
+	public String getURL() {
+		return url;
 	}
 
 	public String getLogoURL() {
-		return TechnicRestAPI.getModpackImgURL(name);
-	}
-	
-	public String getBackgroundURL() {
-		return TechnicRestAPI.getModpackBackgroundURL(name);
+		return logoUrl;
 	}
 
-	public String getIconURL() {
-		return TechnicRestAPI.getModpackIconURL(name);
+	public String getBackgroundURL() {
+		return backgroundUrl;
+	}
+
+	public boolean hasMirror() {
+		return hasMirror;
+	}
+
+	public String getMirrorURL() {
+		return mirrorUrl;
+	}
+
+	public CustomModpack getModpack() {
+		return new CustomModpack(this);
 	}
 
 	public BufferedImage getLogo() throws IOException {
@@ -97,7 +125,7 @@ public class ModpackInfo {
 		}
 		return image;
 	}
-	
+
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
@@ -109,23 +137,5 @@ public class ModpackInfo {
 			image = ImageIO.read(download.getOutFile());
 		}
 		return image;
-	}
-
-	public BufferedImage getIcon() throws IOException { 
-		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "icon.png");
-		if (temp.exists()) {
-			image = ImageIO.read(temp);
-		} else {
-			temp.mkdirs();
-			Download download = DownloadUtils.downloadFile(getIconURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
-		}
-		return image;
-	}
-
-	@Override
-	public String toString() {
-		return "{ ModpackBuilds [name: " + name + ", recommended: " + recommended + ", latest: " + latest + ", builds: " + builds + "] }";
 	}
 }

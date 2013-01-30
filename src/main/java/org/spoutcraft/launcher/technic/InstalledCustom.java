@@ -7,13 +7,13 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-import org.spoutcraft.launcher.technic.rest.CustomInfo;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
+import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
 
-public class CustomPack extends InstalledPack {
+public class InstalledCustom extends InstalledPack {
 	private final CustomInfo info;
 
-	public CustomPack(CustomInfo info) throws IOException {
+	public InstalledCustom(CustomInfo info) throws IOException {
 		super(info.getLogo(), info.getLogo(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
 		this.info = info;
 		init();
@@ -47,8 +47,7 @@ public class CustomPack extends InstalledPack {
 	}
 
 	@Override
-	public Modpack getModpack() {
-		// TODO Auto-generated method stub
-		return null;
+	public CustomModpack getModpack() {
+		return info.getModpack();
 	}
 }

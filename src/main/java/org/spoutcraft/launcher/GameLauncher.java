@@ -34,8 +34,6 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
-import java.util.ArrayList;
-
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -46,7 +44,6 @@ import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.util.Utils;
@@ -103,9 +100,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		Applet applet = null;
 		try {
-			//TODO: I just took out the libraries call here Launcher.getGameUpdater().getBuild().getLibraries
-			// We don't need this but if we ever do here is where it goes.
-			applet = MinecraftLauncher.getMinecraftApplet(new ArrayList<Library>(), pack);
+			applet = MinecraftLauncher.getMinecraftApplet(pack);
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {

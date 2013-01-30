@@ -51,7 +51,7 @@ public final class Library implements Downloadable{
 
 	@Override
 	public void download(File location, DownloadListener listener) throws DownloadException{
-		StringBuilder builder = new StringBuilder(RestAPI.LIBRARY_GET_URL);
+		StringBuilder builder = new StringBuilder(SpoutRestAPI.LIBRARY_GET_URL);
 		String url =  builder.append(groupId).append("/").append(artifactId).append("/").append(version).toString();
 		try {
 			DownloadUtils.downloadFile(url, location.getPath(), location.getName(), md5, listener);

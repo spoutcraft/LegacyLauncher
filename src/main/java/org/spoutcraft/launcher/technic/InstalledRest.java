@@ -8,20 +8,20 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.ModpackInfo;
-import org.spoutcraft.launcher.technic.rest.TechnicRestAPI;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 
-public class RestPack extends InstalledPack {
-	private final ModpackInfo info;
+public class InstalledRest extends InstalledPack {
+	private final RestInfo info;
 
-	public RestPack(ModpackInfo info) throws IOException {
+	public InstalledRest(RestInfo info) throws IOException {
 		super(info.getIcon(), info.getLogo(), new ImageIcon(info.getBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH)));
 		this.info = info;
 		init();
 	}
 
-	public ModpackInfo getInfo() {
+	public RestInfo getInfo() {
 		return info;
 	}
 
@@ -51,9 +51,9 @@ public class RestPack extends InstalledPack {
 	}
 
 	@Override
-	public Modpack getModpack() {
+	public RestModpack getModpack() {
 		try {
-			return TechnicRestAPI.getModpack(info, getBuild());
+			return RestAPI.getModpack(info, getBuild());
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 		}

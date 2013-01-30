@@ -34,7 +34,7 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 
 public class AddPack extends InstalledPack {
 	private final static Image icon = MetroLoginFrame.getIcon("icon.png", 32, 32).getImage();
@@ -71,7 +71,7 @@ public class AddPack extends InstalledPack {
 	}
 
 	@Override
-	public Modpack getModpack() {
+	public RestModpack getModpack() {
 		return null;
 	}
 }

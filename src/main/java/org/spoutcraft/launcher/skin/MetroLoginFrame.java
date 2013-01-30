@@ -59,7 +59,7 @@ import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.rest.ModpackInfo;
+import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.LauncherOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
@@ -504,7 +504,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		login.setEnabled(false);
 	}
 	
-	public Image newBackgroundImage(ModpackInfo modpack) {
+	public Image newBackgroundImage(RestInfo modpack) {
 		try {
 			Image image = modpack.getBackground().getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
 			return image;

@@ -46,7 +46,7 @@ public final class Versions {
 		if (versions == null) {
 			InputStream stream = null;
 			try {
-				URLConnection conn = (new URL(RestAPI.VERSIONS_URL)).openConnection();
+				URLConnection conn = (new URL(SpoutRestAPI.VERSIONS_URL)).openConnection();
 				stream = conn.getInputStream();
 				ObjectMapper mapper = new ObjectMapper();
 				Channel c = mapper.readValue(stream, Channel.class);

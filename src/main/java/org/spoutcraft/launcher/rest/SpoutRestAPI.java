@@ -29,7 +29,7 @@ package org.spoutcraft.launcher.rest;
 
 import org.spoutcraft.launcher.Channel;
 
-public class RestAPI {
+public class SpoutRestAPI {
 	// Private
 	private static final String PROJECT = "spoutcraft";
 

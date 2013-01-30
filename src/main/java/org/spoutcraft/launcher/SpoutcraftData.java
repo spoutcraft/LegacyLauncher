@@ -48,13 +48,13 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Project;
-import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.SpoutRestAPI;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
 
-public final class SpoutcraftData extends Modpack {
+public final class SpoutcraftData extends RestModpack {
 	private static final ObjectMapper mapper = new ObjectMapper();
 	private final String installedBuild;
 	private final String build;
@@ -91,7 +91,6 @@ public final class SpoutcraftData extends Modpack {
 		return installedBuild;
 	}
 
-	@Override
 	public List<Library> getLibraries() {
 		return libs;
 	}
@@ -107,7 +106,7 @@ public final class SpoutcraftData extends Modpack {
 	}
 
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
-		return RestAPI.getDownloadURL(build);
+		return SpoutRestAPI.getDownloadURL(build);
 	}
 
 	/**
@@ -118,7 +117,7 @@ public final class SpoutcraftData extends Modpack {
 	 * @throws RestfulAPIException if the REST API could not be accessed
 	 */
 	private static String calcaulateMD5(String build) throws RestfulAPIException {
-		String url = RestAPI.getSpoutcraftURL(build);
+		String url = SpoutRestAPI.getSpoutcraftURL(build);
 		InputStream stream = null;
 		try {
 			URLConnection conn = (new URL(url)).openConnection();
@@ -155,7 +154,7 @@ public final class SpoutcraftData extends Modpack {
 		//Use channel selection for latest
 		if (Versions.getLatestMinecraftVersion().equals(getMinecraftVersion())) {
 			int build;
-			String url = RestAPI.getSpoutcraftURL(channel);
+			String url = SpoutRestAPI.getSpoutcraftURL(channel);
 			try {
 				URLConnection conn = (new URL(url)).openConnection();
 				stream = conn.getInputStream();
@@ -170,7 +169,7 @@ public final class SpoutcraftData extends Modpack {
 			if (channel == Channel.STABLE) {
 				return String.valueOf(build);
 			} else {
-				url = RestAPI.getSpoutcraftURL(Channel.STABLE);
+				url = SpoutRestAPI.getSpoutcraftURL(Channel.STABLE);
 				try {
 					URLConnection conn = (new URL(url)).openConnection();
 					stream = conn.getInputStream();
@@ -190,7 +189,7 @@ public final class SpoutcraftData extends Modpack {
 			}
 		} else {
 			//Find the newest build for the mc version
-			String url = RestAPI.ALL_BUILDS_URL;
+			String url = SpoutRestAPI.ALL_BUILDS_URL;
 			try {
 				final String mcVersion = getMinecraftVersion();
 				URLConnection conn = (new URL(url)).openConnection();
@@ -237,7 +236,7 @@ public final class SpoutcraftData extends Modpack {
 		if (spoutcraft.exists()) {
 			String md5 = MD5Utils.getMD5(spoutcraft);
 			InputStream stream = null;
-			String url = RestAPI.getMD5URL(md5);
+			String url = SpoutRestAPI.getMD5URL(md5);
 			try {
 				URLConnection conn = (new URL(url)).openConnection();
 				stream = conn.getInputStream();
@@ -261,7 +260,7 @@ public final class SpoutcraftData extends Modpack {
 	 */
 	private static List<Library> calculateLibraries(String build) throws RestfulAPIException {
 		InputStream stream = null;
-		String url = RestAPI.getLibraryURL(build);
+		String url = SpoutRestAPI.getLibraryURL(build);
 		try {
 			URLConnection conn = (new URL(url)).openConnection();
 			stream = conn.getInputStream();

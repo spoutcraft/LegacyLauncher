@@ -31,17 +31,14 @@ import java.applet.Applet;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.List;
-
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.UnknownMinecraftException;
-import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.technic.InstalledPack;
 
 public class MinecraftLauncher {
 	private static MinecraftClassLoader loader = null;
-	public static MinecraftClassLoader getClassLoader(List<Library> libraries, InstalledPack pack) {
+	public static MinecraftClassLoader getClassLoader(InstalledPack pack) {
 		if (loader == null) {
 			File mcBinFolder = pack.getBinDir();
 
@@ -51,21 +48,14 @@ public class MinecraftLauncher {
 			File lwglJar = new File(mcBinFolder, "lwjgl.jar");
 			File lwjgl_utilJar = new File(mcBinFolder, "lwjgl_util.jar");
 
-			File[] files = new File[5 + libraries.size()];
-
-			int index = 0;
-			for (Library lib : libraries) {
-				File libraryFile = new File(mcBinFolder, "lib" + File.separator + lib.name() + ".jar");
-				files[index] = libraryFile;
-				index++;
-			}
+			File[] files = new File[5];
 
 			try {
-				files[index + 0] = spoutcraftJar;
-				files[index + 1] = minecraftJar;
-				files[index + 2] = jinputJar;
-				files[index + 3] = lwglJar;
-				files[index + 4] = lwjgl_utilJar;
+				files[0] = spoutcraftJar;
+				files[1] = minecraftJar;
+				files[2] = jinputJar;
+				files[3] = lwglJar;
+				files[4] = lwjgl_utilJar;
 
 				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files, pack);
 			}
@@ -81,11 +71,11 @@ public class MinecraftLauncher {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet(List<Library> libraries, InstalledPack pack) throws CorruptedMinecraftJarException, MinecraftVerifyException {
+	public static Applet getMinecraftApplet(InstalledPack pack) throws CorruptedMinecraftJarException, MinecraftVerifyException {
 		File mcBinFolder = pack.getBinDir();
 
 		try {
-			ClassLoader classLoader = getClassLoader(libraries, pack);
+			ClassLoader classLoader = getClassLoader(pack);
 
 			String nativesPath = new File(mcBinFolder, "natives").getAbsolutePath();
 			System.setProperty("org.lwjgl.librarypath", nativesPath);

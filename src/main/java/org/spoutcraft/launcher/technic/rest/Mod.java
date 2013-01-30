@@ -32,10 +32,12 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 public class Mod {
 	private final String name;
 	private final String version;
+	private final String url;
 
-	public Mod(String name, String version) {
+	public Mod(String name, String version, String downloadUrl) {
 		this.name = name;
 		this.version = version;
+		this.url = downloadUrl;
 	}
 
 	public String getName() {
@@ -46,9 +48,21 @@ public class Mod {
 		return version;
 	}
 
-	public String getMD5() throws RestfulAPIException {
-		return TechnicRestAPI.getModMD5(name, version);
+	public String getURL() {
+		return url;
 	}
+
+	// TODO: This is a really awful way to do this. 
+	// Basically if the mod isn't in the rest database then the API explodes and it returns null.
+	// I should do this better soon but I'm busy.
+	public String getMD5() {
+		try {
+			return RestAPI.getModMD5(name, version);
+		} catch (RestfulAPIException e) {
+			return null;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "{ Mod [name: " + name + ", version: " + version + "] }";

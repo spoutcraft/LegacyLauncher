@@ -92,7 +92,7 @@ public class SpoutcraftBuild implements Comparable<SpoutcraftBuild>{
 		for (Channel c : Channel.values()) {
 			if (c != Channel.CUSTOM) {
 				try {
-					URLConnection conn = (new URL(RestAPI.getBuildListURL(c))).openConnection();
+					URLConnection conn = (new URL(SpoutRestAPI.getBuildListURL(c))).openConnection();
 					stream = conn.getInputStream();
 					ObjectMapper mapper = new ObjectMapper();
 					uniqueBuilds.addAll(Arrays.asList(mapper.readValue(stream, SpoutcraftBuild[].class)));

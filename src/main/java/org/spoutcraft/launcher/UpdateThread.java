@@ -53,7 +53,6 @@ import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.TechnicRestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -150,7 +149,7 @@ public class UpdateThread extends Thread {
 		}
 
 		MinecraftClassLoader loader;
-		loader = MinecraftLauncher.getClassLoader(build.getLibraries(), pack);
+		loader = MinecraftLauncher.getClassLoader(pack);
 
 		int loaded = 0;
 		while (!waiting.get()) {
@@ -427,7 +426,7 @@ public class UpdateThread extends Thread {
 
 			File modFile = new File(temp, name + "-" + build + ".zip");
 
-			Download download = DownloadUtils.downloadFile(TechnicRestAPI.getModDownloadURL(name, build), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
+			Download download = DownloadUtils.downloadFile(mod.getURL(), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
 			if (download.getResult() == Result.SUCCESS) {
 				try {
 					ZipFile zipFile = new ZipFile(download.getOutFile());

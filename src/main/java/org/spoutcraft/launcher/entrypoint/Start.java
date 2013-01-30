@@ -42,7 +42,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Project;
-import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.SpoutRestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -108,7 +108,7 @@ public class Start {
 			}
 
 			ProgressSplashScreen splash = new ProgressSplashScreen();
-			Download download = new Download(RestAPI.getLauncherDownloadURL(Settings.getLauncherChannel(), !codeSource.getName().endsWith(".exe")), temp.getPath());
+			Download download = new Download(SpoutRestAPI.getLauncherDownloadURL(Settings.getLauncherChannel(), !codeSource.getName().endsWith(".exe")), temp.getPath());
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
 
@@ -144,7 +144,7 @@ public class Start {
 	}
 
 	public static int getLatestLauncherBuild() throws RestfulAPIException {
-		String url = RestAPI.getLauncherURL(Settings.getLauncherChannel());
+		String url = SpoutRestAPI.getLauncherURL(Settings.getLauncherChannel());
 		InputStream stream = null;
 		try {
 			URLConnection conn = (new URL(url)).openConnection();

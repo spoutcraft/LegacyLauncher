@@ -36,8 +36,13 @@ import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
+import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
+import org.spoutcraft.launcher.util.MirrorUtils;
 
-public class TechnicRestAPI {
+public class RestAPI {
 
 	private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -83,7 +88,7 @@ public class TechnicRestAPI {
 		return MIRROR_URL + modpack + "/resources/icon.png";
 	}
 
-	public static List<ModpackInfo> getModpacks() throws RestfulAPIException {
+	public static List<RestInfo> getModpacks() throws RestfulAPIException {
 		InputStream stream = null;
 		String url = MODPACKS_URL;
 		try {
@@ -113,13 +118,13 @@ public class TechnicRestAPI {
 		}
 	}
 
-	public static Modpack getModpack(ModpackInfo modpack, String build) throws RestfulAPIException {
+	public static RestModpack getModpack(RestInfo modpack, String build) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModpackURL(modpack.getName(), build);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
-			Modpack result = mapper.readValue(stream, Modpack.class);
+			RestModpack result = mapper.readValue(stream, RestModpack.class);
 			return result.setInfo(modpack, build);
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
@@ -128,13 +133,13 @@ public class TechnicRestAPI {
 		}
 	}
 
-	public static ModpackInfo getModpackInfo(String modpack) throws RestfulAPIException {
+	public static RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModpackInfoURL(modpack);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openStream();
-			ModpackInfo result = mapper.readValue(stream, ModpackInfo.class);
+			RestInfo result = mapper.readValue(stream, RestInfo.class);
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
@@ -179,6 +184,20 @@ public class TechnicRestAPI {
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
+	}
+
+	public static String getMinecraftURL(String user) {
+		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
+	}
+
+	public static String getPatchURL(Modpack build) {
+		String mirrorURL = "patch/minecraft_";
+		mirrorURL += Versions.getLatestMinecraftVersion();
+		mirrorURL += "-" + build.getMinecraftVersion() + ".patch";
+		String fallbackURL = "http://get.spout.org/patch/minecraft_";
+		fallbackURL += Versions.getLatestMinecraftVersion();
+		fallbackURL += "-" + build.getMinecraftVersion() + ".patch";
+		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
 	private static class TechnicMD5 {

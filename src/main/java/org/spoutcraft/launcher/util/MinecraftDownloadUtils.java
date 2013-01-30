@@ -33,6 +33,7 @@ import org.spoutcraft.diff.JBPatch;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class MinecraftDownloadUtils {
@@ -42,7 +43,7 @@ public class MinecraftDownloadUtils {
 		while (tries > 0) {
 			System.out.println("Starting download of minecraft, with " + tries + " tries remaining");
 			tries--;
-			Download download = new Download(build.getMinecraftURL(user), output);
+			Download download = new Download(RestAPI.getMinecraftURL(user), output);
 			download.setListener(listener);
 			download.run();
 			if (download.getResult() != Result.SUCCESS) {
@@ -62,7 +63,7 @@ public class MinecraftDownloadUtils {
 					//Patch Minecraft
 					if (!Versions.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
 						File patch = new File(pack.getPackDirectory(), "mc.patch");
-						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
+						Download patchDownload = DownloadUtils.downloadFile(RestAPI.getPatchURL(build), patch.getPath(), null, null, listener);
 						if (patchDownload.getResult() == Result.SUCCESS) {
 							File patchedMinecraft = new File(pack.getTempDir(), "patched_minecraft.jar");
 							patchedMinecraft.delete();
