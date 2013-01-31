@@ -37,6 +37,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class RestInfo {
@@ -95,7 +96,7 @@ public class RestInfo {
 	public BufferedImage getLogo() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
-		if (temp.exists()) {
+		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
@@ -108,7 +109,7 @@ public class RestInfo {
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
-		if (temp.exists()) {
+		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
@@ -121,7 +122,7 @@ public class RestInfo {
 	public BufferedImage getIcon() throws IOException { 
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "icon.png");
-		if (temp.exists()) {
+		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(iconMD5)) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
