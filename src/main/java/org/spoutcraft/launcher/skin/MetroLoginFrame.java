@@ -545,7 +545,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public void setCustomName(String packName) {
 		customName.setText(packName);
 	}
-
+	
 	public void lockLoginButton() {
 		login.setText("Launching...");
 		login.setEnabled(false);
