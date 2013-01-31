@@ -42,6 +42,7 @@ import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
+import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class CustomInfo {
@@ -117,12 +118,16 @@ public class CustomInfo {
 	public BufferedImage getLogo() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
+		if (temp.exists() && !logoMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
-			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
+			if (logoUrl.equals("")) {
+				image = ImageIO.read(ResourceUtils.getResourceAsFile("noLogo.png"));
+			} else {
+				Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
+				image = ImageIO.read(download.getOutFile());
+			}
 		}
 		return image;
 	}
@@ -130,12 +135,16 @@ public class CustomInfo {
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
 		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
+		if (temp.exists() && !backgroundMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
 			image = ImageIO.read(temp);
 		} else {
 			temp.mkdirs();
-			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
+			if (backgroundUrl.equals("")) {
+				image = ImageIO.read(ResourceUtils.getResourceAsFile("background.jpg"));
+			} else {
+				Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
+				image = ImageIO.read(download.getOutFile());
+			}
 		}
 		return image;
 	}

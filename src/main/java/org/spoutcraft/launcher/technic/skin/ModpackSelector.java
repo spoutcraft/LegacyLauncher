@@ -206,12 +206,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		if (getSelectedPack() instanceof AddPack) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+			frame.setLabelVisible(frame.getPackShadow(), false);
 		} else if (getSelectedPack() instanceof InstalledRest) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+			frame.setLabelVisible(frame.getPackShadow(), true);
 		} else {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
+			frame.setLabelVisible(frame.getPackShadow(), true);
 		}
 
 		this.repaint();
