@@ -103,14 +103,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		for (RestInfo info : modpacks) {
 			installedPacks.add(new InstalledRest(info));
 		}
-
-		for (String pack : Settings.getInstalledPacks()) {
-			if (Settings.isPackCustom(pack)) {
-				try {
-					CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
-					installedPacks.add(new InstalledCustom(info));
-				} catch (RestfulAPIException e) {
-					//TODO: Try and load this without the internet into the pack list somehow
+		if (Settings.getInstalledPacks() != null) {
+			for (String pack : Settings.getInstalledPacks()) {
+				if (Settings.isPackCustom(pack)) {
+					try {
+						CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
+						installedPacks.add(new InstalledCustom(info));
+					} catch (RestfulAPIException e) {
+						//TODO: Try and load this without the internet into the pack list somehow
+					}
 				}
 			}
 		}

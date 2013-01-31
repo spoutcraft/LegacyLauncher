@@ -229,6 +229,10 @@ public class Settings {
 
 	public static synchronized List<String> getInstalledPacks() {
 		YAMLNode node = yaml.getNode("modpacks");
-		return new ArrayList<String>(node.getMap().keySet());
+		if (node == null) {
+			return null;
+		} else {
+			return new ArrayList<String>(node.getMap().keySet());
+		}
 	}
 }
