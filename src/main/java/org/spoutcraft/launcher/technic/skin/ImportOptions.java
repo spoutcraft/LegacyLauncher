@@ -184,7 +184,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 					enableButton(folder, true);
 					
 				} catch (RestfulAPIException e) {
-					msgLabel.setText("Invalid Technic Platform delivery URL");
+					msgLabel.setText("Error parsing platform response");
 					enableButton(save, false);
 					enableButton(folder, false);
 					info = null;
