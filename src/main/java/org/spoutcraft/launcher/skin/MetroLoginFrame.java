@@ -93,6 +93,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private BackgroundImage packBackground;
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
+	private JLabel packShadow;
 
 	public MetroLoginFrame() {
 		initComponents();
@@ -117,6 +118,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
+		
+		packShadow = new JLabel();
+		packShadow.setBounds(FRAME_WIDTH / 2 - (176 / 2), FRAME_HEIGHT / 2 + 45, 176, 38);
+		setIcon(packShadow, "packShadow.png", packShadow.getWidth(), packShadow.getHeight());
 
 		int loginY = 25;
 		// Setup username box
@@ -323,6 +328,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(packOptionsBtn);
 		contentPane.add(packRemoveBtn);
 		contentPane.add(packSelector);
+		contentPane.add(packShadow);
 		contentPane.add(selectorBackground);
 		contentPane.add(name);
 		contentPane.add(pass);
@@ -509,10 +515,18 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public ImageButton getPackRemoveBtn() {
 		return packRemoveBtn;
 	}
+	
+	public JLabel getPackShadow() {
+		return packShadow;
+	}
 
 	public void setButtonEnable(JButton button, boolean enable) {
 		button.setVisible(enable);
 		button.setEnabled(enable);
+	}
+	
+	public void setLabelVisible(JLabel label, boolean visible) {
+		label.setVisible(visible);
 	}
 
 	public void lockLoginButton() {

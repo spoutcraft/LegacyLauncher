@@ -48,4 +48,12 @@ public class ResourceUtils {
 		}
 		return stream;
 	}
+	
+	public static File getResourceAsFile(String path) {
+		File file = new File(".\\src\\main\\resources\\" + path);
+		if (file.exists())
+			return file;
+		else
+			return null;
+	}
 }
