@@ -29,6 +29,7 @@ package org.spoutcraft.launcher.technic.skin;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +37,9 @@ import java.util.ListIterator;
 
 import javax.swing.JComponent;
 
+import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.InstalledCustom;
@@ -104,8 +106,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 		for (String pack : Settings.getInstalledPacks()) {
 			if (Settings.isPackCustom(pack)) {
-				CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
-				installedPacks.add(new InstalledCustom(info));
+				try {
+					CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
+					installedPacks.add(new InstalledCustom(info));
+				} catch (RestfulAPIException e) {
+					//TODO: Try and load this without the internet into the pack list somehow
+				}
 			}
 		}
 		installedPacks.add(new AddPack());
@@ -119,6 +125,22 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			selectPack(loc);
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void removePack() {
+		if (getSelectedPack() instanceof InstalledCustom) {
+			InstalledPack pack = installedPacks.remove(getIndex());
+			String dir = Settings.getPackDirectory(pack.getName());
+			File file = new File(dir);
+			if (file.exists()) {
+				try {
+					FileUtils.deleteDirectory(file);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			selectPack(0);
 		}
 	}
 
@@ -180,11 +202,16 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			InstalledPack pack = iterator.next();
 			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
 		}
-		
+
 		if (getSelectedPack() instanceof AddPack) {
-			Launcher.getFrame().hideModpackOptions();
+			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
+			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+		} else if (getSelectedPack() instanceof InstalledRest) {
+			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
+			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
 		} else {
-			Launcher.getFrame().showModpackOptions();
+			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
+			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
 		}
 
 		this.repaint();

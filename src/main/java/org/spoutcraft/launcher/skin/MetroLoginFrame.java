@@ -74,6 +74,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final int FRAME_HEIGHT = 520;
 	private static final String OPTIONS_ACTION = "options";
 	private static final String PACK_OPTIONS_ACTION = "packoptions";
+	private static final String PACK_REMOVE_ACTION = "packremove";
 	private static final String EXIT_ACTION = "exit";
 	private static final String PACK_LEFT_ACTION = "packleft";
 	private static final String PACK_RIGHT_ACTION = "packright";
@@ -91,6 +92,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ModpackSelector packSelector;
 	private BackgroundImage packBackground;
 	private ImageButton packOptionsBtn;
+	private ImageButton packRemoveBtn;
+
 	public MetroLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -235,12 +238,17 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addKeyListener(this);
 		
 		// Pack Options Button
-		packOptionsBtn = new ImageButton(getIcon("packGear.png", 14, 14), getIcon("packGearHover.png", 14, 14));
-		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 87, FRAME_HEIGHT / 2 - 47, 14, 14);
+		packOptionsBtn = new ImageButton(getIcon("packOptions.png", 20, 20), getIcon("packOptionsInverted.png", 20, 20));
+		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 90, FRAME_HEIGHT / 2 + 59, 20, 20);
 		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 		
-		
+		// Pack Remove Button
+		packRemoveBtn = new ImageButton(getIcon("packDelete.png", 20, 20), getIcon("packDeleteInverted.png", 20, 20));
+		packRemoveBtn.setBounds(FRAME_WIDTH / 2 + 70, FRAME_HEIGHT / 2 + 59, 20, 20);
+		packRemoveBtn.setActionCommand(PACK_REMOVE_ACTION);
+		packRemoveBtn.addActionListener(this);
+
 		// Exit Button
 		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quitHover.png", 28, 28));
 		exit.setBounds(FRAME_WIDTH - 34, 6, 28, 28);
@@ -313,6 +321,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(switchLeft);
 		contentPane.add(switchRight);
 		contentPane.add(packOptionsBtn);
+		contentPane.add(packRemoveBtn);
 		contentPane.add(packSelector);
 		contentPane.add(selectorBackground);
 		contentPane.add(name);
@@ -410,6 +419,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				launcherOptions.setModal(true);
 				launcherOptions.setVisible(true);
 			}
+		} else if(action.equals(PACK_REMOVE_ACTION)) { 
+			getModpackSelector().removePack();
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
 				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
@@ -490,15 +501,20 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public String getSelectedUser() {
 		return this.name.getText();
 	}
-	
-	public void hideModpackOptions() {
-		packOptionsBtn.setVisible(false);
+
+	public ImageButton getPackOptionsBtn() {
+		return packOptionsBtn;
 	}
-	
-	public void showModpackOptions() {
-		packOptionsBtn.setVisible(true);
+
+	public ImageButton getPackRemoveBtn() {
+		return packRemoveBtn;
 	}
-	
+
+	public void setButtonEnable(JButton button, boolean enable) {
+		button.setVisible(enable);
+		button.setEnabled(enable);
+	}
+
 	public void lockLoginButton() {
 		login.setText("Launching...");
 		login.setEnabled(false);

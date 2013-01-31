@@ -41,33 +41,28 @@ import org.spoutcraft.launcher.util.Utils;
 public class CustomInfo {
 	@JsonProperty("name")
 	private String displayName;
-
 	@JsonProperty("user")
 	private String user;
-
 	@JsonProperty("friendly_name")
 	private String name;
-
 	@JsonProperty("version")
 	private String version;
-
 	@JsonProperty("url")
 	private String url;
-
 	@JsonProperty("logo")
 	private String logoUrl;
-
 	@JsonProperty("background")
 	private String backgroundUrl;
-
 	@JsonProperty("mirror")
 	private boolean hasMirror;
-	
 	@JsonProperty("mirror_url")
 	private String mirrorUrl;
-
 	@JsonProperty("minecraft")
 	private String minecraftVersion;
+	@JsonProperty("logo_md5")
+	private String logoMD5;
+	@JsonProperty("background_md5")
+	private String backgroundMD5;
 
 	public String getName() {
 		return name;

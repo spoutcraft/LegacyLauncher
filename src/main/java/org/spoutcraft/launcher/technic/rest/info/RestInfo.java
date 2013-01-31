@@ -48,6 +48,12 @@ public class RestInfo {
 	private String latest;
 	@JsonProperty("builds")
 	private String[] builds;
+	@JsonProperty("logo_md5")
+	private String logoMD5;
+	@JsonProperty("background_md5")
+	private String backgroundMD5;
+	@JsonProperty("icon_md5")
+	private String iconMD5;
 
 	private String displayName = "Technic";
 
