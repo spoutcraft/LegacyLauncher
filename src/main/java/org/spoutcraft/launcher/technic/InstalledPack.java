@@ -97,7 +97,7 @@ public abstract class InstalledPack {
 		String build = Settings.getModpackBuild(getName());
 		if (ModpackOptions.LATEST.equals(build)) {
 			build = getLatest();
-		} else if (ModpackOptions.LATEST.equals(build) || build == null) {
+		} else if (ModpackOptions.RECOMMENDED.equals(build) || build == null) {
 			build = getRecommended();
 		}
 		
