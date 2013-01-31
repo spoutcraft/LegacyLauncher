@@ -207,11 +207,19 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
 			frame.setLabelVisible(frame.getPackShadow(), false);
+			frame.setLabelVisible(frame.getCustomName(), false);
 		} else if (getSelectedPack() instanceof InstalledRest) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
 			frame.setLabelVisible(frame.getPackShadow(), true);
+			frame.setLabelVisible(frame.getCustomName(), false);
 		} else {
+			if (((InstalledCustom) getSelectedPack()).getLogoUrl().equals("")) {
+				frame.setCustomName(getSelectedPack().getDisplayName());
+				frame.setLabelVisible(frame.getCustomName(), true);
+			} else {
+				frame.setLabelVisible(frame.getCustomName(), false);
+			}
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
 			frame.setLabelVisible(frame.getPackShadow(), true);

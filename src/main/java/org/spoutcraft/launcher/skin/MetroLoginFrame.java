@@ -94,6 +94,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
 	private JLabel packShadow;
+	private JLabel customName;
 
 	public MetroLoginFrame() {
 		initComponents();
@@ -302,6 +303,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Pack Selector
 		packSelector = new ModpackSelector(this);
 		packSelector.setBounds(0, (FRAME_HEIGHT / 2) - 85, FRAME_WIDTH, 170);
+		
+		// Custom Pack Name Label
+		customName = new JLabel("", JLabel.CENTER);
+		customName.setBounds(FRAME_WIDTH / 2 - (192 /2), FRAME_HEIGHT / 2 + (110 / 2) - 30, 192, 30);
+		customName.setFont(minecraft.deriveFont(14F));
+		customName.setVisible(false);
+		customName.setForeground(Color.white);
 
 		// User Faces
 		java.util.List<String> savedUsers = getSavedUsernames();
@@ -325,6 +333,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		contentPane.add(switchLeft);
 		contentPane.add(switchRight);
+		contentPane.add(customName);
 		contentPane.add(packOptionsBtn);
 		contentPane.add(packRemoveBtn);
 		contentPane.add(packSelector);
@@ -519,6 +528,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public JLabel getPackShadow() {
 		return packShadow;
 	}
+	
+	public JLabel getCustomName() {
+		return customName;
+	}
 
 	public void setButtonEnable(JButton button, boolean enable) {
 		button.setVisible(enable);
@@ -527,6 +540,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	
 	public void setLabelVisible(JLabel label, boolean visible) {
 		label.setVisible(visible);
+	}
+	
+	public void setCustomName(String packName) {
+		customName.setText(packName);
 	}
 
 	public void lockLoginButton() {

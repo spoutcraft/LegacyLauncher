@@ -28,6 +28,10 @@ public class InstalledCustom extends InstalledPack {
 	public String getDisplayName() {
 		return info.getDisplayName();
 	}
+	
+	public String getLogoUrl() {
+		return info.getLogoURL();
+	}
 
 	@Override
 	public String getRecommended() {
