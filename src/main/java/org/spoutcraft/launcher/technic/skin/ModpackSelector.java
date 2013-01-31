@@ -48,6 +48,7 @@ import org.spoutcraft.launcher.technic.InstalledRest;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
@@ -133,7 +134,22 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		if (getSelectedPack() instanceof InstalledCustom) {
 			InstalledPack pack = installedPacks.remove(getIndex());
 			String dir = Settings.getPackDirectory(pack.getName());
-			File file = new File(dir);
+			
+			Settings.removePack(pack.getName());
+			Settings.getYAML().save();
+			File file;
+			if (dir != null) {
+				file = new File(dir);
+				if (file.exists()) {
+					try {
+						FileUtils.deleteDirectory(file);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+			file = new File(Utils.getAssetsDirectory(), pack.getName());
 			if (file.exists()) {
 				try {
 					FileUtils.deleteDirectory(file);

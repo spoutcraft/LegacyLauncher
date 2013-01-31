@@ -227,6 +227,10 @@ public class Settings {
 		yaml.setProperty("modpacks." + modpack + ".custom_url", url);
 	}
 
+	public static synchronized void removePack(String modpack) {
+		yaml.removeProperty("modpacks." + modpack);
+	}
+
 	public static synchronized List<String> getInstalledPacks() {
 		YAMLNode node = yaml.getNode("modpacks");
 		if (node == null) {

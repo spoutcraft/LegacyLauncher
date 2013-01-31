@@ -189,6 +189,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 					enableButton(folder, false);
 					info = null;
 					this.url = "";
+					e.printStackTrace();
 				}
 			} else {
 				msgLabel.setText("Invalid Technic Platform delivery URL");
