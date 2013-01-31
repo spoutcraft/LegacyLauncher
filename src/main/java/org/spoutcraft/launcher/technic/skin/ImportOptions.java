@@ -40,13 +40,22 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
 import org.spoutcraft.launcher.util.Utils;
 
-public class ImportOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
+public class ImportOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener, DocumentListener {
 	private static final long serialVersionUID = 1L;
 	private static final String QUIT_ACTION = "quit";
 	private static final String IMPORT_ACTION = "import";
@@ -55,8 +64,12 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private static final int FRAME_HEIGHT = 222;
 	private JLabel msgLabel;
 	private JLabel background;
+	private LiteButton save;
+	private LiteButton folder;
 	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
+	private CustomInfo info = null;
+	private String url = "";
 	
 	public ImportOptions() {
 		setTitle("Add a Pack");
@@ -93,8 +106,9 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		LiteTextBox url = new LiteTextBox(this, "Paste Platform URL Here");
 		url.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 10, FRAME_WIDTH - 20, 30);
 		url.setFont(minecraft);
+		url.getDocument().addDocumentListener(this);
 		
-		LiteButton save = new LiteButton("Add Modpack");
+		save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
 		save.setBounds(FRAME_WIDTH - 130, FRAME_HEIGHT - 50, 120, 30);
 		save.setActionCommand(IMPORT_ACTION);
@@ -103,12 +117,15 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		LiteButton folder = new LiteButton("Change Folder");
+		folder = new LiteButton("Change Folder");
 		folder.setFont(minecraft.deriveFont(14F));
 		folder.setBounds(FRAME_WIDTH - 270, FRAME_HEIGHT - 50, 130, 30);
 		folder.setActionCommand(CHANGE_FOLDER);
 		folder.addActionListener(this);
 		
+		enableButton(save, false);
+		enableButton(folder, false);
+
 		contentPane.add(optionsQuit);
 		contentPane.add(msgLabel);
 		contentPane.add(folder);
@@ -137,7 +154,60 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				file.exists();
 				// File is chosen here
 			}
+		} else if (action.equals(IMPORT_ACTION)) {
+			if (info != null || url.isEmpty()) {
+				Launcher.getFrame().getModpackSelector().addPack(info);
+				Settings.setCustomURL(info.getName(), url);
+				Settings.setPackCustom(info.getName(), true);
+				Settings.getYAML().save();
+				dispose();
+			}
 		}
+	}
+
+	public void urlUpdated(Document doc) {
+		try {
+			String url = doc.getText(0, doc.getLength());
+			if (url.isEmpty()) {
+				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
+				enableButton(save, false);
+				enableButton(folder, false);
+				info = null;
+				this.url = "";
+				return;
+			} else if (url.matches("http://([0-9.:]+)/api/modpack/([a-zA-Z0-9-]+)")) {
+				try {
+					info = RestAPI.getCustomModpack(url);
+					msgLabel.setText("Modpack: " + info.getDisplayName());
+					this.url = url;
+					enableButton(save, true);
+					enableButton(folder, true);
+					
+				} catch (RestfulAPIException e) {
+					msgLabel.setText("Invalid Technic Platform delivery URL");
+					enableButton(save, false);
+					enableButton(folder, false);
+					info = null;
+					this.url = "";
+				}
+			} else {
+				msgLabel.setText("Invalid Technic Platform delivery URL");
+				enableButton(save, false);
+				enableButton(folder, false);
+				info = null;
+				this.url = "";
+			}
+			
+		} catch (BadLocationException e) {
+			//This should never ever happen.
+			//Java is stupid for not having a getAllText of some kind on the Document class
+			e.printStackTrace();
+		}
+	}
+
+	public void enableButton(LiteButton button, boolean enable) {
+		button.setEnabled(enable);
+		button.setVisible(enable);
 	}
 
 	@Override
@@ -179,5 +249,21 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		urlUpdated(e.getDocument());
+	}
+	
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		urlUpdated(e.getDocument());
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		urlUpdated(e.getDocument());
 	}
 }

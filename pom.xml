@@ -9,7 +9,7 @@
 	<version>2.0.0-${buildNumber}</version>
 	<url>http://www.technicpack.net</url>
 	<inceptionYear>2013</inceptionYear>
-	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
+	<description>Custom launcher for installing and updating Modpacks with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
 	<!-- Build properties -->
 	<properties>
@@ -41,9 +41,9 @@
 
 	<!-- Source code access -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:TechnicPack/Spoutcraft-Launcher.git</developerConnection>
-		<connection>scm:git:git://github.com/TechnicPack/Spoutcraft-Launcher.git</connection>
-		<url>https://github.com/TechnicPack/Spoutcraft-Launcher/tree/dev</url>
+		<developerConnection>scm:git:git@github.com:TechnicPack/TechnicLauncher.git</developerConnection>
+		<connection>scm:git:git://github.com/TechnicPack/TechnicLauncher.git</connection>
+		<url>https://github.com/TechnicPack/TechnicLauncher/tree/dev</url>
 	</scm>
 
 	<!-- Build server -->
@@ -51,12 +51,6 @@
 		<system>jenkins</system>
 		<url>http://build.technicpack.net/job/TechnicLauncher/</url>
 	</ciManagement>
-
-	<!-- Issue tracker -->
-	<issueManagement>
-		<system>jira</system>
-		<url>http://issues.spout.org/browse/SPOUTCRAFT</url>
-	</issueManagement>
 
 	<!-- Dependency repositories -->
 	<repositories>

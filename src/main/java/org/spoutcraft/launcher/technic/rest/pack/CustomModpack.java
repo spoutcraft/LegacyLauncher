@@ -39,7 +39,7 @@ public class CustomModpack extends Modpack {
 	public List<Mod> getMods() {
 		List<Mod> mods = new ArrayList<Mod>(1);
 		mods.add(new Mod(getName(), getBuild(), getInfo().getURL()));
-		return null;
+		return mods;
 	}
 
 	public CustomInfo getInfo() {

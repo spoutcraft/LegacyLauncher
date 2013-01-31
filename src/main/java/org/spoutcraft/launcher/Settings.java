@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spoutcraft.launcher.yml.YAMLNode;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class Settings {
@@ -211,7 +212,7 @@ public class Settings {
 	}
 
 	public static synchronized boolean isPackCustom(String modpack) {
-		return yaml.getBoolean("modpacks." + modpack + ".custom");
+		return yaml.getBoolean("modpacks." + modpack + ".custom", false);
 	}
 
 	public static synchronized void setPackCustom(String modpack, boolean custom) {
@@ -227,6 +228,7 @@ public class Settings {
 	}
 
 	public static synchronized List<String> getInstalledPacks() {
-		return yaml.getStringList("modpacks", new ArrayList<String>());
+		YAMLNode node = yaml.getNode("modpacks");
+		return new ArrayList<String>(node.getMap().keySet());
 	}
 }

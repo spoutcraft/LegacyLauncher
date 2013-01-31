@@ -40,9 +40,11 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
+import org.spoutcraft.launcher.technic.InstalledCustom;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.InstalledRest;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 
 public class ModpackSelector extends JComponent implements ActionListener {
@@ -102,11 +104,22 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 		for (String pack : Settings.getInstalledPacks()) {
 			if (Settings.isPackCustom(pack)) {
-//				installedPacks.add(new CustomPack()); Load all the custom packs in here
+				CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
+				installedPacks.add(new InstalledCustom(info));
 			}
 		}
 		installedPacks.add(new AddPack());
 		selectPack(0);
+	}
+
+	public void addPack(CustomInfo info) {
+		try {
+			int loc = installedPacks.size() - 1;
+			installedPacks.add(loc, new InstalledCustom(info));
+			selectPack(loc);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public int getIndex() {
@@ -127,8 +140,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			selectPack(index - installedPacks.size());
 		} else if (index < 0) {
 			selectPack(installedPacks.size() + index);
-		} else if (this.index == index) {
-			return;
 		} else {
 			this.index = index;
 		}
