@@ -87,4 +87,8 @@ public class LiteTextBox extends JTextField implements FocusListener{
 			label.setVisible(true);
 		}
 	}
+
+	public void setLabelVisible(boolean visible) {
+		label.setVisible(visible);
+	}
 }
