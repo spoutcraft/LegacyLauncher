@@ -97,6 +97,7 @@ public class YAMLNode {
 			try {
 				node = (Map<String, Object>) o;
 			} catch (ClassCastException e) {
+				e.printStackTrace();
 				return null;
 			}
 		}

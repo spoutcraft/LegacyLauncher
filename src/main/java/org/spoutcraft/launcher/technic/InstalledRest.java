@@ -45,6 +45,11 @@ public class InstalledRest extends InstalledPack {
 	}
 
 	@Override
+	public String getLogoURL() {
+		return info.getLogoURL();
+	}
+
+	@Override
 	public List<String> getBuilds() {
 		return Arrays.asList(info.getBuilds());
 	}

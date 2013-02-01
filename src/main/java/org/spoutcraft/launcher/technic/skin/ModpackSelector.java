@@ -42,7 +42,6 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.InstalledCustom;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.InstalledRest;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
@@ -109,9 +108,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				if (Settings.isPackCustom(pack)) {
 					try {
 						CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
-						installedPacks.add(new InstalledCustom(info));
+						installedPacks.add(info.getPack());
 					} catch (RestfulAPIException e) {
-						//TODO: Try and load this without the internet into the pack list somehow
 						e.printStackTrace();
 					}
 				}
@@ -121,32 +119,25 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(0);
 	}
 
-	public void addPack(CustomInfo info) {
-		try {
-			int loc = installedPacks.size() - 1;
-			installedPacks.add(loc, new InstalledCustom(info));
-			selectPack(loc);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void addPack(InstalledPack pack) {
+		int loc = installedPacks.size() - 1;
+		installedPacks.add(loc, pack);
+		selectPack(loc);
 	}
 
 	public void removePack() {
-		if (getSelectedPack() instanceof InstalledCustom) {
+		boolean custom = Settings.isPackCustom(getSelectedPack().getName());
+		if (custom) {
 			InstalledPack pack = installedPacks.remove(getIndex());
-			String dir = Settings.getPackDirectory(pack.getName());
 			
 			Settings.removePack(pack.getName());
 			Settings.getYAML().save();
-			File file;
-			if (dir != null) {
-				file = new File(dir);
-				if (file.exists()) {
-					try {
-						FileUtils.deleteDirectory(file);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+			File file = pack.getPackDirectory();
+			if (file.exists()) {
+				try {
+					FileUtils.deleteDirectory(file);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 			}
 			
@@ -221,19 +212,16 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
 		}
 
-		if (getSelectedPack() instanceof AddPack) {
+		boolean custom = Settings.isPackCustom(selected.getName());
+
+		if (selected instanceof AddPack) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
 			frame.setLabelVisible(frame.getPackShadow(), false);
 			frame.setLabelVisible(frame.getCustomName(), false);
-		} else if (getSelectedPack() instanceof InstalledRest) {
-			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
-			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
-			frame.setLabelVisible(frame.getPackShadow(), true);
-			frame.setLabelVisible(frame.getCustomName(), false);
-		} else {
-			if (((InstalledCustom) getSelectedPack()).getLogoUrl().equals("")) {
-				frame.setCustomName(getSelectedPack().getDisplayName());
+		} else if (custom) {
+			if (selected.getLogoURL().equals("")) {
+				frame.setCustomName(selected.getDisplayName());
 				frame.setLabelVisible(frame.getCustomName(), true);
 			} else {
 				frame.setLabelVisible(frame.getCustomName(), false);
@@ -241,6 +229,11 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
 			frame.setLabelVisible(frame.getPackShadow(), true);
+		} else {
+			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
+			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
+			frame.setLabelVisible(frame.getPackShadow(), true);
+			frame.setLabelVisible(frame.getCustomName(), false);
 		}
 
 		this.repaint();

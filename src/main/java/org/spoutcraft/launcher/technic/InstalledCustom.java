@@ -44,6 +44,11 @@ public class InstalledCustom extends InstalledPack {
 	}
 
 	@Override
+	public String getLogoURL() {
+		return info.getLogoURL();
+	}
+
+	@Override
 	public List<String> getBuilds() {
 		List<String> builds = new ArrayList<String>(1);
 		builds.add(getLatest());

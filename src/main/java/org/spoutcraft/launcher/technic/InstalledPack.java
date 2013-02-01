@@ -81,6 +81,8 @@ public abstract class InstalledPack {
 		return new ImageIcon(logo.getScaledInstance(width, height, Image.SCALE_SMOOTH));
 	}
 
+	public abstract String getLogoURL();
+
 	public abstract String getName();
 
 	public abstract String getDisplayName();

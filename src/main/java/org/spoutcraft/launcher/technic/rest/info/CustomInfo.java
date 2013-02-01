@@ -32,6 +32,10 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.technic.InstalledCustom;
+import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.InstalledRest;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -105,6 +109,20 @@ public class CustomInfo {
 		return mirrorUrl;
 	}
 
+	public InstalledPack getPack() {
+		try {
+			if (this.hasMirror()) {
+				RestAPI rest = new RestAPI(getMirrorURL());
+				RestInfo restInfo = rest.getModpackInfo(getName());
+				return new InstalledRest(restInfo);
+			} else {
+				return new InstalledCustom(this);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	public CustomModpack getModpack() {
 		return new CustomModpack(this);
 	}

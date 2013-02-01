@@ -66,6 +66,11 @@ public class AddPack extends InstalledPack {
 	}
 
 	@Override
+	public String getLogoURL() {
+		return "";
+	}
+
+	@Override
 	public List<String> getBuilds() {
 		return Collections.emptyList();
 	}
