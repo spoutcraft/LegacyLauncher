@@ -150,9 +150,10 @@ public class CustomInfo {
 		BufferedImage image;
 		File assets = new File(Utils.getAssetsDirectory(), getName());
 		assets.mkdirs();
-		File temp = new File(assets, "background.jpg");
+		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
 		if (temp.exists() && !backgroundMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
 			image = ImageIO.read(temp);
+		} else {
 			if (backgroundUrl.equals("")) {
 				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
 			} else {
