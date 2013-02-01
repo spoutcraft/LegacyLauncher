@@ -42,7 +42,7 @@ public class MinecraftLauncher {
 		if (loader == null) {
 			File mcBinFolder = pack.getBinDir();
 
-			File spoutcraftJar = new File(mcBinFolder, "modpack.jar");
+			File modpackJar = new File(mcBinFolder, "modpack.jar");
 			File minecraftJar = new File(mcBinFolder, "minecraft.jar");
 			File jinputJar = new File(mcBinFolder, "jinput.jar");
 			File lwglJar = new File(mcBinFolder, "lwjgl.jar");
@@ -51,13 +51,13 @@ public class MinecraftLauncher {
 			File[] files = new File[5];
 
 			try {
-				files[0] = spoutcraftJar;
+				files[0] = modpackJar;
 				files[1] = minecraftJar;
 				files[2] = jinputJar;
 				files[3] = lwglJar;
 				files[4] = lwjgl_utilJar;
 
-				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), spoutcraftJar, files, pack);
+				loader = new MinecraftClassLoader(ClassLoader.getSystemClassLoader(), modpackJar, files, pack);
 			}
 			catch (Exception e) {
 				e.printStackTrace();

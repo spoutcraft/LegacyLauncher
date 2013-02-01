@@ -133,10 +133,9 @@ public class UpdateThread extends Thread {
 					Resources.Special.getYAML();
 				}
 				Versions.getMinecraftVersions();
-
-				cleanLogs();
-				cleanTemp();
 			}
+
+			cleanLogs();
 
 //			Validator validate = new Validator();
 //			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
@@ -162,17 +161,6 @@ public class UpdateThread extends Thread {
 		}
 		logger.info("Preloaded " + loaded + " classes in advance");
 		finished.set(true);
-	}
-
-	private void cleanTemp() {
-		File binDir = pack.getBinDir();
-		for (File f : binDir.listFiles()) {
-			if (f.isDirectory()) {
-				if (f.getName().startsWith("temp_")) {
-					FileUtils.deleteQuietly(f);
-				}
-			}
-		}
 	}
 
 	private void cleanLogs() {
@@ -445,6 +433,7 @@ public class UpdateThread extends Thread {
 			}
 		}
 
+		cleanupPackTemp();
 		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
 			installed.createNewFile();
@@ -454,9 +443,16 @@ public class UpdateThread extends Thread {
 		yaml.save();
 	}
 
+	public void cleanupPackTemp() {
+		try {
+			FileUtils.cleanDirectory(pack.getTempDir());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void cleanupBinFolders() {
 		try {
-			if (pack.getBinDir().exists()) {
+			if (!pack.getBinDir().exists()) {
 				return;
 			}
 

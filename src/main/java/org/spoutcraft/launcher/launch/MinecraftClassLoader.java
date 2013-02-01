@@ -50,8 +50,6 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
-import org.apache.commons.io.FileUtils;
-
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -60,17 +58,14 @@ public class MinecraftClassLoader extends URLClassLoader {
 	private HashSet<String> preloaded = new HashSet<String>();
 	private HashMap<String, File> classLocations = new HashMap<String, File>(10000);
 
-	public MinecraftClassLoader(ClassLoader parent, File spoutcraft, File[] libraries, InstalledPack pack) {
+	public MinecraftClassLoader(ClassLoader parent, File modpackJar, File[] libraries, InstalledPack pack) {
 		super(new URL[0], parent);
 
 		// Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)
-		File tempDir = getTempDirectory(pack);
 		for (File f : libraries) {
 			try {
-				File replacement = new File(tempDir, f.getName());
-				FileUtils.copyFile(f, replacement);
-				this.addURL(replacement.toURI().toURL());
-				index(replacement);
+				this.addURL(f.toURI().toURL());
+				index(f);
 			} catch (ClosedByInterruptException e) {
 				// Ignore, assume we interrupted for a reason
 				return;
@@ -79,28 +74,13 @@ public class MinecraftClassLoader extends URLClassLoader {
 			}
 		}
 		try {
-			File tempSpoutcraft = new File(tempDir, spoutcraft.getName());
-			FileUtils.copyFile(spoutcraft, tempSpoutcraft);
-			spoutcraft = tempSpoutcraft;
-			this.addURL(spoutcraft.toURI().toURL());
-			index(spoutcraft);
+			this.addURL(modpackJar.toURI().toURL());
+			index(modpackJar);
 		} catch (ClosedByInterruptException e) {
 			// Ignore, assume we interrupted for a reason
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
-	}
-
-	private File getTempDirectory(InstalledPack pack) {
-		int index = 0;
-		while (true) {
-			File tempDir = new File(pack.getBinDir(), "temp_" + index);
-			if (!tempDir.isDirectory() && !tempDir.exists()) {
-				tempDir.mkdirs();
-				return tempDir;
-			}
-			index++;
 		}
 	}
 
