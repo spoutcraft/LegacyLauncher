@@ -69,6 +69,7 @@ public abstract class InstalledPack {
 			initDirectories();
 		}
 	}
+
 	public ImageIcon getBackground() {
 		return background;
 	}
@@ -97,12 +98,17 @@ public abstract class InstalledPack {
 
 	public String getBuild() {
 		String build = Settings.getModpackBuild(getName());
+		String saveBuild = build;
 		if (ModpackOptions.LATEST.equals(build)) {
 			build = getLatest();
+			saveBuild = ModpackOptions.LATEST;
 		} else if (ModpackOptions.RECOMMENDED.equals(build) || build == null) {
 			build = getRecommended();
+			saveBuild = ModpackOptions.RECOMMENDED;
 		}
 		
+		Settings.setModpackBuild(getName(), saveBuild);
+		Settings.getYAML().save();
 		return build;
 	}
 

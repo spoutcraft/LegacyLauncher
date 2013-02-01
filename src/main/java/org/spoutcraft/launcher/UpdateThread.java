@@ -117,7 +117,6 @@ public class UpdateThread extends Thread {
 	private void runTasks() throws IOException{
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
-			File installed = new File(pack.getBinDir(), "installed");
 
 			if (minecraftUpdate) {
 				updateMinecraft(build);
@@ -125,6 +124,7 @@ public class UpdateThread extends Thread {
 
 			boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
 			if (modpackUpdate) {
+				File installed = new File(pack.getBinDir(), "installed");
 				if(!installed.exists()) {
 					updateModpack(build);
 				}
@@ -291,7 +291,7 @@ public class UpdateThread extends Thread {
 			return true;
 		}
 		stateChanged("Checking for Minecraft update...", 600F / steps);
-		String installed = Settings.getInstalledMC();
+		String installed = Settings.getInstalledMC(build.getName());
 		stateChanged("Checking for Minecraft update...", 700F / steps);
 		String required = build.getMinecraftVersion();
 		return installed == null || !installed.equals(required);
@@ -352,7 +352,7 @@ public class UpdateThread extends Thread {
 
 		stateChanged("Extracting Files...", 0);
 
-		Settings.setInstalledMC(build.getMinecraftVersion());
+		Settings.setInstalledMC(build.getName(), build.getMinecraftVersion());
 		Settings.getYAML().save();
 	}
 

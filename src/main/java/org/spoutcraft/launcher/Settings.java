@@ -179,12 +179,12 @@ public class Settings {
 		yaml.setProperty("launcher.client.server", server);
 	}
 
-	public static synchronized String getInstalledMC() {
-		return yaml.getString("launcher.client.minecraft", null);
+	public static synchronized String getInstalledMC(String modpack) {
+		return yaml.getString("modpacks." + modpack + ".minecraft", null);
 	}
 
-	public static synchronized void setInstalledMC(String version) {
-		yaml.setProperty("launcher.client.minecraft", version);
+	public static synchronized void setInstalledMC(String modpack, String version) {
+		yaml.setProperty("modpacks." + modpack + ".minecraft", version);
 	}
 
 	public static synchronized void setModpackBuild(String modpack, String build) {

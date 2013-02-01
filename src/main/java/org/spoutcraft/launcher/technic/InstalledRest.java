@@ -1,6 +1,7 @@
 package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -8,8 +9,9 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
-import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
+import org.spoutcraft.launcher.technic.rest.pack.FallbackModpack;
 
 public class InstalledRest extends InstalledPack {
 	private final RestInfo info;
@@ -55,12 +57,18 @@ public class InstalledRest extends InstalledPack {
 	}
 
 	@Override
-	public RestModpack getModpack() {
+	public Modpack getModpack() {
 		try {
 			return info.getRest().getModpack(info, getBuild());
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
+
+			File installed = new File(this.getPackDirectory(), "installed");
+			if (installed.exists()) {
+				return new FallbackModpack(getName(), getBuild());
+			}
+
+			return null;
 		}
-		return null;
 	}
 }

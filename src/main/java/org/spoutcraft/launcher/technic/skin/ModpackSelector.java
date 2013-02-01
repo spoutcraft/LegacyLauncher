@@ -42,10 +42,12 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
+import org.spoutcraft.launcher.technic.InstalledOffline;
 import org.spoutcraft.launcher.technic.InstalledPack;
 import org.spoutcraft.launcher.technic.InstalledRest;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
+import org.spoutcraft.launcher.technic.rest.info.OfflineInfo;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -111,6 +113,10 @@ public class ModpackSelector extends JComponent implements ActionListener {
 						installedPacks.add(info.getPack());
 					} catch (RestfulAPIException e) {
 						e.printStackTrace();
+						String build = Settings.getModpackBuild(pack);
+						if (build != null) {
+							installedPacks.add(new InstalledOffline(new OfflineInfo(pack, build)));
+						}
 					}
 				}
 			}
