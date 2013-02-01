@@ -27,6 +27,20 @@
 
 package org.spoutcraft.launcher.entrypoint;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import javax.swing.UIManager;
+
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
+import org.spoutcraft.launcher.util.OperatingSystem;
+
 public class Start {
 	public static void main(String[] args) {
 		try {
@@ -43,92 +57,88 @@ public class Start {
 			return;
 		}
 
-		if (true) {
-			SpoutcraftLauncher.main(args);
+//		// Test for exe relaunch
+		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
+		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
+			String[] argsCopy = new String[args.length - 1];
+			for (int i = 1; i < args.length; i++) {
+				argsCopy[i-1] = args[i];
+			}
+			if (args[0].equals("-Mover")) {
+				Mover.main(argsCopy, true);
+			} else {
+				SpoutcraftLauncher.main(argsCopy);
+			}
 			return;
 		}
-//		// Test for exe relaunch
-//		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
-//		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
-//			String[] argsCopy = new String[args.length - 1];
-//			for (int i = 1; i < args.length; i++) {
-//				argsCopy[i-1] = args[i];
-//			}
-//			if (args[0].equals("-Mover")) {
-//				Mover.main(argsCopy, true);
-//			} else {
-//				SpoutcraftLauncher.main(argsCopy);
-//			}
-//			return;
-//		}
-//
-//		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
-//		if (settings == null) {
-//			throw new NullPointerException("The YAMLProcessor object was null for settings.");
-//		}
-//		Settings.setYAML(settings);
-//
-//		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
-//		int latest = getLatestLauncherBuild();
-//		if (version < latest) {
-//			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
-//			File temp;
-//			if (codeSource.getName().endsWith(".exe")) {
-//				temp = new File(Utils.getLauncherDirectory(), "temp.exe");
-//			} else {
-//				temp = new File(Utils.getLauncherDirectory(), "temp.jar");
-//			}
-//
-//			try {
-//				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//			} catch (Exception e) {
-//			}
-//
-//			ProgressSplashScreen splash = new ProgressSplashScreen();
-//			Download download = new Download(SpoutRestAPI.getLauncherDownloadURL(Settings.getLauncherChannel(), !codeSource.getName().endsWith(".exe")), temp.getPath());
-//			download.setListener(new LauncherDownloadListener(splash));
-//			download.run();
 
-//			ProcessBuilder processBuilder = new ProcessBuilder();
-//			ArrayList<String> commands = new ArrayList<String>();
-//			if (!codeSource.getName().endsWith(".exe")) {
-//				if (OperatingSystem.getOS().isWindows()) {
-//					commands.add("javaw");
-//				} else {
-//					commands.add("java");
-//				}
-//				commands.add("-Xmx256m");
-//				commands.add("-cp");
-//				commands.add(temp.getAbsolutePath());
-//				commands.add(Mover.class.getName());
-//			} else {
-//				commands.add(temp.getAbsolutePath());
-//				commands.add("-Mover");
-//			}
-//			commands.add(codeSource.getAbsolutePath());
-//			commands.addAll(Arrays.asList(args));
-//			processBuilder.command(commands);
-//
-//			try {
-//				processBuilder.start();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-//			System.exit(0);
-//		} else {
-//			SpoutcraftLauncher.main(args);
-//		}
+		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
+		if (settings == null) {
+			throw new NullPointerException("The YAMLProcessor object was null for settings.");
+		}
+		Settings.setYAML(settings);
+
+		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
+		int latest = RestAPI.getLatestLauncherBuild();
+		if (version < latest) {
+			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			File temp;
+			if (codeSource.getName().endsWith(".exe")) {
+				temp = new File(Utils.getLauncherDirectory(), "temp.exe");
+			} else {
+				temp = new File(Utils.getLauncherDirectory(), "temp.jar");
+			}
+
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			} catch (Exception e) {
+			}
+
+			ProgressSplashScreen splash = new ProgressSplashScreen();
+			Download download = new Download(RestAPI.getLauncherDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getPath());
+			download.setListener(new LauncherDownloadListener(splash));
+			download.run();
+
+			ProcessBuilder processBuilder = new ProcessBuilder();
+			ArrayList<String> commands = new ArrayList<String>();
+			if (!codeSource.getName().endsWith(".exe")) {
+				if (OperatingSystem.getOS().isWindows()) {
+					commands.add("javaw");
+				} else {
+					commands.add("java");
+				}
+				commands.add("-Xmx256m");
+				commands.add("-cp");
+				commands.add(temp.getAbsolutePath());
+				commands.add(Mover.class.getName());
+			} else {
+				commands.add(temp.getAbsolutePath());
+				commands.add("-Mover");
+			}
+			commands.add(codeSource.getAbsolutePath());
+			commands.addAll(Arrays.asList(args));
+			processBuilder.command(commands);
+
+			try {
+				processBuilder.start();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.exit(0);
+		} else {
+			SpoutcraftLauncher.main(args);
+		}
 	}
 
-//	private static class LauncherDownloadListener implements DownloadListener {
-//		private final ProgressSplashScreen screen;
-//		LauncherDownloadListener(ProgressSplashScreen screen) {
-//			this.screen = screen;
-//		}
-//
-//		@Override
-//		public void stateChanged(String text, float progress) {
-//			screen.updateProgress((int)progress);
-//		}
-//	}
+	private static class LauncherDownloadListener implements DownloadListener {
+		private final ProgressSplashScreen screen;
+		LauncherDownloadListener(ProgressSplashScreen screen) {
+			this.screen = screen;
+		}
+
+		@Override
+		public void stateChanged(String text, float progress) {
+			screen.updateProgress((int)progress);
+		}
+	}
 }

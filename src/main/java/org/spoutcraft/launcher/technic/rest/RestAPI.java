@@ -210,6 +210,43 @@ public class RestAPI {
 			IOUtils.closeQuietly(stream);
 		}
 	}
+	
+	public static int getLatestLauncherBuild() throws RestfulAPIException {
+		InputStream stream = null;
+		String url = "http://beta.technicpack.net/api/launcher/version/latest";
+		try {
+			URL conn = new URL(url);
+			stream = conn.openConnection().getInputStream();
+			LauncherBuild buildResult = mapper.readValue(stream, LauncherBuild.class);
+			return buildResult.getLatestBuild();
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+	
+	public static String getLauncherDownloadURL(int version, Boolean isJar) throws RestfulAPIException {
+		String ext = null;
+		if (isJar) {
+			ext = "jar";
+		} else {
+			ext = "exe";
+		}
+		
+		InputStream stream = null;
+		String url = "http://beta.technicpack.net/api/launcher/url/" + version + "/" + ext;
+		try {
+			URL conn = new URL(url);
+			stream = conn.openConnection().getInputStream();
+			LauncherURL buildURL = mapper.readValue(stream, LauncherURL.class);
+			return buildURL.getLauncherURL();
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
 
 	public static String getMinecraftURL(String user) {
 		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
@@ -231,6 +268,24 @@ public class RestAPI {
 
 		public String getMD5() {
 			return md5;
+		}
+	}
+	
+	private class LauncherBuild {
+		@JsonProperty("LatestBuild")
+		int latestBuild;
+		
+		public int getLatestBuild() {
+			return latestBuild;
+		}
+	}
+	
+	private class LauncherURL {
+		@JsonProperty("URL")
+		String launcherURL;
+		
+		public String getLauncherURL() {
+			return launcherURL;
 		}
 	}
 }
