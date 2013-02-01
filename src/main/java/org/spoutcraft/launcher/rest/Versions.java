@@ -25,6 +25,8 @@
  * including the MIT license.
  */
 
+//Todo:
+
 package org.spoutcraft.launcher.rest;
 
 import java.io.IOException;
@@ -39,14 +41,14 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-
+//TODO: FIX DIS SHIT
 public final class Versions {
 	private static List<String> versions = null;
 	public static synchronized List<String> getMinecraftVersions() {
 		if (versions == null) {
 			InputStream stream = null;
 			try {
-				URLConnection conn = (new URL(SpoutRestAPI.VERSIONS_URL)).openConnection();
+				URLConnection conn = (new URL("http://get.spout.org/api/versions/spoutcraft/")).openConnection();
 				stream = conn.getInputStream();
 				ObjectMapper mapper = new ObjectMapper();
 				Channel c = mapper.readValue(stream, Channel.class);

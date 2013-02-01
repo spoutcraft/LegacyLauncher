@@ -61,7 +61,6 @@ import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.SpoutcraftBuild;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
@@ -137,8 +136,6 @@ public class SpoutcraftLauncher {
 		}
 
 		checkInternet();
-
-		validateBuild(params);
 
 		setLookAndFeel();
 
@@ -222,23 +219,6 @@ public class SpoutcraftLauncher {
 		proxy.setup();
 	}
 
-	private static void validateBuild(StartupParameters params) {
-		if (params.getSpoutcraftBuild() > 0) {
-			List<SpoutcraftBuild> builds;
-			try {
-				builds = SpoutcraftBuild.getBuildList();
-				String build = String.valueOf(params.getSpoutcraftBuild());
-				for (SpoutcraftBuild b : builds) {
-					if (b.getBuildNumber().equals(build)) {
-						return;
-					}
-				}
-			} catch (RestfulAPIException e) {
-				e.printStackTrace();
-			}
-			params.setSpoutcraftBuild(-1);
-		}
-	}
 
 	private static void cleanup() {
 		File temp = new File(Utils.getLauncherDirectory(), "temp.jar");
@@ -368,7 +348,7 @@ public class SpoutcraftLauncher {
 						}
 					}
 				}
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

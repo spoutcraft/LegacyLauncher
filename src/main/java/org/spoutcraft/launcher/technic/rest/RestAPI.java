@@ -89,7 +89,7 @@ public class RestAPI {
 	public String getModpackImgURL(String modpack) {
 		return getMirrorURL() + modpack + "/resources/logo_180.png";
 	}
-	
+
 	public String getModpackBackgroundURL(String modpack) {
 		return getMirrorURL() + modpack + "/resources/background.jpg";
 	}

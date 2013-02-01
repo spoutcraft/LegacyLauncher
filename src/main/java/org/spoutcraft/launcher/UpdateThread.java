@@ -93,7 +93,7 @@ public class UpdateThread extends Thread {
 	private final DownloadListener listener = new DownloadListenerWrapper();
 	private final Modpack build;
 	private final InstalledPack pack;
-	
+
 	public UpdateThread(InstalledPack pack, DownloadListener listener) throws RestfulAPIException {
 		super("Update Thread");
 		setDaemon(true);
@@ -118,37 +118,32 @@ public class UpdateThread extends Thread {
 	private void runTasks() throws IOException{
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
+			File installed = new File(pack.getBinDir(), "installed");
 
 			if (minecraftUpdate) {
 				updateMinecraft(build);
 			}
-			
+
 			boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
 			if (modpackUpdate) {
-				int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-				if (result == JOptionPane.YES_OPTION) {
+				if(!installed.exists()) {
 					updateModpack(build);
+				}
+				else {
+					int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+					if (result == JOptionPane.YES_OPTION) {
+						updateModpack(build);
+					}
 				}
 			}
 
 			// Download assets
 			if (cleaned.compareAndSet(false, true)) {
-				if (build instanceof SpoutcraftData) {
-					Resources.VIP.getYAML();
-					Resources.Special.getYAML();
-				}
 				Versions.getMinecraftVersions();
 			}
 
 			cleanLogs();
 
-//			Validator validate = new Validator();
-//			if (!(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
-//				validate.run(build);
-//				valid.set(validate.isValid());
-//			} else {
-//				valid.set(true);
-//			}
 			valid.set(true);
 		}
 
@@ -239,7 +234,7 @@ public class UpdateThread extends Thread {
 		if (!pack.getConfigDir().exists()) {
 			return true;
 		}
-		
+
 		float progress = 100F;
 		int steps = 2;
 		stateChanged("Checking for " + build.getName() + " update...", progress / steps);
