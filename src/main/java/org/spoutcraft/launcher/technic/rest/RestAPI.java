@@ -161,6 +161,10 @@ public class RestAPI {
 			stream = conn.openStream();
 			RestInfo result = mapper.readValue(stream, RestInfo.class);
 			result.setRest(this);
+			String display = modpacks.getDisplayName(modpack);
+			if (display != null) {
+				result.setDisplayName(display);
+			}
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);

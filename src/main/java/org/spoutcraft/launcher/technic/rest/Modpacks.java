@@ -44,11 +44,14 @@ public class Modpacks {
 
 	private RestAPI rest = null;
 
+	public String getDisplayName(String modpack) {
+		return modpacks.get(modpack);
+	}
+
 	public List<RestInfo> getModpacks() throws RestfulAPIException {
 		List<RestInfo> modpackInfos = new ArrayList<RestInfo>(modpacks.size());
 		for (String pack : modpacks.keySet()) {
 			RestInfo info = rest.getModpackInfo(pack);
-			info.setDisplayName(modpacks.get(pack));
 			modpackInfos.add(info);
 		}
 		return modpackInfos;
