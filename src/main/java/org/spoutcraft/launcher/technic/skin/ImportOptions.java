@@ -66,10 +66,12 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private JLabel background;
 	private LiteButton save;
 	private LiteButton folder;
+	private LiteTextBox install;
 	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
 	private CustomInfo info = null;
 	private String url = "";
+	private File installDir;
 	
 	public ImportOptions() {
 		setTitle("Add a Pack");
@@ -98,34 +100,41 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		optionsQuit.addActionListener(this);
 		
 		msgLabel = new JLabel();
-		msgLabel.setBounds(10, 90, FRAME_WIDTH - 20, 25);
+		msgLabel.setBounds(10, 75, FRAME_WIDTH - 20, 25);
 		msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 		msgLabel.setForeground(Color.white);
 		msgLabel.setFont(minecraft);
 		
 		LiteTextBox url = new LiteTextBox(this, "Paste Platform URL Here");
-		url.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 10, FRAME_WIDTH - 20, 30);
+		url.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 5, FRAME_WIDTH - 20, 30);
 		url.setFont(minecraft);
 		url.getDocument().addDocumentListener(this);
 		
 		save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(FRAME_WIDTH - 130, FRAME_HEIGHT - 50, 120, 30);
+		save.setBounds(FRAME_WIDTH - 130, FRAME_HEIGHT - 40, 120, 30);
 		save.setActionCommand(IMPORT_ACTION);
 		save.addActionListener(this);
 		
 		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		folder = new LiteButton("Change Folder");
+		folder = new LiteButton("Folder");
 		folder.setFont(minecraft.deriveFont(14F));
-		folder.setBounds(FRAME_WIDTH - 270, FRAME_HEIGHT - 50, 130, 30);
+		folder.setBounds(FRAME_WIDTH - 230, FRAME_HEIGHT - 40, 90, 30);
 		folder.setActionCommand(CHANGE_FOLDER);
 		folder.addActionListener(this);
-		
-		enableButton(save, false);
-		enableButton(folder, false);
 
+		install = new LiteTextBox(this, "");
+		install.setBounds(10, FRAME_HEIGHT - 75, FRAME_WIDTH - 20, 25);
+		install.setFont(minecraft.deriveFont(10F));
+		install.setEnabled(false);
+		install.setVisible(false);
+		
+		enableComponent(save, false);
+		enableComponent(folder, false);
+
+		contentPane.add(install);
 		contentPane.add(optionsQuit);
 		contentPane.add(msgLabel);
 		contentPane.add(folder);
@@ -152,12 +161,14 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				file.exists();
-				// File is chosen here
+				installDir = file;
+				install.setText("Location: " + installDir.getPath());
 			}
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null || url.isEmpty()) {
 				Settings.setCustomURL(info.getName(), url);
 				Settings.setPackCustom(info.getName(), true);
+				Settings.setPackDirectory(info.getName(), installDir.getAbsolutePath());
 				Settings.getYAML().save();
 				Launcher.getFrame().getModpackSelector().addPack(info.getPack());
 				dispose();
@@ -170,8 +181,8 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			String url = doc.getText(0, doc.getLength());
 			if (url.isEmpty()) {
 				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
-				enableButton(save, false);
-				enableButton(folder, false);
+				enableComponent(save, false);
+				enableComponent(folder, false);
 				info = null;
 				this.url = "";
 				return;
@@ -180,21 +191,25 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 					info = RestAPI.getCustomModpack(url);
 					msgLabel.setText("Modpack: " + info.getDisplayName());
 					this.url = url;
-					enableButton(save, true);
-					enableButton(folder, true);
-					
+					enableComponent(save, true);
+					enableComponent(folder, true);
+					enableComponent(install, true);
+					installDir = new File(Utils.getLauncherDirectory(), info.getName());
+					install.setText("Location: " + installDir.getPath());
 				} catch (RestfulAPIException e) {
 					msgLabel.setText("Error parsing platform response");
-					enableButton(save, false);
-					enableButton(folder, false);
+					enableComponent(save, false);
+					enableComponent(folder, false);
+					enableComponent(install, false);
 					info = null;
 					this.url = "";
 					e.printStackTrace();
 				}
 			} else {
 				msgLabel.setText("Invalid Technic Platform delivery URL");
-				enableButton(save, false);
-				enableButton(folder, false);
+				enableComponent(save, false);
+				enableComponent(folder, false);
+				enableComponent(install, false);
 				info = null;
 				this.url = "";
 			}
@@ -206,9 +221,9 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		}
 	}
 
-	public void enableButton(LiteButton button, boolean enable) {
-		button.setEnabled(enable);
-		button.setVisible(enable);
+	public void enableComponent(JComponent component, boolean enable) {
+		component.setEnabled(enable);
+		component.setVisible(enable);
 	}
 
 	@Override
