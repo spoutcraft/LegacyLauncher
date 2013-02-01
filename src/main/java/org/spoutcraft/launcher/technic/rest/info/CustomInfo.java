@@ -129,11 +129,13 @@ public class CustomInfo {
 
 	public BufferedImage getLogo() throws IOException {
 		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
+		File assets = new File(Utils.getAssetsDirectory(), getName());
+		assets.mkdirs();
+		File temp = new File(assets, "logo.png");
 		if (temp.exists() && !logoMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
 			image = ImageIO.read(temp);
 		} else {
-			temp.mkdirs();
+			
 			if (logoUrl.equals("")) {
 				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/noLogo.png"));
 			} else {
@@ -146,11 +148,11 @@ public class CustomInfo {
 
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
+		File assets = new File(Utils.getAssetsDirectory(), getName());
+		assets.mkdirs();
+		File temp = new File(assets, "background.jpg");
 		if (temp.exists() && !backgroundMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
 			image = ImageIO.read(temp);
-		} else {
-			temp.mkdirs();
 			if (backgroundUrl.equals("")) {
 				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
 			} else {
