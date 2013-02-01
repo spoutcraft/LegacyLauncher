@@ -337,7 +337,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(packOptionsBtn);
 		contentPane.add(packRemoveBtn);
 		contentPane.add(packSelector);
-		contentPane.add(packShadow);
+		//contentPane.add(packShadow);
 		contentPane.add(selectorBackground);
 		contentPane.add(name);
 		contentPane.add(pass);

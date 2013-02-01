@@ -217,7 +217,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		if (selected instanceof AddPack) {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
-			frame.setLabelVisible(frame.getPackShadow(), false);
 			frame.setLabelVisible(frame.getCustomName(), false);
 		} else if (custom) {
 			if (selected.getLogoURL().equals("")) {
@@ -228,11 +227,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			}
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
-			frame.setLabelVisible(frame.getPackShadow(), true);
 		} else {
 			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
 			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
-			frame.setLabelVisible(frame.getPackShadow(), true);
 			frame.setLabelVisible(frame.getCustomName(), false);
 		}
 
