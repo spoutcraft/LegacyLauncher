@@ -49,6 +49,7 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import com.beust.jcommander.JCommander;
 import org.apache.commons.io.IOUtils;
@@ -242,7 +243,7 @@ public class SpoutcraftLauncher {
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
 		}
 		try {
-//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to setup look and feel", e);
 		}
