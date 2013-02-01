@@ -40,6 +40,8 @@ import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JOptionPane;
+
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.progress.ProgressMonitor;
@@ -123,7 +125,10 @@ public class UpdateThread extends Thread {
 			
 			boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
 			if (modpackUpdate) {
-				updateModpack(build);
+				int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				if (result == JOptionPane.YES_OPTION) {
+					updateModpack(build);
+				}
 			}
 
 			// Download assets

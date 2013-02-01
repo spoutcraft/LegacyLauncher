@@ -434,8 +434,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				launcherOptions.setModal(true);
 				launcherOptions.setVisible(true);
 			}
-		} else if(action.equals(PACK_REMOVE_ACTION)) { 
-			getModpackSelector().removePack();
+		} else if(action.equals(PACK_REMOVE_ACTION)) {
+			int result = JOptionPane.showConfirmDialog(c, "Are you sure you want to remove this pack?", "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.YES_OPTION) {
+				getModpackSelector().removePack();
+			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
 				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
