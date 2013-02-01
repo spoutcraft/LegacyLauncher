@@ -262,7 +262,7 @@ public class RestAPI {
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
-	private class TechnicMD5 {
+	private static class TechnicMD5 {
 		@JsonProperty("MD5")
 		String md5;
 
@@ -271,7 +271,7 @@ public class RestAPI {
 		}
 	}
 	
-	private class LauncherBuild {
+	private static class LauncherBuild {
 		@JsonProperty("LatestBuild")
 		int latestBuild;
 		
@@ -280,7 +280,7 @@ public class RestAPI {
 		}
 	}
 	
-	private class LauncherURL {
+	private static class LauncherURL {
 		@JsonProperty("URL")
 		String launcherURL;
 		
