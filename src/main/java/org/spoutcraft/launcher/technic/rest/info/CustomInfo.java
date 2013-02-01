@@ -135,7 +135,7 @@ public class CustomInfo {
 		} else {
 			temp.mkdirs();
 			if (logoUrl.equals("")) {
-				image = ImageIO.read(ResourceUtils.getResourceAsFile("noLogo.png"));
+				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/noLogo.png"));
 			} else {
 				Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
 				image = ImageIO.read(download.getOutFile());
@@ -152,7 +152,7 @@ public class CustomInfo {
 		} else {
 			temp.mkdirs();
 			if (backgroundUrl.equals("")) {
-				image = ImageIO.read(ResourceUtils.getResourceAsFile("background.jpg"));
+				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
 			} else {
 				Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
 				image = ImageIO.read(download.getOutFile());
