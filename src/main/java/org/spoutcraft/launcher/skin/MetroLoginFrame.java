@@ -522,7 +522,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public ImageButton getPackRemoveBtn() {
 		return packRemoveBtn;
 	}
-	
+
+	public LiteButton getLoginButton() {
+		return login;
+	}
+
 	public JLabel getPackShadow() {
 		return packShadow;
 	}
@@ -531,15 +535,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return customName;
 	}
 
-	public void setButtonEnable(JButton button, boolean enable) {
-		button.setVisible(enable);
-		button.setEnabled(enable);
+	public void enableComponent(JComponent component, boolean enable) {
+		component.setVisible(enable);
+		component.setEnabled(enable);
 	}
-	
-	public void setLabelVisible(JLabel label, boolean visible) {
-		label.setVisible(visible);
-	}
-	
+
 	public void setCustomName(String packName) {
 		customName.setText(packName);
 	}

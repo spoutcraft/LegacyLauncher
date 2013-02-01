@@ -215,22 +215,25 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		boolean custom = Settings.isPackCustom(selected.getName());
 
 		if (selected instanceof AddPack) {
-			frame.setButtonEnable(frame.getPackOptionsBtn(), false);
-			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
-			frame.setLabelVisible(frame.getCustomName(), false);
+			frame.enableComponent(frame.getPackOptionsBtn(), false);
+			frame.enableComponent(frame.getPackRemoveBtn(), false);
+			frame.enableComponent(frame.getCustomName(), false);
+			frame.enableComponent(frame.getLoginButton(), false);
 		} else if (custom) {
 			if (selected.getLogoURL().equals("")) {
 				frame.setCustomName(selected.getDisplayName());
-				frame.setLabelVisible(frame.getCustomName(), true);
+				frame.enableComponent(frame.getCustomName(), true);
 			} else {
-				frame.setLabelVisible(frame.getCustomName(), false);
+				frame.enableComponent(frame.getCustomName(), false);
 			}
-			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
-			frame.setButtonEnable(frame.getPackRemoveBtn(), true);
+			frame.enableComponent(frame.getPackOptionsBtn(), true);
+			frame.enableComponent(frame.getPackRemoveBtn(), true);
+			frame.enableComponent(frame.getLoginButton(), true);
 		} else {
-			frame.setButtonEnable(frame.getPackOptionsBtn(), true);
-			frame.setButtonEnable(frame.getPackRemoveBtn(), false);
-			frame.setLabelVisible(frame.getCustomName(), false);
+			frame.enableComponent(frame.getPackOptionsBtn(), true);
+			frame.enableComponent(frame.getPackRemoveBtn(), false);
+			frame.enableComponent(frame.getCustomName(), false);
+			frame.enableComponent(frame.getLoginButton(), true);
 		}
 
 		this.repaint();
