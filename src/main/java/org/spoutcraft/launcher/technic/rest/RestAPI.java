@@ -46,7 +46,7 @@ import org.spoutcraft.launcher.util.MirrorUtils;
 public class RestAPI {
 
 	private final static ObjectMapper mapper = new ObjectMapper();
-	public static final RestAPI TECHNIC = new RestAPI("http://www.sctgamic/API/");
+	public static final RestAPI TECHNIC = new RestAPI("http://www.sctgaming.com/Technic/API/");
 
 	private final String restURL;
 	private final String restInfoURL;
