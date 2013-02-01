@@ -50,13 +50,11 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import com.beust.jcommander.JCommander;
 import org.apache.commons.io.IOUtils;
 
 import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
@@ -170,6 +168,8 @@ public class SpoutcraftLauncher {
 			return;
 		}
 
+		frame.setUser(Settings.getLastUser());
+
 		if (Settings.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
@@ -247,10 +247,6 @@ public class SpoutcraftLauncher {
 		temp.delete();
 		temp = new File(Utils.getLauncherDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
-		if (!Main.isOldLauncher()) {
-			temp = new File(Utils.getLauncherDirectory(), "launcherVersion");
-			temp.delete();
-		}
 		temp = new File(Utils.getLauncherDirectory(), "mc.patch");
 		temp.delete();
 		temp = new File(Utils.getLauncherDirectory(), "config/libraries.yml");
@@ -265,10 +261,10 @@ public class SpoutcraftLauncher {
 		OperatingSystem os = OperatingSystem.getOS();
 		if (os.isMac()) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
 		}
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Failed to setup look and feel", e);
 		}
@@ -334,7 +330,7 @@ public class SpoutcraftLauncher {
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		return build;
 	}
@@ -372,7 +368,9 @@ public class SpoutcraftLauncher {
 						}
 					}
 				}
-			} catch (Exception e) { }
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
 		}
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);

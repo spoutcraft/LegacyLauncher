@@ -196,8 +196,6 @@ public final class StartupParameters {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else {
-			Main.old |= oldLauncher;
 		}
 		return false;
 	}
@@ -244,9 +242,6 @@ public final class StartupParameters {
 		if (build != -1) {
 			params.add("-build");
 			params.add(Integer.toString(build));
-		}
-		if (Main.isOldLauncher()) {
-			params.add("-old_launcher");
 		}
 		if (console) {
 			params.add("-console");

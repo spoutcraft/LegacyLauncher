@@ -56,7 +56,6 @@ public class LiteTextBox extends JTextField implements FocusListener{
 		this.setBorder(new LiteBorder(5, getBackground()));
 	}
 
-
 	@Override
 	public void setFont(Font font) {
 		super.setFont(font);

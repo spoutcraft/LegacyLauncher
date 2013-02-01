@@ -239,4 +239,12 @@ public class Settings {
 			return new ArrayList<String>(node.getMap().keySet());
 		}
 	}
+
+	public static synchronized void setLastUser(String name) {
+		yaml.setProperty("launcher.lastuser", name);
+	}
+
+	public static synchronized String getLastUser() {
+		return yaml.getString("launcher.lastuser");
+	}
 }

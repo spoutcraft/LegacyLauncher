@@ -71,7 +71,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		parent.getContentPane().add(underLabel);
 		parent.getContentPane().add(remove);
 		
-		remove.setTransparency(0.4F);
+		remove.setTransparency(0F);
 		remove.setHoverTransparency(1F);
 	}
 	
@@ -128,7 +128,7 @@ public class DynamicButton extends JButton implements MouseListener{
 			w = sw;
 			
 		}
-		underLabel.setBounds(x + (w - sw) / 2, y - 20, w, 20);
+		underLabel.setBounds(x + (w - sw) / 2, y - 18, w, 20);
 		
 		
 	}
@@ -165,12 +165,14 @@ public class DynamicButton extends JButton implements MouseListener{
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		updateSize(hoverIncrease);
+		remove.setTransparency(0.4f);
 		underLabel.setVisible(true);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		updateSize(-hoverIncrease);
+		remove.setTransparency(0.0f);
 		underLabel.setVisible(false);
 	}
 	

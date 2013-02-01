@@ -39,7 +39,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,14 +61,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
-import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -350,9 +345,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		super.setVisible(visible);
 		if (visible) {
 			showJava15Warning();
-			if (Main.isOldLauncher()) {
-				showOutdatedWarning();
-			}
 		}
 	}
 
@@ -385,37 +377,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			dispose();
 			System.exit(0);
 		}
-	}
-	private void showOutdatedWarning() {
-		JLabel label = new JLabel();
-		Font arial12 = new Font("Arial", Font.PLAIN, 12);
-		label.setFont(arial12);
-
-		StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-		style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + arial12.getSize() + "pt;");
-
-		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a></body></html>");
-
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			@Override
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-					try {
-						Compatibility.browse(e.getURL().toURI());
-					} catch (URISyntaxException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		});
-		ep.setEditable(false);
-		ep.setBackground(label.getBackground());
-
-		JOptionPane.showMessageDialog(this, ep, "Outdated Launcher", JOptionPane.WARNING_MESSAGE);
-		dispose();
-		System.exit(0);
 	}
 
 	protected static final class UserPasswordInformation {

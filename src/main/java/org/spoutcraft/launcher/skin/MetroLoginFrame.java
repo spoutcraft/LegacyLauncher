@@ -47,6 +47,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
@@ -82,6 +83,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
+	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
 	private LiteTextBox name;
 	private LitePasswordBox pass;
 	private LiteButton login;
@@ -124,37 +126,29 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		packShadow.setBounds(FRAME_WIDTH / 2 - (176 / 2), FRAME_HEIGHT / 2 + 45, 176, 38);
 		setIcon(packShadow, "packShadow.png", packShadow.getWidth(), packShadow.getHeight());
 
-		int loginY = 25;
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(602, loginStrip.getY() + loginY, 140, 24);
+		name.setBounds(620, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(602, loginStrip.getY() + loginY + 31, 140, 24);
+		pass.setBounds(745, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(755, loginStrip.getY() + loginY + 31, 110, 24);
+		remember.setBounds(745 + 26, loginStrip.getY() + loginStrip.getHeight() / 2 - 40, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
 		remember.setContentAreaFilled(false);
 		remember.setBorder(null);
 		remember.setForeground(Color.WHITE);
+		remember.setHorizontalTextPosition(SwingConstants.LEFT);
 		remember.addKeyListener(this);
-
-		// Setup login button
-		login = new LiteButton("Login");
-		login.setBounds(755, loginStrip.getY() + loginY, 92, 24);
-		login.setFont(minecraft);
-		login.setActionCommand(LOGIN_ACTION);
-		login.addActionListener(this);
-		login.addKeyListener(this);
 
 		// Technic logo
 		JLabel logo = new JLabel();
@@ -204,17 +198,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		home.setTransparency(0.70F);
 		home.setHoverTransparency(1F);
 
-		
-//		// Forums link
-//		HyperlinkJLabel forums = new HyperlinkJLabel("DEATHRAT MAKE MORE RICE", "http://forums.technicpack.net/");
-//		forums.setFont(largerMinecraft);
-//		forums.setBounds(625, 35, 90, 20);
-//		forums.setForeground(Color.WHITE);
-//		forums.setOpaque(false);
-//		forums.setTransparency(0.70F);
-//		forums.setHoverTransparency(1F);
-//		
-//		
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
@@ -254,6 +237,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		packRemoveBtn.setBounds(FRAME_WIDTH / 2 + 70, FRAME_HEIGHT / 2 + 59, 20, 20);
 		packRemoveBtn.setActionCommand(PACK_REMOVE_ACTION);
 		packRemoveBtn.addActionListener(this);
+		
+		// Setup login button
+		login = new LiteButton("Launch");
+		login.setBounds(FRAME_WIDTH / 2 - 50, FRAME_HEIGHT / 2 + 58, 100, 22);
+		login.setFont(minecraft);
+		login.setActionCommand(LOGIN_ACTION);
+		login.addActionListener(this);
+		login.addKeyListener(this);
 
 		// Exit Button
 		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quitHover.png", 28, 28));
@@ -282,14 +273,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		facebook.setBounds(6 + 34 * 2, 6, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
-		// Google+ button
-		/*
-		JButton gplus = new ImageHyperlinkButton("http://spout.in/gplus");
-		gplus.setToolTipText("Follow us on Google+");
-		gplus.setBounds(6 + 34 * 2 + xShift, FRAME_HEIGHT - 62 + yShift, 28, 28);
-		setIcon(gplus, "gplus.png", 28);
-		*/
-
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
 		youtube.setRolloverIcon(getIcon("youtubeInverted.png", 28, 28));
@@ -314,14 +297,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// User Faces
 		java.util.List<String> savedUsers = getSavedUsernames();
 		int users = Math.min(5, this.getSavedUsernames().size());
+		
+
 		for (int i = 0; i < users; i++) {
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			DynamicButton userButton = new DynamicButton(this, getImage(userName), 10, accountName, userName);
-			userButton.setFont(minecraft.deriveFont(14F));
+			DynamicButton userButton = new DynamicButton(this, getImage(userName), 1, accountName, userName);
+			userButton.setFont(minecraft.deriveFont(12F));
 
-			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 60) - 30, FRAME_HEIGHT - 25, 45, 45);
+			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 60) - 30, FRAME_HEIGHT - 57, 45, 45);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
@@ -329,6 +314,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			userButton.getRemoveIcon().addActionListener(this);
 			userButton.getRemoveIcon().setActionCommand(REMOVE_USER);
 			removeButtons.put(userButton.getRemoveIcon(), userButton);
+			userButtons.put(userName, userButton);
 		}
 
 		contentPane.add(switchLeft);
@@ -358,8 +344,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(exit);
 		contentPane.add(progressBar);
 		
-		
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
+	}
+
+	public void setUser(String name) {
+		if (name != null) {
+			DynamicButton user = userButtons.get(name);
+			if (user != null) {
+				user.doClick();
+			}
+		}
 	}
 
 	public ModpackSelector getModpackSelector() {
@@ -460,6 +454,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				this.doLogin(getSelectedUser(), pass);
 				if (remember.isSelected()) {
 					saveUsername(getSelectedUser(), pass);
+					Settings.setLastUser(getSelectedUser());
+					Settings.getYAML().save();
 				}
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
@@ -471,7 +467,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
 			this.remember.setSelected(true);
-			action(LOGIN_ACTION, userButton);
 		}  else if (action.equals(REMOVE_USER)) {
 			DynamicButton userButton = removeButtons.get((JButton)c);
 			this.removeAccount(userButton.getAccount());
