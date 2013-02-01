@@ -39,19 +39,31 @@ public class Modpacks {
 
 	@JsonProperty("modpacks")
 	private Map<String, String> modpacks;
+	@JsonProperty("mirror_url")
+	private String mirrorURL;
+
+	private RestAPI rest = null;
 
 	public List<RestInfo> getModpacks() throws RestfulAPIException {
 		List<RestInfo> modpackInfos = new ArrayList<RestInfo>(modpacks.size());
 		for (String pack : modpacks.keySet()) {
-			RestInfo info = RestAPI.getModpackInfo(pack);
+			RestInfo info = rest.getModpackInfo(pack);
 			info.setDisplayName(modpacks.get(pack));
 			modpackInfos.add(info);
 		}
 		return modpackInfos;
 	}
 
+	public String getMirrorURL() {
+		return mirrorURL;
+	}
+
 	@Override
 	public String toString() {
 		return "{ Modpacks [modpacks: " + modpacks + "] }";
+	}
+
+	public void setRest(RestAPI rest) {
+		this.rest = rest;
 	}
 }

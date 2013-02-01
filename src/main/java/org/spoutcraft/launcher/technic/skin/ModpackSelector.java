@@ -100,7 +100,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void setupModpackButtons() throws IOException {
-		List<RestInfo> modpacks = RestAPI.getModpacks();
+		List<RestInfo> modpacks = RestAPI.TECHNIC.getRestInfos();
 		for (RestInfo info : modpacks) {
 			installedPacks.add(new InstalledRest(info));
 		}
@@ -112,6 +112,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 						installedPacks.add(new InstalledCustom(info));
 					} catch (RestfulAPIException e) {
 						//TODO: Try and load this without the internet into the pack list somehow
+						e.printStackTrace();
 					}
 				}
 			}

@@ -56,10 +56,20 @@ public class RestInfo {
 	@JsonProperty("icon_md5")
 	private String iconMD5;
 
+	private RestAPI rest;
+
 	private String displayName = "Technic";
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
+	}
+
+	public void setRest(RestAPI rest) {
+		this.rest = rest;
+	}
+
+	public RestAPI getRest() {
+		return rest;
 	}
 
 	public String getName() {
@@ -82,15 +92,15 @@ public class RestInfo {
 	}
 
 	public String getLogoURL() {
-		return RestAPI.getModpackImgURL(name);
+		return rest.getModpackImgURL(name);
 	}
 	
 	public String getBackgroundURL() {
-		return RestAPI.getModpackBackgroundURL(name);
+		return rest.getModpackBackgroundURL(name);
 	}
 
 	public String getIconURL() {
-		return RestAPI.getModpackIconURL(name);
+		return rest.getModpackIconURL(name);
 	}
 
 	public BufferedImage getLogo() throws IOException {

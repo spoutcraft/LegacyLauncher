@@ -34,10 +34,17 @@ public class Mod {
 	private final String version;
 	private final String url;
 
+	private RestAPI rest = null;
+
 	public Mod(String name, String version, String downloadUrl) {
 		this.name = name;
 		this.version = version;
 		this.url = downloadUrl;
+	}
+
+	public Mod(String name, String version, RestAPI rest) {
+		this(name, version, rest.getModDownloadURL(name, version));
+		this.rest = rest;
 	}
 
 	public String getName() {
@@ -52,13 +59,15 @@ public class Mod {
 		return url;
 	}
 
-	// TODO: This is a really awful way to do this. 
-	// Basically if the mod isn't in the rest database then the API explodes and it returns null.
-	// I should do this better soon but I'm busy.
 	public String getMD5() {
-		try {
-			return RestAPI.getModMD5(name, version);
-		} catch (RestfulAPIException e) {
+		if (rest != null) {
+			try {
+				return rest.getModMD5(name, version);
+			} catch (RestfulAPIException e) {
+				e.printStackTrace();
+				return null;
+			}
+		} else {
 			return null;
 		}
 	}

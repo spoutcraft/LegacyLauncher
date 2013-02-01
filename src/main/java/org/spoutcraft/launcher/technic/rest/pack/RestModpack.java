@@ -35,7 +35,6 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 
 public class RestModpack extends Modpack {
@@ -86,10 +85,6 @@ public class RestModpack extends Modpack {
 		return minecraftVersion;
 	}
 
-	public String getYMLURL() {
-		return RestAPI.getModpackYMLURL(this.getName());
-	}
-
 	public String getForgeVersion() {
 		return forgeVersion;
 	}
@@ -98,7 +93,7 @@ public class RestModpack extends Modpack {
 	public List<Mod> getMods() {
 		List<Mod> modList = new ArrayList<Mod>(mods.size());
 		for (String name : mods.keySet()) {
-			modList.add(new Mod(name, mods.get(name), RestAPI.getModDownloadURL(name, mods.get(name))));
+			modList.add(new Mod(name, mods.get(name), rest));
 		}
 		return modList;
 	}
@@ -109,7 +104,7 @@ public class RestModpack extends Modpack {
 	}
 
 	public String getMD5() throws RestfulAPIException {
-		return RestAPI.getModpackMD5(this.getName());
+		return rest.getModpackMD5(this.getName());
 	}
 
 }

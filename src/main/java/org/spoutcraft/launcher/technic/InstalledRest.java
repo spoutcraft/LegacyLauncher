@@ -8,7 +8,6 @@ import java.util.List;
 import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 
@@ -53,7 +52,7 @@ public class InstalledRest extends InstalledPack {
 	@Override
 	public RestModpack getModpack() {
 		try {
-			return RestAPI.getModpack(info, getBuild());
+			return info.getRest().getModpack(info, getBuild());
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 		}

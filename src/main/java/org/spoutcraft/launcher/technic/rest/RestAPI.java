@@ -35,6 +35,7 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
@@ -44,66 +45,84 @@ import org.spoutcraft.launcher.util.MirrorUtils;
 
 public class RestAPI {
 
-	private static final ObjectMapper mapper = new ObjectMapper();
+	private final static ObjectMapper mapper = new ObjectMapper();
+	public static final RestAPI TECHNIC = new RestAPI("http://www.sctgaming.com/Technic/API/");
 
-	public static final String REST_URL = "http://www.sctgaming.com/Technic/API/";
-	public static final String MODPACKS_URL = REST_URL + "modpack/";
-	public static final String CACHE_URL = REST_URL + "cache/";
-	public static final String MOD_URL = CACHE_URL + "mod/";
-	public static final String MIRROR_URL = "http://mirror.technicpack.net/Technic/";
+	private final String restURL;
+	private final String restInfoURL;
+	private final String cacheURL;
+	private final String modURL;
+	private final String mirrorURL;
 
-	public static String getModDownloadURL(String mod, String build) {
-		return MIRROR_URL + "mods/" + mod + "/" + mod + "-" + build + ".zip";
+	private final Modpacks modpacks;
+
+	public RestAPI(String url) {
+		restURL = url;
+		restInfoURL = restURL + "modpack/";
+		cacheURL = restURL + "cache/";
+		modURL = cacheURL + "mod/";
+		modpacks = getModpacks();
+		modpacks.setRest(this);
+		mirrorURL = modpacks.getMirrorURL();
 	}
 
-	public static String getModMD5URL(String mod, String build) {
-		return CACHE_URL + "mod/" + mod + "/" + build + "/MD5";
+	public String getModDownloadURL(String mod, String build) {
+		return getMirrorURL() + "mods/" + mod + "/" + mod + "-" + build + ".zip";
 	}
 
-	public static String getModpackURL(String modpack, String build) {
-		return MODPACKS_URL + modpack + "/build/" + build;
+	public String getModMD5URL(String mod, String build) {
+		return modURL + mod + "/" + build + "/MD5";
 	}
 
-	public static String getModpackMD5URL(String modpack) {
-		return MODPACKS_URL + modpack + "/MD5";
+	public String getModpackURL(String modpack, String build) {
+		return restInfoURL + modpack + "/build/" + build;
 	}
 
-	public static String getModpackYMLURL(String modpack) {
-		return MIRROR_URL + modpack + "/modpack.yml";
+	public String getModpackMD5URL(String modpack) {
+		return restInfoURL + modpack + "/MD5";
 	}
 
-	public static String getModpackInfoURL(String modpack) {
-		return MODPACKS_URL + modpack;
+	public String getModpackInfoURL(String modpack) {
+		return restInfoURL + modpack;
 	}
 
-	public static String getModpackImgURL(String modpack) {
-		return MIRROR_URL + modpack + "/resources/logo_180.png";
+	public String getModpackImgURL(String modpack) {
+		return getMirrorURL() + modpack + "/resources/logo_180.png";
 	}
 	
-	public static String getModpackBackgroundURL(String modpack) {
-		return MIRROR_URL + modpack + "/resources/background.jpg";
+	public String getModpackBackgroundURL(String modpack) {
+		return getMirrorURL() + modpack + "/resources/background.jpg";
 	}
 
-	public static String getModpackIconURL(String modpack) {
-		return MIRROR_URL + modpack + "/resources/icon.png";
+	public String getModpackIconURL(String modpack) {
+		return getMirrorURL() + modpack + "/resources/icon.png";
 	}
 
-	public static List<RestInfo> getModpacks() throws RestfulAPIException {
+	private Modpacks getModpacks() {
 		InputStream stream = null;
-		String url = MODPACKS_URL;
+		String url = restInfoURL;
 		try {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
 			Modpacks result = mapper.readValue(stream, Modpacks.class);
-			return result.getModpacks();
+			return result;
 		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
+			Launcher.getFrame().handleException(new RestfulAPIException("Error accessing URL [" + url + "]", e));
+			return null;
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 	}
 
-	public static String getModMD5(String mod, String build) throws RestfulAPIException {
+	public String getMirrorURL() {
+		return mirrorURL;
+	}
+
+	public List<RestInfo> getRestInfos() throws RestfulAPIException {
+		return modpacks.getModpacks();
+	}
+
+	public String getModMD5(String mod, String build) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModMD5URL(mod, build);
 		try {
@@ -118,13 +137,14 @@ public class RestAPI {
 		}
 	}
 
-	public static RestModpack getModpack(RestInfo modpack, String build) throws RestfulAPIException {
+	public RestModpack getModpack(RestInfo modpack, String build) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModpackURL(modpack.getName(), build);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
 			RestModpack result = mapper.readValue(stream, RestModpack.class);
+			result.setRest(this);
 			return result.setInfo(modpack, build);
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
@@ -133,13 +153,14 @@ public class RestAPI {
 		}
 	}
 
-	public static RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
+	public RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModpackInfoURL(modpack);
 		try {
 			URL conn = new URL(url);
 			stream = conn.openStream();
 			RestInfo result = mapper.readValue(stream, RestInfo.class);
+			result.setRest(this);
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
@@ -163,15 +184,15 @@ public class RestAPI {
 		}
 	}
 
-	public static String getLatestBuild(String modpack) throws RestfulAPIException {
+	public String getLatestBuild(String modpack) throws RestfulAPIException {
 		return getModpackInfo(modpack).getLatest();
 	}
 
-	public static String getRecommendedBuild(String modpack) throws RestfulAPIException {
+	public String getRecommendedBuild(String modpack) throws RestfulAPIException {
 		return getModpackInfo(modpack).getRecommended();
 	}
 
-	public static String getModpackMD5(String modpack) throws RestfulAPIException {
+	public String getModpackMD5(String modpack) throws RestfulAPIException {
 		InputStream stream = null;
 		String url = getModpackMD5URL(modpack);
 		try {
@@ -200,7 +221,7 @@ public class RestAPI {
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
-	private static class TechnicMD5 {
+	private class TechnicMD5 {
 		@JsonProperty("MD5")
 		String md5;
 
