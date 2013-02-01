@@ -27,29 +27,7 @@
 
 package org.spoutcraft.launcher.entrypoint;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.Arrays;
-import javax.swing.UIManager;
-
-import org.apache.commons.io.IOUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.Project;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.util.OperatingSystem;
-import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.YAMLProcessor;
-
 public class Start {
-	private static final ObjectMapper mapper = new ObjectMapper();
 	public static void main(String[] args) {
 		try {
 			launch(args);
@@ -142,15 +120,15 @@ public class Start {
 //		}
 	}
 
-	private static class LauncherDownloadListener implements DownloadListener {
-		private final ProgressSplashScreen screen;
-		LauncherDownloadListener(ProgressSplashScreen screen) {
-			this.screen = screen;
-		}
-
-		@Override
-		public void stateChanged(String text, float progress) {
-			screen.updateProgress((int)progress);
-		}
-	}
+//	private static class LauncherDownloadListener implements DownloadListener {
+//		private final ProgressSplashScreen screen;
+//		LauncherDownloadListener(ProgressSplashScreen screen) {
+//			this.screen = screen;
+//		}
+//
+//		@Override
+//		public void stateChanged(String text, float progress) {
+//			screen.updateProgress((int)progress);
+//		}
+//	}
 }
