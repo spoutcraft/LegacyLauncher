@@ -635,10 +635,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (e.getWhen() - previous > 100L) {
-			if (e.getUnitsToScroll() < 0) {
+		if (e.getWhen() != previous) {
+			if (e.getUnitsToScroll() > 0) {
 				getModpackSelector().selectNextPack();
-			} else if (e.getUnitsToScroll() > 0){
+			} else if (e.getUnitsToScroll() < 0){
 				getModpackSelector().selectPreviousPack();
 			}
 			this.previous = e.getWhen();
