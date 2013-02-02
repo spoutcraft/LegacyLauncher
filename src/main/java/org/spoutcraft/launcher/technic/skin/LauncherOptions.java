@@ -34,6 +34,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 
@@ -47,6 +48,8 @@ import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.Utils;
 
 public class LauncherOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -55,8 +58,11 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final int FRAME_HEIGHT = 300;
 	private static final String QUIT_ACTION = "quit";
 	private static final String SAVE_ACTION = "save";
+	private static final String LOGS_ACTION = "logs";
 
 	private JLabel background;
+	private JLabel build;
+	private LiteButton logs;
 	private JComboBox memory;
 	private int mouseX = 0, mouseY = 0;
 
@@ -98,13 +104,27 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		memory.setBounds(150, 100, 100, 25);
 		populateMemory(memory);
 
-		LiteButton save = new LiteButton("Save and Close");
+		LiteButton save = new LiteButton("Save");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(10, FRAME_HEIGHT - 40, 280, 30);
+		save.setBounds(FRAME_WIDTH / 2 + 10, FRAME_HEIGHT - 60, 130, 30);
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
 
+		logs = new LiteButton("Logs");
+		logs.setFont(minecraft.deriveFont(14F));
+		logs.setBounds(10, FRAME_HEIGHT - 60, 130, 30);
+		logs.setForeground(Color.WHITE);
+		logs.setActionCommand(LOGS_ACTION);
+		logs.addActionListener(this);
+
+		build = new JLabel("Launcher Build: " + Settings.getLauncherBuild());
+		build.setBounds(10, FRAME_HEIGHT - 25, 150, 20);
+		build.setFont(minecraft);
+		build.setForeground(Color.WHITE);
+
 		Container contentPane = getContentPane();
+		contentPane.add(build);
+		contentPane.add(logs);
 		contentPane.add(optionsQuit);
 		contentPane.add(title);
 		contentPane.add(memory);
@@ -129,6 +149,9 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
 			Settings.getYAML().save();
 			dispose();
+		} else if (action.equals(LOGS_ACTION)) {
+			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
+			Compatibility.open(logDirectory);
 		}
 	}
 
