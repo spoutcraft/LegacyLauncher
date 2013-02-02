@@ -97,6 +97,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ImageButton packRemoveBtn;
 	private JLabel packShadow;
 	private JLabel customName;
+	private long previous = 0L;
 
 	public MetroLoginFrame() {
 		initComponents();
@@ -298,7 +299,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// User Faces
 		java.util.List<String> savedUsers = getSavedUsernames();
 		int users = Math.min(5, this.getSavedUsernames().size());
-		
 
 		for (int i = 0; i < users; i++) {
 			String accountName = savedUsers.get(i);
@@ -307,7 +307,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			DynamicButton userButton = new DynamicButton(this, getImage(userName), 1, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(12F));
 
-			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 60) - 30, FRAME_HEIGHT - 57, 45, 45);
+			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 70), FRAME_HEIGHT - 57, 45, 45);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
@@ -635,10 +635,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (e.getWheelRotation() < 0) {
-			getModpackSelector().selectNextPack();
-		} else if (e.getWheelRotation() > 0){
-			getModpackSelector().selectPreviousPack();
+		if (e.getWhen() - previous > 100L) {
+			if (e.getUnitsToScroll() < 0) {
+				getModpackSelector().selectNextPack();
+			} else if (e.getUnitsToScroll() > 0){
+				getModpackSelector().selectPreviousPack();
+			}
+			this.previous = e.getWhen();
 		}
+		
 	}
 }
