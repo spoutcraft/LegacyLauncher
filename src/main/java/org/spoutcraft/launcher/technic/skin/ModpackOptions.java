@@ -43,9 +43,11 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.UpdateThread;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
@@ -65,8 +67,11 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String MANUAL_ACTION = "manual";
 	private static final String CHANGEFOLDER_ACTION = "changefolder";
 	private static final String OPENFOLDER_ACTION = "openfolder";
+	private static final String CLEAN_BIN_ACTION = "cleanbin";
+
 	public static final String RECOMMENDED = "recommended";
 	public static final String LATEST = "latest";
+
 	private String build;
 	private JLabel buildLabel;
 	private JLabel background;
@@ -74,6 +79,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private JComboBox buildSelector;
 	private LiteTextBox packLocation;
 	private LiteButton openFolder;
+	private LiteButton cleanBin;
 	private File installedDirectory;
 	private JFileChooser fileChooser;
 	private boolean directoryChanged = false;
@@ -200,11 +206,17 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			openFolder.setVisible(false);
 		}
 
-		LiteButton save = new LiteButton("Save and Close");
+		LiteButton save = new LiteButton("Save");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(10, FRAME_HEIGHT - 40, 280, 30);
+		save.setBounds(FRAME_WIDTH / 2 + 10, FRAME_HEIGHT - 40, FRAME_WIDTH / 2 - 20, 25);
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
+
+		cleanBin = new LiteButton("Reset Pack");
+		cleanBin.setFont(minecraft.deriveFont(14F));
+		cleanBin.setBounds(10, FRAME_HEIGHT - 40, FRAME_WIDTH / 2 - 20, 25);
+		cleanBin.setActionCommand(CLEAN_BIN_ACTION);
+		cleanBin.addActionListener(this);
 		
 		contentPane.add(optionsTitle);
 		contentPane.add(optionsQuit);
@@ -217,6 +229,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		contentPane.add(changeFolder);
 		contentPane.add(openFolder);
 		contentPane.add(save);
+		contentPane.add(cleanBin);
 		contentPane.add(background);
 		
 		setLocationRelativeTo(this.getOwner());
@@ -268,7 +281,19 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 					openFolder.setVisible(true);
 				}
 			}
+		} else if (action.equals(CLEAN_BIN_ACTION)) {
+			int result = JOptionPane.showConfirmDialog(c, "Are you sure you want to reset this pack?", "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			if (result == JOptionPane.YES_OPTION) {
+				cleanBin();
+				dispose();
+			}
 		}
+	}
+
+	private void cleanBin() {
+		Settings.removePack(installedPack.getName());
+		UpdateThread.cleanupBinFolders(installedPack);
+		UpdateThread.cleanupModsFolders(installedPack);
 	}
 
 	private void populateBuilds(JComboBox buildSelector) {

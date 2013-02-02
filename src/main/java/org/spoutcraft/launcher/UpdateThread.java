@@ -390,8 +390,8 @@ public class UpdateThread extends Thread {
 	}
 
 	public void updateModpack(Modpack modpack) throws IOException {
-		cleanupBinFolders();
-		cleanupModsFolders();
+		cleanupBinFolders(pack);
+		cleanupModsFolders(pack);
 		File workingDir = pack.getPackDirectory();
 
 		pack.getTempDir().mkdirs();
@@ -449,7 +449,7 @@ public class UpdateThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	public void cleanupBinFolders() {
+	public static void cleanupBinFolders(InstalledPack pack) {
 		try {
 			if (!pack.getBinDir().exists()) {
 				return;
@@ -471,7 +471,7 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	public void cleanupModsFolders() {
+	public static void cleanupModsFolders(InstalledPack pack) {
 		try {
 			File working = pack.getPackDirectory();
 			File mods = new File(working, "mods");
