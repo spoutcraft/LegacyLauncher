@@ -356,10 +356,11 @@ public class SpoutcraftLauncher {
 	}
 
 	public static void setupConsole() {
-		if (console == null) {
-			console = new ConsoleFrame(2500, true);
-			console.setVisible(true);
+		if (console != null) {
+			console.dispose();
 		}
+		console = new ConsoleFrame(2500, true);
+		console.setVisible(true);
 	}
 
 	public static void destroyConsole() {

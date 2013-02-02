@@ -46,6 +46,7 @@ import javax.swing.SwingConstants;
 
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.util.Compatibility;
@@ -59,6 +60,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final String QUIT_ACTION = "quit";
 	private static final String SAVE_ACTION = "save";
 	private static final String LOGS_ACTION = "logs";
+	private static final String CONSOLE_ACTION = "console";
 
 	private JLabel background;
 	private JLabel build;
@@ -106,16 +108,23 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 
 		LiteButton save = new LiteButton("Save");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(FRAME_WIDTH / 2 + 10, FRAME_HEIGHT - 60, 130, 30);
+		save.setBounds(FRAME_WIDTH - 90 - 10, FRAME_HEIGHT - 60, 90, 30);
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
 
 		logs = new LiteButton("Logs");
 		logs.setFont(minecraft.deriveFont(14F));
-		logs.setBounds(10, FRAME_HEIGHT - 60, 130, 30);
+		logs.setBounds(FRAME_WIDTH / 2 - 45, FRAME_HEIGHT - 60, 90, 30);
 		logs.setForeground(Color.WHITE);
 		logs.setActionCommand(LOGS_ACTION);
 		logs.addActionListener(this);
+		
+		LiteButton console = new LiteButton("Console");
+		console.setFont(minecraft.deriveFont(14F));
+		console.setBounds(10, FRAME_HEIGHT - 60, 90, 30);
+		console.setForeground(Color.WHITE);
+		console.setActionCommand(CONSOLE_ACTION);
+		console.addActionListener(this);
 
 		build = new JLabel("Launcher Build: " + Settings.getLauncherBuild());
 		build.setBounds(10, FRAME_HEIGHT - 25, 150, 20);
@@ -125,6 +134,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		Container contentPane = getContentPane();
 		contentPane.add(build);
 		contentPane.add(logs);
+		contentPane.add(console);
 		contentPane.add(optionsQuit);
 		contentPane.add(title);
 		contentPane.add(memory);
@@ -152,6 +162,8 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		} else if (action.equals(LOGS_ACTION)) {
 			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 			Compatibility.open(logDirectory);
+		} else if (action.equals(CONSOLE_ACTION)) {
+			SpoutcraftLauncher.setupConsole();
 		}
 	}
 

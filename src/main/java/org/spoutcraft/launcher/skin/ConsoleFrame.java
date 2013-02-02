@@ -93,7 +93,7 @@ import org.spoutcraft.launcher.util.Compatibility;
  *
  * This code reused & relicensed as LGPL v 3 with permission.
  */
-public class ConsoleFrame extends JFrame implements MouseListener{
+public class ConsoleFrame extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger rootLogger = Logger.getLogger("launcher");
 	private Process trackProc;
@@ -116,6 +116,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	 */
 	public ConsoleFrame(int numLines, boolean colorEnabled) {
 		this(numLines, colorEnabled, null, false);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	/**
@@ -183,12 +184,14 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 
 		}
 		textComponent.addMouseListener(this);
-		textComponent.setFont(getMonospaceFont());
+		textComponent.setFont(getMonospaceFont().deriveFont(14F));
 		textComponent.setEditable(false);
 		DefaultCaret caret = (DefaultCaret) textComponent.getCaret();
 		caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
 		document = textComponent.getDocument();
 		document.addDocumentListener(new LimitLinesDocumentListener(numLines, true));
+		textComponent.setBackground(Color.BLACK);
+		textComponent.setForeground(Color.WHITE);
 
 		JScrollPane scrollText = new JScrollPane(textComponent);
 		scrollText.setBorder(null);
