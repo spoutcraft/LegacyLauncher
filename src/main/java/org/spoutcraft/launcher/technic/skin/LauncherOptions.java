@@ -164,6 +164,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			Compatibility.open(logDirectory);
 		} else if (action.equals(CONSOLE_ACTION)) {
 			SpoutcraftLauncher.setupConsole();
+			dispose();
 		}
 	}
 
