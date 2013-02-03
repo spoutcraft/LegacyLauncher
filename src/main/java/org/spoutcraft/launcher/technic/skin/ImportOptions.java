@@ -29,12 +29,18 @@ package org.spoutcraft.launcher.technic.skin;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -44,6 +50,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
@@ -60,17 +67,20 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private static final String QUIT_ACTION = "quit";
 	private static final String IMPORT_ACTION = "import";
 	private static final String CHANGE_FOLDER = "folder";
+	private static final String PASTE_URL = "paste";
 	private static final int FRAME_WIDTH = 520;
 	private static final int FRAME_HEIGHT = 222;
 	private JLabel msgLabel;
 	private JLabel background;
 	private LiteButton save;
 	private LiteButton folder;
+	private LiteButton paste;
 	private LiteTextBox install;
 	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
 	private CustomInfo info = null;
 	private String url = "";
+	private Document urlDoc;
 	private File installDir;
 	
 	public ImportOptions() {
@@ -106,9 +116,10 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		msgLabel.setFont(minecraft);
 		
 		LiteTextBox url = new LiteTextBox(this, "Paste Platform URL Here");
-		url.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 5, FRAME_WIDTH - 20, 30);
+		url.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 5, FRAME_WIDTH - 115, 30);
 		url.setFont(minecraft);
 		url.getDocument().addDocumentListener(this);
+		urlDoc = url.getDocument();
 		
 		save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
@@ -124,6 +135,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		folder.setBounds(FRAME_WIDTH - 230, FRAME_HEIGHT - 40, 90, 30);
 		folder.setActionCommand(CHANGE_FOLDER);
 		folder.addActionListener(this);
+		
+		paste = new LiteButton("Paste");
+		paste.setFont(minecraft.deriveFont(14F));
+		paste.setBounds(FRAME_WIDTH - 100, msgLabel.getY() + msgLabel.getHeight() + 5, 90, 30);
+		paste.setActionCommand(PASTE_URL);
+		paste.addActionListener(this);
+		paste.setVisible(true);
 
 		install = new LiteTextBox(this, "");
 		install.setBounds(10, FRAME_HEIGHT - 75, FRAME_WIDTH - 20, 25);
@@ -133,11 +151,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		
 		enableComponent(save, false);
 		enableComponent(folder, false);
+		enableComponent(paste, true);
 
 		contentPane.add(install);
 		contentPane.add(optionsQuit);
 		contentPane.add(msgLabel);
 		contentPane.add(folder);
+		contentPane.add(paste);
 		contentPane.add(url);
 		contentPane.add(save);
 		contentPane.add(background);
@@ -173,6 +193,24 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				Launcher.getFrame().getModpackSelector().addPack(info.getPack());
 				dispose();
 			}
+		} else if (action.equals(PASTE_URL)) {
+			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+			Transferable clipData = clipboard.getContents(clipboard);
+			if(clipData != null) {
+				try {
+					if(clipData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+						String s = (String)(clipData.getTransferData(DataFlavor.stringFlavor));
+						urlDoc.remove(0, urlDoc.getLength());
+						urlDoc.insertString(0, s, new SimpleAttributeSet());
+					}
+				} catch(UnsupportedFlavorException e) {
+					e.printStackTrace();
+				} catch(IOException e) {
+					e.printStackTrace();
+				} catch (BadLocationException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -194,6 +232,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 					enableComponent(save, true);
 					enableComponent(folder, true);
 					enableComponent(install, true);
+					enableComponent(paste, true);
 					installDir = new File(Utils.getLauncherDirectory(), info.getName());
 					install.setText("Location: " + installDir.getPath());
 				} catch (RestfulAPIException e) {
