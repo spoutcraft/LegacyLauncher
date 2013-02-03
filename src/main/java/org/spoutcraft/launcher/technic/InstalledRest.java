@@ -89,7 +89,7 @@ public class InstalledRest extends InstalledPack {
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 
-			File installed = new File(this.getPackDirectory(), "installed");
+			File installed = new File(this.getBinDir(), "installed");
 			if (installed.exists()) {
 				return new FallbackModpack(getName(), getBuild());
 			}
