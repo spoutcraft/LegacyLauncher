@@ -123,22 +123,22 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		
 		save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(FRAME_WIDTH - 130, FRAME_HEIGHT - 40, 120, 30);
+		save.setBounds(FRAME_WIDTH - 145, FRAME_HEIGHT - 40, 135, 30);
 		save.setActionCommand(IMPORT_ACTION);
 		save.addActionListener(this);
 		
 		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
-		folder = new LiteButton("Folder");
+		folder = new LiteButton("Change Folder");
 		folder.setFont(minecraft.deriveFont(14F));
-		folder.setBounds(FRAME_WIDTH - 230, FRAME_HEIGHT - 40, 90, 30);
+		folder.setBounds(FRAME_WIDTH - 290, FRAME_HEIGHT - 40, 135, 30);
 		folder.setActionCommand(CHANGE_FOLDER);
 		folder.addActionListener(this);
 		
 		paste = new LiteButton("Paste");
 		paste.setFont(minecraft.deriveFont(14F));
-		paste.setBounds(FRAME_WIDTH - 100, msgLabel.getY() + msgLabel.getHeight() + 5, 90, 30);
+		paste.setBounds(FRAME_WIDTH - 95, msgLabel.getY() + msgLabel.getHeight() + 5, 85, 30);
 		paste.setActionCommand(PASTE_URL);
 		paste.addActionListener(this);
 		paste.setVisible(true);
