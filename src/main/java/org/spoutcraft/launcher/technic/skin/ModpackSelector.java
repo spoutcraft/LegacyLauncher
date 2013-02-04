@@ -194,6 +194,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		// Set the big button image in the middle
 		buttons.get(3).setIcon(selected.getLogo(bigWidth, bigHeight));
 
+		// Set the URL for the platform button
+		frame.getPlatform().setURL("http://beta.technicpack.net/modpack/details/" + selected.getName());
+
 		// Start the iterator at the selected pack
 		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
 		// Add the first 3 buttons to the left

@@ -95,6 +95,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private BackgroundImage packBackground;
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
+	private ImageHyperlinkButton platform;
 	private JLabel packShadow;
 	private JLabel customName;
 	private long previous = 0L;
@@ -129,19 +130,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(620, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
+		name.setBounds(620, loginStrip.getY() + loginStrip.getHeight() / 2 - 40, 115, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(745, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
+		pass.setBounds(620, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(745 + 26, loginStrip.getY() + loginStrip.getHeight() / 2 - 40, 110, 24);
+		remember.setBounds(745, loginStrip.getY() + loginStrip.getHeight() / 2 - 12, 115, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -149,7 +150,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		remember.setContentAreaFilled(false);
 		remember.setBorder(null);
 		remember.setForeground(Color.WHITE);
-		remember.setHorizontalTextPosition(SwingConstants.LEFT);
+		remember.setHorizontalTextPosition(SwingConstants.RIGHT);
+		remember.setIconTextGap(10);
 		remember.addKeyListener(this);
 
 		// Technic logo
@@ -229,20 +231,25 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.addKeyListener(this);
 		
 		// Pack Options Button
-		packOptionsBtn = new ImageButton(getIcon("packOptions.png", 20, 20), getIcon("packOptionsInverted.png", 20, 20));
-		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 90, FRAME_HEIGHT / 2 + 59, 20, 20);
+		packOptionsBtn = new ImageButton(getIcon("packOptions.png", 20, 21), getIcon("packOptionsInverted.png", 20, 21));
+		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 90, FRAME_HEIGHT / 2 + 59, 20, 21);
 		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 		
 		// Pack Remove Button
-		packRemoveBtn = new ImageButton(getIcon("packDelete.png", 20, 20), getIcon("packDeleteInverted.png", 20, 20));
-		packRemoveBtn.setBounds(FRAME_WIDTH / 2 + 70, FRAME_HEIGHT / 2 + 59, 20, 20);
+		packRemoveBtn = new ImageButton(getIcon("packDelete.png", 20, 21), getIcon("packDeleteInverted.png", 20, 21));
+		packRemoveBtn.setBounds(FRAME_WIDTH / 2 + 70, FRAME_HEIGHT / 2 + 59, 20, 21);
 		packRemoveBtn.setActionCommand(PACK_REMOVE_ACTION);
 		packRemoveBtn.addActionListener(this);
 		
+		// Platform website button
+		platform = new ImageHyperlinkButton("http://www.beta.technicpack.net/");
+		platform.setIcon(getIcon("openPlatformPage.png", 20, 20));
+		platform.setBounds(FRAME_WIDTH / 2 - 65, FRAME_HEIGHT / 2 + 59, 20, 20);
+		
 		// Setup login button
 		login = new LiteButton("Launch");
-		login.setBounds(FRAME_WIDTH / 2 - 50, FRAME_HEIGHT / 2 + 58, 100, 22);
+		login.setBounds(745, loginStrip.getY() + loginStrip.getHeight() / 2 - 40, 115, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -323,6 +330,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(customName);
 		contentPane.add(packOptionsBtn);
 		contentPane.add(packRemoveBtn);
+		contentPane.add(platform);
 		contentPane.add(packSelector);
 		//contentPane.add(packShadow);
 		contentPane.add(selectorBackground);
@@ -538,6 +546,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return customName;
 	}
 
+	public ImageHyperlinkButton getPlatform() {
+		return platform;
+	}
+
 	public void enableComponent(JComponent component, boolean enable) {
 		component.setVisible(enable);
 		component.setEnabled(enable);
@@ -550,8 +562,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public void lockLoginButton() {
 		login.setText("Launching...");
 		login.setEnabled(false);
+		packRemoveBtn.setEnabled(false);
+		packOptionsBtn.setEnabled(false);
 	}
-	
+
 	public Image newBackgroundImage(RestInfo modpack) {
 		try {
 			Image image = modpack.getBackground().getScaledInstance(FRAME_WIDTH, FRAME_HEIGHT, Image.SCALE_SMOOTH);
