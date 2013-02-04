@@ -109,7 +109,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			for (String pack : Settings.getInstalledPacks()) {
 				if (Settings.isPackCustom(pack)) {
 					try {
-						CustomInfo info = RestAPI.getCustomModpack(Settings.getCustomURL(pack));
+						CustomInfo info = RestAPI.getCustomModpack(RestAPI.getCustomPackURL(pack));
 						installedPacks.add(info.getPack());
 					} catch (RestfulAPIException e) {
 						e.printStackTrace();

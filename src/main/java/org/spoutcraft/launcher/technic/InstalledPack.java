@@ -68,6 +68,13 @@ public abstract class InstalledPack {
 			installedDirectory = new File(location);
 			initDirectories();
 		}
+		
+		String build = Settings.getModpackBuild(getName());
+		
+		if (build == null) {
+			Settings.setModpackBuild(getName(), ModpackOptions.RECOMMENDED);
+			Settings.getYAML().save();
+		}
 	}
 
 	public ImageIcon getBackground() {

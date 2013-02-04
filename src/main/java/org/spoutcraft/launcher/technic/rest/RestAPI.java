@@ -98,6 +98,10 @@ public class RestAPI {
 		return getMirrorURL() + modpack + "/resources/icon.png";
 	}
 
+	public static String getCustomPackURL(String modpack) {
+		return "http://beta.technicpack.net/api/modpack/" + modpack;
+	}
+
 	private Modpacks getModpacks() {
 		InputStream stream = null;
 		String url = restInfoURL;

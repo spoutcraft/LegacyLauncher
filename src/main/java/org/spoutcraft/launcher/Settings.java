@@ -219,14 +219,6 @@ public class Settings {
 		yaml.setProperty("modpacks." + modpack + ".custom", custom);
 	}
 
-	public static synchronized String getCustomURL(String modpack) {
-		return yaml.getString("modpacks." + modpack + ".custom_url");
-	}
-
-	public static synchronized void setCustomURL(String modpack, String url) {
-		yaml.setProperty("modpacks." + modpack + ".custom_url", url);
-	}
-
 	public static synchronized void removePack(String modpack) {
 		yaml.removeProperty("modpacks." + modpack);
 	}
