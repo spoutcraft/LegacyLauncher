@@ -97,4 +97,8 @@ public class InstalledRest extends InstalledPack {
 			return null;
 		}
 	}
+
+	public String getWebURL() {
+		return info.getWebURL();
+	}
 }

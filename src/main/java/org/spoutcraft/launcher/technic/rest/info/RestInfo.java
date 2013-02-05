@@ -57,8 +57,8 @@ public class RestInfo {
 	private String backgroundMD5;
 	@JsonProperty("icon_md5")
 	private String iconMD5;
-//	@JsonProperty("url")
-//	private String url;
+	@JsonProperty("url")
+	private String url;
 
 	private RestAPI rest;
 
@@ -93,6 +93,10 @@ public class RestInfo {
 
 	public String[] getBuilds() {
 		return builds;
+	}
+
+	public String getWebURL() {
+		return url;
 	}
 
 	public String getLogoURL() {

@@ -122,7 +122,13 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			}
 		}
 		installedPacks.add(new AddPack());
-		selectPack(0);
+		
+		String lastPack = Settings.getLastModpack();
+		if (lastPack == null) {
+			selectPack(0);
+		} else {
+			selectPack(lastPack);
+		}
 	}
 
 	public void addPack(InstalledPack pack) {
@@ -182,6 +188,10 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		}
 
 		InstalledPack selected = installedPacks.get(getIndex());
+
+		// Determine if the pack is custom
+		boolean custom = Settings.isPackCustom(selected.getName());
+
 		// Set the background image based on the pack
 		frame.getBackgroundImage().setIcon(selected.getBackground());
 
@@ -195,7 +205,17 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		buttons.get(3).setIcon(selected.getLogo(bigWidth, bigHeight));
 
 		// Set the URL for the platform button
-		frame.getPlatform().setURL("http://beta.technicpack.net/modpack/details/" + selected.getName());
+		String url = "http://beta.technicpack.net/modpack/details/" + selected.getName();
+		if (selected instanceof InstalledRest && !custom) {
+			String newUrl = ((InstalledRest) selected).getWebURL();
+			if (newUrl != null && !newUrl.isEmpty()) {
+				url = newUrl;
+				frame.enableComponent(frame.getPlatform(), true);
+			} else {
+				frame.enableComponent(frame.getPlatform(), false);
+			}
+		}
+		frame.getPlatform().setURL(url);
 
 		// Start the iterator at the selected pack
 		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
@@ -221,8 +241,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
 		}
 
-		boolean custom = Settings.isPackCustom(selected.getName());
-
 		if (selected instanceof AddPack) {
 			frame.enableComponent(frame.getPackOptionsBtn(), false);
 			frame.enableComponent(frame.getPackRemoveBtn(), false);
@@ -245,7 +263,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			frame.enableComponent(frame.getPackRemoveBtn(), false);
 			frame.enableComponent(frame.getCustomName(), false);
 			frame.enableComponent(frame.getLoginButton(), true);
-			frame.enableComponent(frame.getPlatform(), true);
 		}
 
 		this.repaint();

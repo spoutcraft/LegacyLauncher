@@ -153,7 +153,6 @@ public class SpoutcraftLauncher {
 		try {
 			new Launcher(updater, new GameLauncher(), frame);
 			frame.getModpackSelector().setupModpackButtons();
-			frame.getModpackSelector().selectPack(Settings.getLastModpack());
 		} catch (IOException failure) {
 			failure.printStackTrace();
 			ErrorDialog dialog = new ErrorDialog(frame, failure);
