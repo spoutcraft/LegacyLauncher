@@ -33,6 +33,7 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
@@ -40,6 +41,7 @@ import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.Utils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RestInfo {
 	@JsonProperty("name")
 	private String name;
@@ -55,6 +57,8 @@ public class RestInfo {
 	private String backgroundMD5;
 	@JsonProperty("icon_md5")
 	private String iconMD5;
+//	@JsonProperty("url")
+//	private String url;
 
 	private RestAPI rest;
 

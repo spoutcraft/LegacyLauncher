@@ -31,6 +31,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.technic.InstalledCustom;
 import org.spoutcraft.launcher.technic.InstalledPack;
@@ -43,6 +44,7 @@ import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomInfo {
 	@JsonProperty("name")
 	private String displayName;

@@ -31,12 +31,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class RestModpack extends Modpack {
 
 	@JsonProperty("libraries")
