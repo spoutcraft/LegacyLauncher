@@ -291,7 +291,6 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	}
 
 	private void cleanBin() {
-		Settings.removePack(installedPack.getName());
 		UpdateThread.cleanupBinFolders(installedPack);
 		UpdateThread.cleanupModsFolders(installedPack);
 	}
