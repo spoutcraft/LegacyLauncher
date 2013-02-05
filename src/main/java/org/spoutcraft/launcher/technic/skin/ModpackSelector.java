@@ -122,13 +122,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			}
 		}
 		installedPacks.add(new AddPack());
-		
-		String lastPack = Settings.getLastModpack();
-		if (lastPack == null) {
-			selectPack(0);
-		} else {
-			selectPack(lastPack);
-		}
+		selectPack(0);
+		selectPack(Settings.getLastModpack());
 	}
 
 	public void addPack(InstalledPack pack) {
