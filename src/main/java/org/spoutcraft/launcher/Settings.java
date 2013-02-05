@@ -220,7 +220,7 @@ public class Settings {
 	}
 
 	public static synchronized void removePack(String modpack) {
-		yaml.removeProperty("modpacks." + modpack);
+		yaml.removeProperty("modpacks." + modpack + ".minecraft");
 	}
 
 	public static synchronized List<String> getInstalledPacks() {

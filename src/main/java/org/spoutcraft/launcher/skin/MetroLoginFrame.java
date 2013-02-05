@@ -123,7 +123,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
-		
+
 		packShadow = new JLabel();
 		packShadow.setBounds(FRAME_WIDTH / 2 - (176 / 2), FRAME_HEIGHT / 2 + 45, 176, 38);
 		setIcon(packShadow, "packShadow.png", packShadow.getWidth(), packShadow.getHeight());
@@ -158,18 +158,18 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		JLabel logo = new JLabel();
 		logo.setBounds(FRAME_WIDTH / 2 - 200, 15, 400, 109);
 		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
-		
+
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
 		selectorBackground.setBounds(0, FRAME_HEIGHT / 2 - 84, FRAME_WIDTH, 168);
 		setIcon(selectorBackground, "selectorBackground.png", selectorBackground.getWidth(), selectorBackground.getHeight());
-		
+
 		// Pack Select Left
 		ImageButton switchLeft = new ImageButton(getIcon("selectLeft.png", 22, 168), getIcon("selectLeftInverted.png", 22, 168));
 		switchLeft.setBounds(0, FRAME_HEIGHT / 2 - 83, 22, 167);
 		switchLeft.setActionCommand(PACK_LEFT_ACTION);
 		switchLeft.addActionListener(this);
-		
+
 		// Pack Select Right
 		ImageButton switchRight = new ImageButton(getIcon("selectRight.png", 22, 168), getIcon("selectRightInverted.png", 22, 168));
 		switchRight.setBounds(FRAME_WIDTH - 22, FRAME_HEIGHT / 2 - 83, 22, 167);
@@ -229,24 +229,24 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
 		options.addKeyListener(this);
-		
+
 		// Pack Options Button
 		packOptionsBtn = new ImageButton(getIcon("packOptions.png", 20, 21), getIcon("packOptionsInverted.png", 20, 21));
 		packOptionsBtn.setBounds(FRAME_WIDTH / 2 - 90, FRAME_HEIGHT / 2 + 59, 20, 21);
 		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
-		
+
+		// Platform website button
+		platform = new ImageHyperlinkButton("http://www.beta.technicpack.net/");
+		platform.setIcon(getIcon("openPlatformPage.png", 20, 20));
+		platform.setBounds(FRAME_WIDTH / 2 - 65, FRAME_HEIGHT / 2 + 59, 20, 20);
+
 		// Pack Remove Button
 		packRemoveBtn = new ImageButton(getIcon("packDelete.png", 20, 21), getIcon("packDeleteInverted.png", 20, 21));
 		packRemoveBtn.setBounds(FRAME_WIDTH / 2 + 70, FRAME_HEIGHT / 2 + 59, 20, 21);
 		packRemoveBtn.setActionCommand(PACK_REMOVE_ACTION);
 		packRemoveBtn.addActionListener(this);
-		
-		// Platform website button
-		platform = new ImageHyperlinkButton("http://www.beta.technicpack.net/");
-		platform.setIcon(getIcon("openPlatformPage.png", 20, 20));
-		platform.setBounds(FRAME_WIDTH / 2 - 65, FRAME_HEIGHT / 2 + 59, 20, 20);
-		
+
 		// Setup login button
 		login = new LiteButton("Launch");
 		login.setBounds(745, loginStrip.getY() + loginStrip.getHeight() / 2 - 40, 115, 24);
