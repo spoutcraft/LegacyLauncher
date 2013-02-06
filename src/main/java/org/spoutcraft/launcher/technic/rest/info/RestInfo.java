@@ -113,11 +113,13 @@ public class RestInfo {
 
 	public BufferedImage getLogo() throws IOException {
 		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
+		Utils.getAssetsDirectory().mkdirs();
+		File assets = new File(Utils.getAssetsDirectory(), getName());
+		assets.mkdirs();
+		File temp = new File(assets, "logo.png");
 		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
 			image = ImageIO.read(temp);
 		} else {
-			temp.mkdirs();
 			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
 			image = ImageIO.read(download.getOutFile());
 		}
@@ -126,11 +128,12 @@ public class RestInfo {
 	
 	public BufferedImage getBackground() throws IOException {
 		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
+		File assets = new File(Utils.getAssetsDirectory(), getName());
+		assets.mkdirs();
+		File temp = new File(assets, "background.jpg");
 		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
 			image = ImageIO.read(temp);
 		} else {
-			temp.mkdirs();
 			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
 			image = ImageIO.read(download.getOutFile());
 		}
@@ -139,11 +142,12 @@ public class RestInfo {
 
 	public BufferedImage getIcon() throws IOException { 
 		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "icon.png");
+		File assets = new File(Utils.getAssetsDirectory(), getName());
+		assets.mkdirs();
+		File temp = new File(assets, "icon.png");
 		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(iconMD5)) {
 			image = ImageIO.read(temp);
 		} else {
-			temp.mkdirs();
 			Download download = DownloadUtils.downloadFile(getIconURL(), temp.getAbsolutePath());
 			image = ImageIO.read(download.getOutFile());
 		}

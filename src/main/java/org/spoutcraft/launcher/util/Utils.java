@@ -69,6 +69,7 @@ public class Utils {
 	public static File getLauncherDirectory() {
 		if (workDir == null) {
 			workDir = getWorkingDirectory("technic");
+			workDir.mkdirs();
 		}
 		return workDir;
 	}
@@ -91,7 +92,7 @@ public class Utils {
 
 	public static File getWorkingDirectory(String applicationName) {
 		if (getStartupParameters() != null && getStartupParameters().isPortable()) {
-			return new File("technic");
+			return new File(applicationName);
 		}
 
 		String userHome = System.getProperty("user.home", ".");
