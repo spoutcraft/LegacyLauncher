@@ -152,7 +152,9 @@ public final class StartupParameters {
 		}
 		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
 		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
-		return mb < min;
+		boolean memory = mb < min;
+		boolean permgen = Settings.getPermGen();
+		return memory || permgen;
 	}
 
 	public boolean relaunch(Logger log) {
@@ -183,6 +185,9 @@ public final class StartupParameters {
 				commands.add("java");
 			}
 			commands.add("-Xmx" + memory + "m");
+			if (Settings.getPermGen()) {
+				commands.add("-XX:MaxPermSize=128m");
+			}
 			commands.add("-cp");
 			commands.add(pathToJar);
 			commands.add(SpoutcraftLauncher.class.getName());

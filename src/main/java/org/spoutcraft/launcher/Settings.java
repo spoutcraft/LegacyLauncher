@@ -103,6 +103,14 @@ public class Settings {
 		yaml.setProperty("launcher.memory", memory);
 	}
 
+	public static synchronized void setPermGen(boolean permgen) {
+		yaml.setProperty("launcher.permgen", permgen);
+	}
+
+	public static synchronized boolean getPermGen() {
+		return yaml.getBoolean("launcher.permgen", false);
+	}
+
 	public static synchronized String getDeveloperCode() {
 		return yaml.getString("launcher.devcode", "");
 	}

@@ -38,6 +38,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -66,6 +67,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private JLabel build;
 	private LiteButton logs;
 	private JComboBox memory;
+	private JCheckBox permgen;
 	private int mouseX = 0, mouseY = 0;
 
 	public LauncherOptions() {
@@ -106,6 +108,13 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		memory.setBounds(150, 100, 100, 25);
 		populateMemory(memory);
 
+		permgen = new JCheckBox("Increase PermGen Size");
+		permgen.setFont(minecraft);
+		permgen.setBounds(50, 150, 200, 25);
+		permgen.setSelected(Settings.getPermGen());
+		permgen.setBorderPainted(false);
+		permgen.setFocusPainted(false);
+
 		LiteButton save = new LiteButton("Save");
 		save.setFont(minecraft.deriveFont(14F));
 		save.setBounds(FRAME_WIDTH - 90 - 10, FRAME_HEIGHT - 60, 90, 30);
@@ -132,6 +141,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		build.setForeground(Color.WHITE);
 
 		Container contentPane = getContentPane();
+		contentPane.add(permgen);
 		contentPane.add(build);
 		contentPane.add(logs);
 		contentPane.add(console);
@@ -157,6 +167,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
+			Settings.setPermGen(permgen.isSelected());
 			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(LOGS_ACTION)) {
