@@ -43,6 +43,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 
 import org.spoutcraft.launcher.Memory;
@@ -166,9 +167,20 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
-			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
-			Settings.setPermGen(permgen.isSelected());
+			int oldMem = Settings.getMemory();
+			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
+			Settings.setMemory(mem);
+			boolean oldperm = Settings.getPermGen();
+			boolean perm = permgen.isSelected();
+			Settings.setPermGen(perm);
 			Settings.getYAML().save();
+			
+			if (mem != oldMem || oldperm != perm) {
+				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (result == JOptionPane.YES_OPTION) {
+					SpoutcraftLauncher.relaunch(true);
+				}
+			}
 			dispose();
 		} else if (action.equals(LOGS_ACTION)) {
 			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");

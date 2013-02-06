@@ -157,8 +157,8 @@ public final class StartupParameters {
 		return memory || permgen;
 	}
 
-	public boolean relaunch(Logger log) {
-		if (shouldRelaunch()) {
+	public boolean relaunch(Logger log, boolean force) {
+		if (shouldRelaunch() || force) {
 			String pathToJar;
 			File jar = new File(SpoutcraftLauncher.class.getProtectionDomain().getCodeSource().getLocation().getFile());
 			try {

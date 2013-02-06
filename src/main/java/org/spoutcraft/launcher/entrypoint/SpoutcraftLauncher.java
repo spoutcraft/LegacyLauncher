@@ -72,6 +72,7 @@ public class SpoutcraftLauncher {
 	private static Logger logger = null;
 	protected static RotatingFileHandler handler = null;
 	protected static ConsoleFrame console;
+	private static StartupParameters params;
 	public SpoutcraftLauncher() {
 		main(new String[0]);
 	}
@@ -88,7 +89,7 @@ public class SpoutcraftLauncher {
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
 
-		StartupParameters params = setupParameters(args);
+		params = setupParameters(args);
 		SpoutcraftLauncher.logger = setupLogger();
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
@@ -126,13 +127,7 @@ public class SpoutcraftLauncher {
 			start = System.currentTimeMillis();
 		}
 
-		if (params.relaunch(logger)) {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) { }
-			System.exit(0);
-			return;
-		}
+		relaunch(false);
 
 		checkInternet();
 
@@ -183,6 +178,16 @@ public class SpoutcraftLauncher {
 		}
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+	}
+
+	public static void relaunch(boolean force) {
+		if (params.relaunch(logger, force)) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) { }
+			System.exit(0);
+			return;
+		}
 	}
 
 	private static void checkInternet() {
