@@ -115,6 +115,8 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		permgen.setSelected(Settings.getPermGen());
 		permgen.setBorderPainted(false);
 		permgen.setFocusPainted(false);
+		permgen.setContentAreaFilled(false);
+		permgen.setForeground(Color.WHITE);
 
 		LiteButton save = new LiteButton("Save");
 		save.setFont(minecraft.deriveFont(14F));
