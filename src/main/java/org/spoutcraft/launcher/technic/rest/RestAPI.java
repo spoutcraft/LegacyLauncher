@@ -35,7 +35,6 @@ import java.util.List;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.CustomInfo;
@@ -44,9 +43,9 @@ import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 import org.spoutcraft.launcher.util.MirrorUtils;
 
 public class RestAPI {
+	public static final String TECHNIC = "http://www.sctgaming.com/Technic/API/";
 
 	private final static ObjectMapper mapper = new ObjectMapper();
-	public static final RestAPI TECHNIC = new RestAPI("http://www.sctgaming.com/Technic/API/");
 
 	private final String restURL;
 	private final String restInfoURL;
@@ -56,7 +55,7 @@ public class RestAPI {
 
 	private final Modpacks modpacks;
 
-	public RestAPI(String url) {
+	public RestAPI(String url) throws RestfulAPIException {
 		restURL = url;
 		restInfoURL = restURL + "modpack/";
 		cacheURL = restURL + "cache/";
@@ -102,7 +101,7 @@ public class RestAPI {
 		return "http://beta.technicpack.net/api/modpack/" + modpack;
 	}
 
-	private Modpacks setupModpacks() {
+	private Modpacks setupModpacks() throws RestfulAPIException {
 		InputStream stream = null;
 		String url = restInfoURL;
 		try {
@@ -111,7 +110,7 @@ public class RestAPI {
 			Modpacks result = mapper.readValue(stream, Modpacks.class);
 			return result;
 		} catch (IOException e) {
-			Launcher.getFrame().handleException(new RestfulAPIException("Error accessing URL [" + url + "]", e));
+			new RestfulAPIException("Error accessing URL [" + url + "]", e);
 			return null;
 		} finally {
 			IOUtils.closeQuietly(stream);
