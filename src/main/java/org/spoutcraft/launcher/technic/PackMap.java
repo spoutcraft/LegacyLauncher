@@ -1,0 +1,110 @@
+package org.spoutcraft.launcher.technic;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+public class PackMap extends HashMap<String, PackInfo> {
+	private static final long serialVersionUID = 1L;
+
+	private final List<String> byIndex = new ArrayList<String>(0);
+
+	private PackInfo selected = null;
+	private int selectedIndex = 0;
+
+	public PackInfo select(int index) {
+		String name = byIndex.get(index);
+		PackInfo info = null;
+		if (name != null) {
+			info = this.get(name);
+		}
+		if (info != null) {
+			selected = info;
+			this.selectedIndex = index;
+		}
+		return info;
+	}
+
+	public PackInfo select(String name) {
+		PackInfo info = get(name);
+		if (info != null) {
+			selected = info;
+			this.selectedIndex = byIndex.indexOf(name);
+		}
+		return info;
+	}
+
+	public PackInfo getSelected() {
+		return selected;
+	}
+
+	public int getIndex() {
+		return selectedIndex;
+	}
+
+	public PackInfo getNext(int offset) {
+		return get(this.selectedIndex + offset);
+	}
+
+	public PackInfo getPrevious(int offset) {
+		return get(this.selectedIndex - offset);
+	}
+
+	public PackInfo addNew(PackInfo pack) {
+		PackInfo info = super.put(pack.getName(), pack);
+		if (info == null) {
+			int loc = byIndex.size() - 1;
+			byIndex.add(loc, pack.getName());
+			select(loc);
+		}
+		return info;
+	}
+
+	public PackInfo add(PackInfo pack) {
+		return this.put(pack.getName(), pack);
+	}
+
+	@Override
+	public PackInfo put(String key, PackInfo value) {
+		PackInfo info = super.put(key, value);
+		if (info == null) {
+			byIndex.add(key);
+		}
+		return info;
+	}
+
+	@Override
+	public PackInfo remove(Object key) {
+		PackInfo info = super.remove(key);
+		if (info != null) {
+			byIndex.remove(key);
+		}
+		return info;
+	}
+
+	public PackInfo get(int index) {
+		if (index >= byIndex.size()) {
+			return this.get(index - byIndex.size());
+		} else if (index < 0) {
+			return this.get(byIndex.size() + index);
+		}
+
+		String pack = null;
+		try {
+			pack = byIndex.get(index);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		PackInfo info = null;
+		if (pack != null) {
+			info = get(pack);
+		}
+
+		return info;
+	}
+
+	public int getPackIndex(String pack) {
+		return byIndex.indexOf(pack);
+	}
+}

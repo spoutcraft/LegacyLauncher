@@ -29,6 +29,7 @@ package org.spoutcraft.launcher;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.spoutcraft.launcher.yml.YAMLNode;
@@ -234,7 +235,7 @@ public class Settings {
 	public static synchronized List<String> getInstalledPacks() {
 		YAMLNode node = yaml.getNode("modpacks");
 		if (node == null) {
-			return null;
+			return Collections.emptyList();
 		} else {
 			return new ArrayList<String>(node.getMap().keySet());
 		}

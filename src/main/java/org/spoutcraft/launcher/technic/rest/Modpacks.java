@@ -71,4 +71,12 @@ public class Modpacks {
 	public void setRest(RestAPI rest) {
 		this.rest = rest;
 	}
+
+	public RestAPI getRest() {
+		return rest;
+	}
+
+	public Map<String, String> getMap() {
+		return modpacks;
+	}
 }

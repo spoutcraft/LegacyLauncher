@@ -26,18 +26,21 @@
  */
 package org.spoutcraft.launcher.technic;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
 
 public class OfflineInfo extends PackInfo {
 	private final String name;
 	private final String version;
 	
-	public OfflineInfo(String name, String version) {
+	public OfflineInfo(String name) {
 		this.name = name;
-		this.version = version;
+		this.version = Settings.getModpackBuild(name);
 		init();
 	}
 
@@ -74,6 +77,11 @@ public class OfflineInfo extends PackInfo {
 
 	@Override
 	public Modpack getModpack() {
+		File installed = new File(this.getBinDir(), "installed");
+		if (installed.exists()) {
+			return new OfflineModpack(getName(), getBuild());
+		}
+
 		return null;
 	}
 }

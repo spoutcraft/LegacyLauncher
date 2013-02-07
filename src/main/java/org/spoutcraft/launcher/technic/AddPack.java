@@ -36,7 +36,7 @@ import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 public class AddPack extends PackInfo {
 	private final static Image icon = MetroLoginFrame.getIcon("icon.png", 32, 32).getImage();
 	private final static Image logo = MetroLoginFrame.getIcon("addNewPack.png", 180, 110).getImage();
-	private final static Image background = MetroLoginFrame.getIcon("background.jpg", 880, 520).getImage();
+	private final static Image background = MetroLoginFrame.getIcon("background.jpg", 880, 520).getImage().getScaledInstance(880, 520, Image.SCALE_SMOOTH);
 
 	@Override
 	public String getName() {
@@ -71,6 +71,11 @@ public class AddPack extends PackInfo {
 	@Override
 	public String getLatest() {
 		return "";
+	}
+
+	@Override
+	public boolean isLoading() {
+		return false;
 	}
 
 	@Override

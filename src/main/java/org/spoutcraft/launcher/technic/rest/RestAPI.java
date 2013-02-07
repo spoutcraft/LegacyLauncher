@@ -61,7 +61,7 @@ public class RestAPI {
 		restInfoURL = restURL + "modpack/";
 		cacheURL = restURL + "cache/";
 		modURL = cacheURL + "mod/";
-		modpacks = getModpacks();
+		modpacks = setupModpacks();
 		modpacks.setRest(this);
 		mirrorURL = modpacks.getMirrorURL();
 	}
@@ -102,7 +102,7 @@ public class RestAPI {
 		return "http://beta.technicpack.net/api/modpack/" + modpack;
 	}
 
-	private Modpacks getModpacks() {
+	private Modpacks setupModpacks() {
 		InputStream stream = null;
 		String url = restInfoURL;
 		try {
@@ -116,6 +116,10 @@ public class RestAPI {
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
+	}
+
+	public Modpacks getModpacks() {
+		return modpacks;
 	}
 
 	public String getMirrorURL() {

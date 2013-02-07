@@ -61,7 +61,6 @@ import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
-import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -146,18 +145,8 @@ public class SpoutcraftLauncher {
 		// Set up the launcher and load login frame
 		MetroLoginFrame frame = new MetroLoginFrame();
 
-		try {
-			new Launcher(updater, new GameLauncher(), frame);
-			frame.getModpackSelector().setupModpackButtons();
-		} catch (IOException failure) {
-			failure.printStackTrace();
-			ErrorDialog dialog = new ErrorDialog(frame, failure);
-			splash.dispose();
-			frame.setVisible(true);
-			dialog.setAlwaysOnTop(true);
-			dialog.setVisible(true);
-			return;
-		}
+		new Launcher(updater, new GameLauncher(), frame);
+		frame.getModpackSelector().setupOfflinePacks();
 
 		frame.setUser(Settings.getLastUser());
 
@@ -168,6 +157,10 @@ public class SpoutcraftLauncher {
 
 		splash.dispose();
 		frame.setVisible(true);
+
+		frame.getModpackSelector().addRestPacks();
+		frame.getModpackSelector().addCustomPacks();
+
 		if (params.hasAccount()) {
 			frame.disableForm();
 			frame.doLogin(params.getUser(), params.getPass());

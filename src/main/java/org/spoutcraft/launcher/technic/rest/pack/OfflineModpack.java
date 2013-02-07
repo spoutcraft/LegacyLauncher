@@ -32,11 +32,11 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 
-public class FallbackModpack extends Modpack {
+public class OfflineModpack extends Modpack {
 	private final String name;
 	private final String build;
 
-	public FallbackModpack(String name, String build) {
+	public OfflineModpack(String name, String build) {
 		this.name = name;
 		this.build = build;
 	}

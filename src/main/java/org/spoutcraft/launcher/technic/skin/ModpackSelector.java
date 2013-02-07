@@ -34,20 +34,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
+import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 
 import org.apache.commons.io.FileUtils;
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.CustomInfo;
 import org.spoutcraft.launcher.technic.OfflineInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.technic.PackMap;
 import org.spoutcraft.launcher.technic.RestInfo;
+import org.spoutcraft.launcher.technic.rest.Modpacks;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -57,8 +61,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private ImportOptions importOptions = null;
 
 	private final MetroLoginFrame frame;
-	private List<PackInfo> installedPacks = new ArrayList<PackInfo>();
-	private List<PackButton> buttons = new ArrayList<PackButton>(7);
+	private final PackMap packs = new PackMap();
+	private final List<PackButton> buttons = new ArrayList<PackButton>(7);
 
 	private final int height = 170;
 	private final int width = 880;
@@ -72,117 +76,138 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int bigY = (height / 2) - (bigHeight / 2);
 	private final int smallY = (height / 2) - (smallHeight / 2);
 
-	private int index;
-
 	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
-		this.index = -1;
 
 		for (int i = 0; i < 7; i++) {
 			PackButton button = new PackButton();
 			buttons.add(button);
+			JLabel label = button.getJLabel();
 			button.setActionCommand(PACK_SELECT_ACTION);
 			button.addActionListener(this);
 			if (i == 3) {
 				button.setBounds(bigX, bigY, bigWidth, bigHeight);
+				label.setBounds(bigX, bigY + bigHeight - 24, bigWidth, 24);
+				label.setFont(label.getFont().deriveFont(14F));
 				button.setIndex(0);
 			} else if (i < 3) {
 				int smallX = bigX - ((i + 1) * (smallWidth + spacing));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
 				button.setIndex((i + 1) * -1);
 			} else if (i > 3) {
 				int smallX = bigX + bigWidth + spacing + ((i - 4) * (smallWidth + spacing));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
+				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
 				button.setIndex(i - 3);
 			}
-			
+
+			this.add(button.getJLabel());
 			this.add(button);
 		}
 	}
 
-	public void setupModpackButtons() throws IOException {
-		List<RestInfo> modpacks = RestAPI.TECHNIC.getRestInfos();
-		for (RestInfo info : modpacks) {
-			installedPacks.add(info);
-		}
-		if (Settings.getInstalledPacks() != null) {
-			for (String pack : Settings.getInstalledPacks()) {
-				if (Settings.isPackCustom(pack)) {
-					try {
-						CustomInfo info = RestAPI.getCustomModpack(RestAPI.getCustomPackURL(pack));
-						installedPacks.add(info.getPack());
-					} catch (RestfulAPIException e) {
-						e.printStackTrace();
-						String build = Settings.getModpackBuild(pack);
-						if (build != null) {
-							installedPacks.add(new OfflineInfo(pack, build));
-						}
-					}
-				}
-			}
-		}
-		installedPacks.add(new AddPack());
-		selectPack(0);
+	public void setupOfflinePacks() {
+		initRest();
+		initCustom();
+		packs.put("addpack", new AddPack());
+
+		selectPack("tekkitlite");
 		selectPack(Settings.getLastModpack());
 	}
 
+	public void initRest() {
+		for (String pack : Settings.getInstalledPacks()) {
+			if (Settings.isPackCustom(pack)) {
+				continue;
+			}
+			OfflineInfo info = new OfflineInfo(pack);
+			packs.put(pack, info);
+		}
+	}
+
+	public void initCustom() {
+		for (String pack : Settings.getInstalledPacks()) {
+			if (!Settings.isPackCustom(pack)) {
+				continue;
+			}
+			OfflineInfo info = new OfflineInfo(pack);
+			packs.put(pack, info);
+		}
+	}
+
+	public void addRestPacks() {
+		Modpacks modpacks = RestAPI.TECHNIC.getModpacks();
+		for (String pack : modpacks.getMap().keySet()) {
+			try {
+				RestInfo info = modpacks.getRest().getModpackInfo(pack);
+				packs.add(info);
+			} catch (RestfulAPIException e) {
+				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
+			}
+			selectPack(packs.getSelected());
+		}
+	}
+
+	public void addCustomPacks() {
+		for (String pack : Settings.getInstalledPacks()) {
+			if (!Settings.isPackCustom(pack)) {
+				continue;
+			}
+			try {
+				CustomInfo info = RestAPI.getCustomModpack(RestAPI.getCustomPackURL(pack));
+				if (info.hasMirror()) {
+					RestAPI rest = new RestAPI(info.getMirrorURL());
+					RestInfo restInfo = rest.getModpackInfo(pack);
+					packs.add(restInfo);
+				} else {
+					packs.add(info);
+				}
+			} catch (RestfulAPIException e) {
+				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Platform API", e);
+			}
+			selectPack(packs.getSelected());
+		}
+	}
+
 	public void addPack(PackInfo pack) {
-		int loc = installedPacks.size() - 1;
-		installedPacks.add(loc, pack);
-		selectPack(loc);
+		packs.addNew(pack);
+		selectPack(pack);
 	}
 
 	public void removePack() {
-		boolean custom = Settings.isPackCustom(getSelectedPack().getName());
-		if (custom) {
-			PackInfo pack = installedPacks.remove(getIndex());
-			
-			Settings.removePack(pack.getName());
-			Settings.getYAML().save();
-			File file = pack.getPackDirectory();
-			if (file.exists()) {
-				try {
-					FileUtils.deleteDirectory(file);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			file = new File(Utils.getAssetsDirectory(), pack.getName());
-			if (file.exists()) {
-				try {
-					FileUtils.deleteDirectory(file);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			selectPack(0);
-		}
-	}
-
-	public int getIndex() {
-		return this.index;
-	}
-
-	public void selectPack(String pack) {
-		for (int i = 0; i < installedPacks.size(); i++) {
-			PackInfo installed = installedPacks.get(i);
-			if (installed.getName().equals(pack)) {
-				selectPack(i);
+		PackInfo pack = packs.get(getSelectedPack().getName());
+		
+		Settings.removePack(pack.getName());
+		Settings.getYAML().save();
+		File file = pack.getPackDirectory();
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
-	}
-
-	public void selectPack(int index) {
-		if (index >= installedPacks.size()) {
-			selectPack(index - installedPacks.size());
-		} else if (index < 0) {
-			selectPack(installedPacks.size() + index);
-		} else {
-			this.index = index;
+		
+		file = new File(Utils.getAssetsDirectory(), pack.getName());
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
-		PackInfo selected = installedPacks.get(getIndex());
+		packs.remove(pack.getName());
+		selectPack(packs.getPrevious(1));
+	}
+
+	public void selectPack(PackInfo pack) {
+		selectPack(pack.getName());
+	}
+
+	public void selectPack(String name) {
+		PackInfo selected = packs.select(name);
 
 		// Determine if the pack is custom
 		boolean custom = Settings.isPackCustom(selected.getName());
@@ -198,6 +223,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		
 		// Set the big button image in the middle
 		buttons.get(3).setIcon(new ImageIcon(selected.getLogo().getScaledInstance(bigWidth, bigHeight, Image.SCALE_SMOOTH)));
+		buttons.get(3).getJLabel().setVisible(selected.isLoading());
 
 		// Set the URL for the platform button
 		String url = "http://beta.technicpack.net/modpack/details/" + selected.getName();
@@ -212,28 +238,18 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		}
 		frame.getPlatform().setURL(url);
 
-		// Start the iterator at the selected pack
-		ListIterator<PackInfo> iterator = installedPacks.listIterator(getIndex());
 		// Add the first 3 buttons to the left
 		for (int i = 0; i < 3; i++) {
-			// If you run out of packs, start the iterator back at the last element
-			if (!iterator.hasPrevious()) {
-				iterator = installedPacks.listIterator(installedPacks.size());
-			}
-			PackInfo pack = iterator.previous();
+			PackInfo pack = packs.getPrevious(i + 1);
 			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
+			buttons.get(i).getJLabel().setVisible(pack.isLoading());
 		}
 
-		// Start the iterator just after the selected pack
-		iterator = installedPacks.listIterator(getIndex() + 1);
 		// Add the last 3 buttons to the right
 		for (int i = 4; i < 7; i++) {
-			// If you run out of packs, start the iterator back at 0
-			if (!iterator.hasNext()) {
-				iterator = installedPacks.listIterator(0);
-			}
-			PackInfo pack = iterator.next();
+			PackInfo pack = packs.getNext(i - 3);
 			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
+			buttons.get(i).getJLabel().setVisible(pack.isLoading());
 		}
 
 		if (selected instanceof AddPack) {
@@ -264,15 +280,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void selectNextPack() {
-		selectPack(getIndex() + 1);
+		selectPack(packs.getNext(1));
 	}
 
 	public void selectPreviousPack() {
-		selectPack(getIndex() - 1);
+		selectPack(packs.getPrevious(1));
 	}
 
 	public PackInfo getSelectedPack() {
-		return installedPacks.get(index);
+		return packs.getSelected();
 	}
 
 	@Override
@@ -293,7 +309,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 					importOptions.setVisible(true);
 				}
 			} else {
-				selectPack(getIndex() + button.getIndex()); 
+				selectPack(packs.get(packs.getIndex() + button.getIndex()));
 			}
 		}
 	}

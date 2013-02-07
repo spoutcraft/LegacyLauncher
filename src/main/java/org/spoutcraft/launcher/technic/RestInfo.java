@@ -35,7 +35,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.technic.rest.pack.FallbackModpack;
+import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RestInfo extends PackInfo {
@@ -131,6 +131,11 @@ public class RestInfo extends PackInfo {
 	}
 
 	@Override
+	public boolean isLoading() {
+		return false;
+	}
+
+	@Override
 	public Modpack getModpack() {
 		try {
 			return getRest().getModpack(this, getBuild());
@@ -139,7 +144,7 @@ public class RestInfo extends PackInfo {
 
 			File installed = new File(this.getBinDir(), "installed");
 			if (installed.exists()) {
-				return new FallbackModpack(getName(), getBuild());
+				return new OfflineModpack(getName(), getBuild());
 			}
 
 			return null;

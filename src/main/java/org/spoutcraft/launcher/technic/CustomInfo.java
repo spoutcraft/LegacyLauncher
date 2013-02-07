@@ -90,6 +90,11 @@ public class CustomInfo extends PackInfo {
 	}
 
 	@Override
+	public boolean isLoading() {
+		return false;
+	}
+
+	@Override
 	public String getLogoURL() {
 		return logoUrl;
 	}

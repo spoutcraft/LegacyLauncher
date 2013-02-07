@@ -72,6 +72,10 @@ public abstract class PackInfo {
 
 	public abstract Modpack getModpack();
 
+	public boolean isLoading() {
+		return true;
+	}
+
 	public String getLogoURL() {
 		return "";
 	}
@@ -200,7 +204,7 @@ public abstract class PackInfo {
 	public Image getBackground() {
 		if (background == null) {
 			try {
-				background = buildBackground();
+				background = buildBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -220,53 +224,35 @@ public abstract class PackInfo {
 	}
 
 	private Image buildLogo() throws IOException {
-		BufferedImage image;
-		Utils.getAssetsDirectory().mkdirs();
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "logo.png");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(getLogoMD5())) {
-			image = ImageIO.read(temp);
-		} else {
-			if (getIconURL().isEmpty()) {
-				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/noLogo.png"));
-			}
-			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
-		}
-		return image;
+		return buildImage("logo.png", "/org/spoutcraft/launcher/resources/noLogo.png", getLogoURL(), getLogoMD5());
 	}
 	
 	private Image buildBackground() throws IOException {
-		BufferedImage image;
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "background.jpg");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(getBackgroundMD5())) {
-			image = ImageIO.read(temp);
-		} else {
-			if (getIconURL().isEmpty()) {
-				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
-			}
-			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
-		}
-		return image;
+		return buildImage("background.jpg", "/org/spoutcraft/launcher/resources/background.jpg", getBackgroundURL(), getBackgroundMD5());
 	}
 
 	private Image buildIcon() throws IOException { 
+		return buildImage("icon.png", "/org/spoutcraft/launcher/resources/icon.png", getIconURL(), getIconMD5());
+	}
+
+	private Image buildImage(String name, String backup, String url, String md5) throws IOException {
 		BufferedImage image;
 		File assets = new File(Utils.getAssetsDirectory(), getName());
 		assets.mkdirs();
-		File temp = new File(assets, "icon.png");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(getIconMD5())) {
-			image = ImageIO.read(temp);
-		} else {
-			if (getIconURL().isEmpty()) {
-				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/icon.png"));
+		File temp = new File(assets, name);
+		if (url.isEmpty()) {
+			if (temp.exists()) {
+				image = ImageIO.read(temp);
+			} else {
+				image = ImageIO.read(ResourceUtils.getResourceAsStream(backup));
 			}
-			Download download = DownloadUtils.downloadFile(getIconURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
+		} else {
+			if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(md5)) {
+				image = ImageIO.read(temp);
+			} else {
+				Download download = DownloadUtils.downloadFile(url, temp.getAbsolutePath());
+				image = ImageIO.read(download.getOutFile());
+			}
 		}
 		return image;
 	}

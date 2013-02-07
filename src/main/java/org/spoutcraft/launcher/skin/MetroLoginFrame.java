@@ -39,6 +39,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -406,20 +407,23 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 
 	private BufferedImage getImage(String user){
+		URLConnection conn;
 		try {
-			URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
+			conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
 			InputStream stream = conn.getInputStream();
 			BufferedImage image = ImageIO.read(stream);
 			if (image != null) {
 				return image;
 			}
-		} catch (Exception e) {
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		try {
 			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
-		} catch (IOException e1) {
-			throw new RuntimeException("Error reading backup image", e1);
+		} catch (IOException e) {
+			throw new RuntimeException("Error reading backup image", e);
 		}
 	}
 
