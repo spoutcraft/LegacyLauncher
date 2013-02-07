@@ -31,10 +31,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.CustomInfo;
@@ -51,16 +53,22 @@ public class RestAPI {
 	private final String restInfoURL;
 	private final String cacheURL;
 	private final String modURL;
-	private final String mirrorURL;
 
-	private final Modpacks modpacks;
+	private String mirrorURL;
+	private Modpacks modpacks;
 
-	public RestAPI(String url) throws RestfulAPIException {
+	public RestAPI(String url) {
 		restURL = url;
 		restInfoURL = restURL + "modpack/";
 		cacheURL = restURL + "cache/";
 		modURL = cacheURL + "mod/";
-		modpacks = setupModpacks();
+		try {
+			modpacks = setupModpacks();
+		} catch (RestfulAPIException e) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
+			e.printStackTrace();
+			return;
+		}
 		modpacks.setRest(this);
 		mirrorURL = modpacks.getMirrorURL();
 	}

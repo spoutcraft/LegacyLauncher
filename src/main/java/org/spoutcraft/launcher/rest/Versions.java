@@ -65,7 +65,10 @@ public final class Versions {
 				}
 				Versions.versions = new ArrayList<String>(versions);
 			} catch (IOException e) {
-				throw new RuntimeException(e);
+				Set<String> versions = new HashSet<String>();
+				versions.add("1.4.7");
+				versions.add("1.2.5");
+				Versions.versions = new ArrayList<String>(versions);
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}

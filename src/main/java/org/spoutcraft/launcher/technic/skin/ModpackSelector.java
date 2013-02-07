@@ -141,23 +141,18 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void addRestPacks() {
-		
-		try {
-			Modpacks modpacks = new RestAPI(RestAPI.TECHNIC).getModpacks();
-			for (String pack : modpacks.getMap().keySet()) {
-				try {
-					RestInfo info = modpacks.getRest().getModpackInfo(pack);
-					packs.add(info);
-					if (pack.equals("tekkitlite")) {
-						selectPack(info);
-					}
-				} catch (RestfulAPIException e) {
-					Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
+		Modpacks modpacks = new RestAPI(RestAPI.TECHNIC).getModpacks();
+		for (String pack : modpacks.getMap().keySet()) {
+			try {
+				RestInfo info = modpacks.getRest().getModpackInfo(pack);
+				packs.add(info);
+				if (pack.equals("tekkitlite")) {
+					selectPack(info);
 				}
-				selectPack(packs.getSelected());
+			} catch (RestfulAPIException e) {
+				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
 			}
-		} catch (RestfulAPIException e) {
-			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Technic Rest API at " + RestAPI.TECHNIC + " Running Offline instead.", e);
+			selectPack(packs.getSelected());
 		}
 	}
 
