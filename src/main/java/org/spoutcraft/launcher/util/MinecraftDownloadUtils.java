@@ -32,13 +32,13 @@ import java.io.IOException;
 
 import org.spoutcraft.diff.JBPatch;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class MinecraftDownloadUtils {
-	public static void downloadMinecraft(String user, String output, InstalledPack pack, Modpack build, DownloadListener listener) throws IOException {
+	public static void downloadMinecraft(String user, String output, PackInfo pack, Modpack build, DownloadListener listener) throws IOException {
 		int tries = 3;
 		File outputFile = null;
 		while (tries > 0) {

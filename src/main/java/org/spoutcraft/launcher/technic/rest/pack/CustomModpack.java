@@ -29,9 +29,9 @@ package org.spoutcraft.launcher.technic.rest.pack;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.spoutcraft.launcher.technic.CustomInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
 
 public class CustomModpack extends Modpack {
 	private final CustomInfo info;

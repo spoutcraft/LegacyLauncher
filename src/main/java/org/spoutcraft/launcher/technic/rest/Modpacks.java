@@ -34,7 +34,7 @@ import java.util.Map;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.technic.RestInfo;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Modpacks {

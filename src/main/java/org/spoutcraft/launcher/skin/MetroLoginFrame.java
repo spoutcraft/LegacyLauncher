@@ -59,8 +59,8 @@ import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.technic.RestInfo;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.LauncherOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
@@ -468,7 +468,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				}
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
-			InstalledPack pack = getModpackSelector().getSelectedPack();
+			PackInfo pack = getModpackSelector().getSelectedPack();
 			if (pack instanceof AddPack) {
 				return;
 			}

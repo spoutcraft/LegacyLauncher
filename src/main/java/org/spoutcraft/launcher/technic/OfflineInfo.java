@@ -24,26 +24,24 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest.info;
+package org.spoutcraft.launcher.technic;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.imageio.ImageIO;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 
-import org.spoutcraft.launcher.util.ResourceUtils;
-import org.spoutcraft.launcher.util.Utils;
-
-public class OfflineInfo {
+public class OfflineInfo extends PackInfo {
 	private final String name;
 	private final String version;
 	
 	public OfflineInfo(String name, String version) {
 		this.name = name;
 		this.version = version;
+		init();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -52,36 +50,30 @@ public class OfflineInfo {
 		return version;
 	}
 
-	public BufferedImage getLogo() throws IOException {
-		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "logo.png");
-		if (temp.exists()) {
-			image = ImageIO.read(temp);
-		} else {
-			image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/noLogo.png"));
-		}
-		return image;
+	@Override
+	public String getDisplayName() {
+		return name;
 	}
 
-	public BufferedImage getIcon() throws IOException {
-		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "icon.png");
-		if (temp.exists()) {
-			image = ImageIO.read(temp);
-		} else {
-			image = getLogo();
-		}
-		return image;
+	@Override
+	public String getRecommended() {
+		return version;
 	}
 
-	public BufferedImage getBackground() throws IOException {
-		BufferedImage image;
-		File temp = new File(Utils.getAssetsDirectory(), getName() + File.separator + "background.jpg");
-		if (temp.exists()) {
-			image = ImageIO.read(temp);
-		} else {
-			image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
-		}
-		return image;
+	@Override
+	public String getLatest() {
+		return version;
+	}
+
+	@Override
+	public List<String> getBuilds() {
+		List<String> builds = new ArrayList<String>(1);
+		builds.add(version);
+		return builds;
+	}
+
+	@Override
+	public Modpack getModpack() {
+		return null;
 	}
 }

@@ -45,7 +45,7 @@ import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Utils;
 
 public class GameLauncher extends JFrame implements WindowListener {
@@ -68,7 +68,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		runGame(user, session, downloadTicket, null);
 	}
 
-	public void runGame(String user, String session, String downloadTicket, InstalledPack pack) {
+	public void runGame(String user, String session, String downloadTicket, PackInfo pack) {
 		try {
 			Launcher.getGameUpdater().start(pack);
 			Settings.setLastModpack(pack.getName());

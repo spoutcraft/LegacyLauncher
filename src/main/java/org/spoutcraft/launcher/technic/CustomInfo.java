@@ -24,28 +24,19 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest.info;
+package org.spoutcraft.launcher.technic;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import javax.imageio.ImageIO;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.spoutcraft.launcher.technic.InstalledCustom;
-import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.InstalledRest;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.ResourceUtils;
-import org.spoutcraft.launcher.util.Utils;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CustomInfo {
+public class CustomInfo extends PackInfo {
 	@JsonProperty("name")
 	private String displayName;
 	@JsonProperty("user")
@@ -71,12 +62,66 @@ public class CustomInfo {
 	@JsonProperty("background_md5")
 	private String backgroundMD5;
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getDisplayName() {
 		return displayName;
+	}
+
+	@Override
+	public String getRecommended() {
+		return version;
+	}
+
+	@Override
+	public String getLatest() {
+		return version;
+	}
+
+	@Override
+	public List<String> getBuilds() {
+		List<String> builds = new ArrayList<String>(1);
+		builds.add(getLatest());
+		return builds;
+	}
+
+	@Override
+	public String getLogoURL() {
+		return logoUrl;
+	}
+
+	@Override
+	public String getBackgroundURL() {
+		return backgroundUrl;
+	}
+
+	@Override
+	public String getIconURL() {
+		return logoUrl;
+	}
+
+	@Override
+	public String getLogoMD5() {
+		return logoMD5;
+	}
+
+	@Override
+	public String getBackgroundMD5() {
+		return backgroundMD5;
+	}
+
+	@Override
+	public String getIconMD5() {
+		return logoMD5;
+	}
+
+	@Override
+	public CustomModpack getModpack() {
+		return new CustomModpack(this);
 	}
 
 	public String getVersion() {
@@ -95,14 +140,6 @@ public class CustomInfo {
 		return url;
 	}
 
-	public String getLogoURL() {
-		return logoUrl;
-	}
-
-	public String getBackgroundURL() {
-		return backgroundUrl;
-	}
-
 	public boolean hasMirror() {
 		return hasMirror;
 	}
@@ -111,57 +148,18 @@ public class CustomInfo {
 		return mirrorUrl;
 	}
 
-	public InstalledPack getPack() {
+	public PackInfo getPack() {
 		try {
 			if (this.hasMirror()) {
 				RestAPI rest = new RestAPI(getMirrorURL());
 				RestInfo restInfo = rest.getModpackInfo(getName());
-				return new InstalledRest(restInfo);
+				return restInfo;
 			} else {
-				return new InstalledCustom(this);
+				return this;
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-	}
-	public CustomModpack getModpack() {
-		return new CustomModpack(this);
-	}
-
-	public BufferedImage getLogo() throws IOException {
-		BufferedImage image;
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "logo.png");
-		if (temp.exists() && !logoMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
-			image = ImageIO.read(temp);
-		} else {
-			if (logoUrl.equals("")) {
-				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/noLogo.png"));
-			} else {
-				Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
-				image = ImageIO.read(download.getOutFile());
-			}
-		}
-		return image;
-	}
-
-	public BufferedImage getBackground() throws IOException {
-		BufferedImage image;
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "background.jpg");
-		if (temp.exists() && !backgroundMD5.equals("") && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
-			image = ImageIO.read(temp);
-		} else {
-			if (backgroundUrl.equals("")) {
-				image = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg"));
-			} else {
-				Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
-				image = ImageIO.read(download.getOutFile());
-			}
-		}
-		return image;
 	}
 }

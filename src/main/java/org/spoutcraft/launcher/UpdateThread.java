@@ -52,7 +52,7 @@ import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.util.Download;
@@ -91,9 +91,9 @@ public class UpdateThread extends Thread {
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final DownloadListener listener = new DownloadListenerWrapper();
 	private final Modpack build;
-	private final InstalledPack pack;
+	private final PackInfo pack;
 
-	public UpdateThread(InstalledPack pack, DownloadListener listener) throws RestfulAPIException {
+	public UpdateThread(PackInfo pack, DownloadListener listener) throws RestfulAPIException {
 		super("Update Thread");
 		setDaemon(true);
 		this.pack = pack;
@@ -449,7 +449,7 @@ public class UpdateThread extends Thread {
 			e.printStackTrace();
 		}
 	}
-	public static void cleanupBinFolders(InstalledPack pack) {
+	public static void cleanupBinFolders(PackInfo pack) {
 		try {
 			if (!pack.getBinDir().exists()) {
 				return;
@@ -471,7 +471,7 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	public static void cleanupModsFolders(InstalledPack pack) {
+	public static void cleanupModsFolders(PackInfo pack) {
 		try {
 			File working = pack.getPackDirectory();
 			File mods = new File(working, "mods");

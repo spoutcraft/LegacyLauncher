@@ -25,24 +25,20 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic.rest.info;
+package org.spoutcraft.launcher.technic;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.technic.rest.pack.FallbackModpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RestInfo {
+public class RestInfo extends PackInfo {
 	@JsonProperty("name")
 	private String name;
 	@JsonProperty("recommended")
@@ -50,7 +46,7 @@ public class RestInfo {
 	@JsonProperty("latest")
 	private String latest;
 	@JsonProperty("builds")
-	private String[] builds;
+	private List<String> builds;
 	@JsonProperty("logo_md5")
 	private String logoMD5;
 	@JsonProperty("background_md5")
@@ -76,86 +72,82 @@ public class RestInfo {
 		return rest;
 	}
 
-	public String getName() {
-		return name;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-	public String getRecommended() {
-		return recommended;
-	}
-
-	public String getLatest() {
-		return latest;
-	}
-
-	public String[] getBuilds() {
-		return builds;
-	}
-
 	public String getWebURL() {
 		return url;
 	}
 
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return displayName;
+	}
+	@Override
+	public String getRecommended() {
+		return recommended;
+	}
+
+	@Override
+	public String getLatest() {
+		return latest;
+	}
+
+	@Override
+	public List<String> getBuilds() {
+		return builds;
+	}
+
+	@Override
 	public String getLogoURL() {
 		return rest.getModpackImgURL(name);
 	}
 	
+	@Override
 	public String getBackgroundURL() {
 		return rest.getModpackBackgroundURL(name);
 	}
 
+	@Override
 	public String getIconURL() {
 		return rest.getModpackIconURL(name);
 	}
 
-	public BufferedImage getLogo() throws IOException {
-		BufferedImage image;
-		Utils.getAssetsDirectory().mkdirs();
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "logo.png");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(logoMD5)) {
-			image = ImageIO.read(temp);
-		} else {
-			Download download = DownloadUtils.downloadFile(getLogoURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
-		}
-		return image;
-	}
-	
-	public BufferedImage getBackground() throws IOException {
-		BufferedImage image;
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "background.jpg");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(backgroundMD5)) {
-			image = ImageIO.read(temp);
-		} else {
-			Download download = DownloadUtils.downloadFile(getBackgroundURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
-		}
-		return image;
+	@Override
+	public String getLogoMD5() {
+		return logoMD5;
 	}
 
-	public BufferedImage getIcon() throws IOException { 
-		BufferedImage image;
-		File assets = new File(Utils.getAssetsDirectory(), getName());
-		assets.mkdirs();
-		File temp = new File(assets, "icon.png");
-		if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(iconMD5)) {
-			image = ImageIO.read(temp);
-		} else {
-			Download download = DownloadUtils.downloadFile(getIconURL(), temp.getAbsolutePath());
-			image = ImageIO.read(download.getOutFile());
+	@Override
+	public String getBackgroundMD5() {
+		return backgroundMD5;
+	}
+
+	@Override
+	public String getIconMD5() {
+		return iconMD5;
+	}
+
+	@Override
+	public Modpack getModpack() {
+		try {
+			return getRest().getModpack(this, getBuild());
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+
+			File installed = new File(this.getBinDir(), "installed");
+			if (installed.exists()) {
+				return new FallbackModpack(getName(), getBuild());
+			}
+
+			return null;
 		}
-		return image;
 	}
 
 	@Override
 	public String toString() {
-		return "{ ModpackBuilds [name: " + name + ", recommended: " + recommended + ", latest: " + latest + ", builds: " + builds + "] }";
+		return "{ RestInfo [name: " + name + ", recommended: " + recommended + ", latest: " + latest + ", builds: " + builds + "] }";
 	}
 }

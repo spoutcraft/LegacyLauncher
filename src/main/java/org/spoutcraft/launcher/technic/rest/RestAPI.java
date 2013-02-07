@@ -38,8 +38,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Versions;
-import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
-import org.spoutcraft.launcher.technic.rest.info.RestInfo;
+import org.spoutcraft.launcher.technic.CustomInfo;
+import org.spoutcraft.launcher.technic.RestInfo;
 import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 import org.spoutcraft.launcher.util.MirrorUtils;
 
@@ -165,6 +165,7 @@ public class RestAPI {
 			stream = conn.openStream();
 			RestInfo result = mapper.readValue(stream, RestInfo.class);
 			result.setRest(this);
+			result.init();
 			String display = modpacks.getDisplayName(modpack);
 			if (display != null) {
 				result.setDisplayName(display);
@@ -184,6 +185,7 @@ public class RestAPI {
 			URL conn = new URL(url);
 			stream = conn.openStream();
 			CustomInfo result = mapper.readValue(stream, CustomInfo.class);
+			result.init();
 			return result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);

@@ -30,7 +30,7 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.Directories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.DownloadListener;
 
 public final class GameUpdater extends Directories {
@@ -51,7 +51,7 @@ public final class GameUpdater extends Directories {
 	public GameUpdater() {
 	}
 
-	public void start(InstalledPack installedPack) throws RestfulAPIException {
+	public void start(PackInfo installedPack) throws RestfulAPIException {
 		if (updateThread != null) {
 			return;
 		}

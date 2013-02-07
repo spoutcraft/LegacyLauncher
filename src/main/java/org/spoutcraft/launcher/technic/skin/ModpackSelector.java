@@ -27,6 +27,7 @@
 
 package org.spoutcraft.launcher.technic.skin;
 
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 
 import org.apache.commons.io.FileUtils;
@@ -42,13 +44,11 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.InstalledOffline;
-import org.spoutcraft.launcher.technic.InstalledPack;
-import org.spoutcraft.launcher.technic.InstalledRest;
+import org.spoutcraft.launcher.technic.CustomInfo;
+import org.spoutcraft.launcher.technic.OfflineInfo;
+import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.technic.RestInfo;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.technic.rest.info.CustomInfo;
-import org.spoutcraft.launcher.technic.rest.info.OfflineInfo;
-import org.spoutcraft.launcher.technic.rest.info.RestInfo;
 import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackSelector extends JComponent implements ActionListener {
@@ -57,7 +57,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private ImportOptions importOptions = null;
 
 	private final MetroLoginFrame frame;
-	private List<InstalledPack> installedPacks = new ArrayList<InstalledPack>();
+	private List<PackInfo> installedPacks = new ArrayList<PackInfo>();
 	private List<PackButton> buttons = new ArrayList<PackButton>(7);
 
 	private final int height = 170;
@@ -103,7 +103,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	public void setupModpackButtons() throws IOException {
 		List<RestInfo> modpacks = RestAPI.TECHNIC.getRestInfos();
 		for (RestInfo info : modpacks) {
-			installedPacks.add(new InstalledRest(info));
+			installedPacks.add(info);
 		}
 		if (Settings.getInstalledPacks() != null) {
 			for (String pack : Settings.getInstalledPacks()) {
@@ -115,7 +115,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 						e.printStackTrace();
 						String build = Settings.getModpackBuild(pack);
 						if (build != null) {
-							installedPacks.add(new InstalledOffline(new OfflineInfo(pack, build)));
+							installedPacks.add(new OfflineInfo(pack, build));
 						}
 					}
 				}
@@ -126,7 +126,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(Settings.getLastModpack());
 	}
 
-	public void addPack(InstalledPack pack) {
+	public void addPack(PackInfo pack) {
 		int loc = installedPacks.size() - 1;
 		installedPacks.add(loc, pack);
 		selectPack(loc);
@@ -135,7 +135,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	public void removePack() {
 		boolean custom = Settings.isPackCustom(getSelectedPack().getName());
 		if (custom) {
-			InstalledPack pack = installedPacks.remove(getIndex());
+			PackInfo pack = installedPacks.remove(getIndex());
 			
 			Settings.removePack(pack.getName());
 			Settings.getYAML().save();
@@ -166,7 +166,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 	public void selectPack(String pack) {
 		for (int i = 0; i < installedPacks.size(); i++) {
-			InstalledPack installed = installedPacks.get(i);
+			PackInfo installed = installedPacks.get(i);
 			if (installed.getName().equals(pack)) {
 				selectPack(i);
 			}
@@ -182,13 +182,13 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			this.index = index;
 		}
 
-		InstalledPack selected = installedPacks.get(getIndex());
+		PackInfo selected = installedPacks.get(getIndex());
 
 		// Determine if the pack is custom
 		boolean custom = Settings.isPackCustom(selected.getName());
 
 		// Set the background image based on the pack
-		frame.getBackgroundImage().setIcon(selected.getBackground());
+		frame.getBackgroundImage().setIcon(new ImageIcon(selected.getBackground()));
 
 		// Set the icon image based on the pack
 		frame.setIconImage(selected.getIcon());
@@ -197,12 +197,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		frame.setTitle(selected.getDisplayName());
 		
 		// Set the big button image in the middle
-		buttons.get(3).setIcon(selected.getLogo(bigWidth, bigHeight));
+		buttons.get(3).setIcon(new ImageIcon(selected.getLogo().getScaledInstance(bigWidth, bigHeight, Image.SCALE_SMOOTH)));
 
 		// Set the URL for the platform button
 		String url = "http://beta.technicpack.net/modpack/details/" + selected.getName();
-		if (selected instanceof InstalledRest && !custom) {
-			String newUrl = ((InstalledRest) selected).getWebURL();
+		if (selected instanceof RestInfo && !custom) {
+			String newUrl = ((RestInfo) selected).getWebURL();
 			if (newUrl != null && !newUrl.isEmpty()) {
 				url = newUrl;
 				frame.enableComponent(frame.getPlatform(), true);
@@ -213,15 +213,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		frame.getPlatform().setURL(url);
 
 		// Start the iterator at the selected pack
-		ListIterator<InstalledPack> iterator = installedPacks.listIterator(getIndex());
+		ListIterator<PackInfo> iterator = installedPacks.listIterator(getIndex());
 		// Add the first 3 buttons to the left
 		for (int i = 0; i < 3; i++) {
 			// If you run out of packs, start the iterator back at the last element
 			if (!iterator.hasPrevious()) {
 				iterator = installedPacks.listIterator(installedPacks.size());
 			}
-			InstalledPack pack = iterator.previous();
-			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
+			PackInfo pack = iterator.previous();
+			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
 		}
 
 		// Start the iterator just after the selected pack
@@ -232,8 +232,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			if (!iterator.hasNext()) {
 				iterator = installedPacks.listIterator(0);
 			}
-			InstalledPack pack = iterator.next();
-			buttons.get(i).setIcon(pack.getLogo(smallWidth, smallHeight));
+			PackInfo pack = iterator.next();
+			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
 		}
 
 		if (selected instanceof AddPack) {
@@ -271,7 +271,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(getIndex() - 1);
 	}
 
-	public InstalledPack getSelectedPack() {
+	public PackInfo getSelectedPack() {
 		return installedPacks.get(index);
 	}
 

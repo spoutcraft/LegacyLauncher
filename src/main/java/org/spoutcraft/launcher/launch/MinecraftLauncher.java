@@ -34,11 +34,11 @@ import java.lang.reflect.Modifier;
 import org.spoutcraft.launcher.exceptions.CorruptedMinecraftJarException;
 import org.spoutcraft.launcher.exceptions.MinecraftVerifyException;
 import org.spoutcraft.launcher.exceptions.UnknownMinecraftException;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 
 public class MinecraftLauncher {
 	private static MinecraftClassLoader loader = null;
-	public static MinecraftClassLoader getClassLoader(InstalledPack pack) {
+	public static MinecraftClassLoader getClassLoader(PackInfo pack) {
 		if (loader == null) {
 			File mcBinFolder = pack.getBinDir();
 
@@ -71,7 +71,7 @@ public class MinecraftLauncher {
 	}
 
 	@SuppressWarnings("rawtypes")
-	public static Applet getMinecraftApplet(InstalledPack pack) throws CorruptedMinecraftJarException, MinecraftVerifyException {
+	public static Applet getMinecraftApplet(PackInfo pack) throws CorruptedMinecraftJarException, MinecraftVerifyException {
 		File mcBinFolder = pack.getBinDir();
 
 		try {

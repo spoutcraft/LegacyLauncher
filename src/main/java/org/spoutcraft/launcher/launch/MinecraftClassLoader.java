@@ -50,7 +50,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipException;
 
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Utils;
 
 public class MinecraftClassLoader extends URLClassLoader {
@@ -58,7 +58,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 	private HashSet<String> preloaded = new HashSet<String>();
 	private HashMap<String, File> classLocations = new HashMap<String, File>(10000);
 
-	public MinecraftClassLoader(ClassLoader parent, File modpackJar, File[] libraries, InstalledPack pack) {
+	public MinecraftClassLoader(ClassLoader parent, File modpackJar, File[] libraries, PackInfo pack) {
 		super(new URL[0], parent);
 
 		// Move all of the jars we want to use to a temp folder (so we don't create file hooks on them)

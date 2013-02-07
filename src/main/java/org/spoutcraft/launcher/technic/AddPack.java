@@ -27,23 +27,16 @@
 package org.spoutcraft.launcher.technic;
 
 import java.awt.Image;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-
-import javax.swing.ImageIcon;
 
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 
-public class AddPack extends InstalledPack {
+public class AddPack extends PackInfo {
 	private final static Image icon = MetroLoginFrame.getIcon("icon.png", 32, 32).getImage();
-	private final static Image image = MetroLoginFrame.getIcon("addNewPack.png", 180, 110).getImage();
-	private final static ImageIcon background = new ImageIcon(MetroLoginFrame.getIcon("background.jpg", 880, 520).getImage().getScaledInstance(880, 520, Image.SCALE_SMOOTH));
-
-	public AddPack() throws IOException {
-		super(icon, image, background);
-	}
+	private final static Image logo = MetroLoginFrame.getIcon("addNewPack.png", 180, 110).getImage();
+	private final static Image background = MetroLoginFrame.getIcon("background.jpg", 880, 520).getImage();
 
 	@Override
 	public String getName() {
@@ -56,17 +49,27 @@ public class AddPack extends InstalledPack {
 	}
 
 	@Override
+	public Image getBackground() {
+		return background;
+	}
+
+	@Override
+	public Image getLogo() {
+		return logo;
+	}
+
+	@Override
+	public Image getIcon() {
+		return icon;
+	}
+
+	@Override
 	public String getRecommended() {
 		return "";
 	}
 
 	@Override
 	public String getLatest() {
-		return "";
-	}
-
-	@Override
-	public String getLogoURL() {
 		return "";
 	}
 

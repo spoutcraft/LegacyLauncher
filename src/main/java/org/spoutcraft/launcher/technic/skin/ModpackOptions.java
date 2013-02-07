@@ -51,7 +51,7 @@ import org.spoutcraft.launcher.UpdateThread;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.technic.InstalledPack;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -75,7 +75,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private String build;
 	private JLabel buildLabel;
 	private JLabel background;
-	private InstalledPack installedPack;
+	private PackInfo installedPack;
 	private JComboBox buildSelector;
 	private LiteTextBox packLocation;
 	private LiteButton openFolder;
@@ -85,7 +85,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private boolean directoryChanged = false;
 	private int mouseX = 0, mouseY = 0;
 	
-	public ModpackOptions(InstalledPack installedPack) {
+	public ModpackOptions(PackInfo installedPack) {
 		this.installedPack = installedPack;
 		setTitle("Modpack Options");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
