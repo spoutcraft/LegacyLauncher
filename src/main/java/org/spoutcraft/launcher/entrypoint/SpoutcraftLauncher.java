@@ -37,6 +37,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
@@ -290,8 +291,9 @@ public class SpoutcraftLauncher {
 
 		if (!file.exists()) {
 			try {
-				InputStream input = SpoutcraftLauncher.class.getResource("resources/settings.yml").openStream();
-				if (input != null) {
+				URL inputURL = SpoutcraftLauncher.class.getResource("/resources/settings.yml");
+				if (inputURL != null) {
+					InputStream input = inputURL.openStream();
 					FileOutputStream output = null;
 					try {
 						file.getParentFile().mkdirs();

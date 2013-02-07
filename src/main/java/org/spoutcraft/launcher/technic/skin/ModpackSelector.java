@@ -108,7 +108,11 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void setupOfflinePacks() {
-		initRest();
+		if (Settings.getInstalledPacks().isEmpty()) {
+			addRestPacks();
+		} else {
+			initRest();
+		}
 		initCustom();
 		packs.put("addpack", new AddPack());
 
@@ -142,6 +146,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			try {
 				RestInfo info = modpacks.getRest().getModpackInfo(pack);
 				packs.add(info);
+				if (pack.equals("tekkitlite")) {
+					selectPack(info);
+				}
 			} catch (RestfulAPIException e) {
 				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
 			}
@@ -208,6 +215,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 	public void selectPack(String name) {
 		PackInfo selected = packs.select(name);
+		if (selected == null) {
+			return;
+		}
 
 		// Determine if the pack is custom
 		boolean custom = Settings.isPackCustom(selected.getName());
