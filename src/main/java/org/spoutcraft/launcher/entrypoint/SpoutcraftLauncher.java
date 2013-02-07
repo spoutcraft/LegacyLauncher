@@ -37,8 +37,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
@@ -48,7 +46,6 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 import com.beust.jcommander.JCommander;
@@ -129,8 +126,6 @@ public class SpoutcraftLauncher {
 
 		relaunch(false);
 
-		checkInternet();
-
 		setLookAndFeel();
 
 		if (params.isConsole() || Settings.isDebugMode()) {
@@ -181,28 +176,6 @@ public class SpoutcraftLauncher {
 			} catch (InterruptedException e) { }
 			System.exit(0);
 			return;
-		}
-	}
-
-	private static void checkInternet() {
-		if (!pingURL("http://www.google.com")) {
-			JOptionPane.showMessageDialog(null, "You must have an internet connection to use The Technic Launcher", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		} else if (!pingURL("http://mirror.technicpack.net/Technic/")) {
-			JOptionPane.showMessageDialog(null, "The Technic webservers are currently not responding. Try again later.", "Technic Servers Down", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		}
-	}
-
-	private static boolean pingURL(String urlLoc) {
-		try {
-			final URL url = new URL(urlLoc);
-			final URLConnection conn = url.openConnection();
-			conn.setConnectTimeout(10000);
-			conn.getInputStream();
-			return true;
-		} catch (IOException e) {
-			return false;
 		}
 	}
 
