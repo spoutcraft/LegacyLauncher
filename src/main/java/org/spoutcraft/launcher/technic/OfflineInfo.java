@@ -37,6 +37,7 @@ import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
 public class OfflineInfo extends PackInfo {
 	private final String name;
 	private final String version;
+	private boolean loading = true;
 	
 	public OfflineInfo(String name) {
 		this.name = name;
@@ -61,6 +62,15 @@ public class OfflineInfo extends PackInfo {
 	@Override
 	public String getRecommended() {
 		return version;
+	}
+
+	public void setLoading(boolean loading) {
+		this.loading = loading;
+	}
+
+	@Override
+	public boolean isLoading() {
+		return loading;
 	}
 
 	@Override

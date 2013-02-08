@@ -76,6 +76,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int bigY = (height / 2) - (bigHeight / 2);
 	private final int smallY = (height / 2) - (smallHeight / 2);
 
+	private boolean first = true;
+
 	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
 
@@ -112,11 +114,11 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			addRestPacks();
 		} else {
 			initRest();
+			first = false;
 		}
 		initCustom();
 		packs.put("addpack", new AddPack());
 
-		selectPack("tekkitlite");
 		selectPack(Settings.getLastModpack());
 	}
 
@@ -146,11 +148,16 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			try {
 				RestInfo info = modpacks.getRest().getModpackInfo(pack);
 				packs.add(info);
-				if (pack.equals("tekkitlite")) {
+				if (pack.equals("tekkitlite") && first) {
+					first = false;
 					selectPack(info);
 				}
 			} catch (RestfulAPIException e) {
 				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
+				PackInfo info = packs.get(pack);
+				if (info instanceof OfflineInfo) {
+					((OfflineInfo) info).setLoading(false);
+				}
 			}
 			selectPack(packs.getSelected());
 		}
@@ -172,6 +179,10 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				}
 			} catch (RestfulAPIException e) {
 				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Platform API", e);
+				PackInfo info = packs.get(pack);
+				if (info instanceof OfflineInfo) {
+					((OfflineInfo) info).setLoading(false);
+				}
 			}
 			selectPack(packs.getSelected());
 		}
@@ -269,11 +280,9 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			frame.enableComponent(frame.getLoginButton(), false);
 			frame.enableComponent(frame.getPlatform(), false);
 		} else if (custom) {
-			if (selected.getLogoURL().equals("")) {
-				frame.setCustomName(selected.getDisplayName());
-				frame.enableComponent(frame.getCustomName(), true);
-			} else {
-				frame.enableComponent(frame.getCustomName(), false);
+			if (selected.getLogoURL().equals("") && !selected.isLoading()) {
+				buttons.get(3).getJLabel().setText(selected.getDisplayName());
+				buttons.get(3).getJLabel().setVisible(true);
 			}
 			frame.enableComponent(frame.getPackOptionsBtn(), true);
 			frame.enableComponent(frame.getPackRemoveBtn(), true);
