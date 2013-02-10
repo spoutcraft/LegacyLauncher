@@ -30,7 +30,9 @@ package org.spoutcraft.launcher.technic.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
@@ -66,11 +68,23 @@ public class RestAPI {
 			modpacks = setupModpacks();
 		} catch (RestfulAPIException e) {
 			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
-			e.printStackTrace();
-			return;
 		}
-		modpacks.setRest(this);
-		mirrorURL = modpacks.getMirrorURL();
+
+		if (modpacks != null) {
+			modpacks.setRest(this);
+			mirrorURL = modpacks.getMirrorURL();
+		} else {
+			mirrorURL = "";
+		}
+	}
+
+	public static Set<String> getDefaults() {
+		Modpacks packs = getDefault().getModpacks();
+		if (packs != null) {
+			return packs.getMap().keySet();
+		} else {
+			return Collections.emptySet();
+		}
 	}
 
 	public static RestAPI getDefault() {

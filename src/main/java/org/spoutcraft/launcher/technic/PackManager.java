@@ -31,7 +31,6 @@ import java.util.logging.Level;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.Modpacks;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 
@@ -47,8 +46,7 @@ public class PackManager {
 		}
 
 		if (packs.size() < 1) {
-			Modpacks modpacks = RestAPI.getDefault().getModpacks();
-			for (String pack : modpacks.getMap().keySet()) {
+			for (String pack : RestAPI.getDefaults()) {
 				initPack(packs, pack);
 			}
 		}
@@ -106,9 +104,9 @@ public class PackManager {
 
 	public static void addRestPacks(ModpackSelector selector) {
 		PackMap packs = selector.getPackMap();
-		Modpacks modpacks = RestAPI.getDefault().getModpacks();
 		int index = 0;
-		for (String pack : modpacks.getMap().keySet()) {
+
+		for (String pack : RestAPI.getDefaults()) {
 			PackInfo info = loadPack(packs, pack);
 			packs.add(info);
 			packs.reorder(index, pack);

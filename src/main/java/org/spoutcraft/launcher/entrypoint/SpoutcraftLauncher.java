@@ -68,7 +68,7 @@ import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 public class SpoutcraftLauncher {
-	private static Logger logger = null;
+	public static Logger logger = null;
 	protected static RotatingFileHandler handler = null;
 	protected static ConsoleFrame console;
 	private static StartupParameters params;
