@@ -66,14 +66,10 @@ public class RestAPI {
 		modURL = cacheURL + "mod/";
 		try {
 			modpacks = setupModpacks();
-		} catch (RestfulAPIException e) {
-			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
-		}
-
-		if (modpacks != null) {
 			modpacks.setRest(this);
 			mirrorURL = modpacks.getMirrorURL();
-		} else {
+		} catch (RestfulAPIException e) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
 			mirrorURL = "";
 		}
 	}
@@ -140,8 +136,7 @@ public class RestAPI {
 			Modpacks result = mapper.readValue(stream, Modpacks.class);
 			return result;
 		} catch (IOException e) {
-			new RestfulAPIException("Error accessing URL [" + url + "]", e);
-			return null;
+			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
