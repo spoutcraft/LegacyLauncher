@@ -189,7 +189,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				Settings.setPackCustom(info.getName(), true);
 				Settings.setPackDirectory(info.getName(), installDir.getAbsolutePath());
 				Settings.getYAML().save();
-				Launcher.getFrame().getModpackSelector().addPack(info.getPack());
+				Launcher.getFrame().getSelector().addPack(info.getPack());
 				dispose();
 			}
 		} else if (action.equals(PASTE_URL)) {

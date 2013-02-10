@@ -45,7 +45,7 @@ import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 import org.spoutcraft.launcher.util.MirrorUtils;
 
 public class RestAPI {
-	public static final String TECHNIC = "http://www.sctgaming.com/Technic/API/";
+	private static RestAPI TECHNIC;
 
 	private final static ObjectMapper mapper = new ObjectMapper();
 
@@ -71,6 +71,14 @@ public class RestAPI {
 		}
 		modpacks.setRest(this);
 		mirrorURL = modpacks.getMirrorURL();
+	}
+
+	public static RestAPI getDefault() {
+		if (TECHNIC == null) {
+			TECHNIC = new RestAPI("http://www.sctgaming.com/Technic/API/");
+		}
+
+		return TECHNIC;
 	}
 
 	public String getModDownloadURL(String mod, String build) {

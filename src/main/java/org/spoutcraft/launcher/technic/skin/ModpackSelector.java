@@ -34,30 +34,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 
 import org.apache.commons.io.FileUtils;
+
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.CustomInfo;
-import org.spoutcraft.launcher.technic.OfflineInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.PackMap;
 import org.spoutcraft.launcher.technic.RestInfo;
-import org.spoutcraft.launcher.technic.rest.Modpacks;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Utils;
 
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
+	public static final String DEFAULT_PACK = "tekkitlite";
 	private ImportOptions importOptions = null;
 
 	private final MetroLoginFrame frame;
@@ -75,8 +70,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int bigX = (width / 2) - (bigWidth / 2);
 	private final int bigY = (height / 2) - (bigHeight / 2);
 	private final int smallY = (height / 2) - (smallHeight / 2);
-
-	private boolean first = true;
 
 	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
@@ -109,83 +102,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		}
 	}
 
-	public void setupOfflinePacks() {
-		if (Settings.getInstalledPacks().isEmpty()) {
-			addRestPacks();
-		} else {
-			initRest();
-			first = false;
-		}
-		initCustom();
-		packs.put("addpack", new AddPack());
-
-		selectPack(Settings.getLastModpack());
-	}
-
-	public void initRest() {
-		for (String pack : Settings.getInstalledPacks()) {
-			if (Settings.isPackCustom(pack)) {
-				continue;
-			}
-			OfflineInfo info = new OfflineInfo(pack);
-			packs.put(pack, info);
-		}
-	}
-
-	public void initCustom() {
-		for (String pack : Settings.getInstalledPacks()) {
-			if (!Settings.isPackCustom(pack)) {
-				continue;
-			}
-			OfflineInfo info = new OfflineInfo(pack);
-			packs.put(pack, info);
-		}
-	}
-
-	public void addRestPacks() {
-		Modpacks modpacks = new RestAPI(RestAPI.TECHNIC).getModpacks();
-		for (String pack : modpacks.getMap().keySet()) {
-			try {
-				RestInfo info = modpacks.getRest().getModpackInfo(pack);
-				packs.add(info);
-				if (pack.equals("tekkitlite") && first) {
-					first = false;
-					selectPack(info);
-				}
-			} catch (RestfulAPIException e) {
-				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Rest API", e);
-				PackInfo info = packs.get(pack);
-				if (info instanceof OfflineInfo) {
-					((OfflineInfo) info).setLoading(false);
-				}
-			}
-			selectPack(packs.getSelected());
-		}
-	}
-
-	public void addCustomPacks() {
-		for (String pack : Settings.getInstalledPacks()) {
-			if (!Settings.isPackCustom(pack)) {
-				continue;
-			}
-			try {
-				CustomInfo info = RestAPI.getCustomModpack(RestAPI.getCustomPackURL(pack));
-				if (info.hasMirror()) {
-					RestAPI rest = new RestAPI(info.getMirrorURL());
-					RestInfo restInfo = rest.getModpackInfo(pack);
-					packs.add(restInfo);
-				} else {
-					packs.add(info);
-				}
-			} catch (RestfulAPIException e) {
-				Launcher.getLogger().log(Level.SEVERE, "Unable to load modpack " + pack + " from Technic Platform API", e);
-				PackInfo info = packs.get(pack);
-				if (info instanceof OfflineInfo) {
-					((OfflineInfo) info).setLoading(false);
-				}
-			}
-			selectPack(packs.getSelected());
-		}
+	public PackMap getPackMap() {
+		return packs;
 	}
 
 	public void addPack(PackInfo pack) {

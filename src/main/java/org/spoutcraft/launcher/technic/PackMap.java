@@ -90,6 +90,12 @@ public class PackMap extends HashMap<String, PackInfo> {
 		return this.put(pack.getName(), pack);
 	}
 
+	public void reorder(int index, String pack) {
+		if (byIndex.remove(pack)) {
+			byIndex.add(index, pack);
+		}
+	}
+
 	@Override
 	public PackInfo put(String key, PackInfo value) {
 		PackInfo info = super.put(key, value);

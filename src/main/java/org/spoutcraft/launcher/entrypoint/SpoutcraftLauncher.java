@@ -60,6 +60,8 @@ import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.technic.PackManager;
+import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
@@ -140,9 +142,10 @@ public class SpoutcraftLauncher {
 
 		// Set up the launcher and load login frame
 		MetroLoginFrame frame = new MetroLoginFrame();
+		ModpackSelector selector = frame.getSelector();
 
 		new Launcher(updater, new GameLauncher(), frame);
-		frame.getModpackSelector().setupOfflinePacks();
+		PackManager.initPacks(selector);
 
 		frame.setUser(Settings.getLastUser());
 
@@ -154,8 +157,16 @@ public class SpoutcraftLauncher {
 		splash.dispose();
 		frame.setVisible(true);
 
-		frame.getModpackSelector().addRestPacks();
-		frame.getModpackSelector().addCustomPacks();
+		String lastPack = Settings.getLastModpack();
+		
+		if (!Settings.getInstalledPacks().contains(lastPack)) {
+			lastPack = ModpackSelector.DEFAULT_PACK;
+		}
+		selector.selectPack(lastPack);
+		PackManager.loadPack(selector.getPackMap(), lastPack);
+
+		PackManager.addRestPacks(selector);
+		PackManager.addCustomPacks(selector);
 
 		if (params.hasAccount()) {
 			frame.disableForm();

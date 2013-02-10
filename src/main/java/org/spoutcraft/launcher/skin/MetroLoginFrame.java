@@ -366,7 +366,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	public ModpackSelector getModpackSelector() {
+	public ModpackSelector getSelector() {
 		return packSelector;
 	}
 	
@@ -444,20 +444,20 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if(action.equals(PACK_REMOVE_ACTION)) {
 			int result = JOptionPane.showConfirmDialog(c, "Are you sure you want to remove this pack?", "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (result == JOptionPane.YES_OPTION) {
-				getModpackSelector().removePack();
+				getSelector().removePack();
 			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
-				packOptions = new ModpackOptions(getModpackSelector().getSelectedPack());
+				packOptions = new ModpackOptions(getSelector().getSelectedPack());
 				packOptions.setModal(true);
 				packOptions.setVisible(true);
 			}
 		} else if (action.equals(EXIT_ACTION)) {
 			System.exit(0);
 		} else if (action.equals(PACK_LEFT_ACTION)) {
-			getModpackSelector().selectPreviousPack();
+			getSelector().selectPreviousPack();
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
-			getModpackSelector().selectNextPack();
+			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
 			if (!login.isEnabled()) {
 				return;
@@ -472,7 +472,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				}
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
-			PackInfo pack = getModpackSelector().getSelectedPack();
+			PackInfo pack = getSelector().getSelectedPack();
 			if (pack instanceof AddPack) {
 				return;
 			}
@@ -655,9 +655,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		if (e.getWhen() != previous) {
 			if (e.getUnitsToScroll() > 0) {
-				getModpackSelector().selectNextPack();
+				getSelector().selectNextPack();
 			} else if (e.getUnitsToScroll() < 0){
-				getModpackSelector().selectPreviousPack();
+				getSelector().selectPreviousPack();
 			}
 			this.previous = e.getWhen();
 		}
