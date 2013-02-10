@@ -113,7 +113,8 @@ public class FileUtils {
 		IOException exception = null;
 		for (File file : files) {
 			try {
-				forceDelete(file);
+				if(!(file.getName().equalsIgnoreCase("rei_minimap") || file.getParentFile().getName().equalsIgnoreCase("rei_minimap")))
+					forceDelete(file);
 			} catch (IOException ioe) {
 				exception = ioe;
 			}
