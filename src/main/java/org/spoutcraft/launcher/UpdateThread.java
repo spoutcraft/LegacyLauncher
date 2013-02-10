@@ -114,24 +114,26 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	private void runTasks() throws IOException{
+	private void runTasks() throws IOException {
 		while (!valid.get()) {
-			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
+			if (!pack.isLoading()) {
+				boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 
-			if (minecraftUpdate) {
-				updateMinecraft(build);
-			}
-
-			boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
-			if (modpackUpdate) {
-				File installed = new File(pack.getBinDir(), "installed");
-				if(!installed.exists()) {
-					updateModpack(build);
+				if (minecraftUpdate) {
+					updateMinecraft(build);
 				}
-				else {
-					int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
-					if (result == JOptionPane.YES_OPTION) {
+
+				boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
+				if (modpackUpdate) {
+					File installed = new File(pack.getBinDir(), "installed");
+					if(!installed.exists()) {
 						updateModpack(build);
+					}
+					else {
+						int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+						if (result == JOptionPane.YES_OPTION) {
+							updateModpack(build);
+						}
 					}
 				}
 			}

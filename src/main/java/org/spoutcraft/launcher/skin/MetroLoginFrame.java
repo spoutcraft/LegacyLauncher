@@ -100,6 +100,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private JLabel packShadow;
 	private JLabel customName;
 	private long previous = 0L;
+	private boolean locked = false;
 
 	public MetroLoginFrame() {
 		initComponents();
@@ -459,9 +460,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
-			if (!login.isEnabled()) {
+			if (locked) {
 				return;
 			}
+			PackInfo pack = getSelector().getSelectedPack();
+			if (pack instanceof AddPack) {
+				return;
+			}
+			lockLoginButton();
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
 				this.doLogin(getSelectedUser(), pass);
@@ -472,10 +478,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				}
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
-			PackInfo pack = getSelector().getSelectedPack();
-			if (pack instanceof AddPack) {
-				return;
-			}
 			DynamicButton userButton = (DynamicButton)c;
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
@@ -538,10 +540,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return packRemoveBtn;
 	}
 
-	public LiteButton getLoginButton() {
-		return login;
-	}
-
 	public JLabel getPackShadow() {
 		return packShadow;
 	}
@@ -564,10 +562,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 	
 	public void lockLoginButton() {
-		login.setText("Launching...");
-		login.setEnabled(false);
-		packRemoveBtn.setEnabled(false);
-		packOptionsBtn.setEnabled(false);
+		if (!locked) {
+			locked = true;
+			login.setText("Launching...");
+			login.setEnabled(false);
+			packRemoveBtn.setEnabled(false);
+			packOptionsBtn.setEnabled(false);
+		}
 	}
 
 	public Image newBackgroundImage(RestInfo modpack) {
