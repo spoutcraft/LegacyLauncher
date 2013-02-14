@@ -92,8 +92,9 @@ public class Utils {
 
 			if (Settings.getLauncherDir() != null) {
 				File temp = new File(Settings.getLauncherDir());
-				if (!temp.exists()) {
-					exists = false;
+				exists = temp.exists();
+				if (exists) {
+					workDir = temp;
 				}
 			}
 
@@ -109,7 +110,15 @@ public class Utils {
 					}
 					workDir.mkdirs();
 				}
+			} else if (Settings.getMigrate() && Settings.getMigrateDir() != null) {
+				File migrate = new File(Settings.getMigrateDir());
+				FileUtils.moveDirectory(workDir, migrate);
+				workDir = migrate;
+				Settings.removeMigrate();
+				File settings = new File(migrate, "settings.yml");
+				settings.delete();
 			}
+
 			Settings.setLauncherDir(workDir.getAbsolutePath());
 			Settings.getYAML().save();
 		}

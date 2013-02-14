@@ -247,7 +247,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
 			Settings.setModpackBuild(installedPack.getName(), build);
-			if (directoryChanged == true) {
+			if (directoryChanged) {
 				installedPack.setPackDirectory(installedDirectory);
 			}
 			Settings.getYAML().save();

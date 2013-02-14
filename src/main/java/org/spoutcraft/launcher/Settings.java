@@ -265,4 +265,25 @@ public class Settings {
 	public static synchronized String getLauncherDir() {
 		return yaml.getString("launcher.directory");
 	}
+
+	public static synchronized void setMigrate(boolean migrate) {
+		yaml.setProperty("launcher.migrate", migrate);
+	}
+
+	public static synchronized boolean getMigrate() {
+		return yaml.getBoolean("launcher.migrate", false);
+	}
+
+	public static synchronized void setMigrateDir(String path) {
+		yaml.setProperty("launcher.migratedir", path);
+	}
+
+	public static synchronized String getMigrateDir() {
+		return yaml.getString("launcher.migratedir");
+	}
+
+	public static synchronized void removeMigrate() {
+		yaml.removeProperty("launcher.migrate");
+		yaml.removeProperty("launcher.migratedir");
+	}
 }

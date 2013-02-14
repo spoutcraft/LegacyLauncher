@@ -42,8 +42,10 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 import org.spoutcraft.launcher.Memory;
@@ -51,6 +53,7 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -63,13 +66,20 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final String SAVE_ACTION = "save";
 	private static final String LOGS_ACTION = "logs";
 	private static final String CONSOLE_ACTION = "console";
+	private static final String CHANGEFOLDER_ACTION = "changefolder";
 
 	private JLabel background;
 	private JLabel build;
 	private LiteButton logs;
 	private JComboBox memory;
 	private JCheckBox permgen;
+	private JRadioButton beta;
+	private JRadioButton stable;
+	private JFileChooser fileChooser;
 	private int mouseX = 0, mouseY = 0;
+	private String installedDirectory;
+	private LiteTextBox packLocation;
+	private boolean directoryChanged = false;
 
 	public LauncherOptions() {
 		setTitle("Launcher Options");
@@ -99,53 +109,96 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		title.setBounds(50, 10, 200, 20);
 		title.setForeground(Color.WHITE);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
-		
+
+		build = new JLabel("Launcher Build:    " + Settings.getLauncherBuild());
+		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
+		build.setFont(minecraft);
+		build.setForeground(Color.WHITE);
+
+		beta = new JRadioButton("Always use Beta Launcher Builds");
+		beta.setBounds(10, build.getY() + build.getHeight() + 10, FRAME_WIDTH - 20, 20);
+		beta.setFont(minecraft);
+		beta.setForeground(Color.WHITE);
+		beta.setContentAreaFilled(false);
+		beta.setFocusPainted(false);
+		beta.setBorderPainted(false);
+		beta.setEnabled(false);
+		beta.setSelected(true);
+
+		stable = new JRadioButton("Always use Stable Launcher Builds");
+		stable.setBounds(10, beta.getY() + beta.getHeight() + 10, FRAME_WIDTH - 20, 20);
+		stable.setFont(minecraft);
+		stable.setForeground(Color.WHITE);
+		stable.setContentAreaFilled(false);
+		stable.setFocusPainted(false);
+		stable.setBorderPainted(false);
+		stable.setEnabled(false);
+
 		JLabel memoryLabel = new JLabel("Memory: ");
 		memoryLabel.setFont(minecraft);
-		memoryLabel.setBounds(50, 100, 75, 25);
+		memoryLabel.setBounds(10, stable.getY() + stable.getHeight() + 10, 65, 20);
 		memoryLabel.setForeground(Color.WHITE);
+		memoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
 		memory = new JComboBox();
-		memory.setBounds(150, 100, 100, 25);
+		memory.setBounds(memoryLabel.getX() + memoryLabel.getWidth() + 10, memoryLabel.getY(), 100, 20);
 		populateMemory(memory);
 
 		permgen = new JCheckBox("Increase PermGen Size");
 		permgen.setFont(minecraft);
-		permgen.setBounds(50, 150, 200, 25);
+		permgen.setBounds(10, memoryLabel.getY() + memoryLabel.getHeight() + 10, FRAME_WIDTH - 20, 25);
 		permgen.setSelected(Settings.getPermGen());
 		permgen.setBorderPainted(false);
 		permgen.setFocusPainted(false);
 		permgen.setContentAreaFilled(false);
 		permgen.setForeground(Color.WHITE);
+		permgen.setIconTextGap(15);
 
-		LiteButton save = new LiteButton("Save");
-		save.setFont(minecraft.deriveFont(14F));
-		save.setBounds(FRAME_WIDTH - 90 - 10, FRAME_HEIGHT - 60, 90, 30);
-		save.setActionCommand(SAVE_ACTION);
-		save.addActionListener(this);
+		installedDirectory = Settings.getLauncherDir();
+
+		packLocation = new LiteTextBox(this, "");
+		packLocation.setBounds(10, permgen.getY() + permgen.getHeight() + 10, FRAME_WIDTH - 20, 25);
+		packLocation.setFont(minecraft.deriveFont(10F));
+		packLocation.setText(installedDirectory);
+		packLocation.setEnabled(false);
+
+		LiteButton changeFolder = new LiteButton("Change Folder");
+		changeFolder.setBounds(FRAME_WIDTH / 2 + 5, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
+		changeFolder.setFont(minecraft);
+		changeFolder.setActionCommand(CHANGEFOLDER_ACTION);
+		changeFolder.addActionListener(this);
+		changeFolder.setEnabled(!Utils.getStartupParameters().isPortable());
 
 		logs = new LiteButton("Logs");
 		logs.setFont(minecraft.deriveFont(14F));
-		logs.setBounds(FRAME_WIDTH / 2 - 45, FRAME_HEIGHT - 60, 90, 30);
+		logs.setBounds(10, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
 		logs.setForeground(Color.WHITE);
 		logs.setActionCommand(LOGS_ACTION);
 		logs.addActionListener(this);
-		
+
+		LiteButton save = new LiteButton("Save");
+		save.setFont(minecraft.deriveFont(14F));
+		save.setBounds(FRAME_WIDTH / 2 + 5, logs.getY() + logs.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
+		save.setActionCommand(SAVE_ACTION);
+		save.addActionListener(this);
+
 		LiteButton console = new LiteButton("Console");
 		console.setFont(minecraft.deriveFont(14F));
-		console.setBounds(10, FRAME_HEIGHT - 60, 90, 30);
+		console.setBounds(10, logs.getY() + logs.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
 		console.setForeground(Color.WHITE);
 		console.setActionCommand(CONSOLE_ACTION);
 		console.addActionListener(this);
 
-		build = new JLabel("Launcher Build: " + Settings.getLauncherBuild());
-		build.setBounds(10, FRAME_HEIGHT - 25, 150, 20);
-		build.setFont(minecraft);
-		build.setForeground(Color.WHITE);
+		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 		Container contentPane = getContentPane();
 		contentPane.add(permgen);
 		contentPane.add(build);
+		contentPane.add(beta);
+		contentPane.add(stable);
+		contentPane.add(changeFolder);
+		contentPane.add(packLocation);
 		contentPane.add(logs);
 		contentPane.add(console);
 		contentPane.add(optionsQuit);
@@ -175,14 +228,19 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			boolean oldperm = Settings.getPermGen();
 			boolean perm = permgen.isSelected();
 			Settings.setPermGen(perm);
-			Settings.getYAML().save();
 			
-			if (mem != oldMem || oldperm != perm) {
+			if (mem != oldMem || oldperm != perm || directoryChanged) {
+				if (directoryChanged) {
+					Settings.setMigrate(true);
+					Settings.setMigrateDir(installedDirectory);
+					Settings.getYAML().save();
+				}
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
 				}
 			}
+			Settings.getYAML().save();
 			dispose();
 		} else if (action.equals(LOGS_ACTION)) {
 			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
@@ -190,6 +248,15 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		} else if (action.equals(CONSOLE_ACTION)) {
 			SpoutcraftLauncher.setupConsole();
 			dispose();
+		} else if (action.equals(CHANGEFOLDER_ACTION)) {
+			int result = fileChooser.showOpenDialog(this);
+			
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				packLocation.setText(file.getPath());
+				installedDirectory = file.getAbsolutePath();
+				directoryChanged = true;
+			}
 		}
 	}
 
