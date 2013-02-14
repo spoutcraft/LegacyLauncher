@@ -217,7 +217,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setSelectedIcon(forumIcon);
 		forums.setRolloverSelectedIcon(forumIcon);
 
-		// Forums link
+		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
 		forums.setToolTipText("Donate to the modders");
 		donate.setBounds(9 + forums.getWidth() + 9, loginStrip.getY() + 9, 90, 90);
@@ -227,12 +227,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		donate.setPressedIcon(donateIcon);
 		donate.setSelectedIcon(donateIcon);
 		donate.setRolloverSelectedIcon(donateIcon);
-
-//		// Donate link
-//		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
-//		donate.setToolTipText("Donate to the modders");
-//		donate.setBounds(forums.getX() + 100,  forums.getY(), 90, 90);
-//		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
 
 		// Issues link
 		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://forums.technicpack.net/forums/bug-reports.81/");
@@ -361,10 +355,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(twitter);
 		contentPane.add(facebook);
 		contentPane.add(youtube);
-		//contentPane.add(home);
 		contentPane.add(forums);
 		contentPane.add(donate);
-		//contentPane.add(issues);
 		contentPane.add(logo);
 		contentPane.add(loginStrip);
 		contentPane.add(options);

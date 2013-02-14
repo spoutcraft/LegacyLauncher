@@ -55,7 +55,7 @@ public class Start {
 			return;
 		}
 
-//		// Test for exe relaunch
+		// Test for exe relaunch
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
 		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
 			String[] argsCopy = new String[args.length - 1];
@@ -70,15 +70,16 @@ public class Start {
 			return;
 		}
 
+		Utils.getLauncherDirectory();
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = RestAPI.getLatestLauncherBuild();
 		if (version < latest) {
 			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
-				temp = new File(Utils.getLauncherDirectory(), "temp.exe");
+				temp = new File(Utils.getSettingsDirectory(), "temp.exe");
 			} else {
-				temp = new File(Utils.getLauncherDirectory(), "temp.jar");
+				temp = new File(Utils.getSettingsDirectory(), "temp.jar");
 			}
 
 			try {
