@@ -29,6 +29,7 @@ package org.spoutcraft.launcher.technic.skin;
 
 import java.awt.Color;
 
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
@@ -47,6 +48,16 @@ public class PackButton extends ImageButton {
 		label.setBackground(new Color(35, 35, 35));
 		label.setOpaque(true);
 		label.setHorizontalAlignment(SwingConstants.CENTER);
+	}
+
+	@Override
+	public void setIcon(Icon defaultIcon) {
+		super.setIcon(defaultIcon);
+		if (index == 0) {
+			this.setSelectedIcon(defaultIcon);
+			this.setRolloverIcon(defaultIcon);
+			this.setPressedIcon(defaultIcon);
+		}
 	}
 
 	public JLabel getJLabel() {
