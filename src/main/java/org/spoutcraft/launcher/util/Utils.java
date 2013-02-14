@@ -83,6 +83,11 @@ public class Utils {
 
 			settingsDir = workDir;
 			SpoutcraftLauncher.setupSettings(settingsDir);
+
+			if (Utils.getStartupParameters().isPortable()) {
+				return workDir;
+			}
+
 			if (Settings.getLauncherDir() != null) {
 				File temp = new File(Settings.getLauncherDir());
 				if (!temp.exists()) {
