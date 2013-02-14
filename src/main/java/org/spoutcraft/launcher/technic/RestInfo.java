@@ -34,7 +34,6 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -56,20 +55,10 @@ public class RestInfo extends PackInfo {
 	@JsonProperty("url")
 	private String url;
 
-	private RestAPI rest;
-
 	private String displayName = "Technic";
 
 	public void setDisplayName(String displayName) {
 		this.displayName = displayName;
-	}
-
-	public void setRest(RestAPI rest) {
-		this.rest = rest;
-	}
-
-	public RestAPI getRest() {
-		return rest;
 	}
 
 	public String getWebURL() {
@@ -102,17 +91,17 @@ public class RestInfo extends PackInfo {
 
 	@Override
 	public String getLogoURL() {
-		return rest.getModpackImgURL(name);
+		return getRest().getModpackImgURL(name);
 	}
 	
 	@Override
 	public String getBackgroundURL() {
-		return rest.getModpackBackgroundURL(name);
+		return getRest().getModpackBackgroundURL(name);
 	}
 
 	@Override
 	public String getIconURL() {
-		return rest.getModpackIconURL(name);
+		return getRest().getModpackIconURL(name);
 	}
 
 	@Override

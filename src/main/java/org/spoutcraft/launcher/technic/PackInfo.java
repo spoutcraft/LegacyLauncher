@@ -37,6 +37,7 @@ import javax.imageio.ImageIO;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.RestObject;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -45,7 +46,7 @@ import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.util.FileUtils;
 
-public abstract class PackInfo {
+public abstract class PackInfo extends RestObject {
 	private Image logo;
 	private Image background;
 	private Image icon;

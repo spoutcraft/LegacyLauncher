@@ -37,14 +37,12 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.RestInfo;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Modpacks {
+public class Modpacks extends RestObject {
 
 	@JsonProperty("modpacks")
 	private Map<String, String> modpacks;
 	@JsonProperty("mirror_url")
 	private String mirrorURL;
-
-	private RestAPI rest = null;
 
 	public String getDisplayName(String modpack) {
 		return modpacks.get(modpack);
@@ -53,7 +51,7 @@ public class Modpacks {
 	public List<RestInfo> getModpacks() throws RestfulAPIException {
 		List<RestInfo> modpackInfos = new ArrayList<RestInfo>(modpacks.size());
 		for (String pack : modpacks.keySet()) {
-			RestInfo info = rest.getModpackInfo(pack);
+			RestInfo info = getRest().getModpackInfo(pack);
 			modpackInfos.add(info);
 		}
 		return modpackInfos;
@@ -66,14 +64,6 @@ public class Modpacks {
 	@Override
 	public String toString() {
 		return "{ Modpacks [modpacks: " + modpacks + "] }";
-	}
-
-	public void setRest(RestAPI rest) {
-		this.rest = rest;
-	}
-
-	public RestAPI getRest() {
-		return rest;
 	}
 
 	public Map<String, String> getMap() {

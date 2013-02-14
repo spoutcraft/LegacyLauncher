@@ -128,18 +128,9 @@ public class RestAPI {
 	}
 
 	private Modpacks setupModpacks() throws RestfulAPIException {
-		InputStream stream = null;
-		String url = restInfoURL;
-		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
-			Modpacks result = mapper.readValue(stream, Modpacks.class);
-			return result;
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		Modpacks result = getRestObject(Modpacks.class, restInfoURL);
+		result.setRest(this);
+		return result;
 	}
 
 	public Modpacks getModpacks() {
@@ -155,71 +146,31 @@ public class RestAPI {
 	}
 
 	public String getModMD5(String mod, String build) throws RestfulAPIException {
-		InputStream stream = null;
-		String url = getModMD5URL(mod, build);
-		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
-			TechnicMD5 md5Result = mapper.readValue(stream, TechnicMD5.class);
-			return md5Result.getMD5();
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		TechnicMD5 result = getRestObject(TechnicMD5.class, getModMD5URL(mod, build));
+		return result.getMD5();
 	}
 
 	public RestModpack getModpack(RestInfo modpack, String build) throws RestfulAPIException {
-		InputStream stream = null;
-		String url = getModpackURL(modpack.getName(), build);
-		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
-			RestModpack result = mapper.readValue(stream, RestModpack.class);
-			result.setRest(this);
-			return result.setInfo(modpack, build);
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		RestModpack result = getRestObject(RestModpack.class, getModpackURL(modpack.getName(), build));
+		result.setRest(this);
+		return result.setInfo(modpack, build);
 	}
 
 	public RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
-		InputStream stream = null;
-		String url = getModpackInfoURL(modpack);
-		try {
-			URL conn = new URL(url);
-			stream = conn.openStream();
-			RestInfo result = mapper.readValue(stream, RestInfo.class);
-			result.setRest(this);
-			result.init();
-			String display = modpacks.getDisplayName(modpack);
-			if (display != null) {
-				result.setDisplayName(display);
-			}
-			return result;
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
+		RestInfo result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
+		result.setRest(this);
+		result.init();
+		String display = modpacks.getDisplayName(modpack);
+		if (display != null) {
+			result.setDisplayName(display);
 		}
+		return result;
 	}
 
 	public static CustomInfo getCustomModpack(String packURL) throws RestfulAPIException {
-		InputStream stream = null;
-		String url = packURL;
-		try {
-			URL conn = new URL(url);
-			stream = conn.openStream();
-			CustomInfo result = mapper.readValue(stream, CustomInfo.class);
-			result.init();
-			return result;
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		CustomInfo info = getRestObject(CustomInfo.class, packURL);
+		info.init();
+		return info;
 	}
 
 	public String getLatestBuild(String modpack) throws RestfulAPIException {
@@ -231,33 +182,13 @@ public class RestAPI {
 	}
 
 	public String getModpackMD5(String modpack) throws RestfulAPIException {
-		InputStream stream = null;
-		String url = getModpackMD5URL(modpack);
-		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
-			TechnicMD5 md5Result = mapper.readValue(stream, TechnicMD5.class);
-			return md5Result.getMD5();
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		TechnicMD5 result = getRestObject(TechnicMD5.class, getModpackMD5URL(modpack));
+		return result.getMD5();
 	}
 	
 	public static int getLatestLauncherBuild() throws RestfulAPIException {
-		InputStream stream = null;
-		String url = "http://beta.technicpack.net/api/launcher/version/latest";
-		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
-			LauncherBuild buildResult = mapper.readValue(stream, LauncherBuild.class);
-			return buildResult.getLatestBuild();
-		} catch (IOException e) {
-			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
+		LauncherBuild result = getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/launcher/version/latest");
+		return result.getLatestBuild();
 	}
 	
 	public static String getLauncherDownloadURL(int version, Boolean isJar) throws RestfulAPIException {
@@ -268,20 +199,30 @@ public class RestAPI {
 			ext = "exe";
 		}
 		
-		InputStream stream = null;
 		String url = "http://beta.technicpack.net/api/launcher/url/" + version + "/" + ext;
+		LauncherURL result = getRestObject(LauncherURL.class, url);
+		return result.getLauncherURL();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends RestObject> T getRestObject(Class<T> restObject, String url) throws RestfulAPIException {
+		InputStream stream = null;
 		try {
 			URL conn = new URL(url);
 			stream = conn.openConnection().getInputStream();
-			LauncherURL buildURL = mapper.readValue(stream, LauncherURL.class);
-			return buildURL.getLauncherURL();
+			RestObject result = mapper.readValue(stream, restObject);
+			if (result.hasError()) {
+				throw new RestfulAPIException("Error in json response: " + result.getError());
+			}
+
+			return (T) result;
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
 			IOUtils.closeQuietly(stream);
 		}
 	}
-
+ 
 	public static String getMinecraftURL(String user) {
 		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
 	}
@@ -296,7 +237,7 @@ public class RestAPI {
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
-	private static class TechnicMD5 {
+	private static class TechnicMD5 extends RestObject {
 		@JsonProperty("MD5")
 		String md5;
 
@@ -305,7 +246,7 @@ public class RestAPI {
 		}
 	}
 	
-	private static class LauncherBuild {
+	private static class LauncherBuild extends RestObject {
 		@JsonProperty("LatestBuild")
 		int latestBuild;
 		
@@ -314,7 +255,7 @@ public class RestAPI {
 		}
 	}
 	
-	private static class LauncherURL {
+	private static class LauncherURL extends RestObject {
 		@JsonProperty("URL")
 		String launcherURL;
 		
