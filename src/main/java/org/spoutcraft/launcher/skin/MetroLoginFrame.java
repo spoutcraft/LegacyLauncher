@@ -217,6 +217,17 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setSelectedIcon(forumIcon);
 		forums.setRolloverSelectedIcon(forumIcon);
 
+		// Forums link
+		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
+		forums.setToolTipText("Donate to the modders");
+		donate.setBounds(9 + forums.getWidth() + 9, loginStrip.getY() + 9, 90, 90);
+		ImageIcon donateIcon = getIcon("donateButton.gif");
+		donate.setIcon(donateIcon);
+		donate.setRolloverIcon(donateIcon);
+		donate.setPressedIcon(donateIcon);
+		donate.setSelectedIcon(donateIcon);
+		donate.setRolloverSelectedIcon(donateIcon);
+
 //		// Donate link
 //		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
 //		donate.setToolTipText("Donate to the modders");
@@ -352,7 +363,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(youtube);
 		//contentPane.add(home);
 		contentPane.add(forums);
-		//contentPane.add(donate);
+		contentPane.add(donate);
 		//contentPane.add(issues);
 		contentPane.add(logo);
 		contentPane.add(loginStrip);
