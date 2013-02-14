@@ -50,7 +50,6 @@ public class Launcher {
 		this.updater = updater;
 		this.launcher = launcher;
 		this.loginFrame = frame;
-
 		logger.addHandler(new ConsoleHandler());
 		instance = this;
 	}

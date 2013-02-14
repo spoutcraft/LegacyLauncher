@@ -155,7 +155,7 @@ public abstract class PackInfo extends RestObject {
 		if (installedDirectory != null) {
 			FileUtils.moveDirectory(installedDirectory, packPath);
 		}
-		Settings.setPackDirectory(getName(), packPath.getPath());
+		Settings.setPackDirectory(getName(), packPath);
 		installedDirectory = packPath;
 		initDirectories();
 	}

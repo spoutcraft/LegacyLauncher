@@ -33,11 +33,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Formatter;
@@ -89,6 +87,7 @@ public class SpoutcraftLauncher {
 
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
+		Utils.setSplashScreen(splash);
 
 		SpoutcraftLauncher.logger = setupLogger();
 
@@ -103,13 +102,6 @@ public class SpoutcraftLauncher {
 		GameUpdater updater = new GameUpdater();
 		Utils.getAssetsDirectory().mkdirs();
 
-		if (Settings.getYAML() == null) {
-			YAMLProcessor settings = setupSettings();
-			if (settings == null) {
-				throw new NullPointerException("The YAMLProcessor object was null for settings.");
-			}
-			Settings.setYAML(settings);
-		}
 		Settings.setLauncherBuild(launcherBuild);
 		setupProxy();
 
@@ -297,46 +289,10 @@ public class SpoutcraftLauncher {
 		return build;
 	}
 
-	protected static YAMLProcessor setupSettings() {
-		File file = new File(Utils.getLauncherDirectory(), "settings.yml");
-
-		if (!file.exists()) {
-			try {
-				URL inputURL = SpoutcraftLauncher.class.getResource("/resources/settings.yml");
-				if (inputURL != null) {
-					InputStream input = inputURL.openStream();
-					FileOutputStream output = null;
-					try {
-						file.getParentFile().mkdirs();
-						output = new FileOutputStream(file);
-						byte[] buf = new byte[8192];
-						int length;
-
-						while ((length = input.read(buf)) > 0) {
-							output.write(buf, 0, length);
-						}
-
-					} catch (Exception e) {
-						e.printStackTrace();
-					} finally {
-						try {
-							input.close();
-						} catch (Exception ignored) {
-						}
-						try {
-							if (output != null) {
-								output.close();
-							}
-						} catch (Exception e) {
-						}
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
+	public static void setupSettings(File file) {
+		File settingsFile = new File(file, "settings.yml");
+		YAMLProcessor settings = new YAMLProcessor(settingsFile, false, YAMLFormat.EXTENDED);
+		Settings.setYAML(settings);
 	}
 
 	public static void setupConsole() {

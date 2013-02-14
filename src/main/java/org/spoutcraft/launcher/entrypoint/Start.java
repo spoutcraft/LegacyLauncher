@@ -33,12 +33,10 @@ import java.util.Arrays;
 
 import javax.swing.UIManager;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.YAMLProcessor;
 import org.spoutcraft.launcher.util.OperatingSystem;
 
 public class Start {
@@ -71,12 +69,6 @@ public class Start {
 			}
 			return;
 		}
-
-		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
-		if (settings == null) {
-			throw new NullPointerException("The YAMLProcessor object was null for settings.");
-		}
-		Settings.setYAML(settings);
 
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = RestAPI.getLatestLauncherBuild();

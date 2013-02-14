@@ -27,6 +27,7 @@
 
 package org.spoutcraft.launcher;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,12 +213,20 @@ public class Settings {
 		return yaml.getString("launcher.lastmodpack");
 	}
 	
-	public static synchronized void setPackDirectory(String modpack, String directory) {
+	public static synchronized void setPackDirectory(String modpack, File dir) {
+		String directory = dir.getAbsolutePath();
+		if (dir.getParent().contains(Settings.getLauncherDir())) {
+			directory = "launcher\\" + dir.getName();
+		}
 		yaml.setProperty("modpacks." + modpack + ".directory", directory);
 	}
 
 	public static synchronized String getPackDirectory(String modpack) {
-		return yaml.getString("modpacks." + modpack + ".directory");
+		String directory = yaml.getString("modpacks." + modpack + ".directory");
+		if (directory != null && directory.startsWith("launcher\\")) {
+			directory = new File(Settings.getLauncherDir(), directory.substring(9)).getAbsolutePath();
+		}
+		return directory;
 	}
 
 	public static synchronized boolean isPackCustom(String modpack) {
@@ -247,5 +256,13 @@ public class Settings {
 
 	public static synchronized String getLastUser() {
 		return yaml.getString("launcher.lastuser");
+	}
+
+	public static synchronized void setLauncherDir(String path) {
+		yaml.setProperty("launcher.directory", path);
+	}
+
+	public static synchronized String getLauncherDir() {
+		return yaml.getString("launcher.directory");
 	}
 }

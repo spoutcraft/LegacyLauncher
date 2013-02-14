@@ -52,9 +52,14 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import javax.net.ssl.HttpsURLConnection;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.entrypoint.SplashScreen;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.exceptions.AccountMigratedException;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
 import org.spoutcraft.launcher.exceptions.MCNetworkException;
@@ -65,13 +70,47 @@ import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
 public class Utils {
 	private static File workDir = null;
 	private static StartupParameters params = null;
+	private static SplashScreen splash = null;
+	private static File settingsDir = null;
 
 	public static File getLauncherDirectory() {
 		if (workDir == null) {
 			workDir = getWorkingDirectory("technic");
-			workDir.mkdirs();
+			boolean exists = workDir.exists();
+			if (!exists && !workDir.mkdirs()) {
+				throw new RuntimeException("The working directory could not be created: " + workDir);
+			}
+
+			settingsDir = workDir;
+			SpoutcraftLauncher.setupSettings(settingsDir);
+			if (Settings.getLauncherDir() != null) {
+				File temp = new File(Settings.getLauncherDir());
+				if (!temp.exists()) {
+					exists = false;
+				}
+			}
+
+			if (!exists) {
+				int result = JOptionPane.showConfirmDialog(splash, "No installation of technic found. Technic Launcher will install at: " + workDir.getAbsolutePath() + " Would you like to change the install directory?", "Install Technic Launcher", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+				if (result == JOptionPane.YES_OPTION) {
+					JFileChooser fileChooser = new JFileChooser(workDir);
+					fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+					int changeInst = fileChooser.showOpenDialog(splash);
+
+					if (changeInst == JFileChooser.APPROVE_OPTION) {
+						workDir = fileChooser.getSelectedFile();
+					}
+					workDir.mkdirs();
+				}
+			}
+			Settings.setLauncherDir(workDir.getAbsolutePath());
+			Settings.getYAML().save();
 		}
 		return workDir;
+	}
+
+	public static File getSettingsDirectory() {
+		return settingsDir;
 	}
 
 	public static File getCacheDirectory() {
@@ -82,6 +121,10 @@ public class Utils {
 		return new File(getLauncherDirectory(), "assets");
 	}
 
+	public static void setSplashScreen(SplashScreen splash) {
+		Utils.splash = splash;
+	}
+
 	public static void setStartupParameters(StartupParameters params) {
 		Utils.params = params;
 	}
@@ -90,7 +133,7 @@ public class Utils {
 		return params;
 	}
 
-	public static File getWorkingDirectory(String applicationName) {
+	private static File getWorkingDirectory(String applicationName) {
 		if (getStartupParameters() != null && getStartupParameters().isPortable()) {
 			return new File(applicationName);
 		}
@@ -113,9 +156,7 @@ public class Utils {
 		} else {
 				workingDirectory = new File(userHome, applicationName + '/');
 		}
-		if ((!workingDirectory.exists()) && (!workingDirectory.mkdirs())) {
-			throw new RuntimeException("The working directory could not be created: " + workingDirectory);
-		}
+
 		return workingDirectory;
 	}
 
