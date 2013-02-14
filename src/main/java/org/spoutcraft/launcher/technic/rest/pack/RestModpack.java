@@ -95,7 +95,7 @@ public class RestModpack extends Modpack {
 	public List<Mod> getMods() {
 		List<Mod> modList = new ArrayList<Mod>(mods.size());
 		for (String name : mods.keySet()) {
-			modList.add(new Mod(name, mods.get(name), rest));
+			modList.add(new Mod(name, mods.get(name), getRest()));
 		}
 		return modList;
 	}
@@ -106,7 +106,7 @@ public class RestModpack extends Modpack {
 	}
 
 	public String getMD5() throws RestfulAPIException {
-		return rest.getModpackMD5(this.getName());
+		return getRest().getModpackMD5(this.getName());
 	}
 
 }

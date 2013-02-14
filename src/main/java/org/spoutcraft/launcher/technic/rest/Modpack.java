@@ -29,7 +29,6 @@ package org.spoutcraft.launcher.technic.rest;
 import java.util.List;
 
 public abstract class Modpack extends RestObject {
-	protected RestAPI rest;
 	
 	public abstract String getMinecraftVersion();
 
