@@ -97,7 +97,7 @@ public class AnimatedBackground extends JLabel {
 				}
 			} else {
 				if (label.transparency > 0) {
-					label.transparency = Math.max(0F, label.transparency - 0.05F);
+					label.transparency = Math.max(0F, label.transparency - 0.10F);
 					label.repaint();
 					if (label.worker.compareAndSet(this, new TransparencyWorker(label, increase))) {
 						label.worker.get().execute();
