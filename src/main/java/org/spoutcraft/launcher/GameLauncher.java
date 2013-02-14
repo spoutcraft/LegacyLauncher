@@ -78,7 +78,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		} catch (RestfulAPIException e1) {
 			e1.printStackTrace();
 		}
-		
+
 		if (pack != null) {
 			this.setTitle(pack.getDisplayName());
 			File icon = new File(Utils.getAssetsDirectory(), pack.getName() + File.separator + "icon.png");
@@ -86,9 +86,9 @@ public class GameLauncher extends JFrame implements WindowListener {
 				this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon.getAbsolutePath()));
 			}
 		}
+
 		if (OperatingSystem.getOS().isMac()) {
-			try
-			{
+			try {
 				Class<?> fullScreenUtilityClass = Class.forName("com.apple.eawt.FullScreenUtilities");
 				java.lang.reflect.Method setWindowCanFullScreenMethod = fullScreenUtilityClass.getDeclaredMethod("setWindowCanFullScreen", new Class[] { Window.class, Boolean.TYPE });
 				setWindowCanFullScreenMethod.invoke(null, new Object[] { this, Boolean.valueOf(true) });
@@ -97,6 +97,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 				e.printStackTrace();
 			}
 		}
+
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getFrame());
 
