@@ -48,6 +48,8 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import net.minecraft.Launcher;
+
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
@@ -121,7 +123,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Login Strip
 		TransparentJLabel loginStrip = new TransparentJLabel();
 		// 379 is the center of the bottom
-		loginStrip.setBounds(0, 379, FRAME_WIDTH, 107);
+		loginStrip.setBounds(0, 379, FRAME_WIDTH, 108);
 		loginStrip.setTransparency(0.95F);
 		loginStrip.setHoverTransparency(0.95F);
 		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
@@ -207,14 +209,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
-		forums.setBounds(10, loginStrip.getY() + 7, 90, 90);
-		setIcon(forums, "forums.png", forums.getWidth(), forums.getHeight());
-		
-		// Donate link
-		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
-		donate.setToolTipText("Donate to the modders");
-		donate.setBounds(forums.getX() + 100,  forums.getY(), 90, 90);
-		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
+		forums.setBounds(9, loginStrip.getY() + 9, 90, 90);
+		forums.setIcon(getIcon("forumsButton.gif"));
+
+//		// Donate link
+//		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
+//		donate.setToolTipText("Donate to the modders");
+//		donate.setBounds(forums.getX() + 100,  forums.getY(), 90, 90);
+//		setIcon(donate, "donate.png", forums.getWidth(), forums.getHeight());
 
 		// Issues link
 		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://forums.technicpack.net/forums/bug-reports.81/");
@@ -334,7 +336,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(packRemoveBtn);
 		contentPane.add(platform);
 		contentPane.add(packSelector);
-		//contentPane.add(packShadow);
 		contentPane.add(selectorBackground);
 		contentPane.add(name);
 		contentPane.add(pass);
@@ -343,7 +344,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(steam);
 		contentPane.add(twitter);
 		contentPane.add(facebook);
-		//contentPane.add(gplus);
 		contentPane.add(youtube);
 		//contentPane.add(home);
 		contentPane.add(forums);
@@ -373,6 +373,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	
 	public BackgroundImage getBackgroundImage() {
 		return packBackground;
+	}
+
+	public static ImageIcon getIcon(String iconName) {
+		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
 	}
 
 	public static ImageIcon getIcon(String iconName, int w, int h) {

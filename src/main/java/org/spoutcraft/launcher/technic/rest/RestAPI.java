@@ -208,8 +208,7 @@ public class RestAPI {
 	public static <T extends RestObject> T getRestObject(Class<T> restObject, String url) throws RestfulAPIException {
 		InputStream stream = null;
 		try {
-			URL conn = new URL(url);
-			stream = conn.openConnection().getInputStream();
+			stream = new URL(url).openStream();
 			RestObject result = mapper.readValue(stream, restObject);
 			if (result.hasError()) {
 				throw new RestfulAPIException("Error in json response: " + result.getError());
