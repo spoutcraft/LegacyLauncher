@@ -88,6 +88,7 @@ public class SpoutcraftLauncher {
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
 		Utils.setSplashScreen(splash);
+		setLookAndFeel();
 
 		SpoutcraftLauncher.logger = setupLogger();
 
@@ -120,8 +121,6 @@ public class SpoutcraftLauncher {
 		}
 
 		relaunch(false);
-
-		setLookAndFeel();
 
 		if (params.isConsole() || Settings.isDebugMode()) {
 			setupConsole();
