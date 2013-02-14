@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.SocketException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.PublicKey;
 import java.security.cert.Certificate;
@@ -56,6 +57,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.entrypoint.SplashScreen;
@@ -360,5 +362,20 @@ public class Utils {
 			in.close();
 		}
 		jar.close();
+	}
+
+	public static boolean pingURL(String urlLoc) {
+		InputStream stream = null;
+		try {
+			final URL url = new URL(urlLoc);
+			final URLConnection conn = url.openConnection();
+			conn.setConnectTimeout(10000);
+			stream = conn.getInputStream();
+			return true;
+		} catch (IOException e) {
+			return false;
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
 	}
 }

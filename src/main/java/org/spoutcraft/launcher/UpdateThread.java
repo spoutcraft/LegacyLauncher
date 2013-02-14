@@ -55,6 +55,7 @@ import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -150,6 +151,8 @@ public class UpdateThread extends Thread {
 
 		MinecraftClassLoader loader;
 		loader = MinecraftLauncher.getClassLoader(pack);
+		System.out.println(RestAPI.getRunCountURL(build.getName()));
+		System.out.println(Utils.pingURL(RestAPI.getRunCountURL(build.getName())));
 
 		int loaded = 0;
 		while (!waiting.get()) {
@@ -438,6 +441,7 @@ public class UpdateThread extends Thread {
 		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
 			installed.createNewFile();
+			Utils.pingURL(RestAPI.getDownloadCountURL(modpack.getName()));
 		}
 		YAMLProcessor yaml = new YAMLProcessor(installed, false, YAMLFormat.EXTENDED);
 		yaml.setProperty("build", modpack.getBuild());

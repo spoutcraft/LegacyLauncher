@@ -38,6 +38,7 @@ import java.util.logging.Level;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Versions;
@@ -91,6 +92,10 @@ public class RestAPI {
 		return TECHNIC;
 	}
 
+	public String getRestURL() {
+		return restURL;
+	}
+
 	public String getModDownloadURL(String mod, String build) {
 		return getMirrorURL() + "mods/" + mod + "/" + mod + "-" + build + ".zip";
 	}
@@ -125,6 +130,20 @@ public class RestAPI {
 
 	public static String getCustomPackURL(String modpack) {
 		return "http://beta.technicpack.net/api/modpack/" + modpack;
+	}
+
+	public static String getDownloadCountURL(String modpack) {
+		if (Settings.isPackCustom(modpack)) {
+			return getCustomPackURL(modpack) + "/download";
+		}
+		return getDefault().getRestURL() + "";
+	}
+
+	public static String getRunCountURL(String modpack) {
+		if (Settings.isPackCustom(modpack)) {
+			return getCustomPackURL(modpack) + "/run";
+		}
+		return getDefault().getRestURL() + "";
 	}
 
 	private Modpacks setupModpacks() throws RestfulAPIException {
