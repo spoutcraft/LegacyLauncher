@@ -152,7 +152,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		boolean custom = Settings.isPackCustom(selected.getName());
 
 		// Set the background image based on the pack
-		frame.getBackgroundImage().setIcon(new ImageIcon(selected.getBackground()));
+		frame.getBackgroundImage().changeBackground(name, new ImageIcon(selected.getBackground()));
 
 		// Set the icon image based on the pack
 		frame.setIconImage(selected.getIcon());

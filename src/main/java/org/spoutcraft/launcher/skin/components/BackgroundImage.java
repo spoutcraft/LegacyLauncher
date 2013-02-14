@@ -27,35 +27,22 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Random;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
+import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.util.BlurUtils;
-import org.spoutcraft.launcher.util.ResourceUtils;
-import org.spoutcraft.launcher.util.Utils;
 
 public class BackgroundImage extends JLabel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
 	private final MetroLoginFrame frame;
 	private int mouseX = 0, mouseY = 0;
+	private AnimatedBackground background;
 
 	public BackgroundImage(MetroLoginFrame frame, int width, int height) {
 		this.frame = frame;
@@ -63,55 +50,17 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 		setHorizontalAlignment(SwingConstants.CENTER);
 		setBounds(0, 0, width, height);
 
-		setIcon(new ImageIcon(getBackgroundImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
 		setVerticalAlignment(SwingConstants.TOP);
 		setHorizontalAlignment(SwingConstants.LEFT);
+		setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		background = new AnimatedBackground(this);
+		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		background.setBounds(0, 0, width, height);
+		this.add(background);
 	}
 
-	private BufferedImage getBackgroundImage() {
-		final List<File> images = new ArrayList<File>();
-		File backgroundDir = new File(new File(Utils.getAssetsDirectory(), "background"), getTimeFolder());
-		if (backgroundDir.exists()) {
-			for (File f : backgroundDir.listFiles()) {
-				if (f.getName().endsWith(".png") || f.getName().endsWith(".jpg")) {
-					images.add(f);
-				}
-			}
-		}
-		InputStream stream = null;
-		BufferedImage image;
-		try {
-			try {
-				stream = new FileInputStream(images.get((new Random()).nextInt(images.size())));
-			} catch (Exception io) {
-				if (images.size() > 0) {
-					io.printStackTrace();
-				}
-				stream = ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/background.jpg");
-			}
-			image = ImageIO.read(stream);
-			image = BlurUtils.applyGaussianBlur(image, 10, 1, true);
-			return image;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			IOUtils.closeQuietly(stream);
-		}
-		return new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
-	}
-
-	private String getTimeFolder() {
-		int hours = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-		if (hours < 6) {
-			return "night";
-		}
-		if (hours < 12) {
-			return "day";
-		}
-		if (hours < 20) {
-			return "evening";
-		}
-		return "night";
+	public void changeBackground(String name, Icon icon) {
+		background.changeIcon(name, icon);
 	}
 
 	@Override
