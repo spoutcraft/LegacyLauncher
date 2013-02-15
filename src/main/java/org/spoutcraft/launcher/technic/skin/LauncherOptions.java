@@ -52,9 +52,11 @@ import javax.swing.SwingConstants;
 import org.spoutcraft.launcher.Memory;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -63,6 +65,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 
 	private static final int FRAME_WIDTH = 300;
 	private static final int FRAME_HEIGHT = 300;
+	private static final String LAUNCHER_PREPEND = "Launcher Build:    ";
 	private static final String QUIT_ACTION = "quit";
 	private static final String SAVE_ACTION = "save";
 	private static final String LOGS_ACTION = "logs";
@@ -114,7 +117,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		title.setForeground(Color.WHITE);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 
-		build = new JLabel("Launcher Build:    " + Settings.getLauncherBuild());
+		build = new JLabel(LAUNCHER_PREPEND + Settings.getLauncherBuild());
 		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		build.setFont(minecraft);
 		build.setForeground(Color.WHITE);
@@ -277,9 +280,27 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			}
 		} else if (action.equals(BETA_ACTION)) {
 			buildStream = "beta";
+			if (buildStream != Settings.getBuildStream()) {
+				build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			}
 		} else if (action.equals(STABLE_ACTION)) {
 			buildStream = "stable";
+			if (buildStream != Settings.getBuildStream()) {
+				build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			}
 		}
+	}
+	
+	private int getLatestLauncherBuild(String buildStream) {
+		int build = Settings.getLauncherBuild();
+		try {
+			build = RestAPI.getLatestLauncherBuild(buildStream);
+			return build;
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+		}
+		
+		return build;
 	}
 
 	@SuppressWarnings("restriction")

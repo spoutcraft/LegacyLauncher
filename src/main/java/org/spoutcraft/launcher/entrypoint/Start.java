@@ -73,8 +73,8 @@ public class Start {
 
 		Utils.getLauncherDirectory();
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
-		int latest = RestAPI.getLatestLauncherBuild();
 		String buildStream = Settings.getBuildStream();
+		int latest = RestAPI.getLatestLauncherBuild(buildStream);
 		boolean update = false;
 		
 		if (buildStream.equals("beta") && version < latest) {
