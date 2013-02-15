@@ -54,7 +54,6 @@ client:
     resizeScreenshots: false
     resizedScreenshotHeight: 3200
     resizedScreenshotWidth: 6000
-    shaderType: 0
     showChatColors: true
     showDamageAlerts: true
     showJoinMessages: true
