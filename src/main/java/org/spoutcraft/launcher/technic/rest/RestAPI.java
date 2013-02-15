@@ -206,7 +206,7 @@ public class RestAPI {
 	}
 	
 	public static int getLatestLauncherBuild() throws RestfulAPIException {
-		LauncherBuild result = getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/launcher/version/latest");
+		LauncherBuild result = getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/launcher/version/" + Settings.getBuildStream());
 		return result.getLatestBuild();
 	}
 	

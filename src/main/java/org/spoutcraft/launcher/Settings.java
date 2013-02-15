@@ -286,4 +286,15 @@ public class Settings {
 		yaml.removeProperty("launcher.migrate");
 		yaml.removeProperty("launcher.migratedir");
 	}
+	
+	public static synchronized void setBuildStream(String stream) {
+		yaml.setProperty("launcher.buildstream", stream);
+	}
+	
+	public static synchronized String getBuildStream() {
+		if (yaml.getString("launcher.buildstream") != null) {
+			return yaml.getString("launcher.buildstream");
+		}
+		return "stable";
+	}
 }

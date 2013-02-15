@@ -38,6 +38,7 @@ import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -67,6 +68,8 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final String LOGS_ACTION = "logs";
 	private static final String CONSOLE_ACTION = "console";
 	private static final String CHANGEFOLDER_ACTION = "changefolder";
+	private static final String BETA_ACTION = "beta";
+	private static final String STABLE_ACTION = "stable";
 
 	private JLabel background;
 	private JLabel build;
@@ -80,6 +83,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private String installedDirectory;
 	private LiteTextBox packLocation;
 	private boolean directoryChanged = false;
+	private String buildStream = "stable";
 
 	public LauncherOptions() {
 		setTitle("Launcher Options");
@@ -114,29 +118,42 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		build.setFont(minecraft);
 		build.setForeground(Color.WHITE);
-
-		beta = new JRadioButton("Always use Beta Launcher Builds");
-		beta.setBounds(10, build.getY() + build.getHeight() + 10, FRAME_WIDTH - 20, 20);
-		beta.setFont(minecraft);
-		beta.setForeground(Color.WHITE);
-		beta.setContentAreaFilled(false);
-		beta.setFocusPainted(false);
-		beta.setBorderPainted(false);
-		beta.setEnabled(false);
-		beta.setSelected(true);
-
+		
+		ButtonGroup group = new ButtonGroup();
+		
 		stable = new JRadioButton("Always use Stable Launcher Builds");
-		stable.setBounds(10, beta.getY() + beta.getHeight() + 10, FRAME_WIDTH - 20, 20);
+		stable.setBounds(10, build.getY() + build.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		stable.setFont(minecraft);
 		stable.setForeground(Color.WHITE);
 		stable.setContentAreaFilled(false);
 		stable.setFocusPainted(false);
 		stable.setBorderPainted(false);
-		stable.setEnabled(false);
+		stable.setSelected(true);
+		stable.setActionCommand(STABLE_ACTION);
+		stable.addActionListener(this);
+		group.add(stable);
+
+		beta = new JRadioButton("Always use Beta Launcher Builds");
+		beta.setBounds(10, stable.getY() + stable.getHeight() + 10, FRAME_WIDTH - 20, 20);
+		beta.setFont(minecraft);
+		beta.setForeground(Color.WHITE);
+		beta.setContentAreaFilled(false);
+		beta.setFocusPainted(false);
+		beta.setBorderPainted(false);
+		beta.setActionCommand(BETA_ACTION);
+		beta.addActionListener(this);
+		group.add(beta);
+		
+		buildStream = Settings.getBuildStream();
+		if (buildStream.equals("stable")) {
+			stable.setSelected(true);
+		} else if (buildStream.equals("beta")) {
+			beta.setSelected(true);
+		}
 
 		JLabel memoryLabel = new JLabel("Memory: ");
 		memoryLabel.setFont(minecraft);
-		memoryLabel.setBounds(10, stable.getY() + stable.getHeight() + 10, 65, 20);
+		memoryLabel.setBounds(10, beta.getY() + beta.getHeight() + 10, 65, 20);
 		memoryLabel.setForeground(Color.WHITE);
 		memoryLabel.setHorizontalAlignment(SwingConstants.CENTER);
 
@@ -228,13 +245,15 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			boolean oldperm = Settings.getPermGen();
 			boolean perm = permgen.isSelected();
 			Settings.setPermGen(perm);
+			String oldBuildStream = Settings.getBuildStream();
+			Settings.setBuildStream(buildStream);
 			if (directoryChanged) {
 				Settings.setMigrate(true);
 				Settings.setMigrateDir(installedDirectory);
 			}
 			Settings.getYAML().save();
 			
-			if (mem != oldMem || oldperm != perm || directoryChanged) {
+			if (mem != oldMem || oldperm != perm || directoryChanged || !buildStream.equals(oldBuildStream)) {
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
@@ -256,6 +275,10 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 				installedDirectory = file.getAbsolutePath();
 				directoryChanged = true;
 			}
+		} else if (action.equals(BETA_ACTION)) {
+			buildStream = "beta";
+		} else if (action.equals(STABLE_ACTION)) {
+			buildStream = "stable";
 		}
 	}
 

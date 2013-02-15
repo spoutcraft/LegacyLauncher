@@ -73,7 +73,7 @@ public class Start {
 		Utils.getLauncherDirectory();
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = RestAPI.getLatestLauncherBuild();
-		if (version < latest) {
+		if (version != latest) {
 			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
