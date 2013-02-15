@@ -33,6 +33,7 @@ import java.util.Arrays;
 
 import javax.swing.UIManager;
 
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
@@ -73,7 +74,16 @@ public class Start {
 		Utils.getLauncherDirectory();
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = RestAPI.getLatestLauncherBuild();
-		if (version != latest) {
+		String buildStream = Settings.getBuildStream();
+		boolean update = false;
+		
+		if (buildStream.equals("beta") && version < latest) {
+			update = true;
+		} else if (buildStream.equals("stable") && version != latest) {
+			update = true;
+		}
+		
+		if (update) {
 			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
