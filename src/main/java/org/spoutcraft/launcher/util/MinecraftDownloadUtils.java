@@ -73,7 +73,7 @@ public class MinecraftDownloadUtils {
 							minecraftMD5 = FileType.MINECRAFT.getMD5(build.getMinecraftVersion());
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 
-							if (minecraftMD5.equals(resultMD5)) {
+							if (minecraftMD5.equalsIgnoreCase(resultMD5)) {
 								outputFile = download.getOutFile();
 								download.getOutFile().delete();
 								Utils.copy(patchedMinecraft, download.getOutFile());

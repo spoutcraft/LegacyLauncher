@@ -246,7 +246,7 @@ public class RestAPI {
 	}
 
 	public static String getPatchURL(Modpack build) {
-		String mirrorURL = "patch/minecraft_";
+		String mirrorURL = "Patches/Minecraft/minecraft_";
 		mirrorURL += Versions.getLatestMinecraftVersion();
 		mirrorURL += "-" + build.getMinecraftVersion() + ".patch";
 		String fallbackURL = "http://get.spout.org/patch/minecraft_";

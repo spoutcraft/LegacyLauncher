@@ -58,6 +58,9 @@ public enum FileType {
 		if (this == MINECRAFT && "1.2.5".equals(version)) {
 			return "8e8778078a175a33603a585257f28563";
 		}
+		if (this == MINECRAFT && "1.2.3".equals(version)) {
+			return "12f6c4b1bdcc63f029e3c088a364b8e4";
+		}
 		return md5;
 	}
 
