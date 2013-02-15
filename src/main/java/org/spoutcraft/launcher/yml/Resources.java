@@ -38,7 +38,7 @@ public enum Resources implements YAMLResource {
 			new File(Utils.getWorkingDirectory(), "config" + File.separator + "vip.yml"),
 			null),
 
-	Assets ("http://get.spout.org/assets.yml",
+	Assets ("http://get.spout.org/assetsns.yml",
 			new File(Utils.getWorkingDirectory(), "config" + File.separator + "assets.yml"),
 			null),
 	;
