@@ -280,15 +280,12 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			}
 		} else if (action.equals(BETA_ACTION)) {
 			buildStream = "beta";
-			if (buildStream != Settings.getBuildStream()) {
-				build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
-			}
+			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
 		} else if (action.equals(STABLE_ACTION)) {
 			buildStream = "stable";
-			if (buildStream != Settings.getBuildStream()) {
-				build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
-			}
+			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
 		}
+		
 	}
 	
 	private int getLatestLauncherBuild(String buildStream) {
