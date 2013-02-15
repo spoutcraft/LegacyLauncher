@@ -248,7 +248,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			boolean oldperm = Settings.getPermGen();
 			boolean perm = permgen.isSelected();
 			Settings.setPermGen(perm);
-			String oldBuildStream = Settings.getBuildStream();
 			Settings.setBuildStream(buildStream);
 			if (directoryChanged) {
 				Settings.setMigrate(true);
@@ -256,7 +255,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			}
 			Settings.getYAML().save();
 			
-			if (mem != oldMem || oldperm != perm || directoryChanged || !buildStream.equals(oldBuildStream)) {
+			if (mem != oldMem || oldperm != perm || directoryChanged) {
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
