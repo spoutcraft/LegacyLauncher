@@ -81,14 +81,6 @@ public class Settings {
 		yaml.setProperty("launcher.client.type", build.type());
 	}
 
-	public static synchronized boolean isDebugMode() {
-		return yaml.getInt("launcher.launcher.debug", 0) == 1;
-	}
-
-	public static synchronized void setDebugMode(boolean b) {
-		yaml.setProperty("launcher.launcher.debug", b ? 1 : 0);
-	}
-
 	public static synchronized String getSpoutcraftSelectedBuild() {
 		return yaml.getString("launcher.client.buildNumber", "-1");
 	}

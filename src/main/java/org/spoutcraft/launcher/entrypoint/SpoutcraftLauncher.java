@@ -107,22 +107,18 @@ public class SpoutcraftLauncher {
 		setupProxy();
 
 		if (params.isDebugMode()) {
-			Settings.setDebugMode(true);
-		}
-
-		if (Settings.isDebugMode()) {
 			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
 			start = System.currentTimeMillis();
 		}
 
-		if (Settings.isDebugMode()) {
+		if (params.isDebugMode()) {
 			logger.info("Launcher settings took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
 		relaunch(false);
 
-		if (params.isConsole() || Settings.isDebugMode()) {
+		if (params.isConsole() || params.isDebugMode()) {
 			setupConsole();
 			logger.info("Console Mode Activated");
 		}
@@ -140,7 +136,7 @@ public class SpoutcraftLauncher {
 
 		frame.setUser(Settings.getLastUser());
 
-		if (Settings.isDebugMode()) {
+		if (params.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
@@ -164,7 +160,7 @@ public class SpoutcraftLauncher {
 			frame.doLogin(params.getUser(), params.getPass());
 		}
 
-		if (Settings.isDebugMode()) {
+		if (params.isDebugMode()) {
 			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}

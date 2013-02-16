@@ -43,7 +43,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
@@ -57,7 +56,7 @@ public class MirrorUtils {
 	public static String getMirrorUrl(String mirrorURI, String fallbackUrl){
 		updateMirrors();
 
-		boolean debug = Settings.isDebugMode();
+		boolean debug = Utils.getStartupParameters().isDebugMode();
 		if (debug) {
 			System.out.println("Testing " + MirrorUtils.mirrors.size() + " for " + mirrorURI);
 		}
@@ -113,14 +112,14 @@ public class MirrorUtils {
 	public static boolean isAddressReachable(String url, int timeout) {
 		try {
 			URL test = new URL(url);
-			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection.setFollowRedirects(true);
 			HttpURLConnection urlConnect = (HttpURLConnection) test.openConnection();
 			System.setProperty("http.agent", "");
 			urlConnect.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534.30 (KHTML, like Gecko) Chrome/12.0.742.100 Safari/534.30");
 			urlConnect.setRequestMethod("HEAD");
 			urlConnect.setConnectTimeout(timeout);
 			int response = urlConnect.getResponseCode();
-			if (Settings.isDebugMode()) {
+			if (Utils.getStartupParameters().isDebugMode()) {
 				System.out.println("Response for mirror " + url + " was " + response);
 			}
 			return (response == HttpURLConnection.HTTP_OK);
