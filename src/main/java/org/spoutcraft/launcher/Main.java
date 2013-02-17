@@ -1,7 +1,7 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
  * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
@@ -29,19 +29,11 @@ package org.spoutcraft.launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 public class Main {
-	public static boolean old = false;
-
 	public Main() {
-		old = true;
 		main(new String[0]);
 	}
 
 	public static void main(String[] args) {
-		old = true;
 		SpoutcraftLauncher.main(args);
-	}
-
-	public static boolean isOldLauncher() {
-		return old;
 	}
 }

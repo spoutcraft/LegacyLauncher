@@ -1,7 +1,7 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
  * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
@@ -248,10 +248,8 @@ public class SpoutcraftLauncher {
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
-		if (!Main.isOldLauncher()) {
-			temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
-			temp.delete();
-		}
+		temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
+		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "config/libraries.yml");

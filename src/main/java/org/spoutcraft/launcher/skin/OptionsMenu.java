@@ -1,7 +1,7 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
  * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
@@ -411,7 +411,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 				gamePane.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- spoutcraftVersionLabel ----
-				spoutcraftVersionLabel.setText("Version:");
+				spoutcraftVersionLabel.setText("Channel:");
 				spoutcraftVersionLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- memoryLabel ----
@@ -426,12 +426,12 @@ public class OptionsMenu extends JDialog implements ActionListener {
 				memory.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- minecraftVersionLabel ----
-				minecraftVersionLabel.setText("Minecraft:");
+				minecraftVersionLabel.setText("Version:");
 				minecraftVersionLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- minecraftVersion ----
 				minecraftVersion.setFont(new Font("Arial", Font.PLAIN, 11));
-				minecraftVersion.setToolTipText("The minecraft version");
+				minecraftVersion.setToolTipText("The Minecraft version");
 
 				//---- windowModeLabel ----
 				windowModeLabel.setText("Window Mode:");
@@ -575,14 +575,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 			//======== developerPane ========
 			{
-				//---- DevLabel ----
-				DevLabel.setText("Developer Code:");
-				DevLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-
-				//---- developerCode ----
-				developerCode.setFont(new Font("Arial", Font.PLAIN, 11));
-				developerCode.setToolTipText("Allows access to advanced settings");
-
 				//---- launcherVersionLabel ----
 				launcherVersionLabel.setText("Launcher:");
 				launcherVersionLabel.setBackground(Color.white);
@@ -600,13 +592,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 				debugMode.setBackground(Color.white);
 				debugMode.setFont(new Font("Arial", Font.PLAIN, 11));
 				debugMode.setToolTipText("Enables more detailed logging");
-
-				//---- lwjglLabel ----
-				lwjglLabel.setText("Latest LWJGL:");
-				lwjglLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-
-				//---- latestLWJGL ----
-				latestLWJGL.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- md5Label ----
 				md5Label.setText("Disable MD5:");
@@ -638,10 +623,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 										.addContainerGap()
 										.add(developerPaneLayout.createParallelGroup()
 												.add(developerPaneLayout.createSequentialGroup()
-														.add(DevLabel)
-														.addPreferredGap(LayoutStyle.RELATED)
-														.add(developerCode))
-												.add(developerPaneLayout.createSequentialGroup()
 														.add(launcherVersionLabel)
 														.addPreferredGap(LayoutStyle.RELATED)
 														.add(launcherVersion))
@@ -657,11 +638,9 @@ public class OptionsMenu extends JDialog implements ActionListener {
 														.add(developerPaneLayout.createParallelGroup()
 																.add(developerPaneLayout.createSequentialGroup()
 																		.add(developerPaneLayout.createParallelGroup()
-																				.add(debugLabel)
-																				.add(lwjglLabel, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE))
+																				.add(debugLabel))
 																		.addPreferredGap(LayoutStyle.RELATED)
 																		.add(developerPaneLayout.createParallelGroup()
-																				.add(latestLWJGL)
 																				.add(debugMode)))
 																.add(developerPaneLayout.createSequentialGroup()
 																		.add(md5Label, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
@@ -675,10 +654,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 								.add(developerPaneLayout.createSequentialGroup()
 										.addContainerGap()
 										.add(developerPaneLayout.createParallelGroup(GroupLayout.BASELINE)
-												.add(DevLabel)
-												.add(developerCode, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.BASELINE)
 												.add(launcherVersionLabel)
 												.add(launcherVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 										.addPreferredGap(LayoutStyle.RELATED)
@@ -691,10 +666,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 												.add(debugLabel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
 										.addPreferredGap(LayoutStyle.RELATED)
 										.add(developerPaneLayout.createParallelGroup(GroupLayout.TRAILING)
-												.add(lwjglLabel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
-												.add(latestLWJGL))
-										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.TRAILING)
 												.add(md5Label, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
 												.add(md5Checkbox))
 										.addPreferredGap(LayoutStyle.RELATED)
@@ -704,7 +675,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 										.addContainerGap(5, Short.MAX_VALUE))
 				);
 			}
-			mainOptions.addTab("Developer", developerPane);
+			mainOptions.addTab("Advanced", developerPane);
 		}
 
 		//---- logsButton ----

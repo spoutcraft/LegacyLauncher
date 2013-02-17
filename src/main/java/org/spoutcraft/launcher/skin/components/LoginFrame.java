@@ -1,7 +1,7 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
  * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
@@ -350,9 +350,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		super.setVisible(visible);
 		if (visible) {
 			showJava15Warning();
-			if (Main.isOldLauncher()) {
-				showOutdatedWarning();
-			}
 		}
 	}
 
@@ -368,8 +365,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			style.append("font-size:" + arial12.getSize() + "pt;");
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-					+ "Spoutcraft requires Java 6 or greater to run, Download"
-					+ "<br>java updates from http://spout.in/javaupdates</body></html>");
+					+ "Spoutcraft requires Java 6 or greater to run, download"
+					+ "<br/>Java updates from http://spout.in/javaupdates</body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());

@@ -1,7 +1,7 @@
 /*
  * This file is part of Spoutcraft.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
  * Spoutcraft is licensed under the Spout License Version 1.
  *
  * Spoutcraft is free software: you can redistribute it and/or modify
@@ -84,9 +84,6 @@ public final class StartupParameters {
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
 	private boolean relaunched = false;
 
-	@Parameter(names = {"-old_launcher"}, description = "Indicates old launcher")
-	private boolean oldLauncher = false;
-
 	@Parameter(names = {"-console"}, description = "Shows the console window")
 	private boolean console = false;
 
@@ -97,13 +94,13 @@ public final class StartupParameters {
 	public void logParameters(Logger log) {
 		log.info("------------ Startup Parameters ------------");
 		if (user != null) {
-			log.info("Minecraft Username: " + user);
+			log.info("Minecraft username: " + user);
 		}
 		if (pass != null) {
-			log.info("Minecraft Password exists");
+			log.info("Minecraft password exists");
 		}
 		if (server != null) {
-			log.info("Minecraft Server: " + server);
+			log.info("Minecraft server: " + server);
 		}
 		if (portable) {
 			log.info("Portable mode activated");
@@ -112,19 +109,19 @@ public final class StartupParameters {
 			log.info("Debug mode activated");
 		}
 		if (proxyHost != null) {
-			log.info("Proxy Host: " + proxyHost);
+			log.info("Proxy host: " + proxyHost);
 		}
 		if (proxyPort != null) {
-			log.info("Proxy Port: " + proxyPort);
+			log.info("Proxy port: " + proxyPort);
 		}
 		if (proxyUser != null) {
-			log.info("Proxy User exists");
+			log.info("Proxy user exists");
 		}
 		if (proxyPassword != null) {
-			log.info("Porxy Password exists");
+			log.info("Porxy password exists");
 		}
 		if (ignoreMD5) {
-			log.info("No MD5 Mode activated");
+			log.info("No MD5 mode activated");
 		}
 		if (build != -1) {
 			log.info("Spoutcraft build selected: " + build);
@@ -132,11 +129,8 @@ public final class StartupParameters {
 		if (relaunched) {
 			log.info("Relaunched with correct memory");
 		}
-		if (oldLauncher) {
-			log.info("Old Launcher detected");
-		}
 		if (console) {
-			log.info("Console frame enabled");
+			log.info("Debug console enabled");
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -168,8 +162,8 @@ public final class StartupParameters {
 			} catch (java.io.UnsupportedEncodingException ignore) { }
 
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
-			log.info("Attempting relaunch with " + memory + " mb of RAM");
-			log.info("Path to Launcher Jar: " + pathToJar);
+			log.info("Attempting relaunch with " + memory + "MB of RAM");
+			log.info("Path to launcher jar: " + pathToJar);
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
@@ -195,8 +189,6 @@ public final class StartupParameters {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else {
-			Main.old |= oldLauncher;
 		}
 		return false;
 	}
@@ -243,9 +235,6 @@ public final class StartupParameters {
 		if (build != -1) {
 			params.add("-build");
 			params.add(Integer.toString(build));
-		}
-		if (Main.isOldLauncher()) {
-			params.add("-old_launcher");
 		}
 		if (console) {
 			params.add("-console");
