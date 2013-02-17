@@ -179,6 +179,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		options.setHoverTransparency(1F);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
+		options.setBorder(BorderFactory.createEmptyBorder());
+		options.setContentAreaFilled(false);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://spout.in/steam");
@@ -229,6 +231,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			setIcon(userButton.getRemoveIcon(), "remove.png", 16);
 			userButton.getRemoveIcon().addActionListener(this);
 			userButton.getRemoveIcon().setActionCommand(REMOVE_USER);
+			userButton.getRemoveIcon().setBorder(BorderFactory.createEmptyBorder());
+			userButton.getRemoveIcon().setContentAreaFilled(false);
 			removeButtons.put(userButton.getRemoveIcon(), userButton);
 		}
 
