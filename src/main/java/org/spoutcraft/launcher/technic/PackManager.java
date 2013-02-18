@@ -81,6 +81,7 @@ public class PackManager {
 		try {
 			if (custom) {
 				CustomInfo info = RestAPI.getCustomModpack(RestAPI.getCustomPackURL(pack));
+				info.init();
 				if (!info.hasMirror()) {
 					packs.add(info);
 					return info;

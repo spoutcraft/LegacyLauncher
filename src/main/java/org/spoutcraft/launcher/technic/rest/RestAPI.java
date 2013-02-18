@@ -188,7 +188,6 @@ public class RestAPI {
 
 	public static CustomInfo getCustomModpack(String packURL) throws RestfulAPIException {
 		CustomInfo info = getRestObject(CustomInfo.class, packURL);
-		info.init();
 		return info;
 	}
 

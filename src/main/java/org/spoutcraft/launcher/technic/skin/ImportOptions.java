@@ -182,13 +182,21 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				File file = fileChooser.getSelectedFile();
 				file.exists();
 				installDir = file;
-				install.setText("Location: " + installDir.getPath());
+				if (info.isForceDir() && installDir.getAbsolutePath().startsWith(Utils.getLauncherDirectory().getAbsolutePath())) {
+					install.setText("Please select a directory outside of " + Utils.getLauncherDirectory().getAbsolutePath());
+				} else {
+					install.setText("Location: " + installDir.getPath());
+					folder.setText("Change Folder");
+					folder.setLocation(FRAME_WIDTH - 290, FRAME_HEIGHT - 40);
+					enableComponent(save, true);
+				}
 			}
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null || url.isEmpty()) {
 				Settings.setPackCustom(info.getName(), true);
 				Settings.setPackDirectory(info.getName(), installDir);
 				Settings.getYAML().save();
+				info.init();
 				Launcher.getFrame().getSelector().addPack(info.getPack());
 				dispose();
 			}
@@ -228,12 +236,19 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 					info = RestAPI.getCustomModpack(url);
 					msgLabel.setText("Modpack: " + info.getDisplayName());
 					this.url = url;
-					enableComponent(save, true);
 					enableComponent(folder, true);
 					enableComponent(install, true);
 					enableComponent(paste, true);
-					installDir = new File(Utils.getLauncherDirectory(), info.getName());
-					install.setText("Location: " + installDir.getPath());
+					if (info.isForceDir()) {
+						install.setText("Please select an install directory");
+						folder.setText("Select");
+						folder.setLocation(FRAME_WIDTH - 145, FRAME_HEIGHT - 40);
+						enableComponent(save, false);
+					} else {
+						installDir = new File(Utils.getLauncherDirectory(), info.getName());
+						install.setText("Location: " + installDir.getPath());
+						enableComponent(save, true);
+					}
 				} catch (RestfulAPIException e) {
 					msgLabel.setText("Error parsing platform response");
 					enableComponent(save, false);

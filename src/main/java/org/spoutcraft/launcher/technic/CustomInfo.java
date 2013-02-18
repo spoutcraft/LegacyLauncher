@@ -61,6 +61,8 @@ public class CustomInfo extends PackInfo {
 	private String logoMD5;
 	@JsonProperty("background_md5")
 	private String backgroundMD5;
+	@JsonProperty("force_directory")
+	private boolean forceDir;
 
 	@Override
 	public String getName() {
@@ -127,6 +129,10 @@ public class CustomInfo extends PackInfo {
 	@Override
 	public CustomModpack getModpack() {
 		return new CustomModpack(this);
+	}
+
+	public boolean isForceDir() {
+		return forceDir;
 	}
 
 	public String getVersion() {
