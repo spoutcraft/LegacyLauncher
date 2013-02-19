@@ -182,8 +182,8 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				File file = fileChooser.getSelectedFile();
 				file.exists();
 				installDir = file;
-				if (info.isForceDir() && installDir.getAbsolutePath().startsWith(Utils.getLauncherDirectory().getAbsolutePath())) {
-					install.setText("Please select a directory outside of " + Utils.getLauncherDirectory().getAbsolutePath());
+				if (info.isForceDir() && installDir.getAbsolutePath().startsWith(Utils.getSettingsDirectory().getAbsolutePath())) {
+					install.setText("Please select a directory outside of " + Utils.getSettingsDirectory().getAbsolutePath());
 				} else {
 					install.setText("Location: " + installDir.getPath());
 					folder.setText("Change Folder");
