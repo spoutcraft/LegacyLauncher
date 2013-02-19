@@ -245,7 +245,7 @@ public class SpoutcraftLauncher {
 
 		SpoutcraftLauncher.handler = fileHandler;
 
-		if (!params.isDebugMode()) {
+		if (params != null && !params.isDebugMode()) {
 			logger.setUseParentHandlers(false);
 
 			System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
