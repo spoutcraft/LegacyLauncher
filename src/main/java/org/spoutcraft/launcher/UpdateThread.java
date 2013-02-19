@@ -512,11 +512,6 @@ public class UpdateThread extends Thread {
 				FileUtils.cleanDirectory(coremods);
 			}
 
-			File config = new File(working, "config");
-			if (config.exists()) {
-				FileUtils.cleanDirectory(config);
-			}
-
 			File resources = new File(working, "resources");
 			if (resources.exists()) {
 				FileUtils.cleanDirectory(resources);
