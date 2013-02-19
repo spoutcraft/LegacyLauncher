@@ -56,7 +56,6 @@ import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.FileType;
@@ -65,7 +64,6 @@ import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
@@ -305,9 +303,6 @@ public class UpdateThread extends Thread {
 	public void updateMinecraft(Modpack build) throws IOException {
 		pack.getBinDir().mkdir();
 		pack.getCacheDir().mkdir();
-		if (pack.getTempDir().exists()) {
-			FileUtils.deleteDirectory(pack.getTempDir());
-		}
 		pack.getTempDir().mkdir();
 
 		String minecraftMD5 = FileType.MINECRAFT.getMD5();
@@ -418,26 +413,38 @@ public class UpdateThread extends Thread {
 
 			File modFile = new File(temp, name + "-" + build + ".zip");
 
-			Download download = DownloadUtils.downloadFile(mod.getURL(), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
-			if (download.getResult() == Result.SUCCESS) {
-				try {
-					ZipFile zipFile = new ZipFile(download.getOutFile());
-					zipFile.setRunInThread(true);
-					zipFile.extractAll(workingDir.getAbsolutePath());
-
-					ProgressMonitor monitor = zipFile.getProgressMonitor();
-					while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
-						long totalProgress = monitor.getWorkCompleted() / (monitor.getTotalWork() + 1);
-						stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
-					}
-				} catch (ZipException e) {
-					Launcher.getLogger().log(Level.SEVERE, "An error occurred while extracting file: " + modFile.getAbsolutePath());
-					e.printStackTrace();
+			boolean shouldDownload = true;
+			if (modFile.exists()) {
+				System.out.println("Mod " + modFile.getName() + " already found in the cache.");
+				String resultMD5 = MD5Utils.getMD5(modFile);
+				System.out.println("Expected MD5: " + mod.getMD5() + " Calculated MD5: " + resultMD5);
+				if (MD5Utils.getMD5(modFile).equalsIgnoreCase(mod.getMD5())) {
+					shouldDownload = false;
+					System.out.println("Succesfully skipped download of: " + mod.getName() + " " + mod.getVersion());
 				}
 			}
-		}
 
-		cleanupPackTemp();
+			if (shouldDownload) {
+				DownloadUtils.downloadFile(mod.getURL(), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
+			}
+
+			try {
+				ZipFile zipFile = new ZipFile(modFile);
+				zipFile.setRunInThread(true);
+				zipFile.extractAll(workingDir.getAbsolutePath());
+
+				ProgressMonitor monitor = zipFile.getProgressMonitor();
+				while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
+					long totalProgress = monitor.getWorkCompleted() / (monitor.getTotalWork() + 1);
+					stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
+				}
+			} catch (ZipException e) {
+				Launcher.getLogger().log(Level.SEVERE, "An error occurred while extracting file: " + modFile.getAbsolutePath());
+				e.printStackTrace();
+			}
+		}
+		cleanupPackTemp(modpack);
+
 		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
 			installed.createNewFile();
@@ -448,13 +455,28 @@ public class UpdateThread extends Thread {
 		yaml.save();
 	}
 
-	public void cleanupPackTemp() {
-		try {
-			FileUtils.cleanDirectory(pack.getTempDir());
-		} catch (IOException e) {
-			e.printStackTrace();
+	public void cleanupPackTemp(Modpack modpack) {
+		if (!pack.getTempDir().isDirectory()) {
+			return;
+		}
+
+		File[] files = pack.getTempDir().listFiles();
+		List<String> keepFiles = new ArrayList<String>(modpack.getMods().size());
+		for (Mod mod : modpack.getMods()) {
+			keepFiles.add(mod.getName() + "-" + mod.getVersion() + ".zip");
+		}
+		keepFiles.add("minecraft.jar");
+		keepFiles.add("natives.jar");
+
+		for (File file : files) {
+			String fileName = file.getName();
+			if (keepFiles.contains(fileName)) {
+				continue;
+			}
+			FileUtils.deleteQuietly(file);
 		}
 	}
+
 	public static void cleanupBinFolders(PackInfo pack) {
 		try {
 			if (!pack.getBinDir().exists()) {
