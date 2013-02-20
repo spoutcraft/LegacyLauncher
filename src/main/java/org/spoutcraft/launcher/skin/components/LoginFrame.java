@@ -309,15 +309,18 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				break;
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
+				Launcher.getFrame().lockLoginButton(true);
 				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:
 				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
 				removeAccount(getSelectedUser());
+				Launcher.getFrame().lockLoginButton(true);
 				enableForm();
 				break;
 			case USER_NOT_PREMIUM:
 				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+				Launcher.getFrame().lockLoginButton(true);
 				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
