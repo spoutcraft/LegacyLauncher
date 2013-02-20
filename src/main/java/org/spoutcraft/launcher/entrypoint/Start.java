@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.UIManager;
@@ -91,7 +92,7 @@ public class Start {
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = getLatestLauncherBuild();
 		if (version < latest) {
-			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			File codeSource = new File(URLDecoder.decode(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
 				temp = new File(Utils.getWorkingDirectory(), "temp.exe");
