@@ -504,7 +504,7 @@ public class UpdateThread extends Thread {
 			File working = pack.getPackDirectory();
 			File mods = new File(working, "mods");
 			if (mods.exists()) {
-				FileUtils.cleanDirectory(mods);
+				FileUtils.cleanDirectory(mods, false);
 			}
 
 			File coremods = new File(working, "coremods");
