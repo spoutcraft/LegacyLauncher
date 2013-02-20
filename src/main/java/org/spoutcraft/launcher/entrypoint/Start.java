@@ -28,6 +28,7 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import java.io.File;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -49,7 +50,7 @@ public class Start {
 		}
 	}
 
-	private static void launch(String[] args) throws Exception{
+	private static void launch(String[] args) throws Exception {
 		// Text for local build (not official build)
 		if (SpoutcraftLauncher.getLauncherBuild().equals("0")) {
 			SpoutcraftLauncher.main(args);
@@ -84,7 +85,7 @@ public class Start {
 		}
 		
 		if (update) {
-			File codeSource = new File(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+			File codeSource = new File(URLDecoder.decode(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
 				temp = new File(Utils.getSettingsDirectory(), "temp.exe");
