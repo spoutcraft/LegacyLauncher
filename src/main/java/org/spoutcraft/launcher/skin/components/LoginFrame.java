@@ -332,6 +332,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 						Launcher.getGameUpdater().runGame();
 					} else {
 						enableForm();
+						Launcher.getFrame().lockLoginButton(true);
 					}
 				}
 				break;
@@ -339,6 +340,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			case PERMISSION_DENIED:
 				JOptionPane.showMessageDialog(getParent(), "Ensure Technic Launcher is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
 				enableForm();
+				Launcher.getFrame().lockLoginButton(true);
 				break;
 		}
 	}
