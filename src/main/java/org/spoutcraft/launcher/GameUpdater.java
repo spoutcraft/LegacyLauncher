@@ -26,8 +26,6 @@
  */
 package org.spoutcraft.launcher;
 
-import java.io.IOException;
-
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.api.SpoutcraftDirectories;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
@@ -46,17 +44,15 @@ public final class GameUpdater extends SpoutcraftDirectories{
 	private String minecraftSession = "";
 
 	private DownloadListener listener;
-	private SpoutcraftData build;
 	private long validationTime;
 	private UpdateThread updateThread;
 
 	public GameUpdater() throws RestfulAPIException {
-		build = new SpoutcraftData();
-		updateThread = new UpdateThread(build, null);
+		updateThread = new UpdateThread();
 	}
 
 	public SpoutcraftData getBuild() {
-		return build;
+		return updateThread.getBuild();
 	}
 
 	public void start() {
@@ -72,20 +68,13 @@ public final class GameUpdater extends SpoutcraftDirectories{
 	}
 
 	public void onSpoutcraftBuildChange() {
-		SpoutcraftData prev = this.build;
-		try {
-			this.build = new SpoutcraftData();
-			if (!this.build.getBuild().equals(prev.getBuild())) {
-				DownloadListener old = updateThread.getDownloadListener();
-				updateThread.setDownloadListener(null);
-				updateThread.interrupt();
-				MinecraftLauncher.resetClassLoader();
-				updateThread = new UpdateThread(build, old);
-				start();
-			}
-		} catch (IOException e) {
-			Launcher.getLoginFrame().handleException(e);
-		}
+		DownloadListener old = updateThread.getDownloadListener();
+		updateThread.setDownloadListener(null);
+		updateThread.interrupt();
+		MinecraftLauncher.resetClassLoader();
+		updateThread = new UpdateThread();
+		updateThread.setDownloadListener(old);
+		start();
 	}
 
 	public void setStartValidationTime(long validationTime) {

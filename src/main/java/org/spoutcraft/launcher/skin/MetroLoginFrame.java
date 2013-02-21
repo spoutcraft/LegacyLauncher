@@ -226,7 +226,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String userName = this.getUsername(accountName);
 
 			//Create callable
-			CallbackTask<BufferedImage> callback = getImage(userName);
+			CallbackTask callback = getImage(userName);
 	
 			//Start callable
 			FutureTask<BufferedImage> futureImage = new FutureTask<BufferedImage>(callback);
@@ -235,7 +235,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			downloadThread.start();
 			
 			//Create future image, using default mc avatar for now
-			FutureImage userImage = new FutureImage(futureImage, getDefaultImage());
+			FutureImage userImage = new FutureImage(getDefaultImage());
 			callback.setCallback(userImage);
 			
 			DynamicButton userButton = new DynamicButton(this, userImage, 44, accountName, userName);
@@ -296,12 +296,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	private CallbackTask<BufferedImage> getImage(final String user){
-		return new CallbackTask<BufferedImage>(new Callable<BufferedImage>() {
+	private CallbackTask getImage(final String user){
+		return new CallbackTask(new Callable<BufferedImage>() {
 			public BufferedImage call() throws Exception {
 				try {
 					System.out.println("Attempting to grab helm of " + user + " from minotar.net");
-					URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
+					URLConnection conn = (new URL("http://skins.technicpack.net/helm/" + user + "/100")).openConnection();
 					conn.setReadTimeout(15000);
 					conn.setConnectTimeout(5000);
 					InputStream stream = conn.getInputStream();
@@ -319,10 +319,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		});
 	}
 
-	private static class CallbackTask<T> implements Callable<T> {
-		private final Callable<T> task;
+	private static class CallbackTask implements Callable<BufferedImage> {
+		private final Callable<BufferedImage> task;
 		private volatile ImageCallback callback;
-		CallbackTask(Callable<T> task) {
+		CallbackTask(Callable<BufferedImage> task) {
 			this.task = task;
 		}
 
@@ -330,11 +330,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			this.callback = callback;
 		}
 
-		public T call() throws Exception {
+		public BufferedImage call() throws Exception {
+			BufferedImage image = null;
 			try {
-				return task.call();
+				image = task.call();
+				return image;
 			} finally {
-				callback.done();
+				callback.done(image);
 			}
 		}
 	}

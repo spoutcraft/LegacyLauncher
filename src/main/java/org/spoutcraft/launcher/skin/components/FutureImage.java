@@ -5,15 +5,12 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import org.spoutcraft.launcher.skin.ImageCallback;
 
 public class FutureImage extends Image implements ImageCallback{
-	private final Future<BufferedImage> future;
 	private final BufferedImage empty;
-	private BufferedImage futureImage = null;
+	private volatile BufferedImage futureImage = null;
 
 	/**
 	 * Future image and empty image must be the same height and width
@@ -21,23 +18,12 @@ public class FutureImage extends Image implements ImageCallback{
 	 * @param future
 	 * @param empty
 	 */
-	public FutureImage(Future<BufferedImage> future, BufferedImage empty) {
-		this.future = future;
+	public FutureImage(BufferedImage empty) {
 		this.empty = empty;
 	}
 
-	public void done() {
-		if (futureImage == null) {
-			if (future.isDone()) {
-				try {
-					futureImage = future.get();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				} catch (ExecutionException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	public void done(BufferedImage done) {
+		this.futureImage = done;
 	}
 
 	public int getWidth() {

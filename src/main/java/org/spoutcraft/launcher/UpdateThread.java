@@ -85,18 +85,23 @@ public class UpdateThread extends Thread {
 	private final AtomicBoolean finished = new AtomicBoolean(false);
 	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
-	private final SpoutcraftData build;
-	public UpdateThread(SpoutcraftData build, DownloadListener listener) {
+	private volatile SpoutcraftData build;
+	public UpdateThread() {
 		super("Update Thread");
 		setDaemon(true);
-		this.build = build;
-		setDownloadListener(listener);
+	}
+
+	public SpoutcraftData getBuild() {
+		return build;
 	}
 
 	@Override
 	public void run() {
 		while (true) {
 			try {
+				if (build == null) {
+					build = new SpoutcraftData();
+				}
 				runTasks();
 				break;
 			} catch (Exception e) {
@@ -108,9 +113,6 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException{
 		while (!valid.get()) {
-			
-			
-			
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable(build);
 

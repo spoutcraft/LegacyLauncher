@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.SimpleDateFormat;
@@ -54,7 +55,6 @@ import com.beust.jcommander.JCommander;
 import org.apache.commons.io.IOUtils;
 
 import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
@@ -155,6 +155,11 @@ public class SpoutcraftLauncher {
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
 		logThread.start();
+		
+		if (Settings.isDebugMode()) {
+			logger.info("Launcher internet validation & look and feel took " + (System.currentTimeMillis() - start) + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		// Set up the launcher and load login frame
 		LoginFrame frame = new MetroLoginFrame();
@@ -174,7 +179,7 @@ public class SpoutcraftLauncher {
 		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Launcher skin took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -194,12 +199,21 @@ public class SpoutcraftLauncher {
 	}
 
 	private static void checkInternet() {
-		if (!pingURL("http://www.google.com")) {
-			JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		} else if (!pingURL("http://get.spout.org")) {
-			JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+		String localHost = "127.0.0.1";
+		try {
+			localHost = InetAddress.getLocalHost().getHostAddress().toString();
+		} catch (Exception e) { }
+		logger.info("Localhost: " + localHost);
+		
+		//May not be online, check
+		if (localHost.contains("127.0.0.1")) {
+			if (!pingURL("http://www.google.com")) {
+				JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			} else if (!pingURL("http://get.spout.org")) {
+				JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
 		}
 	}
 
