@@ -428,7 +428,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private BufferedImage getUserImage(String user) {
 		File file = new File(Utils.getAssetsDirectory(), user + ".png");
 		try {
-			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/avatar/" + user + "/100", file.getAbsolutePath());
+			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/helm/" + user + "/100", file.getAbsolutePath());
 			if (download.getResult().equals(Result.SUCCESS)) {
 				return ImageIO.read(download.getOutFile());
 			}
