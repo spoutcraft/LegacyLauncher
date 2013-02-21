@@ -323,6 +323,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton)c;
+			this.setEnabled(false);
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
 			this.remember.setSelected(true);
