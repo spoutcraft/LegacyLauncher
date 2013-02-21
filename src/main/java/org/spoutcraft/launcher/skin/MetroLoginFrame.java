@@ -240,6 +240,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			
 			DynamicButton userButton = new DynamicButton(this, userImage, 44, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
+			
+			userImage.setRepaintCallback(userButton);
 
 			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), (FRAME_HEIGHT - 75) / 2 , 75, 75);
 			contentPane.add(userButton);

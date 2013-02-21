@@ -6,11 +6,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.ImageProducer;
 
+import javax.swing.JComponent;
+import javax.swing.SwingUtilities;
+
 import org.spoutcraft.launcher.skin.ImageCallback;
 
 public class FutureImage extends Image implements ImageCallback{
 	private final BufferedImage empty;
 	private volatile BufferedImage futureImage = null;
+	private JComponent repaintCallback = null;
 
 	/**
 	 * Future image and empty image must be the same height and width
@@ -22,8 +26,20 @@ public class FutureImage extends Image implements ImageCallback{
 		this.empty = empty;
 	}
 
+	public void setRepaintCallback(JComponent comp) {
+		this.repaintCallback = comp;
+	}
+
 	public void done(BufferedImage done) {
 		this.futureImage = done;
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				if (repaintCallback != null) {
+					repaintCallback.setBounds(repaintCallback.getX(), repaintCallback.getY(), repaintCallback.getWidth(), repaintCallback.getHeight());
+					repaintCallback.repaint();
+				}
+			}
+		});
 	}
 
 	public int getWidth() {
