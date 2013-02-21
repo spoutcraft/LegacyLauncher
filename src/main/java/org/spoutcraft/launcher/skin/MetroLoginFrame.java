@@ -36,17 +36,19 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.FutureTask;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.FutureImage;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
@@ -223,7 +225,20 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			DynamicButton userButton = new DynamicButton(this, getImage(userName), 44, accountName, userName);
+			//Create callable
+			CallbackTask<BufferedImage> callback = getImage(userName);
+	
+			//Start callable
+			FutureTask<BufferedImage> futureImage = new FutureTask<BufferedImage>(callback);
+			Thread downloadThread = new Thread(futureImage, "Image download thread");
+			downloadThread.setDaemon(true);
+			downloadThread.start();
+			
+			//Create future image, using default mc avatar for now
+			FutureImage userImage = new FutureImage(futureImage, getDefaultImage());
+			callback.setCallback(userImage);
+			
+			DynamicButton userButton = new DynamicButton(this, userImage, 44, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
 
 			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), (FRAME_HEIGHT - 75) / 2 , 75, 75);
@@ -273,30 +288,54 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	private BufferedImage getImage(String user){
-		try {
-			System.out.println("Attempting to grab helm of " + user + " from minotar.net");
-			URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
-			conn.setReadTimeout(10000);
-			conn.setConnectTimeout(3000);
-			InputStream stream = conn.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
-			if (image != null) {
-				return image;
-			}
-		} catch (SocketTimeoutException e) {
-			e.printStackTrace();
-			System.out.println("Took too long to grab the helm for " + user + ", aborting.");
-		} catch (ConnectException e) {
-			e.printStackTrace();
-			System.out.println("Took too long to grab the helm for " + user + ", aborting.");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private static BufferedImage getDefaultImage() {
 		try {
 			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
-		} catch (IOException e1) {
-			throw new RuntimeException("Error reading backup image", e1);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to read backup image");
+		}
+	}
+
+	private CallbackTask<BufferedImage> getImage(final String user){
+		return new CallbackTask<BufferedImage>(new Callable<BufferedImage>() {
+			public BufferedImage call() throws Exception {
+				try {
+					System.out.println("Attempting to grab helm of " + user + " from minotar.net");
+					URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
+					conn.setReadTimeout(15000);
+					conn.setConnectTimeout(5000);
+					InputStream stream = conn.getInputStream();
+					BufferedImage image = ImageIO.read(stream);
+					if (image == null) {
+						throw new NullPointerException("No image downloaded!");
+					}
+					System.out.println("Completed helm request to minotar.net");
+					return image;
+				} catch (Exception e) {
+					System.out.println("Failed helm request to minotar.net");
+					throw e;
+				}
+			}
+		});
+	}
+
+	private static class CallbackTask<T> implements Callable<T> {
+		private final Callable<T> task;
+		private volatile ImageCallback callback;
+		CallbackTask(Callable<T> task) {
+			this.task = task;
+		}
+
+		public void setCallback(ImageCallback callback) {
+			this.callback = callback;
+		}
+
+		public T call() throws Exception {
+			try {
+				return task.call();
+			} finally {
+				callback.done();
+			}
 		}
 	}
 

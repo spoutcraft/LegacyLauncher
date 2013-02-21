@@ -33,7 +33,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.Icon;
@@ -48,12 +47,12 @@ import org.spoutcraft.launcher.util.SwingWorker;
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private final AtomicReference<ResizingWorker> worker = new AtomicReference<ResizingWorker>(null);
-	private final BufferedImage icon;
+	private final FutureImage icon;
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
 	private final TransparentButton remove;
 	private final String account, userName;
-	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, String account, String userName) {
+	public DynamicButton(JFrame parent, FutureImage icon, int hoverIncrease, String account, String userName) {
 		this.icon = icon;
 		this.hoverIncrease = hoverIncrease;
 		this.account = account;
@@ -116,7 +115,7 @@ public class DynamicButton extends JButton implements MouseListener{
 
 	@Override
 	public void setBounds(int x, int y, int w, int h) {
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, w, h)));
+		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), w, h)));
 		super.setBounds(x, y, w, h);
 		remove.setBounds(x + w + 2, y, 16, 16);
 		
@@ -146,7 +145,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		int width = getIcon().getIconWidth();
 		int height = getIcon().getIconHeight();
 		setBounds(getX() - size / 2, getY() - size / 2, width + size, height + size);
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, width + size, height + size)));
+		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), width + size, height + size)));
 	}
 
 	public void mouseClicked(MouseEvent e) {
