@@ -48,7 +48,7 @@ import org.spoutcraft.launcher.util.SwingWorker;
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private final AtomicReference<ResizingWorker> worker = new AtomicReference<ResizingWorker>(null);
-	private final Image icon;
+	private Image icon;
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
 	private final TransparentButton remove;
@@ -98,6 +98,12 @@ public class DynamicButton extends JButton implements MouseListener{
 		if (underLabel != null) {
 			this.underLabel.setFont(font);
 		}
+	}
+
+	public void updateIcon(ImageIcon icon) {
+		this.icon = icon.getImage();
+		setIcon(new ImageIcon(this.icon.getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH)));
+		this.repaint();
 	}
 
 	@Override
