@@ -54,7 +54,6 @@ public class RestAPI {
 
 	private final String restURL;
 	private final String restInfoURL;
-	private final String cacheURL;
 	private final String modURL;
 
 	private String mirrorURL;
@@ -63,8 +62,7 @@ public class RestAPI {
 	public RestAPI(String url) {
 		restURL = url;
 		restInfoURL = restURL + "modpack/";
-		cacheURL = restURL + "cache/";
-		modURL = cacheURL + "mod/";
+		modURL = restURL + "mod/";
 		try {
 			modpacks = setupModpacks();
 			modpacks.setRest(this);
@@ -86,7 +84,7 @@ public class RestAPI {
 
 	public static RestAPI getDefault() {
 		if (TECHNIC == null) {
-			TECHNIC = new RestAPI("http://www.sctgaming.com/Technic/API/");
+			TECHNIC = new RestAPI("http://solder.technicpack.net/api/");
 		}
 
 		return TECHNIC;
@@ -96,24 +94,28 @@ public class RestAPI {
 		return restURL;
 	}
 
+	public String getRestInfoURL() {
+		return restInfoURL;
+	}
+
+	public String getModURL() {
+		return modURL;
+	}
+
 	public String getModDownloadURL(String mod, String build) {
 		return getMirrorURL() + "mods/" + mod + "/" + mod + "-" + build + ".zip";
 	}
 
 	public String getModMD5URL(String mod, String build) {
-		return modURL + mod + "/" + build + "/MD5";
+		return getModURL() + mod + "/" + build;
 	}
 
 	public String getModpackURL(String modpack, String build) {
-		return restInfoURL + modpack + "/build/" + build;
-	}
-
-	public String getModpackMD5URL(String modpack) {
-		return restInfoURL + modpack + "/MD5";
+		return getRestInfoURL() + modpack + "/" + build;
 	}
 
 	public String getModpackInfoURL(String modpack) {
-		return restInfoURL + modpack;
+		return getRestInfoURL() + modpack;
 	}
 
 	public String getModpackImgURL(String modpack) {
@@ -199,11 +201,6 @@ public class RestAPI {
 		return getModpackInfo(modpack).getRecommended();
 	}
 
-	public String getModpackMD5(String modpack) throws RestfulAPIException {
-		TechnicMD5 result = getRestObject(TechnicMD5.class, getModpackMD5URL(modpack));
-		return result.getMD5();
-	}
-	
 	public static int getLatestLauncherBuild(String stream) throws RestfulAPIException {
 		LauncherBuild result = getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/launcher/version/" + stream);
 		return result.getLatestBuild();

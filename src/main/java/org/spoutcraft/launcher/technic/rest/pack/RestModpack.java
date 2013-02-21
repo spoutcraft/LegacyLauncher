@@ -33,7 +33,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+
 import org.spoutcraft.launcher.technic.RestInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
@@ -104,9 +104,4 @@ public class RestModpack extends Modpack {
 	public String toString() {
 		return "{ Modpack [name: " + name + ", build: " + build + ", libraries: " + libraries + ", minecraft: " + minecraftVersion + ", forge: " + forgeVersion + ", mods: " + mods + "] }";
 	}
-
-	public String getMD5() throws RestfulAPIException {
-		return getRest().getModpackMD5(this.getName());
-	}
-
 }
