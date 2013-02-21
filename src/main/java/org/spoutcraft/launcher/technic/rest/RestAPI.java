@@ -90,6 +90,10 @@ public class RestAPI {
 		return TECHNIC;
 	}
 
+	public static String getPlatformURL() {
+		return "http://beta.technicpack.net/api/";
+	}
+
 	public String getRestURL() {
 		return restURL;
 	}
@@ -131,7 +135,7 @@ public class RestAPI {
 	}
 
 	public static String getCustomPackURL(String modpack) {
-		return "http://beta.technicpack.net/api/modpack/" + modpack;
+		return getPlatformURL() + "modpack/" + modpack;
 	}
 
 	public static String getDownloadCountURL(String modpack) {
@@ -202,7 +206,7 @@ public class RestAPI {
 	}
 
 	public static int getLatestLauncherBuild(String stream) throws RestfulAPIException {
-		LauncherBuild result = getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/launcher/version/" + stream);
+		LauncherBuild result = getRestObject(LauncherBuild.class, getPlatformURL() + "launcher/version/" + stream);
 		return result.getLatestBuild();
 	}
 	
@@ -214,7 +218,7 @@ public class RestAPI {
 			ext = "exe";
 		}
 		
-		String url = "http://beta.technicpack.net/api/launcher/url/" + version + "/" + ext;
+		String url = getPlatformURL() + "launcher/url/" + version + "/" + ext;
 		LauncherURL result = getRestObject(LauncherURL.class, url);
 		return result.getLauncherURL();
 	}
