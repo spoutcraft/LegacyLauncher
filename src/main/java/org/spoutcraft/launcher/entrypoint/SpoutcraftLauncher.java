@@ -154,6 +154,8 @@ public class SpoutcraftLauncher {
 
 		PackManager.addRestPacks(selector);
 		PackManager.addCustomPacks(selector);
+		
+		frame.updateFaces();
 
 		if (params.hasAccount()) {
 			frame.disableForm();

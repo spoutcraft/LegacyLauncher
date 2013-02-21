@@ -32,9 +32,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.Icon;
@@ -43,27 +43,26 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.SwingWorker;
 
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private final AtomicReference<ResizingWorker> worker = new AtomicReference<ResizingWorker>(null);
-	private final BufferedImage icon;
+	private final Image icon;
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
 	private final TransparentButton remove;
 	private final String account, userName;
-	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, String account, String userName) {
-		this.icon = icon;
+	public DynamicButton(JFrame parent, ImageIcon icon, int hoverIncrease, String account, String userName) {
+		this.icon = icon.getImage();
 		this.hoverIncrease = hoverIncrease;
 		this.account = account;
 		this.userName = userName;
 		underLabel = new DynamicLabel(userName);
 		remove = new TransparentButton();
-		this.setSize(icon.getWidth(), icon.getHeight());
+		this.setSize(icon.getIconWidth(), icon.getIconHeight());
 		this.setBorder(null);
-		setIcon(new ImageIcon(icon));
+		setIcon(icon);
 		setRolloverEnabled(true);
 		setFocusable(false);
 		addMouseListener(this);
@@ -117,7 +116,7 @@ public class DynamicButton extends JButton implements MouseListener{
 
 	@Override
 	public void setBounds(int x, int y, int w, int h) {
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, w, h)));
+		setIcon(new ImageIcon(icon.getScaledInstance(w, h, Image.SCALE_SMOOTH)));
 		super.setBounds(x, y, w, h);
 		remove.setBounds(x + w + 2, y, 16, 16);
 		
@@ -147,7 +146,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		int width = getIcon().getIconWidth();
 		int height = getIcon().getIconHeight();
 		setBounds(getX() - size / 2, getY() - size / 2, width + size, height + size);
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, width + size, height + size)));
+		setIcon(new ImageIcon(icon.getScaledInstance(width + size, height + size, Image.SCALE_SMOOTH)));
 	}
 
 	@Override

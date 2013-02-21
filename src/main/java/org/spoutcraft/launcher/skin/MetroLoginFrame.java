@@ -27,8 +27,6 @@
 
 package org.spoutcraft.launcher.skin;
 
-import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
-
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,13 +35,11 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -68,9 +64,13 @@ import org.spoutcraft.launcher.technic.skin.ImageButton;
 import org.spoutcraft.launcher.technic.skin.LauncherOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.Download.Result;
+import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
+import org.spoutcraft.launcher.util.Utils;
 
 public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
@@ -324,7 +324,13 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			DynamicButton userButton = new DynamicButton(this, getImage(userName), 1, accountName, userName);
+			ImageIcon image = getIcon("face.png");
+			File face = new File(Utils.getAssetsDirectory(), userName + ".png");
+			if (face.exists()) {
+				image = new ImageIcon(face.getAbsolutePath());
+			}
+			
+			DynamicButton userButton = new DynamicButton(this, image, 1, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(12F));
 
 			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 70), FRAME_HEIGHT - 57, 45, 45);
@@ -410,25 +416,30 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	private BufferedImage getImage(String user){
-		URLConnection conn;
-		try {
-			conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
-			InputStream stream = conn.getInputStream();
-			BufferedImage image = ImageIO.read(stream);
+	public void updateFaces() {
+		for (String user : userButtons.keySet()) {
+			BufferedImage image = getUserImage(user);
 			if (image != null) {
-				return image;
+				userButtons.get(user).setIcon(new ImageIcon(image));
 			}
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		}
+	}
+
+	private BufferedImage getUserImage(String user) {
+		File file = new File(Utils.getAssetsDirectory(), user + ".png");
 		try {
-			return ImageIO.read(getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
+			Download download = DownloadUtils.downloadFile("https://minotar.net/helm/" + user + "/100", file.getAbsolutePath());
+			if (download.getResult().equals(Result.SUCCESS)) {
+				return ImageIO.read(download.getOutFile());
+			}
 		} catch (IOException e) {
-			throw new RuntimeException("Error reading backup image", e);
+			if (Utils.getStartupParameters().isDebugMode()) {
+				org.spoutcraft.launcher.api.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
+			} else {
+				org.spoutcraft.launcher.api.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
+			}
 		}
+		return null;
 	}
 
 	@Override
