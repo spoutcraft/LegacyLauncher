@@ -256,7 +256,7 @@ public class RestAPI {
 	}
 
 	private static class TechnicMD5 extends RestObject {
-		@JsonProperty("MD5")
+		@JsonProperty("md5")
 		String md5;
 
 		public String getMD5() {
