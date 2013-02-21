@@ -36,6 +36,8 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -273,12 +275,21 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	private BufferedImage getImage(String user){
 		try {
+			System.out.println("Attempting to grab helm of " + user + " from minotar.net");
 			URLConnection conn = (new URL("https://minotar.net/helm/" + user + "/100")).openConnection();
+			conn.setReadTimeout(10000);
+			conn.setConnectTimeout(3000);
 			InputStream stream = conn.getInputStream();
 			BufferedImage image = ImageIO.read(stream);
 			if (image != null) {
 				return image;
 			}
+		} catch (SocketTimeoutException e) {
+			e.printStackTrace();
+			System.out.println("Took too long to grab the helm for " + user + ", aborting.");
+		} catch (ConnectException e) {
+			e.printStackTrace();
+			System.out.println("Took too long to grab the helm for " + user + ", aborting.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
