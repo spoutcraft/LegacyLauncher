@@ -115,7 +115,7 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException {
 		while (!valid.get()) {
-			if (!pack.isLoading()) {
+			if (!pack.isLoading() && build.getMinecraftVersion() != null) {
 				boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 
 				if (minecraftUpdate) {
