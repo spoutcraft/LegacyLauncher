@@ -44,6 +44,7 @@ public class LitePasswordBox extends JPasswordField implements FocusListener{
 		this.setBackground(new Color(220, 220, 220));
 		this.setBorder(new LiteBorder(5, getBackground()));
 		this.setEchoChar('*');
+		this.label.setForeground(Color.BLACK);
 	}
 
 	@Override

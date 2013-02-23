@@ -43,6 +43,7 @@ public class LiteTextBox extends JTextField implements FocusListener{
 		parent.getContentPane().add(this.label);
 		this.setBackground(new Color(220, 220, 220));
 		this.setBorder(new LiteBorder(5, getBackground()));
+		this.label.setForeground(Color.BLACK);
 	}
 
 	@Override
