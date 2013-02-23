@@ -105,7 +105,9 @@ public class UpdateThread extends Thread {
 				runTasks();
 				break;
 			} catch (Exception e) {
-				Launcher.getLoginFrame().handleException(e);
+				if (!this.isInterrupted()) {
+					Launcher.getLoginFrame().handleException(e);
+				}
 				return;
 			}
 		}
