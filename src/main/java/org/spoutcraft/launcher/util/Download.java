@@ -29,6 +29,7 @@ package org.spoutcraft.launcher.util;
 import java.io.*;
 import java.net.*;
 import java.nio.channels.Channels;
+import java.nio.channels.ClosedByInterruptException;
 import java.nio.channels.ReadableByteChannel;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -67,6 +68,7 @@ public class Download implements Runnable {
 	public void run(){
 		ReadableByteChannel rbc = null;
 		FileOutputStream fos = null;
+		Thread progress = null;
 		try {
 			URLConnection conn = url.openConnection();
 			conn.setDoInput(true);
@@ -88,7 +90,7 @@ public class Download implements Runnable {
 
 			stateChanged();
 
-			Thread progress = new MonitorThread(Thread.currentThread(), rbc);
+			progress = new MonitorThread(Thread.currentThread(), rbc);
 			progress.start();
 
 			fos.getChannel().transferFrom(rbc, 0, size > 0 ? size : Integer.MAX_VALUE);
@@ -102,6 +104,12 @@ public class Download implements Runnable {
 			} else {
 				result = Result.SUCCESS;
 			}
+		} catch (ClosedByInterruptException e) {
+			if (progress != null) {
+				progress.interrupt();
+			}
+			result = Result.INTERRUPTED;
+			exception = e;
 		} catch (PermissionDeniedException e) {
 			exception = e;
 			result = Result.PERMISSION_DENIED;
@@ -232,5 +240,6 @@ public class Download implements Runnable {
 		SUCCESS,
 		FAILURE,
 		PERMISSION_DENIED,
+		INTERRUPTED,
 	}
 }

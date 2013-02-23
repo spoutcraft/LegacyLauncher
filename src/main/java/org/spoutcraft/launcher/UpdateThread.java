@@ -86,9 +86,15 @@ public class UpdateThread extends Thread {
 	private final StartupParameters params = Utils.getStartupParameters();
 	private final DownloadListener listener = new DownloadListenerWrapper();
 	private volatile SpoutcraftData build;
+	private final Thread previous;
 	public UpdateThread() {
+		this(null);
+	}
+	
+	public UpdateThread(Thread previous) {
 		super("Update Thread");
 		setDaemon(true);
+		this.previous = previous;
 	}
 
 	public SpoutcraftData getBuild() {
@@ -97,18 +103,25 @@ public class UpdateThread extends Thread {
 
 	@Override
 	public void run() {
-		while (true) {
-			try {
-				if (build == null) {
-					build = new SpoutcraftData();
+		try {
+			build = new SpoutcraftData();
+			boolean interrupted = false;
+			while(true) {
+				try {
+					if (previous != null) {
+						previous.join();
+					}
+					break;
+				} catch (InterruptedException e) {
+					interrupted = true;
 				}
+			}
+			if (!interrupted) {
 				runTasks();
-				break;
-			} catch (Exception e) {
-				if (!this.isInterrupted()) {
-					Launcher.getLoginFrame().handleException(e);
-				}
-				return;
+			}
+		} catch (Exception e) {
+			if (!this.isInterrupted()) {
+				Launcher.getLoginFrame().handleException(e);
 			}
 		}
 	}

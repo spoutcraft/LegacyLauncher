@@ -44,7 +44,9 @@ public class DownloadUtils {
 			download = new Download(url, output);
 			download.setListener(listener);
 			download.run();
-			if (download.getResult() != Result.SUCCESS) {
+			if (download.getResult() == Result.INTERRUPTED) {
+				throw new WrappedIOException("Download interrupted", download.getException());
+			} else if (download.getResult() != Result.SUCCESS) {
 				if (download.getOutFile() != null) {
 					download.getOutFile().delete();
 				}
@@ -83,7 +85,7 @@ public class DownloadUtils {
 		return downloadFile(url, output, null);
 	}
 	
-	private static class WrappedIOException extends IOException {
+	public static class WrappedIOException extends IOException {
 		private static final long serialVersionUID = 1L;
 		Exception e;
 		String message;

@@ -32,6 +32,7 @@ import org.spoutcraft.diff.JBPatch;
 import org.spoutcraft.launcher.SpoutcraftData;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.util.Download.Result;
+import org.spoutcraft.launcher.util.DownloadUtils.WrappedIOException;
 
 public class MinecraftDownloadUtils {
 	public static void downloadMinecraft(String user, String output, SpoutcraftData build, DownloadListener listener) throws IOException {
@@ -43,7 +44,9 @@ public class MinecraftDownloadUtils {
 			Download download = new Download(build.getMinecraftURL(user), output);
 			download.setListener(listener);
 			download.run();
-			if (download.getResult() != Result.SUCCESS) {
+			if (download.getResult() == Result.INTERRUPTED) {
+				throw new WrappedIOException("Download interrupted", download.getException());
+			} else if (download.getResult() != Result.SUCCESS) {
 				if (download.getOutFile() != null) {
 					download.getOutFile().delete();
 				}

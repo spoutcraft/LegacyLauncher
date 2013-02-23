@@ -72,7 +72,7 @@ public final class GameUpdater extends SpoutcraftDirectories{
 		updateThread.setDownloadListener(null);
 		updateThread.interrupt();
 		MinecraftLauncher.resetClassLoader();
-		updateThread = new UpdateThread();
+		updateThread = new UpdateThread(updateThread);
 		updateThread.setDownloadListener(old);
 		start();
 	}
