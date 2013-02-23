@@ -59,6 +59,12 @@ public class LiteTextBox extends JTextField implements FocusListener{
 		label.setBounds(x + 5, y + 3, w - 5, h - 5);
 	}
 
+	@Override
+	public void setText(String text) {
+		super.setText(text);
+		label.setVisible((text != null && text.length() > 0) ? false : true);
+	}
+
 	public void focusGained(FocusEvent e) {
 		label.setVisible(false);
 	}
