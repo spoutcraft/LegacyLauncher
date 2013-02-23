@@ -189,7 +189,6 @@ public final class SpoutcraftData {
 					Project stable = mapper.readValue(stream, Project.class);
 					//Stable release is newer
 					if (stable.getBuild() > build) {
-						Settings.setSpoutcraftChannel(Channel.STABLE);
 						return String.valueOf(stable.getBuild());
 					} else {
 						return String.valueOf(build);
