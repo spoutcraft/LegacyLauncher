@@ -98,8 +98,8 @@ public class SpoutcraftLauncher {
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
 		logger.info("------------------------------------------");
 		logger.info("Spoutcraft Launcher is starting....");
-		logger.info("Operating System: " + OperatingSystem.getOS());
-		logger.info("JRE: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version"));
+		logger.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
+		logger.info("Java Version: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " <" + System.getProperty("java.vendor.url") + ">");;
 		logger.info("Launcher Build: " + launcherBuild);
 
 		params.logParameters(logger);
