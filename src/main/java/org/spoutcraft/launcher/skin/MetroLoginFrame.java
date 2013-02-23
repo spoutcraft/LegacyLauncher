@@ -80,8 +80,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private OptionsMenu optionsMenu = null;
 	public MetroLoginFrame() {
 		initComponents();
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
+		setSize(FRAME_WIDTH, FRAME_HEIGHT);
+		setLocationRelativeTo(null);
 		setResizable(false);
 		getContentPane().add(new BackgroundImage(FRAME_WIDTH, FRAME_HEIGHT));
 	}
