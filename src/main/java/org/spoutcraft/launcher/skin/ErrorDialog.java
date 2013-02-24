@@ -97,7 +97,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 
 	private String generateExceptionReport() {
 		StringBuilder builder = new StringBuilder("Technic Launcher Error Report:\n");
-		builder.append("( Please submit this report to https://github.com/TechnicPack/Spoutcraft-Launcher/issues )\n");
+		builder.append("( Please submit this report to https://github.com/TechnicPack/TechnicLauncher/issues )\n");
 		builder.append("    Launcher Build: ").append(Settings.getLauncherBuild()).append("\n");
 		builder.append("----------------------------------------------------------------------").append("\n");
 		builder.append("Stack Trace:").append("\n");
@@ -132,7 +132,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 		Container contentPane = getContentPane();
 
 		//---- titleLabel ----
-		titleLabel.setText("An unexpected error has occured - Please report to http://spout.in/issues");
+		titleLabel.setText("An unexpected error has occured - Please report to https://github.com/TechnicPack/TechnicLauncher/issues");
 		titleLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 		//---- exceptionLabel ----
