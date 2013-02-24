@@ -84,7 +84,7 @@ public class RestAPI {
 
 	public static RestAPI getDefault() {
 		if (TECHNIC == null) {
-			TECHNIC = new RestAPI("http://solder.sctgaming.com/api/");
+			TECHNIC = new RestAPI("http://solder.technicpack.net/api/");
 		}
 
 		return TECHNIC;
