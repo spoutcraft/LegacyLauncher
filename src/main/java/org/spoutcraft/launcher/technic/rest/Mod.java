@@ -45,7 +45,7 @@ public class Mod {
 	}
 
 	public Mod(String name, String version, String url) {
-		this(name, version, "", url);
+		this(name, version, null, url);
 	}
 
 	public String getName() {
