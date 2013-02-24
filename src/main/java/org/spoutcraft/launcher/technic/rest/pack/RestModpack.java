@@ -27,9 +27,7 @@
 
 package org.spoutcraft.launcher.technic.rest.pack;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -48,7 +46,7 @@ public class RestModpack extends Modpack {
 	@JsonProperty("forge")
 	private String forgeVersion;
 	@JsonProperty("mods")
-	private Map<String, String> mods;
+	private List<Mod> mods;
 
 	private String name;
 	private String displayName;
@@ -93,11 +91,7 @@ public class RestModpack extends Modpack {
 
 	@Override
 	public List<Mod> getMods() {
-		List<Mod> modList = new ArrayList<Mod>(mods.size());
-		for (String name : mods.keySet()) {
-			modList.add(new Mod(name, mods.get(name), getRest()));
-		}
-		return modList;
+		return mods;
 	}
 
 	@Override

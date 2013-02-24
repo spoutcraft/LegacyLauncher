@@ -27,24 +27,25 @@
 
 package org.spoutcraft.launcher.technic.rest;
 
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.codehaus.jackson.annotate.JsonCreator;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 public class Mod {
 	private final String name;
 	private final String version;
 	private final String url;
+	private final String md5;
 
-	private RestAPI rest = null;
-
-	public Mod(String name, String version, String downloadUrl) {
+	@JsonCreator
+	public Mod(@JsonProperty("name") String name, @JsonProperty("version") String version, @JsonProperty("md5") String md5, @JsonProperty("url") String url) {
 		this.name = name;
 		this.version = version;
-		this.url = downloadUrl;
+		this.md5 = md5;
+		this.url = url;
 	}
 
-	public Mod(String name, String version, RestAPI rest) {
-		this(name, version, rest.getModDownloadURL(name, version));
-		this.rest = rest;
+	public Mod(String name, String version, String url) {
+		this(name, version, "", url);
 	}
 
 	public String getName() {
@@ -60,16 +61,7 @@ public class Mod {
 	}
 
 	public String getMD5() {
-		if (rest != null) {
-			try {
-				return rest.getModMD5(name, version);
-			} catch (RestfulAPIException e) {
-				e.printStackTrace();
-				return null;
-			}
-		} else {
-			return null;
-		}
+		return md5;
 	}
 
 	@Override
