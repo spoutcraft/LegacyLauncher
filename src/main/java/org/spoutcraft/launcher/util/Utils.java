@@ -298,7 +298,7 @@ public class Utils {
 				throw new MinecraftUserNotPremiumException();
 			} else if (result.trim().contains("Old version")) {
 				throw new OutdatedMCLauncherException();
-			} else if (result.trim().contains("Account migrated, use e-mail as username.")) {
+			} else if (result.trim().contains("Mojang account, use e-mail as username.")) {
 				throw new AccountMigratedException();
 			} else {
 				System.err.print("Unknown login result: " + result);
