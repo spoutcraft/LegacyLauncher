@@ -35,6 +35,7 @@ import java.util.Arrays;
 import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
@@ -73,15 +74,21 @@ public class Start {
 		}
 
 		Utils.getLauncherDirectory();
+		boolean update = false;
+
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		String buildStream = Settings.getBuildStream();
-		int latest = RestAPI.getLatestLauncherBuild(buildStream);
-		boolean update = false;
+		int latest = version;
 		
-		if (buildStream.equals("beta") && version < latest) {
-			update = true;
-		} else if (buildStream.equals("stable") && version != latest) {
-			update = true;
+		try {
+			latest = RestAPI.getLatestLauncherBuild(buildStream);
+			if (buildStream.equals("beta") && version < latest) {
+				update = true;
+			} else if (buildStream.equals("stable") && version != latest) {
+				update = true;
+			}
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
 		}
 		
 		if (update) {
