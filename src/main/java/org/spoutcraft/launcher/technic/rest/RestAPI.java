@@ -29,7 +29,9 @@ package org.spoutcraft.launcher.technic.rest;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -223,17 +225,22 @@ public class RestAPI {
 		return result.getLauncherURL();
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T extends RestObject> T getRestObject(Class<T> restObject, String url) throws RestfulAPIException {
 		InputStream stream = null;
 		try {
-			stream = new URL(url).openStream();
-			RestObject result = mapper.readValue(stream, restObject);
+			URLConnection conn = new URL(url).openConnection();
+			conn.setConnectTimeout(2000);
+			conn.setReadTimeout(3000);
+
+			stream = conn.getInputStream();
+			T result = mapper.readValue(stream, restObject);
 			if (result.hasError()) {
 				throw new RestfulAPIException("Error in json response: " + result.getError());
 			}
 
-			return (T) result;
+			return result;
+		} catch (SocketTimeoutException e) {
+			throw new RestfulAPIException("Timed out accessing URL [" + url + "]", e);
 		} catch (IOException e) {
 			throw new RestfulAPIException("Error accessing URL [" + url + "]", e);
 		} finally {
