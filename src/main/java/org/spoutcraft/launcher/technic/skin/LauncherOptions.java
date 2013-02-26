@@ -77,7 +77,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final String CHANGEFOLDER_ACTION = "changefolder";
 	private static final String BETA_ACTION = "beta";
 	private static final String STABLE_ACTION = "stable";
-	private static final String CLOSEDIALOG_KEY = "ESCAPE";
+	private static final String ESCAPE_ACTION = "escape";
 
 	private JLabel background;
 	private JLabel build;
@@ -107,14 +107,17 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
 		
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		{ public void actionPerformed(ActionEvent e)
-			{
+		Action escapeAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSEDIALOG_KEY);
-		getRootPane().getActionMap().put(CLOSEDIALOG_KEY, escapeAction);
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, ESCAPE_ACTION);
+		getRootPane().getActionMap().put(ESCAPE_ACTION, escapeAction);
 
 		background = new JLabel();
 		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);

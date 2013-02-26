@@ -72,7 +72,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String CHANGEFOLDER_ACTION = "changefolder";
 	private static final String OPENFOLDER_ACTION = "openfolder";
 	private static final String CLEAN_BIN_ACTION = "cleanbin";
-	private static final String CLOSEDIALOG_KEY = "ESCAPE";
+	private static final String ESCAPE_ACTION = "escape";
 
 	public static final String RECOMMENDED = "recommended";
 	public static final String LATEST = "latest";
@@ -105,14 +105,17 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
 		
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
-		Action escapeAction = new AbstractAction()
-		{ public void actionPerformed(ActionEvent e)
-			{
+		Action escapeAction = new AbstractAction() {
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
 				dispose();
 			}
 		};
-		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, CLOSEDIALOG_KEY);
-		getRootPane().getActionMap().put(CLOSEDIALOG_KEY, escapeAction);
+
+		getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(escape, ESCAPE_ACTION);
+		getRootPane().getActionMap().put(ESCAPE_ACTION, escapeAction);
 
 		background = new JLabel();
 		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
