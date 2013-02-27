@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLNode;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
 
@@ -207,7 +208,7 @@ public class Settings {
 	
 	public static synchronized void setPackDirectory(String modpack, File dir) {
 		String directory = dir.getAbsolutePath();
-		if (dir.getParent().contains(Settings.getLauncherDir())) {
+		if (!Utils.getStartupParameters().isPortable() && dir.getParent().contains(Settings.getLauncherDir())) {
 			directory = "launcher\\" + dir.getName();
 		}
 		yaml.setProperty("modpacks." + modpack + ".directory", directory);
