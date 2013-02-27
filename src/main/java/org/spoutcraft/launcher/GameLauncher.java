@@ -58,10 +58,19 @@ public class GameLauncher extends JFrame implements WindowListener {
 	public static final int ERROR_IN_LAUNCH = 0;
 	public static final int SUCCESSFUL_LAUNCH = 1;
 
+	private final int width;
+	private final int height;
+
 	public GameLauncher() {
 		super("Spoutcraft");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.setResizable(true);
+		width = Utils.getStartupParameters().getWidth();
+		height = Utils.getStartupParameters().getHeight();
+		if (width != -1 && height != -1) {
+			this.setResizable(false);
+		} else {
+			this.setResizable(true);
+		}
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 	}
@@ -98,7 +107,12 @@ public class GameLauncher extends JFrame implements WindowListener {
 			}
 		}
 
+		
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
+		if (width != -1 && height != -1) {
+			size = new Dimension(width, height);
+		}
+
 		Point centeredLoc = WindowMode.getModeById(Settings.getWindowModeId()).getCenteredLocation(Launcher.getFrame());
 
 		this.setLocation(centeredLoc);

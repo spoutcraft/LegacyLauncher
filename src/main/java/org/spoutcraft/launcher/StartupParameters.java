@@ -91,6 +91,12 @@ public final class StartupParameters {
 	@Parameter(names = {"-console"}, description = "Shows the console window")
 	private boolean console = false;
 
+	@Parameter(names = {"-width"}, description = "Sets the width of the minecraft window to be fixed to this.")
+	private int width = -1;
+
+	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
+	private int height = -1;
+
 	public List<String> getParameters() {
 		return parameters;
 	}
@@ -138,6 +144,12 @@ public final class StartupParameters {
 		}
 		if (console) {
 			log.info("Console frame enabled");
+		}
+		if (width != -1) {
+			log.info("Minecraft frame width: " + width);
+		}
+		if (height != -1) {
+			log.info("Minecraft frame height: " + height);
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -251,6 +263,14 @@ public final class StartupParameters {
 		if (console) {
 			params.add("-console");
 		}
+		if (width != -1) {
+			params.add("-width");
+			params.add(Integer.toString(width));
+		}
+		if (height != -1) {
+			params.add("-height");
+			params.add(Integer.toString(height));
+		}
 		return params;
 	}
 
@@ -329,5 +349,13 @@ public final class StartupParameters {
 
 	public String getProxyPassword() {
 		return proxyPassword;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
 	}
 }
