@@ -36,6 +36,7 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -46,6 +47,8 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
+import org.spout.downpour.DefaultURLConnector;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.FutureImage;
@@ -303,10 +306,18 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			public BufferedImage call() throws Exception {
 				try {
 					System.out.println("Attempting to grab helm of " + user + " from minotar.net");
-					URLConnection conn = (new URL("http://skins.technicpack.net/helm/" + user + "/100")).openConnection();
-					conn.setReadTimeout(15000);
-					conn.setConnectTimeout(5000);
-					InputStream stream = conn.getInputStream();
+					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
+						@Override
+						public void setHeaders(URLConnection conn) {
+							conn.setDoInput(true);
+							conn.setDoOutput(false);
+							HttpURLConnection.setFollowRedirects(true);
+							conn.setUseCaches(false);
+							((HttpURLConnection)conn).setInstanceFollowRedirects(true);
+							conn.setConnectTimeout(10000);
+							conn.setReadTimeout(10000);
+						}
+					}, true);
 					BufferedImage image = ImageIO.read(stream);
 					if (image == null) {
 						throw new NullPointerException("No image downloaded!");

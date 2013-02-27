@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -133,8 +132,7 @@ public final class SpoutcraftData {
 		String url = RestAPI.getSpoutcraftURL(build);
 		InputStream stream = null;
 		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
+			stream = RestAPI.getCachingInputStream(new URL(url), true);
 			Project project = mapper.readValue(stream, Project.class);
 			return project.getMd5();
 		} catch (IOException e) {
@@ -169,8 +167,7 @@ public final class SpoutcraftData {
 			int build;
 			String url = RestAPI.getSpoutcraftURL(channel);
 			try {
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				Project project = mapper.readValue(stream, Project.class);
 				build = project.getBuild();
 			} catch (IOException e) {
@@ -184,8 +181,7 @@ public final class SpoutcraftData {
 			} else {
 				url = RestAPI.getSpoutcraftURL(Channel.STABLE);
 				try {
-					URLConnection conn = (new URL(url)).openConnection();
-					stream = conn.getInputStream();
+					stream = RestAPI.getCachingInputStream(new URL(url), true);
 					Project stable = mapper.readValue(stream, Project.class);
 					//Stable release is newer
 					if (stable.getBuild() > build) {
@@ -204,8 +200,7 @@ public final class SpoutcraftData {
 			String url = RestAPI.ALL_BUILDS_URL;
 			try {
 				final String mcVersion = getMinecraftVersion();
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				ChannelData data = mapper.readValue(stream, ChannelData.class);
 				HashSet<String> builds = new HashSet<String>(100);
 				for (VersionData v : data.stable) {
@@ -250,8 +245,7 @@ public final class SpoutcraftData {
 			InputStream stream = null;
 			String url = RestAPI.getMD5URL(md5);
 			try {
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				MD5Result result = mapper.readValue(stream, MD5Result.class);
 				return result.getBuildNumber();
 			} catch (IOException e) {
@@ -274,8 +268,7 @@ public final class SpoutcraftData {
 		InputStream stream = null;
 		String url = RestAPI.getLibraryURL(build);
 		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
+			stream = RestAPI.getCachingInputStream(new URL(url), true);
 			List<String> json = IOUtils.readLines(stream);
 			String fullJson = "";
 			for (String j : json) {

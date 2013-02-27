@@ -32,9 +32,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.spout.downpour.DefaultURLConnector;
+import org.spoutcraft.launcher.rest.RestAPI;
 
 
 public class BaseYAMLResource implements YAMLResource {
@@ -72,12 +76,23 @@ public class BaseYAMLResource implements YAMLResource {
 
 				//Setup url
 				URL url = new URL(this.url);
-				HttpURLConnection conn = (HttpURLConnection) (url.openConnection());
-				System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
-				conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
 
 				//Copy file
-				stream = conn.getInputStream();
+				stream = RestAPI.getCache().get(url, new DefaultURLConnector() {
+					@Override
+					public void setHeaders(URLConnection conn) {
+						conn.setDoInput(true);
+						conn.setDoOutput(false);
+						System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+						conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+						HttpURLConnection.setFollowRedirects(true);
+						conn.setUseCaches(false);
+						((HttpURLConnection)conn).setInstanceFollowRedirects(true);
+						conn.setConnectTimeout(10000);
+						conn.setReadTimeout(10000);
+					}
+				}, true);
+
 				fout = new FileOutputStream(localCache);
 				fout.getChannel().transferFrom(Channels.newChannel(stream), 0, Integer.MAX_VALUE);
 

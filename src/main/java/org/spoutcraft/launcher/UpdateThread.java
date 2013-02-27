@@ -48,6 +48,7 @@ import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
@@ -149,6 +150,8 @@ public class UpdateThread extends Thread {
 				cleanLogs();
 				cleanTemp();
 				updateFiles();
+				
+				RestAPI.getCache().cleanup();
 			}
 
 			Validator validate = new Validator();
@@ -178,7 +181,9 @@ public class UpdateThread extends Thread {
 
 	private void updateAssets() {
 		YAMLProcessor assets = Resources.Assets.getYAML();
-		updateAssets(assets.getMap(), Utils.getAssetsDirectory());
+		if (assets != null) {
+			updateAssets(assets.getMap(), Utils.getAssetsDirectory());
+		}
 	}
 
 	@SuppressWarnings("unchecked")

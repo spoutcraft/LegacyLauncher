@@ -78,6 +78,7 @@ public class Compatibility {
 		}
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static boolean setExecutable(File file, boolean executable, boolean owner) {
 		try {
 			Class[] params = {boolean.class, boolean.class};

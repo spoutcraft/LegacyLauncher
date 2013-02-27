@@ -29,7 +29,6 @@ package org.spoutcraft.launcher.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -90,8 +89,7 @@ public class SpoutcraftBuild implements Comparable<SpoutcraftBuild>{
 		for (Channel c : Channel.values()) {
 			if (c != Channel.CUSTOM) {
 				try {
-					URLConnection conn = (new URL(RestAPI.getBuildListURL(c))).openConnection();
-					stream = conn.getInputStream();
+					stream = RestAPI.getCachingInputStream(new URL(RestAPI.getBuildListURL(c)), true);
 					ObjectMapper mapper = new ObjectMapper();
 					uniqueBuilds.addAll(Arrays.asList(mapper.readValue(stream, SpoutcraftBuild[].class)));
 				} catch (IOException e) {

@@ -29,7 +29,6 @@ package org.spoutcraft.launcher.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -45,8 +44,7 @@ public final class Versions {
 		if (versions == null) {
 			InputStream stream = null;
 			try {
-				URLConnection conn = (new URL(RestAPI.VERSIONS_URL)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(RestAPI.VERSIONS_URL), true);
 				ObjectMapper mapper = new ObjectMapper();
 				Channel c = mapper.readValue(stream, Channel.class);
 

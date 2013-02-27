@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.URL;
 import java.net.URLConnection;
@@ -48,6 +49,8 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+
+import javax.net.ssl.HttpsURLConnection;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -207,26 +210,26 @@ public class SpoutcraftLauncher {
 		
 		//May not be online, check
 		if (localHost.contains("127.0.0.1")) {
-			if (!pingURL("http://www.google.com")) {
+			if (pingURL("http://www.google.com") / 100 == 2) {
 				JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
-			} else if (!pingURL("http://get.spout.org")) {
+			} else if (pingURL("http://get.spout.org") / 100 == 2) {
 				JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
 				System.exit(0);
 			}
 		}
 	}
 
-	private static boolean pingURL(String urlLoc) {
-		try {
-			final URL url = new URL(urlLoc);
-			final URLConnection conn = url.openConnection();
-			conn.setConnectTimeout(10000);
-			conn.getInputStream();
-			return true;
-		} catch (IOException e) {
-			return false;
+	public static int pingURL(String urlLoc) {
+		for (int i = 1; i <= 3; i++) {
+			try {
+				final URL url = new URL(urlLoc);
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setConnectTimeout(750 * i);
+				return conn.getResponseCode();
+			} catch (IOException e) {}
 		}
+		return HttpURLConnection.HTTP_NOT_FOUND;
 	}
 
 	private static void setupProxy() {

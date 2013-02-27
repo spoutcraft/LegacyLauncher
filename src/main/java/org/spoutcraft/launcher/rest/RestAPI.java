@@ -26,11 +26,20 @@
  */
 package org.spoutcraft.launcher.rest;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import org.spout.downpour.DownpourCache;
+import org.spout.downpour.NoCacheException;
 import org.spoutcraft.launcher.Channel;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.util.Utils;
 
 public class RestAPI {
 	// Private
 	private static final String PROJECT = "spoutcraft";
+	private static DownpourCache cache = new DownpourCache(new File(new File(Utils.getWorkingDirectory(), "cache"), ".rest-cache"));
 
 	// Public
 	public static final String REST_URL = "http://get.spout.org/api/";
@@ -39,6 +48,10 @@ public class RestAPI {
 	public static final String LIBRARY_GET_URL = REST_URL + "library/";
 	public static final String ALL_BUILDS_URL = REST_URL + "builds/" + PROJECT;
 	public static final String LAUNCHER_BUILDS_URL = REST_URL + "builds/spoutcraftlauncher";
+	static {
+		int response = SpoutcraftLauncher.pingURL(REST_URL);
+		cache.setOfflineMode(response / 100 != 2);
+	}
 
 	public static String getSpoutcraftURL(Channel channel) {
 		if (channel != Channel.CUSTOM) {
@@ -82,5 +95,13 @@ public class RestAPI {
 
 	public static String getMD5URL(String md5) {
 		return REST_URL + "hash/" + md5;
+	}
+
+	public static InputStream getCachingInputStream(URL url, boolean force) throws NoCacheException, IOException {
+		return cache.get(url, DownpourCache.DEFAULT_CONNECTOR, force);
+	}
+
+	public static DownpourCache getCache() {
+		return cache;
 	}
 }

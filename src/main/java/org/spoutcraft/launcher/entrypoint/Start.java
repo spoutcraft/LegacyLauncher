@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -145,8 +144,7 @@ public class Start {
 		String url = RestAPI.getLauncherURL(Settings.getLauncherChannel());
 		InputStream stream = null;
 		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
+			stream = RestAPI.getCachingInputStream(new URL(url), true);
 			Project project = mapper.readValue(stream, Project.class);
 			return project.getBuild();
 		} catch (IOException e) {
