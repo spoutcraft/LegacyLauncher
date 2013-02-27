@@ -140,7 +140,16 @@ public class Start {
 		}
 	}
 
-	public static int getLatestLauncherBuild() throws RestfulAPIException {
+	public static int getLatestLauncherBuild() {
+		try {
+			return requestLatestLauncherBuild();
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+		}
+		return -1;
+	}
+
+	private static int requestLatestLauncherBuild() throws RestfulAPIException {
 		String url = RestAPI.getLauncherURL(Settings.getLauncherChannel());
 		InputStream stream = null;
 		try {
