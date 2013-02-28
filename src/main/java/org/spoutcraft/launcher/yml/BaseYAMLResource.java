@@ -63,7 +63,7 @@ public class BaseYAMLResource implements YAMLResource {
 			InputStream stream = null;
 			FileOutputStream fout = null;
 			try {
-				//Pre resource action
+				// Pre resource action
 				if (localCache.exists() && action != null) {
 					try {
 						YAMLProcessor previous = new YAMLProcessor(localCache, false);
@@ -74,10 +74,10 @@ public class BaseYAMLResource implements YAMLResource {
 					}
 				}
 
-				//Setup url
+				// Setup url
 				URL url = new URL(this.url);
 
-				//Copy file
+				// Copy file
 				stream = RestAPI.getCache().get(url, new DefaultURLConnector() {
 					@Override
 					public void setHeaders(URLConnection conn) {
@@ -96,11 +96,11 @@ public class BaseYAMLResource implements YAMLResource {
 				fout = new FileOutputStream(localCache);
 				fout.getChannel().transferFrom(Channels.newChannel(stream), 0, Integer.MAX_VALUE);
 
-				//Setup cached processor
+				// Setup cached processor
 				cached = new YAMLProcessor(localCache, false);
 				cached.load();
 
-				//post resource action
+				// Post resource action
 				if (action != null) {
 					try {
 						action.afterAction(cached);

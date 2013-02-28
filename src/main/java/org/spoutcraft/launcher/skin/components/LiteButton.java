@@ -43,20 +43,20 @@ public class LiteButton extends JButton implements MouseListener{
 		this.setBorder(new LiteBorder(5, getBackground()));
 		this.addMouseListener(this);
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D)g;
 		Color old = g2d.getColor();
-		//Draw box
+		// Draw box
 		g2d.setColor(clicked ? Color.BLACK : getBackground());
 		g2d.fillRect(0, 0, getWidth(), getHeight());
-		//Draw label
+		// Draw label
 		g2d.setColor(clicked ? getBackground() : Color.BLACK);
 		g2d.setFont(getFont());
 		int width = g2d.getFontMetrics().stringWidth(getText());
 		g2d.drawString(getText(), (getWidth() - width) / 2, getFont().getSize() + 4);
-		
+
 		g2d.setColor(old);
 	}
 

@@ -91,7 +91,7 @@ public class UpdateThread extends Thread {
 	public UpdateThread() {
 		this(null);
 	}
-	
+
 	public UpdateThread(Thread previous) {
 		super("Update Thread");
 		setDaemon(true);
@@ -150,7 +150,7 @@ public class UpdateThread extends Thread {
 				cleanLogs();
 				cleanTemp();
 				updateFiles();
-				
+
 				RestAPI.getCache().cleanup();
 			}
 
@@ -372,7 +372,7 @@ public class UpdateThread extends Thread {
 		if (!nativesDir.exists()) {
 			return true;
 		}
-		//Empty dir
+		// Empty dir
 		if (nativesDir.listFiles().length == 0) {
 			return true;
 		}

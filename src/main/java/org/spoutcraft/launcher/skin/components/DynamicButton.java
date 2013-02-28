@@ -68,11 +68,11 @@ public class DynamicButton extends JButton implements MouseListener{
 		underLabel.setForeground(Color.WHITE);
 		parent.getContentPane().add(underLabel);
 		parent.getContentPane().add(remove);
-		
+
 		remove.setTransparency(0.4F);
 		remove.setHoverTransparency(1F);
 	}
-	
+
 	public JButton getRemoveIcon() {
 		return remove;
 	}
@@ -118,17 +118,17 @@ public class DynamicButton extends JButton implements MouseListener{
 		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), w, h)));
 		super.setBounds(x, y, w, h);
 		remove.setBounds(x + w + 2, y, 16, 16);
-		
-		//Allow the label to overflow the button width
+
+		// Allow the label to overflow the button width
 		int sw = underLabel.getFontMetrics(underLabel.getFont()).stringWidth(underLabel.getText());
 		if (sw > w) {
 			x -= ((sw - w) / 2);
 			w = sw;
-			
+
 		}
 		underLabel.setBounds(x + (w - sw) / 2, y + h, w, 20);
-		
-		
+
+
 	}
 
 	private void updateSize(int size) {
@@ -166,7 +166,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		updateSize(-hoverIncrease);
 		underLabel.setVisible(false);
 	}
-	
+
 	private static class DynamicLabel extends JLabel {
 		private static final long serialVersionUID = 1L;
 		protected final AtomicReference<TransparencyWorker> worker = new AtomicReference<TransparencyWorker>(null);

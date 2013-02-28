@@ -58,7 +58,7 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 
 		if (this.isStringPainted() && getString().length() > 0) {
 			g2d.setFont(getFont());
-			
+
 			final int startWidth = (getWidth() - g2d.getFontMetrics().stringWidth(getString())) / 2;
 			String white = "";
 			int whiteWidth = 0;

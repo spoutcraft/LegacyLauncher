@@ -228,22 +228,22 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
 
-			//Create callable
+			// Create callable
 			CallbackTask callback = getImage(userName);
-	
-			//Start callable
+
+			// Start callable
 			FutureTask<BufferedImage> futureImage = new FutureTask<BufferedImage>(callback);
 			Thread downloadThread = new Thread(futureImage, "Image download thread");
 			downloadThread.setDaemon(true);
 			downloadThread.start();
-			
-			//Create future image, using default mc avatar for now
+
+			// Create future image, using default mc avatar for now
 			FutureImage userImage = new FutureImage(getDefaultImage());
 			callback.setCallback(userImage);
-			
+
 			DynamicButton userButton = new DynamicButton(this, userImage, 44, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(14F));
-			
+
 			userImage.setRepaintCallback(userButton);
 
 			userButton.setBounds((FRAME_WIDTH - 75) * (i + 1) / (users + 1), (FRAME_HEIGHT - 75) / 2 , 75, 75);
@@ -305,7 +305,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return new CallbackTask(new Callable<BufferedImage>() {
 			public BufferedImage call() throws Exception {
 				try {
-					System.out.println("Attempting to grab helm of " + user + " from minotar.net");
+					System.out.println("Attempting to grab helm of " + user);
 					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {
@@ -322,10 +322,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					if (image == null) {
 						throw new NullPointerException("No image downloaded!");
 					}
-					System.out.println("Completed helm request to minotar.net");
+					System.out.println("Completed avatar helm request");
 					return image;
 				} catch (Exception e) {
-					System.out.println("Failed helm request to minotar.net");
+					System.out.println("Failed avatar helm request");
 					throw e;
 				}
 			}

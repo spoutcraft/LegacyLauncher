@@ -66,7 +66,7 @@ public class RestAPI {
 		}
 		throw new IllegalArgumentException("No download URL available for custom channel builds");
 	}
-	
+
 	public static String getLauncherDownloadURL(Channel channel, boolean jar) {
 		if (channel != Channel.CUSTOM) {
 			return REST_URL + channel.toString() + "/" + "spoutcraftlauncher" + (jar ? ".jar" : ".exe");

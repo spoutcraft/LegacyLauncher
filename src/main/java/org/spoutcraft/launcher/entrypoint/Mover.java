@@ -75,7 +75,7 @@ public class Mover {
 			IOUtils.closeQuietly(fis);
 			IOUtils.closeQuietly(fos);
 		}
-		
+
 		Compatibility.setExecutable(codeSource, true, true);
 
 		ProcessBuilder processBuilder = new ProcessBuilder();

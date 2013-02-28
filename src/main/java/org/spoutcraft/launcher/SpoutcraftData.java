@@ -91,7 +91,7 @@ public final class SpoutcraftData {
 	public String getMinecraftVersion() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			//TODO: Fix by implementing get.spout.org API for MC
+			// TODO: Fix by implementing get.spout.org API for MC
 			//return "1.4.7";
 			return getLatestMinecraftVersion();
 		} else {
@@ -162,7 +162,7 @@ public final class SpoutcraftData {
 			return Settings.getSpoutcraftSelectedBuild();
 		}
 		InputStream stream = null;
-		//Use channel selection for latest
+		// Use channel selection for latest
 		if (getLatestMinecraftVersion().equals(getMinecraftVersion())) {
 			int build;
 			String url = RestAPI.getSpoutcraftURL(channel);
@@ -175,7 +175,7 @@ public final class SpoutcraftData {
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
-			//Check to see if stable has newer release
+			// Check to see if stable has newer release
 			if (channel == Channel.STABLE) {
 				return String.valueOf(build);
 			} else {
@@ -183,7 +183,7 @@ public final class SpoutcraftData {
 				try {
 					stream = RestAPI.getCachingInputStream(new URL(url), true);
 					Project stable = mapper.readValue(stream, Project.class);
-					//Stable release is newer
+					// Stable release is newer
 					if (stable.getBuild() > build) {
 						return String.valueOf(stable.getBuild());
 					} else {
@@ -196,7 +196,7 @@ public final class SpoutcraftData {
 				}
 			}
 		} else {
-			//Find the newest build for the mc version
+			// Find the newest build for the mc version
 			String url = RestAPI.ALL_BUILDS_URL;
 			try {
 				final String mcVersion = getMinecraftVersion();
@@ -249,7 +249,7 @@ public final class SpoutcraftData {
 				MD5Result result = mapper.readValue(stream, MD5Result.class);
 				return result.getBuildNumber();
 			} catch (IOException e) {
-				//ignore
+				// Ignore
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
@@ -306,7 +306,7 @@ public final class SpoutcraftData {
 		@JsonProperty("minecraft")
 		Library[] minecraft;
 	}
-	
+
 	private static class ChannelData {
 		@JsonProperty("stable")
 		VersionData[] stable;
@@ -315,7 +315,7 @@ public final class SpoutcraftData {
 		@JsonProperty("dev")
 		VersionData[] dev;
 	}
-	
+
 	private static class VersionData {
 		@JsonProperty("build_number")
 		String buildNumber;

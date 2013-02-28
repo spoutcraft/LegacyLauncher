@@ -88,7 +88,6 @@ public final class GameUpdater extends SpoutcraftDirectories{
 		System.out.println("Result: " + result);
 	}
 
-
 	public void setMinecraftUser(String user) {
 		this.user = user;
 	}

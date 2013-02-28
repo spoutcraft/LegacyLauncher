@@ -69,7 +69,7 @@ public class SplashScreen extends JWindow{
 		// Finalize
 		setSize(icon.getIconWidth(), icon.getIconHeight() + 20);
 		try {
-			//Not always supported...
+			// Not always supported...
 			this.setBackground(new Color(0, 0, 0, 0));
 		} catch (UnsupportedOperationException e) {
 			this.setBackground(new Color(0, 0, 0));

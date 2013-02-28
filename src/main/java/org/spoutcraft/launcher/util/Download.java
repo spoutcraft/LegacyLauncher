@@ -36,6 +36,7 @@ import org.apache.commons.io.IOUtils;
 
 import org.spout.downpour.DefaultURLConnector;
 import org.spout.downpour.DownpourCache;
+
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
 import org.spoutcraft.launcher.rest.RestAPI;

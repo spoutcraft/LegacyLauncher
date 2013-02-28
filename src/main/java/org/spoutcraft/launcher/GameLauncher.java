@@ -144,8 +144,8 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		validate();
 		this.setVisible(true);
-		//TODO Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
-		//TODO Someone fix this better (or not, no harm as it just works)
+		// TODO: Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
+		// TODO: Someone fix this better (or not, no harm as it just works)
 		new File(Utils.getWorkingDirectory(), "resources").mkdirs();
 		minecraft.init();
 		minecraft.setSize(getWidth(), getHeight());

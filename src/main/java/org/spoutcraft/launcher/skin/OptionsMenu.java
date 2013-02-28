@@ -295,7 +295,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		if (command.equals(CANCEL_ACTION)) {
 			closeForm();
 		} else if (command.equals(RESET_ACTION)) {
-
 		} else if (command.equals(LOGS_ACTION)) {
 			try {
 				File logDirectory = new File(Utils.getWorkingDirectory(), "logs");
@@ -416,7 +415,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 				//---- memoryLabel ----
 				memoryLabel.setText("Memory:");
-				memoryLabel.setBackground(Color.white);
 				memoryLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- spoutcraftVersion ----
@@ -577,7 +575,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 			{
 				//---- launcherVersionLabel ----
 				launcherVersionLabel.setText("Launcher:");
-				launcherVersionLabel.setBackground(Color.white);
 				launcherVersionLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- launcherVersion ----
@@ -585,13 +582,11 @@ public class OptionsMenu extends JDialog implements ActionListener {
 
 				//---- debugLabel ----
 				debugLabel.setText("Debug Mode:");
-				debugLabel.setBackground(Color.white);
 				debugLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
 				//---- debugMode ----
-				debugMode.setBackground(Color.white);
 				debugMode.setFont(new Font("Arial", Font.PLAIN, 11));
-				debugMode.setToolTipText("Enables more detailed logging");
+				debugMode.setToolTipText("Enables more detailed logging and console");
 
 				//---- md5Label ----
 				md5Label.setText("Disable MD5:");
@@ -637,11 +632,9 @@ public class OptionsMenu extends JDialog implements ActionListener {
 												.add(developerPaneLayout.createSequentialGroup()
 														.add(developerPaneLayout.createParallelGroup()
 																.add(developerPaneLayout.createSequentialGroup()
-																		.add(developerPaneLayout.createParallelGroup()
-																				.add(debugLabel))
+																		.add(debugLabel, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 																		.addPreferredGap(LayoutStyle.RELATED)
-																		.add(developerPaneLayout.createParallelGroup()
-																				.add(debugMode)))
+																		.add(debugMode))
 																.add(developerPaneLayout.createSequentialGroup()
 																		.add(md5Label, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 																		.addPreferredGap(LayoutStyle.RELATED)
