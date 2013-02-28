@@ -51,8 +51,13 @@ public class RestAPI {
 	public static final String ALL_BUILDS_URL = REST_URL + "builds/" + PROJECT;
 	public static final String LAUNCHER_BUILDS_URL = REST_URL + "builds/spoutcraftlauncher";
 	static {
-		int response = SpoutcraftLauncher.pingURL(REST_URL);
-		cache.setOfflineMode(response / 100 != 2);
+		try {
+			int response = SpoutcraftLauncher.pingURL(REST_URL);
+			cache.setOfflineMode(response / 100 != 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+			cache.setOfflineMode(true);
+		}
 	}
 
 	public static String getSpoutcraftURL(Channel channel) {

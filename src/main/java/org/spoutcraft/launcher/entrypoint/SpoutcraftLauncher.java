@@ -224,10 +224,14 @@ public class SpoutcraftLauncher {
 			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 			conn.setConnectTimeout(5000);
 			int response = conn.getResponseCode();
-			logger.info("Pinging [" + urlLoc + "], response: " + response);
+			if (logger != null) {
+				logger.info("Pinging [" + urlLoc + "], response: " + response);
+			}
 			return response;
 		} catch (IOException e) {}
-		logger.info("Pinged [" + urlLoc + "], no response.");
+		if (logger != null) {
+			logger.info("Pinged [" + urlLoc + "], no response.");
+		}
 		return HttpURLConnection.HTTP_NOT_FOUND;
 	}
 
