@@ -1,6 +1,6 @@
 language: java
 jdk:
-    - openjdk6
+    - oraclejdk7
     - openjdk7
     - openjdk6
 install: mvn clean -DbuildNumber=${TRAVIS_BUILD_NUMBER}
