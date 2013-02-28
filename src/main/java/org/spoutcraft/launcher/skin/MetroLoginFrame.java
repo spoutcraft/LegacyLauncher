@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.skin;
@@ -48,6 +48,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 
 import org.spout.downpour.DefaultURLConnector;
+
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
@@ -301,11 +302,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 	}
 
-	private CallbackTask getImage(final String user){
+	private CallbackTask getImage(final String user) {
 		return new CallbackTask(new Callable<BufferedImage>() {
 			public BufferedImage call() throws Exception {
 				try {
-					System.out.println("Attempting to grab helm of " + user);
+					System.out.println("Attempting to grab avatar helm of " + user);
 					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {
@@ -320,7 +321,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					}, true);
 					BufferedImage image = ImageIO.read(stream);
 					if (image == null) {
-						throw new NullPointerException("No image downloaded!");
+						throw new NullPointerException("No avatar helm downloaded!");
 					}
 					System.out.println("Completed avatar helm request");
 					return image;
@@ -474,7 +475,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER){
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
 			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
 				action(LOGIN_ACTION, (JComponent) e.getComponent());

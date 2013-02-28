@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.skin.components;
@@ -41,13 +41,13 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -65,7 +65,6 @@ import javax.swing.JProgressBar;
 import javax.swing.event.HyperlinkEvent;
 import javax.swing.event.HyperlinkListener;
 
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
@@ -82,7 +81,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public LoginFrame() {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Spoutcraft");
+		setTitle("Spoutcraft Launcher");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 	}
 
@@ -382,36 +381,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			dispose();
 			System.exit(0);
 		}
-	}
-	private void showOutdatedWarning() {
-		JLabel label = new JLabel();
-		Font arial12 = new Font("Arial", Font.PLAIN, 12);
-		label.setFont(arial12);
-
-		StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-		style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + arial12.getSize() + "pt;");
-
-		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a></body></html>");
-
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-					try {
-						Compatibility.browse(e.getURL().toURI());
-					} catch (URISyntaxException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		});
-		ep.setEditable(false);
-		ep.setBackground(label.getBackground());
-
-		JOptionPane.showMessageDialog(this, ep, "Outdated Launcher", JOptionPane.WARNING_MESSAGE);
-		dispose();
-		System.exit(0);
 	}
 
 	protected static final class UserPasswordInformation {

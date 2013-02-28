@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
  * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,10 +21,21 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.skin;
+
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
+import java.net.URL;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -37,17 +48,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
-import java.net.URL;
-import java.util.List;
 
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
@@ -91,15 +91,11 @@ public class OptionsMenu extends JDialog implements ActionListener {
 	private JTextField proxyPort;
 	private JTextField proxyUser;
 	private JPasswordField proxyPass;
-	private JPanel developerPane;
-	private JLabel DevLabel;
-	private JTextField developerCode;
+	private JPanel advancedPane;
 	private JLabel launcherVersionLabel;
 	private JComboBox launcherVersion;
 	private JLabel debugLabel;
-	private JCheckBox debugMode;
-	private JLabel lwjglLabel;
-	private JCheckBox latestLWJGL;
+	private JCheckBox debugCheckbox;
 	private JLabel md5Label;
 	private JCheckBox md5Checkbox;
 	private JLabel buildLabel;
@@ -134,9 +130,6 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		saveButton.addActionListener(this);
 		saveButton.setActionCommand(SAVE_ACTION);
 
-		developerCode.setText(Settings.getDeveloperCode());
-		developerCode.getDocument().addDocumentListener(new DeveloperCodeListener(developerCode));
-
 		Settings.setSpoutcraftChannel(populateChannelVersion(spoutcraftVersion, Settings.getSpoutcraftChannel().type(), true));
 		Settings.setLauncherChannel(populateChannelVersion(launcherVersion, Settings.getLauncherChannel().type(), false));
 		populateMinecraftVersions(minecraftVersion);
@@ -147,18 +140,11 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		spoutcraftVersion.setActionCommand(SPOUTCRAFT_CHANNEL_ACTION);
 		updateBuildList();
 		this.md5Checkbox.setSelected(Settings.isIgnoreMD5());
-		this.debugMode.setSelected(Settings.isDebugMode());
+		this.debugCheckbox.setSelected(Settings.isDebugMode());
 		directJoin.setText(Settings.getDirectJoin());
 	}
 
-	private boolean isValidDeveloperCode() {
-		return true;
-	}
-
 	private void populateSpoutcraftBuilds(JComboBox builds) {
-		if (!isValidDeveloperCode()) {
-			return;
-		}
 		try {
 			List<SpoutcraftBuild> buildList = SpoutcraftBuild.getBuildList();
 			for (SpoutcraftBuild build : buildList) {
@@ -228,14 +214,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 	private Channel populateChannelVersion(JComboBox version, int selection, boolean custom) {
 		version.addItem("Stable");
 		version.addItem("Beta");
-		if (isValidDeveloperCode()) {
-			version.addItem("Dev");
-			if (custom) {
-				version.addItem("Custom");
-			}
-		} else if (selection > 1 || selection < 0) {
-			selection = 0;
-		}
+		version.addItem("Custom");
 		version.setSelectedIndex(selection);
 		return Channel.getType(selection);
 	}
@@ -312,7 +291,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 			Settings.setLauncherChannel(Channel.getType(launcherVersion.getSelectedIndex()));
 			Settings.setSpoutcraftChannel(Channel.getType(spoutcraftVersion.getSelectedIndex()));
 			Settings.setMemory(Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId());
-			Settings.setDebugMode(debugMode.isSelected());
+			Settings.setDebugMode(debugCheckbox.isSelected());
 			Settings.setIgnoreMD5(md5Checkbox.isSelected());
 			Settings.setWindowModeId(windowMode.getSelectedIndex());
 			Settings.setMinecraftVersion(getSelectedMinecraftVersion());
@@ -378,15 +357,11 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		proxyPort = new JTextField();
 		proxyUser = new JTextField();
 		proxyPass = new JPasswordField();
-		developerPane = new JPanel();
-		DevLabel = new JLabel();
-		developerCode = new JTextField();
+		advancedPane = new JPanel();
 		launcherVersionLabel = new JLabel();
 		launcherVersion = new JComboBox();
 		debugLabel = new JLabel();
-		debugMode = new JCheckBox();
-		lwjglLabel = new JLabel();
-		latestLWJGL = new JCheckBox();
+		debugCheckbox = new JCheckBox();
 		md5Label = new JLabel();
 		md5Checkbox = new JCheckBox();
 		buildLabel = new JLabel();
@@ -571,7 +546,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 			}
 			mainOptions.addTab("Proxy", proxyPane);
 
-			//======== developerPane ========
+			//======== advancedPane ========
 			{
 				//---- launcherVersionLabel ----
 				launcherVersionLabel.setText("Launcher:");
@@ -584,9 +559,9 @@ public class OptionsMenu extends JDialog implements ActionListener {
 				debugLabel.setText("Debug Mode:");
 				debugLabel.setFont(new Font("Arial", Font.PLAIN, 11));
 
-				//---- debugMode ----
-				debugMode.setFont(new Font("Arial", Font.PLAIN, 11));
-				debugMode.setToolTipText("Enables more detailed logging and console");
+				//---- debugCheckbox ----
+				debugCheckbox.setFont(new Font("Arial", Font.PLAIN, 11));
+				debugCheckbox.setToolTipText("Enables more detailed logging and console");
 
 				//---- md5Label ----
 				md5Label.setText("Disable MD5:");
@@ -610,65 +585,65 @@ public class OptionsMenu extends JDialog implements ActionListener {
 				//---- directJoin ----
 				directJoin.setFont(new Font("Arial", Font.PLAIN, 11));
 
-				GroupLayout developerPaneLayout = new GroupLayout(developerPane);
-				developerPane.setLayout(developerPaneLayout);
-				developerPaneLayout.setHorizontalGroup(
-						developerPaneLayout.createParallelGroup()
-								.add(developerPaneLayout.createSequentialGroup()
+				GroupLayout advancedPaneLayout = new GroupLayout(advancedPane);
+				advancedPane.setLayout(advancedPaneLayout);
+				advancedPaneLayout.setHorizontalGroup(
+						advancedPaneLayout.createParallelGroup()
+								.add(advancedPaneLayout.createSequentialGroup()
 										.addContainerGap()
-										.add(developerPaneLayout.createParallelGroup()
-												.add(developerPaneLayout.createSequentialGroup()
+										.add(advancedPaneLayout.createParallelGroup()
+												.add(advancedPaneLayout.createSequentialGroup()
 														.add(launcherVersionLabel)
 														.addPreferredGap(LayoutStyle.RELATED)
 														.add(launcherVersion))
-												.add(developerPaneLayout.createSequentialGroup()
+												.add(advancedPaneLayout.createSequentialGroup()
 														.add(serverLabel, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 														.addPreferredGap(LayoutStyle.RELATED)
 														.add(directJoin, GroupLayout.PREFERRED_SIZE, 196, GroupLayout.PREFERRED_SIZE))
-												.add(developerPaneLayout.createSequentialGroup()
+												.add(advancedPaneLayout.createSequentialGroup()
 														.add(buildLabel)
 														.addPreferredGap(LayoutStyle.RELATED)
 														.add(buildCombo))
-												.add(developerPaneLayout.createSequentialGroup()
-														.add(developerPaneLayout.createParallelGroup()
-																.add(developerPaneLayout.createSequentialGroup()
+												.add(advancedPaneLayout.createSequentialGroup()
+														.add(advancedPaneLayout.createParallelGroup()
+																.add(advancedPaneLayout.createSequentialGroup()
 																		.add(debugLabel, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 																		.addPreferredGap(LayoutStyle.RELATED)
-																		.add(debugMode))
-																.add(developerPaneLayout.createSequentialGroup()
+																		.add(debugCheckbox))
+																.add(advancedPaneLayout.createSequentialGroup()
 																		.add(md5Label, GroupLayout.PREFERRED_SIZE, 77, GroupLayout.PREFERRED_SIZE)
 																		.addPreferredGap(LayoutStyle.RELATED)
 																		.add(md5Checkbox)))
 														.add(0, 0, Short.MAX_VALUE)))
 										.addContainerGap())
 				);
-				developerPaneLayout.setVerticalGroup(
-						developerPaneLayout.createParallelGroup()
-								.add(developerPaneLayout.createSequentialGroup()
+				advancedPaneLayout.setVerticalGroup(
+						advancedPaneLayout.createParallelGroup()
+								.add(advancedPaneLayout.createSequentialGroup()
 										.addContainerGap()
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.BASELINE)
+										.add(advancedPaneLayout.createParallelGroup(GroupLayout.BASELINE)
 												.add(launcherVersionLabel)
 												.add(launcherVersion, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.BASELINE)
+										.add(advancedPaneLayout.createParallelGroup(GroupLayout.BASELINE)
 												.add(buildCombo, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
 												.add(buildLabel))
 										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup()
-												.add(debugMode)
+										.add(advancedPaneLayout.createParallelGroup()
+												.add(debugCheckbox)
 												.add(debugLabel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE))
 										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.TRAILING)
+										.add(advancedPaneLayout.createParallelGroup(GroupLayout.TRAILING)
 												.add(md5Label, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
 												.add(md5Checkbox))
 										.addPreferredGap(LayoutStyle.RELATED)
-										.add(developerPaneLayout.createParallelGroup(GroupLayout.BASELINE)
+										.add(advancedPaneLayout.createParallelGroup(GroupLayout.BASELINE)
 												.add(serverLabel, GroupLayout.PREFERRED_SIZE, 21, GroupLayout.PREFERRED_SIZE)
 												.add(directJoin, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
 										.addContainerGap(5, Short.MAX_VALUE))
 				);
 			}
-			mainOptions.addTab("Advanced", developerPane);
+			mainOptions.addTab("Advanced", advancedPane);
 		}
 
 		//---- logsButton ----
@@ -713,22 +688,5 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		);
 		pack();
 		setLocationRelativeTo(getOwner());
-	}
-}
-
-class DeveloperCodeListener implements DocumentListener {
-	JTextField field;
-
-	DeveloperCodeListener(JTextField field) {
-		this.field = field;
-	}
-
-	public void insertUpdate(DocumentEvent e) {
-	}
-
-	public void removeUpdate(DocumentEvent e) {
-	}
-
-	public void changedUpdate(DocumentEvent e) {
 	}
 }
