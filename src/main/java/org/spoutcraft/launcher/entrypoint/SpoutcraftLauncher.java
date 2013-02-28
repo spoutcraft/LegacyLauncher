@@ -219,14 +219,15 @@ public class SpoutcraftLauncher {
 	}
 
 	public static int pingURL(String urlLoc) {
-		for (int i = 1; i <= 3; i++) {
-			try {
-				final URL url = new URL(urlLoc);
-				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-				conn.setConnectTimeout(750 * i);
-				return conn.getResponseCode();
-			} catch (IOException e) {}
-		}
+		try {
+			final URL url = new URL(urlLoc);
+			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(5000);
+			int response = conn.getResponseCode();
+			logger.info("Pinging [" + urlLoc + "], response: " + response);
+			return response;
+		} catch (IOException e) {}
+		logger.info("Pinged [" + urlLoc + "], no response.");
 		return HttpURLConnection.HTTP_NOT_FOUND;
 	}
 
@@ -281,7 +282,7 @@ public class SpoutcraftLauncher {
 		OperatingSystem os = OperatingSystem.getOS();
 		if (os.isMac()) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft Launcher");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Spoutcraft");
 		}
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -349,6 +350,7 @@ public class SpoutcraftLauncher {
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
 		} catch (Exception e) {
+
 		}
 		return build;
 	}
