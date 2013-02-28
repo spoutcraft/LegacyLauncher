@@ -156,7 +156,7 @@ public class SpoutcraftLauncher {
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
 		logThread.start();
-		
+
 		if (Settings.isDebugMode()) {
 			logger.info("Launcher internet validation & look and feel took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
@@ -205,8 +205,8 @@ public class SpoutcraftLauncher {
 			localHost = InetAddress.getLocalHost().getHostAddress().toString();
 		} catch (Exception e) { }
 		logger.info("Localhost: " + localHost);
-		
-		//May not be online, check
+
+		// May not be online, check
 		if (localHost.contains("127.0.0.1")) {
 			if (pingURL("http://www.google.com") / 100 != 2) {
 				JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
@@ -219,14 +219,14 @@ public class SpoutcraftLauncher {
 	}
 
 	public static int pingURL(String urlLoc) {
-		try {
-			final URL url = new URL(urlLoc);
-			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setConnectTimeout(5000);
-			int response = conn.getResponseCode();
-			logger.info("Pinging [" + urlLoc + "], response: " + response);
-		} catch (IOException e) {}
-		logger.info("Pinged [" + urlLoc + "], no response.");
+		for (int i = 1; i <= 3; i++) {
+			try {
+				final URL url = new URL(urlLoc);
+				final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+				conn.setConnectTimeout(750 * i);
+				return conn.getResponseCode();
+			} catch (IOException e) {}
+		}
 		return HttpURLConnection.HTTP_NOT_FOUND;
 	}
 
@@ -349,7 +349,6 @@ public class SpoutcraftLauncher {
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
 		} catch (Exception e) {
-
 		}
 		return build;
 	}
