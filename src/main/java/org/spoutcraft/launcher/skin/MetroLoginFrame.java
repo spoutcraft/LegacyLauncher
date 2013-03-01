@@ -84,6 +84,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
 	private static final Color TRANSPARENT = new Color(45, 45, 45, 160);
+	private static final Color DARK_GREY = new Color(45, 45, 45);
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
 	private LiteTextBox name;
@@ -124,19 +125,19 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
-		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 115, 24);
+		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 110, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(loginArea.getX() + 15, loginArea.getY() + name.getHeight() + 20, 115, 24);
+		pass.setBounds(loginArea.getX() + 15, loginArea.getY() + name.getHeight() + 20, 110, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
 
 		// Setup login button
 		login = new LiteButton("Launch");
-		login.setBounds(loginArea.getX() + name.getWidth() + 20, loginArea.getY() + 15, 115, 24);
+		login.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + 15, 110, 24);
 		login.setFont(minecraft);
 		login.setActionCommand(LOGIN_ACTION);
 		login.addActionListener(this);
@@ -144,7 +145,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Setup remember checkbox
 		remember = new JCheckBox("Remember");
-		remember.setBounds(loginArea.getX() + name.getWidth() + 20, loginArea.getY() + name.getHeight() + 20, 115, 24);
+		remember.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + name.getHeight() + 20, 110, 24);
 		remember.setFont(minecraft);
 		remember.setOpaque(false);
 		remember.setBorderPainted(false);
@@ -158,7 +159,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		logo.setBounds(600, 15, 260, 109);
+		logo.setBounds(600, -10, 260, 109);
 		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
 
 		// Pack Selector Background
@@ -181,12 +182,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
-		progressBar.setBounds((FRAME_WIDTH / 2) - (395 / 2), 130, 395, 23);
-		progressBar.setVisible(true);
+		progressBar.setBounds(605, 220, 265, 24);
+		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
-		progressBar.setTransparency(0.70F);
-		progressBar.setHoverTransparency(0.70F);
 		progressBar.setFont(minecraft);
 
 		// Link background box
@@ -202,8 +201,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		browse.setBounds(linkArea.getX() + 10, linkArea.getY() + 10, 245, 30);
 		browse.setHorizontalAlignment(SwingConstants.LEFT);
 		browse.setIcon(getIcon("platformLinkButton.png"));
-		browse.setBackground(Color.BLACK);
+		browse.setBackground(DARK_GREY);
 		browse.setContentAreaFilled(true);
+		browse.setIconTextGap(10);
 
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
@@ -214,8 +214,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setBounds(linkArea.getX() + 10, browse.getY() + browse.getHeight() + 5, 245, 30);
 		forums.setHorizontalAlignment(SwingConstants.LEFT);
 		forums.setIcon(getIcon("forumsLinkButton.png"));
-		forums.setBackground(Color.BLACK);
+		forums.setBackground(DARK_GREY);
 		forums.setContentAreaFilled(true);
+		forums.setIconTextGap(10);
 
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
@@ -226,8 +227,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		donate.setBounds(linkArea.getX() + 10, forums.getY() + forums.getHeight() + 5, 245, 30);
 		donate.setHorizontalAlignment(SwingConstants.LEFT);
 		donate.setIcon(getIcon("donateLinkButton.png"));
-		donate.setBackground(Color.BLACK);
+		donate.setBackground(DARK_GREY);
 		donate.setContentAreaFilled(true);
+		donate.setIconTextGap(10);
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
@@ -329,6 +331,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			userButtons.put(userName, userButton);
 		}
 
+		contentPane.add(progressBar);
 		contentPane.add(packUp);
 		contentPane.add(packDown);
 		contentPane.add(customName);
@@ -353,7 +356,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
-		contentPane.add(progressBar);
+		
 		
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}

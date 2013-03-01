@@ -46,11 +46,11 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 		Graphics2D g2d = (Graphics2D) transparency.setup(g);
 
 		// Draw bar
-		g2d.setColor(Color.WHITE);
+		g2d.setColor(new Color(45, 45, 45));
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 
 		// Draw progress
-		g2d.setColor(Color.BLUE);
+		g2d.setColor(new Color(210, 210, 210));
 		int x = (int) (getWidth() * getPercentComplete());
 		g2d.fillRect(0, 0, x, getHeight());
 
@@ -76,10 +76,10 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 				white = white.substring(0, white.length() - 1);
 				whiteWidth = g2d.getFontMetrics().stringWidth(white);
 			}
-			float height = getFont().getSize();
-			g2d.setColor(Color.WHITE);
+			float height = (this.getHeight() / 2) + (getFont().getSize() / 2);
+			g2d.setColor(new Color(45, 45, 45));
 			g2d.drawString(white, startWidth, height);
-			g2d.setColor(Color.BLACK);
+			g2d.setColor(new Color(210, 210, 210));
 			g2d.drawString(this.getString().substring(chars), whiteWidth + startWidth, height);
 		}
 
