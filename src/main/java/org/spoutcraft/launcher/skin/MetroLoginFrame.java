@@ -49,14 +49,12 @@ import net.minecraft.Launcher;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
-import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.skin.components.TransparentJLabel;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.RestInfo;
@@ -69,7 +67,6 @@ import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.Download.Result;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.ImageUtils;
-import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -121,20 +118,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
 
-		// Login Strip
-		TransparentJLabel loginStrip = new TransparentJLabel();
-		// 379 is the center of the bottom
-		loginStrip.setBounds(0, 379, FRAME_WIDTH, 108);
-		loginStrip.setTransparency(0.95F);
-		loginStrip.setHoverTransparency(0.95F);
-		setIcon(loginStrip, "loginstrip.png", loginStrip.getWidth(), loginStrip.getHeight());
-
+		// Login background box
 		RoundedBox loginArea = new RoundedBox(TRANSPARENT);
 		loginArea.setBounds(605, 377, 265, 83);
-
-		packShadow = new JLabel();
-		packShadow.setBounds(FRAME_WIDTH / 2 - (176 / 2), FRAME_HEIGHT / 2 + 45, 176, 38);
-		setIcon(packShadow, "packShadow.png", packShadow.getWidth(), packShadow.getHeight());
 
 		// Setup username box
 		name = new LiteTextBox(this, "Username...");
@@ -196,59 +182,52 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Progress Bar
 		progressBar = new LiteProgressBar();
 		progressBar.setBounds((FRAME_WIDTH / 2) - (395 / 2), 130, 395, 23);
-		progressBar.setVisible(false);
+		progressBar.setVisible(true);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		progressBar.setTransparency(0.70F);
 		progressBar.setHoverTransparency(0.70F);
 		progressBar.setFont(minecraft);
 
-		// Home Link
-		Font largerMinecraft;
-		if (OperatingSystem.getOS().isUnix()) {
-			largerMinecraft = minecraft.deriveFont((float)18);
-		} else {
-			largerMinecraft = minecraft.deriveFont((float)20);
-		}
+		// Link background box
+		RoundedBox linkArea = new RoundedBox(TRANSPARENT);
+		linkArea.setBounds(605, 250, 265, 120);
 
-		HyperlinkJLabel home = new HyperlinkJLabel("Home", "http://www.technicpack.net");
-		home.setFont(largerMinecraft);
-		home.setBounds(545, 35, 65, 20);
-		home.setForeground(Color.WHITE);
-		home.setOpaque(false);
-		home.setTransparency(0.70F);
-		home.setHoverTransparency(1F);
+		// Browse link
+		JButton browse = new ImageHyperlinkButton("http://beta.technicpack.net");
+		browse.setFont(minecraft);
+		browse.setForeground(Color.WHITE);
+		browse.setToolTipText("Browse More Modpacks");
+		browse.setText("Browse More Modpacks");
+		browse.setBounds(linkArea.getX() + 10, linkArea.getY() + 10, 245, 30);
+		browse.setHorizontalAlignment(SwingConstants.LEFT);
+		browse.setIcon(getIcon("platformLinkButton.png"));
+		browse.setBackground(Color.BLACK);
+		browse.setContentAreaFilled(true);
 
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
+		forums.setFont(minecraft);
+		forums.setForeground(Color.WHITE);
 		forums.setToolTipText("Visit the forums");
-		forums.setBounds(9, loginStrip.getY() + 9, 90, 90);
-		ImageIcon forumIcon = getIcon("forumsButton.gif");
-		forums.setIcon(forumIcon);
-		forums.setRolloverIcon(forumIcon);
-		forums.setPressedIcon(forumIcon);
-		forums.setSelectedIcon(forumIcon);
-		forums.setRolloverSelectedIcon(forumIcon);
+		forums.setText("Visit the Forums");
+		forums.setBounds(linkArea.getX() + 10, browse.getY() + browse.getHeight() + 5, 245, 30);
+		forums.setHorizontalAlignment(SwingConstants.LEFT);
+		forums.setIcon(getIcon("forumsLinkButton.png"));
+		forums.setBackground(Color.BLACK);
+		forums.setContentAreaFilled(true);
 
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
+		donate.setFont(minecraft);
+		donate.setForeground(Color.WHITE);
 		donate.setToolTipText("Donate to the modders");
-		donate.setBounds(9 + forums.getWidth() + 9, loginStrip.getY() + 9, 90, 90);
-		ImageIcon donateIcon = getIcon("donateButton.png");
-		donate.setIcon(donateIcon);
-		donate.setRolloverIcon(donateIcon);
-		donate.setPressedIcon(donateIcon);
-		donate.setSelectedIcon(donateIcon);
-		donate.setRolloverSelectedIcon(donateIcon);
-
-		// Issues link
-		HyperlinkJLabel issues = new HyperlinkJLabel("Issues", "http://forums.technicpack.net/forums/bug-reports.81/");
-		issues.setFont(largerMinecraft);
-		issues.setBounds(733, 35, 85, 20);
-		issues.setForeground(Color.WHITE);
-		issues.setOpaque(false);
-		issues.setTransparency(0.70F);
-		issues.setHoverTransparency(1F);
+		donate.setText("Donate to the Modders");
+		donate.setBounds(linkArea.getX() + 10, forums.getY() + forums.getHeight() + 5, 245, 30);
+		donate.setHorizontalAlignment(SwingConstants.LEFT);
+		donate.setIcon(getIcon("donateLinkButton.png"));
+		donate.setBackground(Color.BLACK);
+		donate.setContentAreaFilled(true);
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
@@ -366,10 +345,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(twitter);
 		contentPane.add(facebook);
 		contentPane.add(youtube);
-//		contentPane.add(forums);
-//		contentPane.add(donate);
+		contentPane.add(browse);
+		contentPane.add(forums);
+		contentPane.add(donate);
+		contentPane.add(linkArea);
 		contentPane.add(logo);
-//		contentPane.add(loginStrip);
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
