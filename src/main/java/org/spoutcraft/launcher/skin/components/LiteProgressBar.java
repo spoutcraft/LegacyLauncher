@@ -32,13 +32,17 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JProgressBar;
 
+import org.spoutcraft.launcher.skin.MetroLoginFrame;
+
 public class LiteProgressBar extends JProgressBar implements Transparent{
 	private static final long serialVersionUID = 1L;
 	private final TransparentComponent transparency = new TransparentComponent(this, false);
+	private final MetroLoginFrame frame;
 
-	public LiteProgressBar() {
+	public LiteProgressBar(MetroLoginFrame frame) {
 		setFocusable(false);
 		setOpaque(false);
+		this.frame = frame;
 	}
 
 	@Override
@@ -84,6 +88,12 @@ public class LiteProgressBar extends JProgressBar implements Transparent{
 		}
 
 		transparency.cleanup(g2d);
+	}
+
+	@Override
+	public void setVisible(boolean aFlag) {
+		super.setVisible(aFlag);
+		frame.getBarBox().setVisible(aFlag);
 	}
 
 	@Override

@@ -250,7 +250,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				info = null;
 				this.url = "";
 				return;
-			} else if (url.matches("http://beta.technicpack.net/api/modpack/([a-zA-Z0-9-]+)")) {
+			} else if (matchUrl(url)) {
 				try {
 					info = RestAPI.getCustomModpack(url);
 					msgLabel.setText("Modpack: " + info.getDisplayName());
@@ -291,6 +291,14 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			//Java is stupid for not having a getAllText of some kind on the Document class
 			e.printStackTrace();
 		}
+	}
+
+	public boolean matchUrl(String url) {
+		boolean result = false;
+		result = (url.matches("http://beta.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
+		result = (url.matches("http://www.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
+		result = (url.matches("http://technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
+		return result;
 	}
 
 	public void enableComponent(JComponent component, boolean enable) {

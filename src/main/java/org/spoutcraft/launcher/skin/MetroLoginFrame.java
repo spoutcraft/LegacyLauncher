@@ -85,6 +85,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String REMOVE_USER = "remove";
 	private static final Color TRANSPARENT = new Color(45, 45, 45, 160);
 	private static final Color DARK_GREY = new Color(45, 45, 45);
+	private static final int SPACING = 7;
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
 	private LiteTextBox name;
@@ -101,6 +102,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private ImageHyperlinkButton platform;
 	private JLabel packShadow;
 	private JLabel customName;
+	private RoundedBox barBox;
 	private long previous = 0L;
 
 	public MetroLoginFrame() {
@@ -159,8 +161,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		logo.setBounds(600, -10, 260, 109);
-		setIcon(logo, "techniclauncher.png", logo.getWidth(), logo.getHeight());
+		logo.setBounds(590, -10, 296, 125);
+		setIcon(logo, "header.png", logo.getWidth(), logo.getHeight());
 
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
@@ -180,9 +182,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		packDown.setActionCommand(PACK_RIGHT_ACTION);
 		packDown.addActionListener(this);
 
+		// Progress Bar Background box
+		barBox = new RoundedBox(TRANSPARENT);
+		barBox.setVisible(false);
+		barBox.setBounds(605, 205, 265, 35);
+
 		// Progress Bar
-		progressBar = new LiteProgressBar();
-		progressBar.setBounds(605, 220, 265, 24);
+		progressBar = new LiteProgressBar(this);
+		progressBar.setBounds(barBox.getX() + SPACING, barBox.getY() + SPACING, barBox.getWidth() - (SPACING * 2), barBox.getHeight() - (SPACING * 2));
 		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
@@ -192,13 +199,16 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		RoundedBox linkArea = new RoundedBox(TRANSPARENT);
 		linkArea.setBounds(605, 250, 265, 120);
 
+		int linkWidth = linkArea.getWidth() - (SPACING * 2);
+		int linkHeight = (linkArea.getHeight() - (SPACING * 4)) / 3;
+
 		// Browse link
 		JButton browse = new ImageHyperlinkButton("http://beta.technicpack.net");
 		browse.setFont(minecraft);
 		browse.setForeground(Color.WHITE);
 		browse.setToolTipText("Browse More Modpacks");
 		browse.setText("Browse More Modpacks");
-		browse.setBounds(linkArea.getX() + 10, linkArea.getY() + 10, 245, 30);
+		browse.setBounds(linkArea.getX() + SPACING, linkArea.getY() + SPACING, linkWidth, linkHeight);
 		browse.setHorizontalAlignment(SwingConstants.LEFT);
 		browse.setIcon(getIcon("platformLinkButton.png"));
 		browse.setBackground(DARK_GREY);
@@ -212,7 +222,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setForeground(Color.WHITE);
 		forums.setToolTipText("Visit the forums");
 		forums.setText("Visit the Forums");
-		forums.setBounds(linkArea.getX() + 10, browse.getY() + browse.getHeight() + 5, 245, 30);
+		forums.setBounds(linkArea.getX() + SPACING, browse.getY() + browse.getHeight() + SPACING, linkWidth, linkHeight);
 		forums.setHorizontalAlignment(SwingConstants.LEFT);
 		forums.setIcon(getIcon("forumsLinkButton.png"));
 		forums.setBackground(DARK_GREY);
@@ -226,7 +236,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		donate.setForeground(Color.WHITE);
 		donate.setToolTipText("Donate to the modders");
 		donate.setText("Donate to the Modders");
-		donate.setBounds(linkArea.getX() + 10, forums.getY() + forums.getHeight() + 5, 245, 30);
+		donate.setBounds(linkArea.getX() + SPACING, forums.getY() + forums.getHeight() + SPACING, linkWidth, linkHeight);
 		donate.setHorizontalAlignment(SwingConstants.LEFT);
 		donate.setIcon(getIcon("donateLinkButton.png"));
 		donate.setBackground(DARK_GREY);
@@ -335,6 +345,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		}
 
 		contentPane.add(progressBar);
+		contentPane.add(barBox);
 		contentPane.add(packUp);
 		contentPane.add(packDown);
 		contentPane.add(customName);
@@ -379,6 +390,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	
 	public BackgroundImage getBackgroundImage() {
 		return packBackground;
+	}
+
+	public RoundedBox getBarBox() {
+		return barBox;
 	}
 
 	public static ImageIcon getIcon(String iconName) {
