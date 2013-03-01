@@ -207,6 +207,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		browse.setToolTipText("Get More Modpacks");
 		browse.setBounds(linkArea.getX() + SPACING, linkArea.getY() + SPACING, linkWidth, linkHeight);
 		browse.setIcon(getIcon("platformLinkButton.png"));
+		browse.setRolloverIcon(getIcon("platformLinkButtonBright.png"));
 		browse.setContentAreaFilled(false);
 		browse.setBorderPainted(false);
 
@@ -215,6 +216,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setToolTipText("Visit the forums");
 		forums.setBounds(linkArea.getX() + SPACING, browse.getY() + browse.getHeight() + SPACING, linkWidth, linkHeight);
 		forums.setIcon(getIcon("forumsLinkButton.png"));
+		forums.setRolloverIcon(getIcon("forumsLinkButtonBright.png"));
 		forums.setContentAreaFilled(false);
 		forums.setBorderPainted(false);
 
@@ -223,6 +225,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		donate.setToolTipText("Donate to the modders");
 		donate.setBounds(linkArea.getX() + SPACING, forums.getY() + forums.getHeight() + SPACING, linkWidth, linkHeight);
 		donate.setIcon(getIcon("donateLinkButton.png"));
+		donate.setRolloverIcon(getIcon("donateLinkButtonBright.png"));
 		donate.setContentAreaFilled(false);
 		donate.setBorderPainted(false);
 
