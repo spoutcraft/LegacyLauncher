@@ -59,17 +59,17 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final PackMap packs = new PackMap();
 	private final List<PackButton> buttons = new ArrayList<PackButton>(7);
 
-	private final int height = 170;
-	private final int width = 880;
+	private final int height = 520;
+//	private final int width = 200;
 	private final int bigWidth = 180;
 	private final int bigHeight = 110;
 	private final float smallScale = 0.7F;
-	private final int spacing = 15;
+	private final int spacing = 8;
 	private final int smallWidth = (int) (bigWidth * smallScale);
 	private final int smallHeight = (int) (bigHeight * smallScale);
-	private final int bigX = (width / 2) - (bigWidth / 2);
+	private final int bigX = 100 - (bigWidth / 2);
 	private final int bigY = (height / 2) - (bigHeight / 2);
-	private final int smallY = (height / 2) - (smallHeight / 2);
+	private final int smallX = 100 - (smallWidth / 2);
 
 	public ModpackSelector(MetroLoginFrame frame) {
 		this.frame = frame;
@@ -86,12 +86,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				label.setFont(label.getFont().deriveFont(14F));
 				button.setIndex(0);
 			} else if (i < 3) {
-				int smallX = bigX - ((i + 1) * (smallWidth + spacing));
+				int smallY = bigY - (spacing * 2) - ((smallHeight + spacing) * (i + 1));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
 				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
 				button.setIndex((i + 1) * -1);
 			} else if (i > 3) {
-				int smallX = bigX + bigWidth + spacing + ((i - 4) * (smallWidth + spacing));
+				int smallY = bigY + bigHeight + ((smallHeight + spacing) * (i - 4)) + (spacing * 3);
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
 				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
 				button.setIndex(i - 3);
