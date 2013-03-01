@@ -84,7 +84,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
 	private static final Color TRANSPARENT = new Color(45, 45, 45, 160);
-	private static final Color DARK_GREY = new Color(45, 45, 45);
 	private static final int SPACING = 7;
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();

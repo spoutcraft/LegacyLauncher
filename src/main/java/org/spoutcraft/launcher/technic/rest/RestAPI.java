@@ -93,7 +93,7 @@ public class RestAPI {
 	}
 
 	public static String getPlatformURL() {
-		return "http://beta.technicpack.net/api/";
+		return "http://www.technicpack.net/api/";
 	}
 
 	public String getRestURL() {
