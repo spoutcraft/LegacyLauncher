@@ -204,6 +204,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		browse.setBackground(DARK_GREY);
 		browse.setContentAreaFilled(true);
 		browse.setIconTextGap(10);
+		browse.setBorderPainted(false);
 
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
@@ -217,6 +218,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		forums.setBackground(DARK_GREY);
 		forums.setContentAreaFilled(true);
 		forums.setIconTextGap(10);
+		forums.setBorderPainted(false);
 
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
@@ -230,6 +232,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		donate.setBackground(DARK_GREY);
 		donate.setContentAreaFilled(true);
 		donate.setIconTextGap(10);
+		donate.setBorderPainted(false);
 
 		// Options Button
 		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
