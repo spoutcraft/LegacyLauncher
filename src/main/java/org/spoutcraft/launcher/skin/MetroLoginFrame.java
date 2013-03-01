@@ -203,45 +203,27 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		int linkHeight = (linkArea.getHeight() - (SPACING * 4)) / 3;
 
 		// Browse link
-		JButton browse = new ImageHyperlinkButton("http://beta.technicpack.net");
-		browse.setFont(minecraft);
-		browse.setForeground(Color.WHITE);
-		browse.setToolTipText("Browse More Modpacks");
-		browse.setText("Browse More Modpacks");
+		JButton browse = new ImageHyperlinkButton("http://www.technicpack.net");
+		browse.setToolTipText("Get More Modpacks");
 		browse.setBounds(linkArea.getX() + SPACING, linkArea.getY() + SPACING, linkWidth, linkHeight);
-		browse.setHorizontalAlignment(SwingConstants.LEFT);
 		browse.setIcon(getIcon("platformLinkButton.png"));
-		browse.setBackground(DARK_GREY);
-		browse.setContentAreaFilled(true);
-		browse.setIconTextGap(10);
+		browse.setContentAreaFilled(false);
 		browse.setBorderPainted(false);
 
 		// Forums link
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
-		forums.setFont(minecraft);
-		forums.setForeground(Color.WHITE);
 		forums.setToolTipText("Visit the forums");
-		forums.setText("Visit the Forums");
 		forums.setBounds(linkArea.getX() + SPACING, browse.getY() + browse.getHeight() + SPACING, linkWidth, linkHeight);
-		forums.setHorizontalAlignment(SwingConstants.LEFT);
 		forums.setIcon(getIcon("forumsLinkButton.png"));
-		forums.setBackground(DARK_GREY);
-		forums.setContentAreaFilled(true);
-		forums.setIconTextGap(10);
+		forums.setContentAreaFilled(false);
 		forums.setBorderPainted(false);
 
 		// Donate link
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
-		donate.setFont(minecraft);
-		donate.setForeground(Color.WHITE);
 		donate.setToolTipText("Donate to the modders");
-		donate.setText("Donate to the Modders");
 		donate.setBounds(linkArea.getX() + SPACING, forums.getY() + forums.getHeight() + SPACING, linkWidth, linkHeight);
-		donate.setHorizontalAlignment(SwingConstants.LEFT);
 		donate.setIcon(getIcon("donateLinkButton.png"));
-		donate.setBackground(DARK_GREY);
-		donate.setContentAreaFilled(true);
-		donate.setIconTextGap(10);
+		donate.setContentAreaFilled(false);
 		donate.setBorderPainted(false);
 
 		// Options Button
