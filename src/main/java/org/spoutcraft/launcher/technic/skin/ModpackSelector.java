@@ -165,7 +165,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		buttons.get(3).getJLabel().setVisible(selected.isLoading());
 
 		// Set the URL for the platform button
-		String url = "http://beta.technicpack.net/modpack/details/" + selected.getName();
+		String url = "http://www.technicpack.net/modpack/details/" + selected.getName();
 		if (selected instanceof RestInfo && !custom) {
 			String newUrl = ((RestInfo) selected).getWebURL();
 			if (newUrl != null && !newUrl.isEmpty()) {
