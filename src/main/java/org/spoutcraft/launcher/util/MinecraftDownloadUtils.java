@@ -90,7 +90,7 @@ public class MinecraftDownloadUtils {
 			}
 		}
 		if (outputFile == null) {
-			throw new IOException("Failed to download Minecraft!");
+			throw new IOException("Failed to download Minecraft! Pack: " + build.getName() + " Minecraft version: " + build.getMinecraftVersion());
 		}
 		Utils.copy(outputFile, new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar"));
 	}
