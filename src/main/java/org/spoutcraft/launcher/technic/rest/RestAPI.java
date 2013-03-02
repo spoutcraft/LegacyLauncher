@@ -230,7 +230,7 @@ public class RestAPI {
 		try {
 			URLConnection conn = new URL(url).openConnection();
 			conn.setConnectTimeout(2000);
-			conn.setReadTimeout(3000);
+			conn.setReadTimeout(5000);
 
 			stream = conn.getInputStream();
 			T result = mapper.readValue(stream, restObject);

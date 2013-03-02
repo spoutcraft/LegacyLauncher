@@ -470,10 +470,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			if (pack instanceof AddPack) {
 				return;
 			}
-//			if (pack.getModpack() == null || pack.getModpack().getMinecraftVersion() == null) {
-//				JOptionPane.showMessageDialog(this, "Error retrieving information for selected pack: " + pack.getDisplayName(), "Error", JOptionPane.WARNING_MESSAGE);
-//				return;
-//			}
+			if (pack.getModpack() == null || pack.getModpack().getMinecraftVersion() == null) {
+				JOptionPane.showMessageDialog(this, "Error retrieving information for selected pack: " + pack.getDisplayName(), "Error", JOptionPane.WARNING_MESSAGE);
+				return;
+			}
 
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {

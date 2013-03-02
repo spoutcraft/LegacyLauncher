@@ -170,7 +170,7 @@ public class CustomInfo extends PackInfo {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return this;
 		}
 	}
 }
