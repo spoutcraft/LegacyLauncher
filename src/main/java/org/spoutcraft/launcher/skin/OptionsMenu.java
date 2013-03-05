@@ -46,8 +46,6 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
@@ -214,6 +212,7 @@ public class OptionsMenu extends JDialog implements ActionListener {
 	private Channel populateChannelVersion(JComboBox version, int selection, boolean custom) {
 		version.addItem("Stable");
 		version.addItem("Beta");
+		version.addItem("Dev");
 		version.addItem("Custom");
 		version.setSelectedIndex(selection);
 		return Channel.getType(selection);
