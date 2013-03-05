@@ -31,7 +31,7 @@ import java.awt.Graphics;
 import javax.swing.Icon;
 import javax.swing.JButton;
 
-public class TransparentButton extends JButton implements Transparent{
+public class TransparentButton extends JButton implements Transparent {
 	private static final long serialVersionUID = 1L;
 	private final TransparentComponent transparency = new TransparentComponent(this);
 	public TransparentButton() {

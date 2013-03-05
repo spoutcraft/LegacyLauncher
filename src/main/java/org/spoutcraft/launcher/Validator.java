@@ -35,7 +35,7 @@ import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.MD5Utils;
 
-public class Validator{
+public class Validator {
 	private boolean passed = false;
 	private boolean errors = false;
 
@@ -59,55 +59,55 @@ public class Validator{
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
 			if (!compareMD5s(build, FileType.MINECRAFT, minecraftJar)) {
-				err("Invalid minecraft.jar");
+			Launcher.err("Invalid minecraft.jar");
 				return minecraftJar.delete();
 			}
 		} else {
-			err("There is no minecraft.jar!");
+		Launcher.err("There is no minecraft.jar!");
 			return true;
 		}
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
 		if (spoutcraft.exists()) {
 			if (!compareSpoutcraftMD5s(build, spoutcraft)) {
-				err("Invalid spoutcraft.jar");
+			Launcher.err("Invalid spoutcraft.jar");
 				return spoutcraft.delete();
 			}
 		} else {
-			err("There is no spoutcraft.jar");
+		Launcher.err("There is no spoutcraft.jar");
 			return true;
 		}
 
 		File jinputJar = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
 		if (jinputJar.exists()) {
 			if (!compareMD5s(build, FileType.JINPUT, jinputJar)) {
-				err("Invalid jinput.jar");
+			Launcher.err("Invalid jinput.jar");
 				return jinputJar.delete();
 			}
 		} else {
-			err("There is no jinput.jar");
+		Launcher.err("There is no jinput.jar");
 			return true;
 		}
 
 		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (lwjglJar.exists()) {
 			if (!compareMD5s(build, FileType.LWJGL, lwjglJar)) {
-				err("Invalid lwjgl.jar");
+			Launcher.err("Invalid lwjgl.jar");
 				return lwjglJar.delete();
 			}
 		} else {
-			err("There is no lwjgl.jar");
+		Launcher.err("There is no lwjgl.jar");
 			return true;
 		}
 
 		File lwjgl_utilJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
 		if (lwjgl_utilJar.exists()) {
 			if (!compareMD5s(build, FileType.LWJGL_UTIL, lwjgl_utilJar)) {
-				err("Invalid lwjgl_util.jar");
+			Launcher.err("Invalid lwjgl_util.jar");
 				return lwjgl_utilJar.delete();
 			}
 		} else {
-			err("There is no lwjgl_util.jar");
+		Launcher.err("There is no lwjgl_util.jar");
 			return true;
 		}
 
@@ -119,11 +119,11 @@ public class Validator{
 			if (libraryFile.exists()) {
 				String md5 = MD5Utils.getMD5(libraryFile);
 				if (!lib.valid(md5)) {
-					err("Invalid " + libraryFile.getName());
+				Launcher.err("Invalid " + libraryFile.getName());
 					return libraryFile.delete();
 				}
 			} else {
-				err("There is no " + libraryFile.getName());
+			Launcher.err("There is no " + libraryFile.getName());
 				return true;
 			}
 		}
@@ -156,7 +156,7 @@ public class Validator{
 	private boolean compareMD5s(FileType type, String version, File file) {
 		String expected = type.getMD5(version);
 		String actual = MD5Utils.getMD5(file);
-		debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
+		Launcher.debug("Checking MD5 of " + type.name() + ". Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
 			return false;
 		}
@@ -166,20 +166,10 @@ public class Validator{
 	private boolean compareSpoutcraftMD5s(SpoutcraftData build, File file) {
 		String expected = build.getMD5();
 		String actual = MD5Utils.getMD5(file);
-		debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);
+		Launcher.debug("Checking MD5 of Spoutcraft. Expected MD5: " + expected + " | Actual MD5: " + actual);
 		if (expected == null || actual == null) {
 			return false;
 		}
 		return expected.equals(actual);
-	}
-
-	private void debug(Object obj) {
-		if (Settings.isDebugMode()) {
-			System.out.println(obj);
-		}
-	}
-
-	private void err(Object obj) {
-		System.err.println(obj);
 	}
 }

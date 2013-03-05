@@ -30,7 +30,7 @@ import java.awt.Graphics;
 
 import javax.swing.JLabel;
 
-public class TransparentJLabel extends JLabel implements Transparent{
+public class TransparentJLabel extends JLabel implements Transparent {
 	private static final long serialVersionUID = 1L;
 	TransparentComponent transparency = new TransparentComponent(this);
 	public TransparentJLabel() {

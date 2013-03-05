@@ -31,7 +31,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JProgressBar;
 
-public class ProgressSplashScreen extends SplashScreen{
+public class ProgressSplashScreen extends SplashScreen {
 	private static final long serialVersionUID = 1L;
 	private JProgressBar progressBar = new JProgressBar();
 

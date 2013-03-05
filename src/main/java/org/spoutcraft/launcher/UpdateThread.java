@@ -127,7 +127,7 @@ public class UpdateThread extends Thread {
 		}
 	}
 
-	private void runTasks() throws IOException{
+	private void runTasks() throws IOException {
 		while (!valid.get()) {
 			boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 			boolean spoutcraftUpdate = minecraftUpdate || isSpoutcraftUpdateAvailable(build);
@@ -204,7 +204,7 @@ public class UpdateThread extends Thread {
 				boolean needDownload = true;
 				if (asset.exists() && !(params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
 					String md5 = MD5Utils.getMD5(asset);
-					logger.info("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
+					Launcher.debug("Checking MD5 of " + asset.getName() + ". Expected MD5: " + key + " | Actual MD5: " + md5);
 					needDownload = md5 == null || !md5.equals(key);
 				} else if (asset.exists() && (params.isIgnoreMD5() || Settings.isIgnoreMD5())) {
 					needDownload = false;
@@ -255,10 +255,8 @@ public class UpdateThread extends Thread {
 		SpoutcraftDirectories dirs = new SpoutcraftDirectories();
 		File binDir = dirs.getBinDir();
 		for (File f : binDir.listFiles()) {
-			if (f.isDirectory()) {
-				if (f.getName().startsWith("temp_")) {
-					FileUtils.deleteQuietly(f);
-				}
+			if (f.isDirectory() && f.getName().startsWith("temp_")) {
+				FileUtils.deleteQuietly(f);
 			}
 		}
 	}
@@ -417,7 +415,7 @@ public class UpdateThread extends Thread {
 		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
-		logger.info("Spoutcraft Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
+		logger.info("Minecraft Version: " + build.getMinecraftVersion());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
@@ -504,6 +502,8 @@ public class UpdateThread extends Thread {
 		File cacheDir = new File(Launcher.getGameUpdater().getBinDir(), "cache");
 		cacheDir.mkdir();
 
+		// Process spoutcraft.jar
+		logger.info("Spoutcraft Build: " + build.getBuild());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		File updateMC = new File(Launcher.getGameUpdater().getUpdateDir().getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {

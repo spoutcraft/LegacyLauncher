@@ -37,7 +37,7 @@ import javax.swing.SwingUtilities;
 
 import org.spoutcraft.launcher.skin.ImageCallback;
 
-public class FutureImage extends Image implements ImageCallback{
+public class FutureImage extends Image implements ImageCallback {
 	private final BufferedImage empty;
 	private volatile BufferedImage futureImage = null;
 	private JComponent repaintCallback = null;

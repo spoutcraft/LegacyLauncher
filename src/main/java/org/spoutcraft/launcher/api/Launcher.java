@@ -32,6 +32,7 @@ import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.GameUpdater;
+import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.util.FileUtils;
 
@@ -66,6 +67,16 @@ public class Launcher {
 
 	public static Logger getLogger() {
 		return instance.logger;
+	}
+
+	public static void debug(Object obj) {
+		if (Settings.isDebugMode()) {
+			System.out.println(obj);
+		}
+	}
+
+	public static void err(Object obj) {
+		System.err.println(obj);
 	}
 
 	public static GameLauncher getGameLauncher() {

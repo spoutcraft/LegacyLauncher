@@ -29,7 +29,7 @@ package org.spoutcraft.launcher.rest;
 import org.codehaus.jackson.annotate.JsonCreator;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Project{
+public class Project {
 	private final String project;
 	private final int releaseChannel;
 	private final int build;

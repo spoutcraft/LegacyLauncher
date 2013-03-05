@@ -36,7 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JWindow;
 
-public class SplashScreen extends JWindow{
+public class SplashScreen extends JWindow {
 	private static final long serialVersionUID = 1L;
 	protected final ImageIcon icon;
 

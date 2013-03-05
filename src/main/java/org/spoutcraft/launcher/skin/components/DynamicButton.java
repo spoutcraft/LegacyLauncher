@@ -44,7 +44,7 @@ import javax.swing.JLabel;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.SwingWorker;
 
-public class DynamicButton extends JButton implements MouseListener{
+public class DynamicButton extends JButton implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private final AtomicReference<ResizingWorker> worker = new AtomicReference<ResizingWorker>(null);
 	private final FutureImage icon;

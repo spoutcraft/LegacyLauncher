@@ -40,7 +40,7 @@ import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.util.Compatibility;
 
-public class ErrorDialog extends JDialog implements ActionListener{
+public class ErrorDialog extends JDialog implements ActionListener {
 	private static final URL spoutcraftIcon = ErrorDialog.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	private static final String CLOSE_ACTION = "close";
 	private static final String REPORT_ACTION = "report";

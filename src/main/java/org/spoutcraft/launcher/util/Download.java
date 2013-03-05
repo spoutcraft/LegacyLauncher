@@ -139,7 +139,7 @@ public class Download implements Runnable, ProgressCallback {
 		INTERRUPTED,
 	}
 
-	public static class RBCWrapper implements ReadableByteChannel{
+	public static class RBCWrapper implements ReadableByteChannel {
 		private final ReadableByteChannel wrapped;
 		private final long size;
 		private final ProgressCallback callback;

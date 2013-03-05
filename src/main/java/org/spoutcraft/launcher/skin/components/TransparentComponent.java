@@ -37,7 +37,7 @@ import javax.swing.JComponent;
 /**
  * Adds transparency to a swing component
  */
-class TransparentComponent implements MouseListener{
+class TransparentComponent implements MouseListener {
 	private final JComponent parent;
 	private float transparency = 1F;
 	private float hoverTransparency = 1F;

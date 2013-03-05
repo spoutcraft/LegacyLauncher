@@ -84,7 +84,7 @@ public class SpoutcraftBuild implements Comparable<SpoutcraftBuild>{
 		return o.buildNumber.compareTo(buildNumber);
 	}
 
-	public static synchronized List<SpoutcraftBuild> getBuildList() throws RestfulAPIException{
+	public static synchronized List<SpoutcraftBuild> getBuildList() throws RestfulAPIException {
 		InputStream stream = null;
 		HashSet<SpoutcraftBuild> uniqueBuilds = new HashSet<SpoutcraftBuild>();
 		for (Channel c : Channel.values()) {

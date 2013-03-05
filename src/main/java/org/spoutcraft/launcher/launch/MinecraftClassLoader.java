@@ -238,7 +238,7 @@ public class MinecraftClassLoader extends URLClassLoader {
 	}
 
 	@Override
-	public Enumeration<URL> getResources(String resource) throws IOException{
+	public Enumeration<URL> getResources(String resource) throws IOException {
 		if (resource != null) {
 			if (resources.containsKey(resource)) {
 				return new IteratorEnumerator(resources.get(resource).iterator());

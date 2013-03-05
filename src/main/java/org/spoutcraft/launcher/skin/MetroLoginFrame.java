@@ -65,7 +65,7 @@ import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.ResourceUtils;
 
-public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener{
+public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener {
 	private static final long serialVersionUID = 1L;
 	private static final URL gearIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/gear.png");
 	private static final int FRAME_WIDTH = 880;
@@ -430,7 +430,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	}
 
 	// Emulates tab focus policy of name -> pass -> remember -> login
-	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
+	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy {
 		public Component getComponentAfter(Container con, Component c) {
 			if (c == name) {
 				return pass;

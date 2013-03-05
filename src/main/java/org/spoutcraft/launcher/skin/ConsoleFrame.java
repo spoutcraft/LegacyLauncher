@@ -91,9 +91,9 @@ import org.spoutcraft.launcher.util.Compatibility;
  *
  * @author sk89q
  *
- * This code reused & relicensed as LGPL v 3 with permission.
+ * This code reused and relicensed as LGPL v3 with permission.
  */
-public class ConsoleFrame extends JFrame implements MouseListener{
+public class ConsoleFrame extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger rootLogger = Logger.getLogger("launcher");
 	private Process trackProc;
@@ -213,10 +213,8 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	 * @param attributes attribute set, or null for none
 	 */
 	public void log(String line, AttributeSet attributes) {
-		if (colorEnabled) {
-			if (line.startsWith("(!!)")) {
-				attributes = highlightedAttributes;
-			}
+		if (colorEnabled && line.startsWith("(!!)")) {
+			attributes = highlightedAttributes;
 		}
 
 		try {

@@ -35,7 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-public class LiteTextBox extends JTextField implements FocusListener{
+public class LiteTextBox extends JTextField implements FocusListener {
 	private static final long serialVersionUID = 1L;
 	protected final JLabel label;
 	public LiteTextBox(JFrame parent, String label) {

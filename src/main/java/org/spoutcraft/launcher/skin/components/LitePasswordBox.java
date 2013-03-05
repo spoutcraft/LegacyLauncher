@@ -35,7 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPasswordField;
 
-public class LitePasswordBox extends JPasswordField implements FocusListener{
+public class LitePasswordBox extends JPasswordField implements FocusListener {
 	private static final long serialVersionUID = 1L;
 	private final JLabel label;
 	public LitePasswordBox(JFrame parent, String label) {

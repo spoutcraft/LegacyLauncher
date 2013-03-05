@@ -28,7 +28,7 @@ package org.spoutcraft.launcher.exceptions;
 
 import java.io.IOException;
 
-public class RestfulAPIException extends IOException{
+public class RestfulAPIException extends IOException {
 	private final Throwable cause;
 	private final String message;
 

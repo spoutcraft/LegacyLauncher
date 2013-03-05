@@ -36,7 +36,7 @@ import javax.swing.JButton;
 
 import org.spoutcraft.launcher.util.Compatibility;
 
-public class ImageHyperlinkButton extends JButton{
+public class ImageHyperlinkButton extends JButton {
 	private static final long serialVersionUID = 1L;
 	private final String url;
 	public ImageHyperlinkButton(String url) {

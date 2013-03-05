@@ -92,7 +92,7 @@ public final class StartupParameters {
 	}
 
 	public void logParameters(Logger log) {
-		log.info("------------ Startup Parameters ------------");
+		log.info("------------- Startup Parameters ------------");
 		if (user != null) {
 			log.info("Minecraft username: " + user);
 		}

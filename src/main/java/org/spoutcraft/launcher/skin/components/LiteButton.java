@@ -34,7 +34,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 
-public class LiteButton extends JButton implements MouseListener{
+public class LiteButton extends JButton implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private boolean clicked = false;
 	public LiteButton(String label) {

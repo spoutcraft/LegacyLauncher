@@ -54,7 +54,7 @@ public class Mover {
 		System.exit(0);
 	}
 
-	private static void execute(String[] args, boolean exe) throws Exception{
+	private static void execute(String[] args, boolean exe) throws Exception {
 		File temp;
 		if (exe) {
 			temp = new File(Utils.getWorkingDirectory(), "temp.exe");
