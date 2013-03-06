@@ -15,14 +15,14 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<mainClass>${project.groupId}.${project.artifactId}.entrypoint.Start</mainClass>
-		<buildNumber>0</buildNumber>
 		<keystore.path>${project.basedir}/src/main/resources/keystore.jks</keystore.path>
 		<keystore.alias>spoutdev</keystore.alias>
 		<keystore.keypass>unleashtheflow</keystore.keypass>
 		<keystore.storepass>unleashtheflow</keystore.storepass>
+		<buildNumber>0</buildNumber>
 	</properties>
 
-	<!-- Company information -->
+	<!-- Organization information -->
 	<organization>
 		<name>Spout LLC</name>
 		<url>http://www.spout.org</url>
@@ -40,9 +40,9 @@
 
 	<!-- Source code access -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:SpoutDev/SpoutcraftLauncher.git</developerConnection>
-		<connection>scm:git:git://github.com/SpoutDev/SpoutcraftLauncher.git</connection>
-		<url>https://github.com/SpoutDev/SpoutcraftLauncher</url>
+		<developerConnection>scm:git:git@github.com:Legacy/SpoutcraftLauncher.git</developerConnection>
+		<connection>scm:git:git://github.com/Legacy/SpoutcraftLauncher.git</connection>
+		<url>https://github.com/Legacy/SpoutcraftLauncher</url>
 	</scm>
 
 	<!-- Build server -->
@@ -79,7 +79,7 @@
 
 	<!-- Project dependencies -->
 	<dependencies>
-		<!-- Included in final JAR -->
+		<!-- Include in final JAR -->
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>

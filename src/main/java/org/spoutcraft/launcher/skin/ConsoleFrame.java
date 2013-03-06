@@ -91,7 +91,7 @@ import org.spoutcraft.launcher.util.Compatibility;
  *
  * @author sk89q
  *
- * This code reused and relicensed as LGPL v3 with permission.
+ * This code reused and relicensed as LGPLv3 with permission.
  */
 public class ConsoleFrame extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 1L;

@@ -318,7 +318,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				enableForm();
 				break;
 			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+				JOptionPane.showMessageDialog(getParent(), "You must purchase a Minecraft account to play");
 				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
@@ -366,7 +366,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					+ "Spoutcraft is not compatibile with Java 5."
 					+ "<br/>"
 					+ "<br/>Visit the following link for more information"
-					+ "<br/><a href=\"http://spout.in/macjava5\">http://spout.in/macjava7</a></body></html>");
+					+ "<br/>http://spout.in/macjava5</body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
