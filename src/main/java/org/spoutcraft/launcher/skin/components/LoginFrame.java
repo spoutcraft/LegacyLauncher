@@ -66,6 +66,7 @@ import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
@@ -345,6 +346,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		super.setVisible(visible);
 		if (visible) {
 			showJava15Warning();
+			showJava17MacWarning();
+			showJava17LinuxWarning();
 		}
 	}
 
@@ -360,18 +363,87 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			style.append("font-size:" + arial12.getSize() + "pt;");
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-					+ "Spoutcraft requires Java 6 or greater to run, download"
-					+ "<br/>Java updates from http://spout.in/javaupdates</body></html>");
+					+ "Spoutcraft is not compatibile with Java 5."
+					+ "<br/>"
+					+ "<br/>Visit the following link for more information"
+					+ "<br/><a href=\"http://spout.in/macjava5\">http://spout.in/macjava7</a></body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
 
 			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 			final String title = "Java 1.6 Required!";
-			final String[] options = {"Ok", "Copy URL to clipboard"};
+			final String[] options = {"Exit", "Copy URL to clipboard"};
 
 			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
-				StringSelection ss = new StringSelection("http://spout.in/javaupdates");
+				StringSelection ss = new StringSelection("http://spout.in/macjava5");
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+			}
+			dispose();
+			System.exit(0);
+		}
+	}
+
+	private void showJava17MacWarning() {
+		String version = System.getProperty("java.version");
+		if (version.startsWith("1.7") && OperatingSystem.getOS().isMac()) {
+			JLabel label = new JLabel();
+			Font arial12 = new Font("Arial", Font.PLAIN, 12);
+			label.setFont(arial12);
+
+			StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
+			style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
+			style.append("font-size:" + arial12.getSize() + "pt;");
+
+			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
+					+ "Spoutcraft has incompatibility issues with Java 7 on OS X."
+					+ "<br/>"
+					+ "<br/>Visit the following link for more information"
+					+ "<br/>http://spout.in/macjava7</body></html>");
+
+			ep.setEditable(false);
+			ep.setBackground(label.getBackground());
+
+			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+			final String title = "Java 1.6 Required!";
+			final String[] options = {"Exit", "Copy URL to clipboard"};
+
+			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
+				StringSelection ss = new StringSelection("http://spout.in/macjava7");
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
+			}
+			dispose();
+			System.exit(0);
+		}
+	}
+
+	private void showJava17LinuxWarning() {
+		String version = System.getProperty("java.version");
+		String vendor = System.getProperty("java.vendor");
+		if (version.startsWith("1.7") && vendor.contains("Oracle") && OperatingSystem.getOS().isUnix()) {
+			JLabel label = new JLabel();
+			Font arial12 = new Font("Arial", Font.PLAIN, 12);
+			label.setFont(arial12);
+
+			StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
+			style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
+			style.append("font-size:" + arial12.getSize() + "pt;");
+
+			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
+					+ "Spoutcraft and Minecraft have incompatibility issues with Oracle's Java 7 on Linux."
+					+ "<br/>"
+					+ "<br/>In order to use Spoutcraft, another variant of Java 1.7 is needed."
+					+ "<br/>Please install OpenJDK from http://openjdk.java.net/</body></html>");
+
+			ep.setEditable(false);
+			ep.setBackground(label.getBackground());
+
+			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+			final String title = "Java 1.7 Oracle Incompatibility!";
+			final String[] options = {"Exit", "Copy URL to clipboard"};
+
+			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
+				StringSelection ss = new StringSelection("http://openjdk.java.net/");
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 			}
 			dispose();
