@@ -306,7 +306,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return new CallbackTask(new Callable<BufferedImage>() {
 			public BufferedImage call() throws Exception {
 				try {
-					System.out.println("Attempting to grab avatar helm of " + user);
+					System.out.println("Attempting to grab avatar helm of " + user + "...");
 					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {

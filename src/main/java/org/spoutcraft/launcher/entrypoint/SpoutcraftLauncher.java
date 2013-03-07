@@ -98,7 +98,7 @@ public class SpoutcraftLauncher {
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
 		logger.info("---------------------------------------------");
-		logger.info("Spoutcraft Launcher is starting....");
+		logger.info("Spoutcraft Launcher is starting...");
 		logger.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
 		logger.info("Java Version: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " <" + System.getProperty("java.vendor.url") + ">");
 		logger.info("Launcher Build: " + launcherBuild);
@@ -125,12 +125,12 @@ public class SpoutcraftLauncher {
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			logger.info("Initial organization and look and feel time took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher settings took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Loading settings took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -150,7 +150,7 @@ public class SpoutcraftLauncher {
 
 		if (params.isConsole() || Settings.isDebugMode()) {
 			setupConsole();
-			logger.info("Console Mode Activated");
+			logger.info("Debug mode activated!");
 		}
 
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
@@ -158,7 +158,7 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher internet validation & look and feel took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Internet validation and look and feel took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -180,7 +180,7 @@ public class SpoutcraftLauncher {
 		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher skin took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Loading default launcher skin took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -191,12 +191,7 @@ public class SpoutcraftLauncher {
 			frame.doLogin(params.getUser(), params.getPass());
 		}
 
-		if (Settings.isDebugMode()) {
-			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+		logger.info("Launcher startup took " + (System.currentTimeMillis() - startupTime) + "ms");
 	}
 
 	private static void checkInternet() {
@@ -228,7 +223,7 @@ public class SpoutcraftLauncher {
 				logger.info("Pinging [" + urlLoc + "], response: " + response);
 			}
 			return response;
-		} catch (IOException e) {}
+		} catch (IOException e) { }
 		if (logger != null) {
 			logger.info("Pinged [" + urlLoc + "], no response.");
 		}
@@ -353,9 +348,7 @@ public class SpoutcraftLauncher {
 		String build = "0";
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
-		} catch (Exception e) {
-
-		}
+		} catch (Exception e) { }
 		return build;
 	}
 

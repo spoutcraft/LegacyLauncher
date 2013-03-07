@@ -420,7 +420,8 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private void showJava17LinuxWarning() {
 		String version = System.getProperty("java.version");
 		String vendor = System.getProperty("java.vendor");
-		if (version.startsWith("1.7") && vendor.contains("Oracle") && OperatingSystem.getOS().isUnix()) {
+		String vmname = System.getProperty("java.vm.name");
+		if (version.startsWith("1.7") && !vmname.toLowerCase().contains("openjdk") && OperatingSystem.getOS().isUnix()) {
 			JLabel label = new JLabel();
 			Font arial12 = new Font("Arial", Font.PLAIN, 12);
 			label.setFont(arial12);
