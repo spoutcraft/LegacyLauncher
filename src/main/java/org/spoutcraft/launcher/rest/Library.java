@@ -59,8 +59,8 @@ public final class Library implements Downloadable{
 		}
 	}
 
-	public boolean valid(String m5d) {
-		return md5.equalsIgnoreCase(m5d);
+	public boolean valid(String md5) {
+		return this.md5.equalsIgnoreCase(md5);
 	}
 
 	public String name() {

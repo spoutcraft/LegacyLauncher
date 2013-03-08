@@ -46,9 +46,9 @@ import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
+import org.spoutcraft.launcher.rest.Minecraft;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
@@ -59,6 +59,7 @@ public final class SpoutcraftData {
 	private final String build;
 	private final String hash;
 	private final List<Library> libs;
+	private final List<Minecraft> minecraftVersions;
 
 	/**
 	 * Creates a snapshot of Spoutcraft build information
@@ -66,6 +67,7 @@ public final class SpoutcraftData {
 	 * @throws RestfulAPIException
 	 */
 	public SpoutcraftData() throws RestfulAPIException {
+		minecraftVersions = requestMinecraftVersions();
 		build = calculateBuild();
 		installedBuild = calculateInstall();
 		hash = calcaulateMD5(build);
@@ -91,8 +93,6 @@ public final class SpoutcraftData {
 	public String getMinecraftVersion() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			// TODO: Fix by implementing get.spout.org API for MC
-			//return "1.4.7";
 			return getLatestMinecraftVersion();
 		} else {
 			return selected;
@@ -100,7 +100,7 @@ public final class SpoutcraftData {
 	}
 
 	public String getLatestMinecraftVersion() {
-		return Versions.getLatestMinecraftVersion();
+		return minecraftVersions.get(0).getVersion();
 	}
 
 	public String getMinecraftURL(String user) {
@@ -322,4 +322,20 @@ public final class SpoutcraftData {
 		@JsonProperty("build_version")
 		String minecraftVersion;
 	}
+	
+	private List<Minecraft> requestMinecraftVersions() throws RestfulAPIException {
+		InputStream stream = null;
+		try {
+			stream = RestAPI.getCachingInputStream(new URL(RestAPI.MINECRAFT_URL), true);
+			Minecraft[] versions = mapper.readValue(stream, Minecraft[].class);
+			List<Minecraft> list = new ArrayList<Minecraft>(Arrays.asList(versions));
+			Collections.sort(list);
+			return Collections.unmodifiableList(list);
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + RestAPI.MINECRAFT_URL + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+
 }

@@ -50,6 +50,7 @@ public class RestAPI {
 	public static final String LIBRARY_GET_URL = REST_URL + "library/";
 	public static final String ALL_BUILDS_URL = REST_URL + "builds/" + PROJECT;
 	public static final String LAUNCHER_BUILDS_URL = REST_URL + "builds/spoutcraftlauncher";
+	public static final String MINECRAFT_URL = REST_URL + "minecraft";
 	static {
 		try {
 			int response = SpoutcraftLauncher.pingURL(REST_URL);
