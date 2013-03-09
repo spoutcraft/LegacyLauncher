@@ -229,7 +229,7 @@ public class RestAPI {
 		InputStream stream = null;
 		try {
 			URLConnection conn = new URL(url).openConnection();
-			conn.setConnectTimeout(2000);
+			conn.setConnectTimeout(5000);
 			conn.setReadTimeout(5000);
 
 			stream = conn.getInputStream();
