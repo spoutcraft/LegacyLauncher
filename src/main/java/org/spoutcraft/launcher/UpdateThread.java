@@ -52,6 +52,7 @@ import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.technic.OfflineInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.rest.Mod;
 import org.spoutcraft.launcher.technic.rest.Modpack;
@@ -115,7 +116,7 @@ public class UpdateThread extends Thread {
 
 	private void runTasks() throws IOException {
 		while (!valid.get()) {
-			if (!pack.isLoading() && build.getMinecraftVersion() != null) {
+			if (!pack.isLoading() && build.getMinecraftVersion() != null && !(pack instanceof OfflineInfo)) {
 				boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 
 				if (minecraftUpdate) {

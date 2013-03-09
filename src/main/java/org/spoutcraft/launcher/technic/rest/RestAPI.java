@@ -187,7 +187,10 @@ public class RestAPI {
 		RestInfo result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
 		result.setRest(this);
 		result.init();
-		String display = modpacks.getDisplayName(modpack);
+		String display = null;
+		if (modpacks != null) {
+			display = modpacks.getDisplayName(modpack);
+		}
 		if (display != null) {
 			result.setDisplayName(display);
 		}
