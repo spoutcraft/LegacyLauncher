@@ -48,43 +48,43 @@ public final class StartupParameters {
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
-	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft Username")
+	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft username")
 	private String user = null;
 
-	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft Password")
+	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft password")
 	private String pass = null;
 
-	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft Server to join")
+	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft server to join")
 	private String server = null;
 
-	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
+	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable mode")
 	private boolean portable = false;
 
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
 
-	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
+	@Parameter(names = {"-proxy_host"}, description = "HTTP proxy host")
 	private String proxyHost = null;
 
-	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
+	@Parameter(names = {"-proxy_port"}, description = "HTTP proxy port")
 	private String proxyPort = null;
 
-	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
+	@Parameter(names = {"-proxy_user"}, description = "HTTP proxy username")
 	private String proxyUser = null;
 
-	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
+	@Parameter(names = {"-proxy_password"}, description = "HTTP proxy password")
 	private String proxyPassword = null;
 
-	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
+	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables file integrity checking with MD5")
 	private boolean ignoreMD5 = false;
 
 	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
 	private int build = -1;
 
-	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
+	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for property memory arguments")
 	private boolean relaunched = false;
 
-	@Parameter(names = {"-console"}, description = "Shows the console window")
+	@Parameter(names = {"-console"}, description = "Shows the Spoutcraft debug console window")
 	private boolean console = false;
 
 	public List<String> getParameters() {

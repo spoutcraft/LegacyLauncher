@@ -306,12 +306,14 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		return new CallbackTask(new Callable<BufferedImage>() {
 			public BufferedImage call() throws Exception {
 				try {
-					System.out.println("Attempting to grab avatar helm of " + user + "...");
+					System.out.println("Attempting to grab avatar helm for " + user + "...");
 					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {
 							conn.setDoInput(true);
 							conn.setDoOutput(false);
+							System.setProperty("http.agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
+							conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.162 Safari/535.19");
 							HttpURLConnection.setFollowRedirects(true);
 							conn.setUseCaches(false);
 							((HttpURLConnection)conn).setInstanceFollowRedirects(true);
@@ -323,10 +325,10 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 					if (image == null) {
 						throw new NullPointerException("No avatar helm downloaded!");
 					}
-					System.out.println("Completed avatar helm request");
+					System.out.println("Completed avatar helm request!");
 					return image;
 				} catch (Exception e) {
-					System.out.println("Failed avatar helm request");
+					System.out.println("Failed avatar helm request!");
 					throw e;
 				}
 			}

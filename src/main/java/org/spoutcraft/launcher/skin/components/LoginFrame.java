@@ -363,10 +363,10 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			style.append("font-size:" + arial12.getSize() + "pt;");
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-					+ "Spoutcraft is not compatibile with Java 5."
-					+ "<br/>"
-					+ "<br/>Visit the following link for more information"
-					+ "<br/>http://spout.in/macjava5</body></html>");
+					+ "Spoutcraft is not compatible with Java 5."
+					+ "<br>"
+					+ "<br>Visit the following link for more information"
+					+ "<br>http://spout.in/macjava5</body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
@@ -397,9 +397,9 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
 					+ "Spoutcraft has incompatibility issues with Java 7 on OS X."
-					+ "<br/>"
-					+ "<br/>Visit the following link for more information"
-					+ "<br/>http://spout.in/macjava7</body></html>");
+					+ "<br>"
+					+ "<br>Visit the following link for more information"
+					+ "<br>http://spout.in/macjava7</body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
@@ -432,9 +432,9 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
 					+ "Spoutcraft and Minecraft have incompatibility issues with Oracle's Java 7 on Linux."
-					+ "<br/>"
-					+ "<br/>In order to use Spoutcraft, another variant of Java 1.7 is needed."
-					+ "<br/>Please install OpenJDK from http://openjdk.java.net/</body></html>");
+					+ "<br>"
+					+ "<br>In order to use Spoutcraft, another variant of Java 1.7 is needed."
+					+ "<br>Please install OpenJDK from http://openjdk.java.net/</body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
