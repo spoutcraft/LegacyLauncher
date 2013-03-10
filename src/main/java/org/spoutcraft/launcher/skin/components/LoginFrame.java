@@ -318,7 +318,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				enableForm();
 				break;
 			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You must purchase a Minecraft account to play");
+				JOptionPane.showConfirmDialog(getParent(), "Spoutcraft will not work without a premium Minecraft account. We do not encourage piracy!", "Premium Minecraft Account Required", JOptionPane.DEFAULT_OPTION);
 				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
@@ -333,7 +333,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					}
 				}
 				break;
-
 			case PERMISSION_DENIED:
 				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
 				enableForm();
