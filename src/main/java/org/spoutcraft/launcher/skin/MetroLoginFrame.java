@@ -40,7 +40,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -60,7 +59,6 @@ import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.FutureImage;
 import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
-import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
@@ -167,7 +165,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Progress Bar
 		progressBar = new LiteProgressBar();
-		progressBar.setBounds(FRAME_WIDTH / 2 - 198, pass.getY() + 90, 436, 23);
+		progressBar.setBounds(FRAME_WIDTH / 2 - 192, pass.getY() + 90, 384, 23);
 		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
@@ -567,8 +565,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 				int intProgress = Math.round(progress);
 				progressBar.setValue(intProgress);
 				String text = status;
-				if (text.length() > 90) {
-					text = text.substring(0, 90) + "...";
+				if (text.length() > 60) {
+					text = text.substring(0, 60) + "...";
 				}
 				progressBar.setString(intProgress + "% " + text);
 			}
