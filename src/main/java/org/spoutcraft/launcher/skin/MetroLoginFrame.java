@@ -213,7 +213,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Close button
 		close = new TransparentButton();
 		close.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(closeIcon)));
-		close.setBounds(FRAME_WIDTH - 37, 0, 37, 20);
+		if (OperatingSystem.getOS().isMac()) {
+			close.setBounds(0, 0, 37, 20);
+		} else {
+			close.setBounds(FRAME_WIDTH - 37, 0, 37, 20);
+		}
 		close.setTransparency(0.70F);
 		close.setHoverTransparency(1F);
 		close.setActionCommand(CLOSE_ACTION);
@@ -224,7 +228,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Minimize button
 		minimize = new TransparentButton();
 		minimize.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(minimizeIcon)));
-		minimize.setBounds(FRAME_WIDTH - 74, 0, 37, 20);
+		if (OperatingSystem.getOS().isMac()) {
+			minimize.setBounds(37, 0, 37, 20);
+		} else {
+			minimize.setBounds(FRAME_WIDTH - 74, 0, 37, 20);
+		}
 		minimize.setTransparency(0.70F);
 		minimize.setHoverTransparency(1F);
 		minimize.setActionCommand(MINIMIZE_ACTION);
@@ -235,7 +243,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		// Options Button
 		options = new TransparentButton();
 		options.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(optionsIcon)));
-		options.setBounds(FRAME_WIDTH - 111, 0, 37, 20);
+		if (OperatingSystem.getOS().isMac()) {
+			options.setBounds(74, 0, 37, 20);
+		} else {
+			options.setBounds(FRAME_WIDTH - 111, 0, 37, 20);
+		}
 		options.setTransparency(0.70F);
 		options.setHoverTransparency(1F);
 		options.setActionCommand(OPTIONS_ACTION);
