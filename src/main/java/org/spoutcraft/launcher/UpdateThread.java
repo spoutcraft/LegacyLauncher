@@ -424,7 +424,7 @@ public class UpdateThread extends Thread {
 		final String minecraftMD5 = minecraft.getMd5();
 		final String jinputMD5 = findMd5("jinput", null, minecraft.getLibraries());
 		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
-		final String lwjglMD5 = findMd5("lwjgl", OperatingSystem.getOS(), minecraft.getLibraries());
+		final String lwjglMD5 = findMd5("lwjgl", null, minecraft.getLibraries());
 
 
 		// Processs minecraft.jar
