@@ -169,9 +169,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		progressBar.setBounds(FRAME_WIDTH / 2 - 192, pass.getY() + 90, 384, 23);
 		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
-		progressBar.setOpaque(true);
-		progressBar.setTransparency(0.70F);
-		progressBar.setHoverTransparency(0.70F);
 		progressBar.setFont(minecraft);
 
 		Font largerMinecraft;
@@ -518,7 +515,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton)c;
-			this.setEnabled(false);
+			userButton.setEnabled(false);
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
 			this.remember.setSelected(true);
