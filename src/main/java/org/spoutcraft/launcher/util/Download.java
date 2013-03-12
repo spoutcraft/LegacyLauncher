@@ -35,8 +35,9 @@ import java.nio.channels.ReadableByteChannel;
 
 import org.apache.commons.io.IOUtils;
 
-import org.spout.downpour.DefaultURLConnector;
 import org.spout.downpour.DownpourCache;
+import org.spout.downpour.connector.DefaultURLConnector;
+import org.spout.downpour.connector.DownloadURLConnector;
 
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
@@ -65,7 +66,7 @@ public class Download implements Runnable, ProgressCallback {
 		FileOutputStream fos = null;
 		try {
 			DownpourCache cache = RestAPI.getCache();
-			InputStream in = cache.get(url, new DefaultURLConnector() {
+			InputStream in = cache.get(url, new DownloadURLConnector() {
 				@Override
 				public void setHeaders(URLConnection conn) {
 					conn.setDoInput(true);

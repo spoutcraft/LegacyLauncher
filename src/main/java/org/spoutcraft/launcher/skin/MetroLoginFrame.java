@@ -52,7 +52,8 @@ import java.util.concurrent.FutureTask;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 
-import org.spout.downpour.DefaultURLConnector;
+import org.spout.downpour.connector.DefaultURLConnector;
+import org.spout.downpour.connector.DownloadURLConnector;
 
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
@@ -416,7 +417,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			public BufferedImage call() throws Exception {
 				try {
 					System.out.println("Attempting to grab avatar helm for " + user + "...");
-					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DefaultURLConnector() {
+					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DownloadURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {
 							conn.setDoInput(true);

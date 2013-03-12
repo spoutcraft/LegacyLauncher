@@ -37,7 +37,8 @@ import java.nio.channels.Channels;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.spout.downpour.DefaultURLConnector;
+import org.spout.downpour.connector.DefaultURLConnector;
+import org.spout.downpour.connector.DownloadURLConnector;
 
 import org.spoutcraft.launcher.rest.RestAPI;
 
@@ -78,7 +79,7 @@ public class BaseYAMLResource implements YAMLResource {
 				URL url = new URL(this.url);
 
 				// Copy file
-				stream = RestAPI.getCache().get(url, new DefaultURLConnector() {
+				stream = RestAPI.getCache().get(url, new DownloadURLConnector() {
 					@Override
 					public void setHeaders(URLConnection conn) {
 						conn.setDoInput(true);

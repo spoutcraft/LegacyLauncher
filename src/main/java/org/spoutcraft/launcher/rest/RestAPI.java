@@ -33,6 +33,8 @@ import java.net.URL;
 
 import org.spout.downpour.DownpourCache;
 import org.spout.downpour.NoCacheException;
+import org.spout.downpour.connector.DefaultURLConnector;
+import org.spout.downpour.connector.DownloadURLConnector;
 
 import org.spoutcraft.launcher.Channel;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -106,7 +108,7 @@ public class RestAPI {
 	}
 
 	public static InputStream getCachingInputStream(URL url, boolean force) throws NoCacheException, IOException {
-		return cache.get(url, DownpourCache.DEFAULT_CONNECTOR, force);
+		return cache.get(url, force ? new DownloadURLConnector() : new DefaultURLConnector(), force);
 	}
 
 	public static DownpourCache getCache() {
