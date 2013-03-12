@@ -38,12 +38,14 @@ public class LiteProgressBar extends JProgressBar implements Transparent {
 
 	public LiteProgressBar() {
 		setFocusable(false);
-		setOpaque(false);
+		setOpaque(true);
 	}
 
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D g2d = (Graphics2D) transparency.setup(g);
+		
+		g2d.clearRect(0, 0, getWidth(), getHeight());
 
 		// Draw bar
 		g2d.setColor(Color.WHITE);
