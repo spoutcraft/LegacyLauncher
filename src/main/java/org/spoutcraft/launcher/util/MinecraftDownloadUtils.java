@@ -72,7 +72,7 @@ public class MinecraftDownloadUtils {
 							minecraftMD5 = build.getMinecraft().getMd5();
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
 							Launcher.debug("Patching minecraft.jar, Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
-							//Ensure the patched Minecraft jar MD5 is correct
+							// Ensure the patched Minecraft jar MD5 is correct
 							if (minecraftMD5.equals(resultMD5)) {
 								outputFile = download.getOutFile();
 								download.getOutFile().delete();

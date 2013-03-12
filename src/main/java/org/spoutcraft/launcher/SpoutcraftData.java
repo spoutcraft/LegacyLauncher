@@ -101,7 +101,7 @@ public final class SpoutcraftData {
 				}
 			}
 		}
-		//Should never get here...
+		// Should never get here...
 		throw new IllegalStateException("Unknown Minecraft Build: " + selected);
 	}
 

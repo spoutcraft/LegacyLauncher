@@ -396,7 +396,7 @@ public class UpdateThread extends Thread {
 		return installed == null || !installed.equals(required);
 	}
 
-	//Searches the MC libraries for the one matching the given artifact id, returns the md5
+	// Searches the MC libraries for the one matching the given artifact id, returns the md5
 	protected static String findMd5(String artifactId, OperatingSystem platform, List<Library> libraries) {
 		for (Library lib : libraries) {
 			if (lib.getArtifactId().equalsIgnoreCase(artifactId)) {
@@ -408,7 +408,7 @@ public class UpdateThread extends Thread {
 				}
 			}
 		}
-		//Should never get here...
+		// Should never get here...
 		throw new IllegalArgumentException("No valid library for " + artifactId + ", with platform " + platform + " was found");
 	}
 

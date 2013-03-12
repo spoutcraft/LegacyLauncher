@@ -365,7 +365,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					+ "Spoutcraft is not compatible with Java 5."
 					+ "<br>"
 					+ "<br>Visit the following link for more information"
-					+ "<br>http://spout.in/macjava5</body></html>");
+					+ "<br><a href=\"http://spout.in/macjava5\">http://spout.in/macjava5</a></body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
@@ -398,7 +398,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					+ "Spoutcraft has incompatibility issues with Java 7 on OS X."
 					+ "<br>"
 					+ "<br>Visit the following link for more information"
-					+ "<br>http://spout.in/macjava7</body></html>");
+					+ "<br><a href=\"http://spout.in/macjava7\">http://spout.in/macjava7</a></body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
@@ -433,7 +433,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					+ "Spoutcraft and Minecraft have incompatibility issues with Oracle's Java 7 on Linux."
 					+ "<br>"
 					+ "<br>In order to use Spoutcraft, another variant of Java 1.7 is needed."
-					+ "<br>Please install OpenJDK from http://openjdk.java.net/</body></html>");
+					+ "<br>Please install OpenJDK from <a href=\"http://openjdk.java.net/\">http://openjdk.java.net/</a></body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());

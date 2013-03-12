@@ -36,7 +36,7 @@ import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
 
-public final class Library implements Downloadable{
+public final class Library implements Downloadable {
 	private final String groupId;
 	private final String artifactId;
 	private final String version;
@@ -49,7 +49,7 @@ public final class Library implements Downloadable{
 		this.md5 = md5;
 	}
 
-	public void download(File location, DownloadListener listener) throws DownloadException{
+	public void download(File location, DownloadListener listener) throws DownloadException {
 		StringBuilder builder = new StringBuilder(RestAPI.LIBRARY_GET_URL);
 		String url =  builder.append(groupId).append("/").append(artifactId).append("/").append(version).toString();
 		try {
