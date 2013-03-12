@@ -170,6 +170,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setFont(minecraft);
+		progressBar.setOpaque(true);
+		progressBar.setTransparency(0.70F);
+		progressBar.setHoverTransparency(0.70F);
 
 		Font largerMinecraft;
 		if (OperatingSystem.getOS().isUnix()) {
