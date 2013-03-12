@@ -48,12 +48,12 @@ import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
 import org.spoutcraft.launcher.rest.Library;
+import org.spoutcraft.launcher.rest.Minecraft;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
@@ -397,8 +397,24 @@ public class UpdateThread extends Thread {
 		stateChanged("Checking for Minecraft update...", 600F / steps);
 		String installed = Settings.getInstalledMC();
 		stateChanged("Checking for Minecraft update...", 700F / steps);
-		String required = build.getMinecraftVersion();
+		String required = build.getMinecraft().getVersion();
 		return installed == null || !installed.equals(required);
+	}
+
+	//Searches the MC libraries for the one matching the given artifact id, returns the md5
+	protected static String findMd5(String artifactId, OperatingSystem platform, List<Library> libraries) {
+		for (Library lib : libraries) {
+			if (lib.getArtifactId().equalsIgnoreCase(artifactId)) {
+				if (platform == null
+					|| platform.isWindows() && lib.getVersion().toLowerCase().endsWith("windows")
+					|| platform.isMac() && lib.getVersion().toLowerCase().endsWith("osx")
+					|| platform.isUnix() && lib.getVersion().toLowerCase().endsWith("linux")) {
+					return lib.getMd5();
+				}
+			}
+		}
+		//Should never get here...
+		throw new IllegalArgumentException("No valid library for " + artifactId + ", with platform " + platform + " was found");
 	}
 
 	public void updateMinecraft(SpoutcraftData build) throws IOException {
@@ -409,14 +425,16 @@ public class UpdateThread extends Thread {
 		}
 		Launcher.getGameUpdater().getUpdateDir().mkdir();
 
-		String minecraftMD5 = FileType.MINECRAFT.getMD5();
-		String jinputMD5 = FileType.JINPUT.getMD5();
-		String lwjglMD5 = FileType.LWJGL.getMD5();
-		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
+		final Minecraft minecraft = build.getMinecraft();
+		final String minecraftMD5 = minecraft.getMd5();
+		final String jinputMD5 = findMd5("jinput", null, minecraft.getLibraries());
+		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
+		final String lwjglMD5 = findMd5("lwjgl-platform", OperatingSystem.getOS(), minecraft.getLibraries());
+
 
 		// Processs minecraft.jar
-		logger.info("Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		logger.info("Minecraft Version: " + build.getMinecraft());
+		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
 			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, build, listener);
@@ -456,7 +474,7 @@ public class UpdateThread extends Thread {
 
 		stateChanged("Extracting Files...", 0);
 
-		Settings.setInstalledMC(build.getMinecraftVersion());
+		Settings.setInstalledMC(build.getMinecraft().getVersion());
 		Settings.getYAML().save();
 	}
 
@@ -504,7 +522,7 @@ public class UpdateThread extends Thread {
 
 		// Process spoutcraft.jar
 		logger.info("Spoutcraft Build: " + build.getBuild());
-		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraft().getVersion() + ".jar");
 		File updateMC = new File(Launcher.getGameUpdater().getUpdateDir().getPath() + File.separator + "minecraft.jar");
 		if (mcCache.exists()) {
 			Utils.copy(mcCache, updateMC);

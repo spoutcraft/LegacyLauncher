@@ -99,4 +99,23 @@ public final class Minecraft implements Comparable<Minecraft>{
 		}
 		return 0;
 	}
+
+	@Override
+	public String toString() {
+		return "{Minecraft v" + getVersion() + ", md5: " + getMd5() + "}";
+	}
+
+	@Override
+	public int hashCode() {
+		return getVersion().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Minecraft)) {
+			return false;
+		}
+		Minecraft other = (Minecraft) obj;
+		return other.getVersion().equals(getVersion());
+	}
 }

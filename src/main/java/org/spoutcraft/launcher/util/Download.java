@@ -36,7 +36,6 @@ import java.nio.channels.ReadableByteChannel;
 import org.apache.commons.io.IOUtils;
 
 import org.spout.downpour.DownpourCache;
-import org.spout.downpour.connector.DefaultURLConnector;
 import org.spout.downpour.connector.DownloadURLConnector;
 
 import org.spoutcraft.launcher.exceptions.DownloadException;

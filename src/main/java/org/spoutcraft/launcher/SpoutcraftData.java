@@ -90,17 +90,23 @@ public final class SpoutcraftData {
 		return libs;
 	}
 
-	public String getMinecraftVersion() {
-		String selected = Settings.getMinecraftVersion();
+	public Minecraft getMinecraft() {
+		final String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			return getLatestMinecraftVersion();
+			return getLatestMinecraft();
 		} else {
-			return selected;
+			for (Minecraft minecraft : minecraftVersions) {
+				if (selected.equalsIgnoreCase(minecraft.getVersion())) {
+					return minecraft;
+				}
+			}
 		}
+		//Should never get here...
+		throw new IllegalStateException("Unknown Minecraft Build: " + selected);
 	}
 
-	public String getLatestMinecraftVersion() {
-		return minecraftVersions.get(0).getVersion();
+	public Minecraft getLatestMinecraft() {
+		return minecraftVersions.get(0);
 	}
 
 	public String getMinecraftURL(String user) {
@@ -113,11 +119,11 @@ public final class SpoutcraftData {
 
 	public String getPatchURL() {
 		String mirrorURL = "patch/minecraft_";
-		mirrorURL += getLatestMinecraftVersion();
-		mirrorURL += "-" + getMinecraftVersion() + ".patch";
+		mirrorURL += getLatestMinecraft().getVersion();
+		mirrorURL += "-" + getMinecraft().getVersion() + ".patch";
 		String fallbackURL = "http://get.spout.org/patch/minecraft_";
-		fallbackURL += getLatestMinecraftVersion();
-		fallbackURL += "-" + getMinecraftVersion() + ".patch";
+		fallbackURL += getLatestMinecraft().getVersion();
+		fallbackURL += "-" + getMinecraft().getVersion() + ".patch";
 		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
@@ -163,7 +169,7 @@ public final class SpoutcraftData {
 		}
 		InputStream stream = null;
 		// Use channel selection for latest
-		if (getLatestMinecraftVersion().equals(getMinecraftVersion())) {
+		if (getLatestMinecraft().equals(getMinecraft())) {
 			int build;
 			String url = RestAPI.getSpoutcraftURL(channel);
 			try {
@@ -199,7 +205,7 @@ public final class SpoutcraftData {
 			// Find the newest build for the mc version
 			String url = RestAPI.ALL_BUILDS_URL;
 			try {
-				final String mcVersion = getMinecraftVersion();
+				final String mcVersion = getMinecraft().getVersion();
 				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				ChannelData data = mapper.readValue(stream, ChannelData.class);
 				HashSet<String> builds = new HashSet<String>(100);

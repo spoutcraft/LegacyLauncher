@@ -67,6 +67,22 @@ public final class Library implements Downloadable{
 		return artifactId + "-" + version;
 	}
 
+	public String getGroupId() {
+		return groupId;
+	}
+
+	public String getArtifactId() {
+		return artifactId;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public String getMd5() {
+		return md5;
+	}
+
 	@Override
 	public int hashCode() {
 		return groupId.hashCode() + artifactId.hashCode() + version.hashCode() + md5.hashCode();

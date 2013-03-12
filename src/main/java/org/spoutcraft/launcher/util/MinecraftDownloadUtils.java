@@ -56,23 +56,23 @@ public class MinecraftDownloadUtils {
 					listener.stateChanged("Download failed, retries remaining: " + tries, 0F);
 				}
 			} else {
-				String minecraftMD5 = FileType.MINECRAFT.getMD5();
-				//String minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getLatestMinecraftVersion());
+				String minecraftMD5 = build.getLatestMinecraft().getMd5();
 				String resultMD5 = MD5Utils.getMD5(download.getOutFile());
 				Launcher.debug("Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
 				if (resultMD5.equals(minecraftMD5) || (minecraftMD5 == null && resultMD5 != null)) {
 					// Patch Minecraft
-					if (!build.getLatestMinecraftVersion().equals(build.getMinecraftVersion())) {
+					if (!build.getLatestMinecraft().equals(build.getMinecraft())) {
+						Launcher.debug("Using older MC Version: " + build.getMinecraft() + ", downloading bytepatch");
 						File patch = new File(Utils.getWorkingDirectory(), "mc.patch");
 						Download patchDownload = DownloadUtils.downloadFile(build.getPatchURL(), patch.getPath(), null, null, listener);
 						if (patchDownload.getResult() == Result.SUCCESS) {
 							File patchedMinecraft = new File(Launcher.getGameUpdater().getUpdateDir(), "patched_minecraft.jar");
 							patchedMinecraft.delete();
 							JBPatch.bspatch(download.getOutFile(), patchedMinecraft, patch);
-							//minecraftMD5 = MD5Utils.getMD5(FileType.MINECRAFT, build.getMinecraftVersion());
-							minecraftMD5 = FileType.MINECRAFT.getMD5(build.getMinecraftVersion());
+							minecraftMD5 = build.getMinecraft().getMd5();
 							resultMD5 = MD5Utils.getMD5(patchedMinecraft);
-
+							Launcher.debug("Patching minecraft.jar, Expected MD5: " + minecraftMD5 + " Result MD5: " + resultMD5);
+							//Ensure the patched Minecraft jar MD5 is correct
 							if (minecraftMD5.equals(resultMD5)) {
 								outputFile = download.getOutFile();
 								download.getOutFile().delete();
@@ -92,6 +92,6 @@ public class MinecraftDownloadUtils {
 		if (outputFile == null) {
 			throw new IOException("Failed to download Minecraft!");
 		}
-		Utils.copy(outputFile, new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar"));
+		Utils.copy(outputFile, new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + build.getMinecraft().getVersion() + ".jar"));
 	}
 }
