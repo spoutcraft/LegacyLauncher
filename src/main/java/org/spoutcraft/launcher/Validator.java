@@ -34,7 +34,6 @@ import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.Minecraft;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.OperatingSystem;
 
 public class Validator {
 	private boolean passed = false;
@@ -93,7 +92,7 @@ public class Validator {
 			return true;
 		}
 
-		final String lwjglMD5 = UpdateThread.findMd5("lwjgl-platform", OperatingSystem.getOS(), minecraft.getLibraries());
+		final String lwjglMD5 = UpdateThread.findMd5("lwjgl", null, minecraft.getLibraries());
 
 		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (lwjglJar.exists()) {

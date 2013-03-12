@@ -72,13 +72,8 @@ public class UpdateThread extends Thread {
 
 	// Temporarily hardcoded
 	private static final String WINDOWS_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/windows_natives.jar";
-	private static final String WINDOWS_NATIVES_MD5 = "9406d7d376b131d20c5717ee9fd89a7f";
-
 	private static final String OSX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/macosx_natives.jar";
-	private static final String OSX_NATIVES_MD5 = "2f60f009723553622af280c920bb7431";
-
 	private static final String LINUX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/linux_natives.jar";
-	private static final String LINUX_NATIVES_MD5 = "3b4435ec85e63faa041b4c080b815b22";
 
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
@@ -429,7 +424,7 @@ public class UpdateThread extends Thread {
 		final String minecraftMD5 = minecraft.getMd5();
 		final String jinputMD5 = findMd5("jinput", null, minecraft.getLibraries());
 		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
-		final String lwjglMD5 = findMd5("lwjgl-platform", OperatingSystem.getOS(), minecraft.getLibraries());
+		final String lwjglMD5 = findMd5("lwjgl", OperatingSystem.getOS(), minecraft.getLibraries());
 
 
 		// Processs minecraft.jar
@@ -467,7 +462,7 @@ public class UpdateThread extends Thread {
 		}
 
 		try {
-			getNatives();
+			downloadNatives(minecraft);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -482,22 +477,20 @@ public class UpdateThread extends Thread {
 		return GameUpdater.baseURL;
 	}
 
-	public void getNatives() throws IOException, UnsupportedOSException {
-		String url, md5;
+	public void downloadNatives(Minecraft minecraft) throws IOException, UnsupportedOSException {
+		final String url;
 
 		OperatingSystem os = OperatingSystem.getOS();
 		if (os.isUnix()) {
 			url = LINUX_NATIVES_URL;
-			md5 = LINUX_NATIVES_MD5;
 		} else if (os.isMac()) {
 			url = OSX_NATIVES_URL;
-			md5 = OSX_NATIVES_MD5;
 		} else if (os.isWindows()) {
 			url = WINDOWS_NATIVES_URL;
-			md5 = WINDOWS_NATIVES_MD5;
 		} else {
 			throw new UnsupportedOperationException("Unknown OS: " + os);
 		}
+		final String md5 = findMd5("lwjgl-platform", OperatingSystem.getOS(), minecraft.getLibraries());
 
 		// Download natives
 		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
