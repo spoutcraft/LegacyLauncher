@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +38,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.spoutcraft.launcher.VersionComparator;
 
 public final class Versions {
 	private static List<String> versions = null;
@@ -59,6 +61,7 @@ public final class Versions {
 					versions.add(version.version);
 				}
 				Versions.versions = new ArrayList<String>(versions);
+				Collections.sort(Versions.versions, new VersionComparator());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			} finally {

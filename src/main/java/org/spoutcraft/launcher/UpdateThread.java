@@ -426,7 +426,6 @@ public class UpdateThread extends Thread {
 		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
 		final String lwjglMD5 = findMd5("lwjgl", null, minecraft.getLibraries());
 
-
 		// Processs minecraft.jar
 		logger.info("Minecraft Version: " + build.getMinecraft());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
