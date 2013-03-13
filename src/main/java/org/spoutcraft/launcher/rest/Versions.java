@@ -65,7 +65,7 @@ public final class Versions {
 				IOUtils.closeQuietly(stream);
 			}
 		}
-		return versions;
+		return new ArrayList<String>(versions);
 	}
 
 	private static class Channel {

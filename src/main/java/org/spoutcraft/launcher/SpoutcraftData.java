@@ -49,6 +49,7 @@ import org.spoutcraft.launcher.rest.MD5Result;
 import org.spoutcraft.launcher.rest.Minecraft;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
@@ -91,14 +92,14 @@ public final class SpoutcraftData {
 	}
 
 	public Minecraft getMinecraft() {
-		final String selected = Settings.getMinecraftVersion();
+		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			return getLatestMinecraft();
-		} else {
-			for (Minecraft minecraft : minecraftVersions) {
-				if (selected.equalsIgnoreCase(minecraft.getVersion())) {
-					return minecraft;
-				}
+			//Find the latest supported SC MC version
+			selected = Versions.getMinecraftVersions().get(0);
+		}
+		for (Minecraft minecraft : minecraftVersions) {
+			if (selected.equalsIgnoreCase(minecraft.getVersion())) {
+				return minecraft;
 			}
 		}
 		// Should never get here...
