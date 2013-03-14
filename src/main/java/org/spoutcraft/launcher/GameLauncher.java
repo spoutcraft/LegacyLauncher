@@ -35,6 +35,8 @@ import java.awt.Window;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.logging.Level;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -132,6 +134,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		} catch (CorruptedMinecraftJarException corruption) {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
+			Launcher.getLogger().log(Level.SEVERE, "Minecraft Verification error", verify);
 			Launcher.clearCache();
 			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the appplication.");
 			this.setVisible(false);

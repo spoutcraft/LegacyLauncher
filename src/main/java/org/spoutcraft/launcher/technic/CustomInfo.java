@@ -57,6 +57,10 @@ public class CustomInfo extends PackInfo {
 	private String mirrorUrl;
 	@JsonProperty("minecraft")
 	private String minecraftVersion;
+	@JsonProperty("minecraft_md5")
+	private String minecraftMd5;
+	@JsonProperty("use_patch")
+	boolean usePatch;
 	@JsonProperty("logo_md5")
 	private String logoMD5;
 	@JsonProperty("background_md5")
@@ -141,6 +145,10 @@ public class CustomInfo extends PackInfo {
 
 	public String getMinecraftVersion() {
 		return minecraftVersion;
+	}
+
+	public String getMinecraftMd5() {
+		return minecraftMd5;
 	}
 
 	public String getUser() {

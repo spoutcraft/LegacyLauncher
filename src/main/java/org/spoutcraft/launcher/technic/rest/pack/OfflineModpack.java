@@ -47,6 +47,11 @@ public class OfflineModpack extends Modpack {
 	}
 
 	@Override
+	public String getMinecraftMd5() {
+		return null;
+	}
+
+	@Override
 	public String getBuild() {
 		return build;
 	}

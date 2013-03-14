@@ -42,7 +42,7 @@ public class FileUtils {
 	 * @throws IOException in case deletion is unsuccessful
 	 */
 	public static void deleteDirectory(File directory) throws IOException {
-		if (!directory.exists()) {
+		if (directory == null || !directory.exists()) {
 			return;
 		}
 

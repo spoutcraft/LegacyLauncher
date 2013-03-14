@@ -306,14 +306,14 @@ public class UpdateThread extends Thread {
 		pack.getCacheDir().mkdir();
 		pack.getTempDir().mkdir();
 
-		String minecraftMD5 = FileType.MINECRAFT.getMD5();
+		String minecraftMD5 = build.getMinecraftMd5();
 		String jinputMD5 = FileType.JINPUT.getMD5();
 		String lwjglMD5 = FileType.LWJGL.getMD5();
 		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
 		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
+		File mcCache = new File(Utils.getCacheDirectory(), "minecraft_" + build.getMinecraftVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			String output = pack.getTempDir() + File.separator + "minecraft.jar";
 			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, build, listener);
@@ -324,21 +324,21 @@ public class UpdateThread extends Thread {
 		nativesDir.mkdir();
 
 		// Process other downloads
-		mcCache = new File(pack.getCacheDir(), "jinput.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", pack.getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
 		} else {
 			Utils.copy(mcCache, new File(pack.getBinDir(), "jinput.jar"));
 		}
 
-		mcCache = new File(pack.getCacheDir(), "lwjgl.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", pack.getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
 		} else {
 			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl.jar"));
 		}
 
-		mcCache = new File(pack.getCacheDir(), "lwjgl_util.jar");
+		mcCache = new File(Utils.getCacheDirectory(), "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", pack.getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
 		} else {
