@@ -60,7 +60,6 @@ import javax.swing.text.SimpleAttributeSet;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
@@ -91,7 +90,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private Document urlDoc;
 	private File installDir;
 	private LiteTextBox urlTextBox;
-	
+
 	public ImportOptions() {
 		setTitle("Add a Pack");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -101,10 +100,10 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		setUndecorated(true);
 		initComponents();
 	}
-	
+
 	public void initComponents() {
 		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
-		
+
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -119,36 +118,36 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		getRootPane().getActionMap().put(ESCAPE_ACTION, escapeAction);
 
 		background = new JLabel();
-		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
+		background.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 		MetroLoginFrame.setIcon(background, "platformBackground.png", background.getWidth(), background.getHeight());
-		
+
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
-		
+
 		ImageButton optionsQuit = new ImageButton(MetroLoginFrame.getIcon("quit.png", 28, 28), MetroLoginFrame.getIcon("quit.png", 28, 28));
 		optionsQuit.setRolloverIcon(MetroLoginFrame.getIcon("quitHover.png", 28, 28));
 		optionsQuit.setBounds(FRAME_WIDTH - 38, 10, 28, 28);
 		optionsQuit.setActionCommand(QUIT_ACTION);
 		optionsQuit.addActionListener(this);
-		
+
 		msgLabel = new JLabel();
 		msgLabel.setBounds(10, 75, FRAME_WIDTH - 20, 25);
 		msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 		msgLabel.setForeground(Color.white);
 		msgLabel.setFont(minecraft);
-		
+
 		urlTextBox = new LiteTextBox(this, "Paste Platform URL Here");
 		urlTextBox.setBounds(10, msgLabel.getY() + msgLabel.getHeight() + 5, FRAME_WIDTH - 115, 30);
 		urlTextBox.setFont(minecraft);
 		urlTextBox.getDocument().addDocumentListener(this);
 		urlDoc = urlTextBox.getDocument();
-		
+
 		save = new LiteButton("Add Modpack");
 		save.setFont(minecraft.deriveFont(14F));
 		save.setBounds(FRAME_WIDTH - 145, FRAME_HEIGHT - 40, 135, 30);
 		save.setActionCommand(IMPORT_ACTION);
 		save.addActionListener(this);
-		
+
 		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
@@ -157,7 +156,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		folder.setBounds(FRAME_WIDTH - 290, FRAME_HEIGHT - 40, 135, 30);
 		folder.setActionCommand(CHANGE_FOLDER);
 		folder.addActionListener(this);
-		
+
 		paste = new LiteButton("Paste");
 		paste.setFont(minecraft.deriveFont(14F));
 		paste.setBounds(FRAME_WIDTH - 95, msgLabel.getY() + msgLabel.getHeight() + 5, 85, 30);
@@ -170,7 +169,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		install.setFont(minecraft.deriveFont(10F));
 		install.setEnabled(false);
 		install.setVisible(false);
-		
+
 		enableComponent(save, false);
 		enableComponent(folder, false);
 		enableComponent(paste, true);
@@ -183,23 +182,23 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		contentPane.add(urlTextBox);
 		contentPane.add(save);
 		contentPane.add(background);
-		
+
 		setLocationRelativeTo(this.getOwner());
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent)e.getSource());
+			action(e.getActionCommand(), (JComponent) e.getSource());
 		}
 	}
-	
+
 	private void action(String action, JComponent c) {
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(CHANGE_FOLDER)) {
 			int result = fileChooser.showOpenDialog(this);
-			
+
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				file.exists();
@@ -225,17 +224,17 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		} else if (action.equals(PASTE_URL)) {
 			Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
 			Transferable clipData = clipboard.getContents(clipboard);
-			if(clipData != null) {
+			if (clipData != null) {
 				try {
-					if(clipData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-						String s = (String)(clipData.getTransferData(DataFlavor.stringFlavor));
+					if (clipData.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+						String s = (String) (clipData.getTransferData(DataFlavor.stringFlavor));
 						urlDoc.remove(0, urlDoc.getLength());
 						urlDoc.insertString(0, s, new SimpleAttributeSet());
 						urlTextBox.setLabelVisible(false);
 					}
-				} catch(UnsupportedFlavorException e) {
+				} catch (UnsupportedFlavorException e) {
 					e.printStackTrace();
-				} catch(IOException e) {
+				} catch (IOException e) {
 					e.printStackTrace();
 				} catch (BadLocationException e) {
 					e.printStackTrace();
@@ -265,13 +264,14 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				enableComponent(save, false);
 				// fetch the info asynchronously
 				SwingWorker<CustomInfo, Void> worker = new SwingWorker<CustomInfo, Void>() {
-					
+
 					@Override
 					protected CustomInfo doInBackground() throws Exception {
 						CustomInfo result = RestAPI.getCustomModpack(url);
 						return result;
 					}
-					
+
+					@Override
 					public void done() {
 						try {
 							info = get();
@@ -316,10 +316,11 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				info = null;
 				this.url = "";
 			}
-			
+
 		} catch (BadLocationException e) {
-			//This should never ever happen.
-			//Java is stupid for not having a getAllText of some kind on the Document class
+			// This should never ever happen.
+			// Java is stupid for not having a getAllText of some kind on the
+			// Document class
 			e.printStackTrace();
 		}
 	}
@@ -345,13 +346,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -363,19 +364,19 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
