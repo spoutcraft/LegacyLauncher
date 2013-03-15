@@ -130,7 +130,11 @@ public class Utils {
 	}
 
 	public static File getCacheDirectory() {
-		return new File(getLauncherDirectory(), "cache");
+		File cache = new File(getLauncherDirectory(), "cache");
+		if (!cache.exists()) {
+			cache.mkdir();
+		}
+		return cache;
 	}
 	
 	public static File getAssetsDirectory() {
