@@ -533,6 +533,8 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	@Override
 	public void enableForm() {
+		progressBar.setVisible(false);
+		lockLoginButton(true);
 	}
 
 	@Override

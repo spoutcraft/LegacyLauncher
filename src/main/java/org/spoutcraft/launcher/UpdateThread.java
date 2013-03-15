@@ -47,6 +47,7 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.progress.ProgressMonitor;
 
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
@@ -107,6 +108,11 @@ public class UpdateThread extends Thread {
 			try {
 				runTasks();
 				break;
+			} catch (DownloadException e) {
+				JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
+				Launcher.getFrame().enableForm();
+				Launcher.getGameUpdater().resetUpdateThread();
+				return;
 			} catch (Exception e) {
 				Launcher.getFrame().handleException(e);
 				return;

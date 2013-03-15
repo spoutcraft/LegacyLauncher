@@ -63,6 +63,8 @@ public class GameLauncher extends JFrame implements WindowListener {
 	private final int width;
 	private final int height;
 
+	private boolean shouldRun = true;
+
 	public GameLauncher() {
 		super("Spoutcraft");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -81,7 +83,12 @@ public class GameLauncher extends JFrame implements WindowListener {
 		runGame(user, session, downloadTicket, null);
 	}
 
+	public void setShouldRun(boolean shouldRun) {
+		this.shouldRun = shouldRun;
+	}
+
 	public void runGame(String user, String session, String downloadTicket, PackInfo pack) {
+		shouldRun = true;
 		try {
 			Launcher.getGameUpdater().start(pack);
 			Settings.setLastModpack(pack.getName());
@@ -122,6 +129,9 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		Launcher.getGameUpdater().setWaiting(true);
 		while (!Launcher.getGameUpdater().isFinished()) {
+			if (!shouldRun) {
+				return;
+			}
 			try {
 				Thread.sleep(100);
 			}
