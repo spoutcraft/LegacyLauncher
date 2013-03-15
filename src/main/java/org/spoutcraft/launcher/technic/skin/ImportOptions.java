@@ -245,7 +245,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 	public void urlUpdated(Document doc) {
 		try {
-			final String url = doc.getText(0, doc.getLength());
+			final String url = doc.getText(0, doc.getLength()).trim();
 			if (url.isEmpty()) {
 				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 				enableComponent(save, false);
