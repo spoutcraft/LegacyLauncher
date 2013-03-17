@@ -54,6 +54,7 @@ import org.spoutcraft.launcher.util.MirrorUtils;
 public class RestAPI {
 	private static RestAPI TECHNIC;
 	private static Map<String, Minecraft> mcVersions;
+	private static FullModpacks DEFAULT;
 
 	private final static String PATCH_VERSION = "1.4.7";
 	private final static ObjectMapper mapper = new ObjectMapper();
@@ -63,7 +64,7 @@ public class RestAPI {
 	private final String modURL;
 
 	private String mirrorURL;
-	private Modpacks modpacks;
+	private static Modpacks modpacks;
 
 	public RestAPI(String url) {
 		restURL = url;
@@ -89,10 +90,20 @@ public class RestAPI {
 		}
 	}
 
+	public static void setupDefault() {
+		if (DEFAULT != null) {
+			return;
+		}
+		try {
+			DEFAULT = getRestObject(FullModpacks.class, getDefault().getRestInfoURL() + "?include=full");
+		} catch (RestfulAPIException e) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + TECHNIC.getRestInfoURL() + "?include=full" + " Running Offline instead.", e);
+		}
+	}
+
 	public static Collection<RestInfo> getDefaults() {
-		Modpacks packs = getDefault().getModpacks();
-		if (packs != null) {
-			return packs.getModpacks();
+		if (DEFAULT != null) {
+			return DEFAULT.getModpacks();
 		} else {
 			return Collections.emptyList();
 		}
@@ -101,6 +112,7 @@ public class RestAPI {
 	public static RestAPI getDefault() {
 		if (TECHNIC == null) {
 			TECHNIC = new RestAPI("http://solder.technicpack.net/api/");
+			setupDefault();
 		}
 
 		return TECHNIC;
@@ -173,7 +185,7 @@ public class RestAPI {
 	}
 
 	private Modpacks setupModpacks() throws RestfulAPIException {
-		Modpacks result = getRestObject(Modpacks.class, restInfoURL + "?include=full");
+		Modpacks result = getRestObject(Modpacks.class, restInfoURL);
 		result.setRest(this);
 		return result;
 	}
@@ -204,7 +216,7 @@ public class RestAPI {
 	public RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
 		RestInfo result;
 		if (this.equals(getDefault())) {
-			result = modpacks.getMap().get(modpack);
+			result = DEFAULT.getMap().get(modpack);
 		} else {
 			result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
 		}
