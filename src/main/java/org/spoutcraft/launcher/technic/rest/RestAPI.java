@@ -32,11 +32,10 @@ import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Level;
 
 import org.apache.commons.io.IOUtils;
@@ -90,12 +89,12 @@ public class RestAPI {
 		}
 	}
 
-	public static Set<String> getDefaults() {
+	public static Collection<RestInfo> getDefaults() {
 		Modpacks packs = getDefault().getModpacks();
 		if (packs != null) {
-			return packs.getMap().keySet();
+			return packs.getModpacks();
 		} else {
-			return Collections.emptySet();
+			return Collections.emptyList();
 		}
 	}
 
@@ -174,7 +173,7 @@ public class RestAPI {
 	}
 
 	private Modpacks setupModpacks() throws RestfulAPIException {
-		Modpacks result = getRestObject(Modpacks.class, restInfoURL);
+		Modpacks result = getRestObject(Modpacks.class, restInfoURL + "?include=full");
 		result.setRest(this);
 		return result;
 	}
@@ -187,7 +186,7 @@ public class RestAPI {
 		return mirrorURL;
 	}
 
-	public List<RestInfo> getRestInfos() throws RestfulAPIException {
+	public Collection<RestInfo> getRestInfos() throws RestfulAPIException {
 		return modpacks.getModpacks();
 	}
 
@@ -203,16 +202,16 @@ public class RestAPI {
 	}
 
 	public RestInfo getModpackInfo(String modpack) throws RestfulAPIException {
-		RestInfo result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
+		RestInfo result;
+		if (this.equals(getDefault())) {
+			result = modpacks.getMap().get(modpack);
+		} else {
+			result = getRestObject(RestInfo.class, getModpackInfoURL(modpack));
+		}
+		
 		result.setRest(this);
 		result.init();
-		String display = null;
-		if (modpacks != null) {
-			display = modpacks.getDisplayName(modpack);
-		}
-		if (display != null) {
-			result.setDisplayName(display);
-		}
+
 		return result;
 	}
 
@@ -252,8 +251,8 @@ public class RestAPI {
 		try {
 			URLConnection conn = new URL(url).openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			conn.setConnectTimeout(5000);
-			conn.setReadTimeout(5000);
+			conn.setConnectTimeout(10000);
+			conn.setReadTimeout(10000);
 
 			stream = conn.getInputStream();
 			T result = mapper.readValue(stream, restObject);
@@ -277,8 +276,8 @@ public class RestAPI {
 		try {
 			URLConnection conn = new URL(getMinecraftVersionURL()).openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			conn.setConnectTimeout(5000);
-			conn.setReadTimeout(5000);
+			conn.setConnectTimeout(10000);
+			conn.setReadTimeout(10000);
 
 			stream = conn.getInputStream();
 			HashMap<String, Minecraft> versions = mapper.readValue(stream, new TypeReference<Map<String, Minecraft>>() {});
