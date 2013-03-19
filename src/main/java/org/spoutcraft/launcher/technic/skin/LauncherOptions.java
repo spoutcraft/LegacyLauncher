@@ -92,6 +92,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private String installedDirectory;
 	private LiteTextBox packLocation;
 	private boolean directoryChanged = false;
+	private boolean streamChanged = false;
 	private String buildStream = "stable";
 
 	public LauncherOptions() {
@@ -273,8 +274,12 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 				Settings.setMigrateDir(installedDirectory);
 			}
 			Settings.getYAML().save();
-			
-			if (mem != oldMem || oldperm != perm || directoryChanged) {
+
+			if (directoryChanged || streamChanged) {
+				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
+				dispose();
+			}
+			if (mem != oldMem || oldperm != perm) {
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
@@ -303,9 +308,11 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		} else if (action.equals(BETA_ACTION)) {
 			buildStream = "beta";
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
 		} else if (action.equals(STABLE_ACTION)) {
 			buildStream = "stable";
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
 		}
 		
 	}
