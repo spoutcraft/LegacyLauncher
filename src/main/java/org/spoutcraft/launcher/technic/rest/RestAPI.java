@@ -102,6 +102,7 @@ public class RestAPI {
 	}
 
 	public static Collection<RestInfo> getDefaults() {
+		getDefault();
 		if (DEFAULT != null) {
 			return DEFAULT.getModpacks();
 		} else {
