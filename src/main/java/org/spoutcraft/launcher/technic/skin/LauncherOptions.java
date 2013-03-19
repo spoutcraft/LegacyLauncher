@@ -62,6 +62,7 @@ import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public class LauncherOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
@@ -291,6 +292,10 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
+				if (!FileUtils.checkDirectory(file)) {
+					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				packLocation.setText(file.getPath());
 				installedDirectory = file.getAbsolutePath();
 				directoryChanged = true;

@@ -213,4 +213,22 @@ public class FileUtils {
 		}
 		deleteQuietly(dir);
 	}
+
+	public static boolean checkDirectory(File dir) {
+		if (!dir.isDirectory()) {
+			return false;
+		}
+
+		if (dir.list().length == 0) {
+			return true;
+		}
+
+		for (File file: dir.listFiles()) {
+			if (file.getName().equals("settings.yml")) {
+				return true;
+			}
+		}
+
+		return false;
+	}
 }
