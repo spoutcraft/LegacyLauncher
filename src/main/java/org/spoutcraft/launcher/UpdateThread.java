@@ -56,7 +56,6 @@ import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.util.Download.Result;
@@ -430,8 +429,7 @@ public class UpdateThread extends Thread {
 		logger.info("Minecraft Version: " + build.getMinecraft());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			String output = Launcher.getGameUpdater().getUpdateDir() + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, build, listener);
+			DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion().replaceAll("\\.", "_") + "/minecraft.jar", mcCache.getPath(), mcCache.getName(), minecraftMD5, listener);
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
 
@@ -441,21 +439,21 @@ public class UpdateThread extends Thread {
 		// Process other downloads
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar", jinputMD5, listener);
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar"));
 		}
 
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl.jar");
 		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar", lwjglMD5, listener);
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar"));
 		}
 
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl_util.jar");
 		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
+			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar", lwjgl_utilMD5, listener);
 		} else {
 			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar"));
 		}
