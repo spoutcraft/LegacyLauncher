@@ -118,16 +118,6 @@ public final class SpoutcraftData {
 		return RestAPI.getDownloadURL(build);
 	}
 
-	public String getPatchURL() {
-		String mirrorURL = "patch/minecraft_";
-		mirrorURL += getLatestMinecraft().getVersion();
-		mirrorURL += "-" + getMinecraft().getVersion() + ".patch";
-		String fallbackURL = "http://get.spout.org/patch/minecraft_";
-		fallbackURL += getLatestMinecraft().getVersion();
-		fallbackURL += "-" + getMinecraft().getVersion() + ".patch";
-		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
-	}
-
 	/**
 	 * Retrieves the md5 hashsum for the given Spoutcraft build from the REST API
 	 *

@@ -59,7 +59,7 @@ public class Validator {
 		File minecraftJar = new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar");
 		if (minecraftJar.exists()) {
 			if (!compareMD5(build.getMinecraft().getMd5(), minecraftJar)) {
-			Launcher.err("Invalid minecraft.jar");
+				//Launcher.err("Invalid minecraft.jar");
 				return minecraftJar.delete();
 			}
 		} else {
@@ -70,7 +70,7 @@ public class Validator {
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
 		if (spoutcraft.exists()) {
 			if (!compareMD5(build.getMD5(), spoutcraft)) {
-			Launcher.err("Invalid spoutcraft.jar");
+				Launcher.err("Invalid spoutcraft.jar");
 				return spoutcraft.delete();
 			}
 		} else {
@@ -84,7 +84,7 @@ public class Validator {
 		File jinputJar = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
 		if (jinputJar.exists()) {
 			if (!compareMD5(jinputMD5, jinputJar)) {
-			Launcher.err("Invalid jinput.jar");
+				Launcher.err("Invalid jinput.jar");
 				return jinputJar.delete();
 			}
 		} else {
@@ -97,7 +97,7 @@ public class Validator {
 		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
 		if (lwjglJar.exists()) {
 			if (!compareMD5(lwjglMD5, lwjglJar)) {
-			Launcher.err("Invalid lwjgl.jar");
+				Launcher.err("Invalid lwjgl.jar");
 				return lwjglJar.delete();
 			}
 		} else {
@@ -110,7 +110,7 @@ public class Validator {
 		File lwjgl_utilJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
 		if (lwjgl_utilJar.exists()) {
 			if (!compareMD5(lwjgl_utilMD5, lwjgl_utilJar)) {
-			Launcher.err("Invalid lwjgl_util.jar");
+				Launcher.err("Invalid lwjgl_util.jar");
 				return lwjgl_utilJar.delete();
 			}
 		} else {
@@ -126,7 +126,7 @@ public class Validator {
 			if (libraryFile.exists()) {
 				String md5 = MD5Utils.getMD5(libraryFile);
 				if (!lib.valid(md5)) {
-				Launcher.err("Invalid " + libraryFile.getName());
+					Launcher.err("Invalid " + libraryFile.getName());
 					return libraryFile.delete();
 				}
 			} else {
