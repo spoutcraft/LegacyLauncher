@@ -264,8 +264,8 @@ public class RestAPI {
 		try {
 			URLConnection conn = new URL(url).openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			conn.setConnectTimeout(10000);
-			conn.setReadTimeout(10000);
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
 
 			stream = conn.getInputStream();
 			T result = mapper.readValue(stream, restObject);
@@ -289,8 +289,8 @@ public class RestAPI {
 		try {
 			URLConnection conn = new URL(getMinecraftVersionURL()).openConnection();
 			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
-			conn.setConnectTimeout(10000);
-			conn.setReadTimeout(10000);
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
 
 			stream = conn.getInputStream();
 			HashMap<String, Minecraft> versions = mapper.readValue(stream, new TypeReference<Map<String, Minecraft>>() {});
@@ -323,7 +323,7 @@ public class RestAPI {
 
 	public static String getMinecraftMD5(String version) {
 		Minecraft minecraft = mcVersions.get(version);
-		if (minecraft == null || minecraft.shouldUsePatch()) {
+		if (shouldUsePatch(version)) {
 			version = PATCH_VERSION;
 		}
 		minecraft = mcVersions.get(version);
@@ -336,7 +336,13 @@ public class RestAPI {
 
 	public static boolean shouldUsePatch(String version) {
 		Minecraft minecraft = mcVersions.get(version);
-		return minecraft == null || minecraft.shouldUsePatch();
+		boolean shouldPatch = false;
+		if (minecraft == null && (version.equals("1.2.3") || version.equals("1.2.5"))) {
+			shouldPatch = true;
+		} else {
+			shouldPatch = minecraft.shouldUsePatch();
+		}
+		return shouldPatch;
 	}
 
 	public static String getPatchURL(String version) {
