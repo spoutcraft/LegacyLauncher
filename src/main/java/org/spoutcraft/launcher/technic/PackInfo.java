@@ -77,6 +77,10 @@ public abstract class PackInfo extends RestObject {
 		return true;
 	}
 
+	public boolean isForceDir() {
+		return false;
+	}
+
 	public String getLogoURL() {
 		return "";
 	}

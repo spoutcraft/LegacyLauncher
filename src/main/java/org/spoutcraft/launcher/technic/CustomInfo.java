@@ -135,6 +135,7 @@ public class CustomInfo extends PackInfo {
 		return new CustomModpack(this);
 	}
 
+	@Override
 	public boolean isForceDir() {
 		return forceDir;
 	}
@@ -167,17 +168,12 @@ public class CustomInfo extends PackInfo {
 		return mirrorUrl;
 	}
 
-	public PackInfo getPack() {
-		try {
-			if (this.hasMirror()) {
-				RestAPI rest = new RestAPI(getMirrorURL());
-				RestInfo restInfo = rest.getModpackInfo(getName());
-				return restInfo;
-			} else {
-				return this;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	public PackInfo getPack() throws IOException {
+		if (this.hasMirror()) {
+			RestAPI rest = new RestAPI(getMirrorURL());
+			RestInfo restInfo = rest.getModpackInfo(getName());
+			return restInfo;
+		} else {
 			return this;
 		}
 	}
