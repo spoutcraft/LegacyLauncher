@@ -391,6 +391,10 @@ public class SpoutcraftLauncher {
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
 	}
 
+	public static void flush() {
+		if (handler != null) handler.flush();
+	}
+
 	public static void setupConsole() {
 		if (console == null) {
 			console = new ConsoleFrame(2500, true);

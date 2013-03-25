@@ -33,6 +33,7 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.logging.Level;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -148,10 +149,15 @@ public class GameLauncher extends JFrame implements WindowListener {
 		// TODO: Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
 		// TODO: Someone fix this better (or not, no harm as it just works)
 		new File(Utils.getWorkingDirectory(), "resources").mkdirs();
-		minecraft.init();
-		minecraft.setSize(getWidth(), getHeight());
-		minecraft.start();
-		Launcher.getLoginFrame().onEvent(Event.GAME_LAUNCH);
+		try {
+			minecraft.init();
+			minecraft.setSize(getWidth(), getHeight());
+			minecraft.start();
+			Launcher.getLoginFrame().onEvent(Event.GAME_LAUNCH);
+		} catch (Throwable t) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to launch Spoutcraft", t);
+			SpoutcraftLauncher.flush();
+		}
 		return;
 	}
 
