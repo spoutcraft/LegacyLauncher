@@ -131,7 +131,7 @@ public class Utils {
 
 			if (changeInst == JFileChooser.APPROVE_OPTION) {
 				workDir = fileChooser.getSelectedFile();
-				if (!FileUtils.checkDirectory(workDir)) {
+				if (!FileUtils.checkLaunchDirectory(workDir)) {
 					JOptionPane.showMessageDialog(splash, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
 					return selectInstallDir(workDir);
 				}

@@ -214,7 +214,7 @@ public class FileUtils {
 		deleteQuietly(dir);
 	}
 
-	public static boolean checkDirectory(File dir) {
+	public static boolean checkLaunchDirectory(File dir) {
 		if (!dir.isDirectory()) {
 			return false;
 		}
@@ -230,5 +230,19 @@ public class FileUtils {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if a directory is empty
+	 * 
+	 * @param dir to check
+	 * @return true if the directory is empty
+	 */
+	public static boolean checkEmpty(File dir) {
+		if (!dir.isDirectory()) {
+			return false;
+		}
+
+		return dir.list().length == 0;
 	}
 }
