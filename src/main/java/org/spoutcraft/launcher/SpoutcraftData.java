@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher;
@@ -30,7 +30,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -47,6 +46,7 @@ import org.spoutcraft.launcher.exceptions.NoMirrorsAvailableException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Library;
 import org.spoutcraft.launcher.rest.MD5Result;
+import org.spoutcraft.launcher.rest.Minecraft;
 import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
@@ -60,6 +60,7 @@ public final class SpoutcraftData {
 	private final String build;
 	private final String hash;
 	private final List<Library> libs;
+	private final List<Minecraft> minecraftVersions;
 
 	/**
 	 * Creates a snapshot of Spoutcraft build information
@@ -67,6 +68,7 @@ public final class SpoutcraftData {
 	 * @throws RestfulAPIException
 	 */
 	public SpoutcraftData() throws RestfulAPIException {
+		minecraftVersions = requestMinecraftVersions();
 		build = calculateBuild();
 		installedBuild = calculateInstall();
 		hash = calcaulateMD5(build);
@@ -89,19 +91,23 @@ public final class SpoutcraftData {
 		return libs;
 	}
 
-	public String getMinecraftVersion() {
+	public Minecraft getMinecraft() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			//TODO: Fix by implementing get.spout.org API for MC
-			//return "1.4.7";
-			return getLatestMinecraftVersion();
-		} else {
-			return selected;
+			//Find the latest supported SC MC version
+			selected = Versions.getMinecraftVersions().get(0);
 		}
+		for (Minecraft minecraft : minecraftVersions) {
+			if (selected.equalsIgnoreCase(minecraft.getVersion())) {
+				return minecraft;
+			}
+		}
+		// Should never get here...
+		throw new IllegalStateException("Unknown Minecraft Build: " + selected);
 	}
 
-	public String getLatestMinecraftVersion() {
-		return Versions.getLatestMinecraftVersion();
+	public Minecraft getLatestMinecraft() {
+		return minecraftVersions.get(0);
 	}
 
 	public String getMinecraftURL(String user) {
@@ -110,16 +116,6 @@ public final class SpoutcraftData {
 
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
 		return RestAPI.getDownloadURL(build);
-	}
-
-	public String getPatchURL() {
-		String mirrorURL = "patch/minecraft_";
-		mirrorURL += getLatestMinecraftVersion();
-		mirrorURL += "-" + getMinecraftVersion() + ".patch";
-		String fallbackURL = "http://get.spout.org/patch/minecraft_";
-		fallbackURL += getLatestMinecraftVersion();
-		fallbackURL += "-" + getMinecraftVersion() + ".patch";
-		return MirrorUtils.getMirrorUrl(mirrorURL, fallbackURL);
 	}
 
 	/**
@@ -133,8 +129,7 @@ public final class SpoutcraftData {
 		String url = RestAPI.getSpoutcraftURL(build);
 		InputStream stream = null;
 		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
+			stream = RestAPI.getCachingInputStream(new URL(url), true);
 			Project project = mapper.readValue(stream, Project.class);
 			return project.getMd5();
 		} catch (IOException e) {
@@ -160,17 +155,16 @@ public final class SpoutcraftData {
 			return String.valueOf(buildArg);
 		}
 		Channel channel = Settings.getSpoutcraftChannel();
-		if (channel == Channel.CUSTOM){
+		if (channel == Channel.CUSTOM) {
 			return Settings.getSpoutcraftSelectedBuild();
 		}
 		InputStream stream = null;
-		//Use channel selection for latest
-		if (getLatestMinecraftVersion().equals(getMinecraftVersion())) {
+		// Use channel selection for latest
+		if (getLatestMinecraft().equals(getMinecraft())) {
 			int build;
 			String url = RestAPI.getSpoutcraftURL(channel);
 			try {
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				Project project = mapper.readValue(stream, Project.class);
 				build = project.getBuild();
 			} catch (IOException e) {
@@ -178,18 +172,16 @@ public final class SpoutcraftData {
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
-			//Check to see if stable has newer release
+			// Check to see if stable has newer release
 			if (channel == Channel.STABLE) {
 				return String.valueOf(build);
 			} else {
 				url = RestAPI.getSpoutcraftURL(Channel.STABLE);
 				try {
-					URLConnection conn = (new URL(url)).openConnection();
-					stream = conn.getInputStream();
+					stream = RestAPI.getCachingInputStream(new URL(url), true);
 					Project stable = mapper.readValue(stream, Project.class);
-					//Stable release is newer
+					// Stable release is newer
 					if (stable.getBuild() > build) {
-						Settings.setSpoutcraftChannel(Channel.STABLE);
 						return String.valueOf(stable.getBuild());
 					} else {
 						return String.valueOf(build);
@@ -201,12 +193,11 @@ public final class SpoutcraftData {
 				}
 			}
 		} else {
-			//Find the newest build for the mc version
+			// Find the newest build for the mc version
 			String url = RestAPI.ALL_BUILDS_URL;
 			try {
-				final String mcVersion = getMinecraftVersion();
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				final String mcVersion = getMinecraft().getVersion();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				ChannelData data = mapper.readValue(stream, ChannelData.class);
 				HashSet<String> builds = new HashSet<String>(100);
 				for (VersionData v : data.stable) {
@@ -251,12 +242,11 @@ public final class SpoutcraftData {
 			InputStream stream = null;
 			String url = RestAPI.getMD5URL(md5);
 			try {
-				URLConnection conn = (new URL(url)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(url), true);
 				MD5Result result = mapper.readValue(stream, MD5Result.class);
 				return result.getBuildNumber();
 			} catch (IOException e) {
-				//ignore
+				// Ignore
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
@@ -275,8 +265,7 @@ public final class SpoutcraftData {
 		InputStream stream = null;
 		String url = RestAPI.getLibraryURL(build);
 		try {
-			URLConnection conn = (new URL(url)).openConnection();
-			stream = conn.getInputStream();
+			stream = RestAPI.getCachingInputStream(new URL(url), true);
 			List<String> json = IOUtils.readLines(stream);
 			String fullJson = "";
 			for (String j : json) {
@@ -314,7 +303,7 @@ public final class SpoutcraftData {
 		@JsonProperty("minecraft")
 		Library[] minecraft;
 	}
-	
+
 	private static class ChannelData {
 		@JsonProperty("stable")
 		VersionData[] stable;
@@ -323,11 +312,27 @@ public final class SpoutcraftData {
 		@JsonProperty("dev")
 		VersionData[] dev;
 	}
-	
+
 	private static class VersionData {
 		@JsonProperty("build_number")
 		String buildNumber;
 		@JsonProperty("build_version")
 		String minecraftVersion;
 	}
+	
+	private List<Minecraft> requestMinecraftVersions() throws RestfulAPIException {
+		InputStream stream = null;
+		try {
+			stream = RestAPI.getCachingInputStream(new URL(RestAPI.MINECRAFT_URL), true);
+			Minecraft[] versions = mapper.readValue(stream, Minecraft[].class);
+			List<Minecraft> list = new ArrayList<Minecraft>(Arrays.asList(versions));
+			Collections.sort(list);
+			return Collections.unmodifiableList(list);
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + RestAPI.MINECRAFT_URL + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+
 }

@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.rest;
@@ -29,8 +29,8 @@ package org.spoutcraft.launcher.rest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +38,7 @@ import java.util.Set;
 import org.apache.commons.io.IOUtils;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.spoutcraft.launcher.VersionComparator;
 
 public final class Versions {
 	private static List<String> versions = null;
@@ -45,8 +46,7 @@ public final class Versions {
 		if (versions == null) {
 			InputStream stream = null;
 			try {
-				URLConnection conn = (new URL(RestAPI.VERSIONS_URL)).openConnection();
-				stream = conn.getInputStream();
+				stream = RestAPI.getCachingInputStream(new URL(RestAPI.VERSIONS_URL), true);
 				ObjectMapper mapper = new ObjectMapper();
 				Channel c = mapper.readValue(stream, Channel.class);
 
@@ -61,19 +61,14 @@ public final class Versions {
 					versions.add(version.version);
 				}
 				Versions.versions = new ArrayList<String>(versions);
+				Collections.sort(Versions.versions, new VersionComparator());
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			} finally {
 				IOUtils.closeQuietly(stream);
 			}
-			//TODO: Fix by implementing get.spout.org API for MC
-			//versions.add(0, "1.4.7");
 		}
-		return versions;
-	}
-
-	public static synchronized String getLatestMinecraftVersion() {
-		return getMinecraftVersions().get(0);
+		return new ArrayList<String>(versions);
 	}
 
 	private static class Channel {

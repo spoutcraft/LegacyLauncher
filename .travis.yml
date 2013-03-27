@@ -1,0 +1,9 @@
+language: java
+jdk:
+    - oraclejdk7
+    - openjdk7
+    - openjdk6
+install: mvn clean -DbuildNumber=${TRAVIS_BUILD_NUMBER}
+notifications:
+    email: false
+    irc: "irc.esper.net#spoutdev"

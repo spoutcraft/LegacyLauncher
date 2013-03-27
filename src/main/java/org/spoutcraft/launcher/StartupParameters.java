@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher;
@@ -48,46 +48,43 @@ public final class StartupParameters {
 	@Parameter
 	private List<String> parameters = Lists.newArrayList();
 
-	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft Username")
+	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft username")
 	private String user = null;
 
-	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft Password")
+	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft password")
 	private String pass = null;
 
-	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft Server to join")
+	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft server to join")
 	private String server = null;
 
-	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
+	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable mode")
 	private boolean portable = false;
 
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
 
-	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
+	@Parameter(names = {"-proxy_host"}, description = "HTTP proxy host")
 	private String proxyHost = null;
 
-	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
+	@Parameter(names = {"-proxy_port"}, description = "HTTP proxy port")
 	private String proxyPort = null;
 
-	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
+	@Parameter(names = {"-proxy_user"}, description = "HTTP proxy username")
 	private String proxyUser = null;
 
-	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
+	@Parameter(names = {"-proxy_password"}, description = "HTTP proxy password")
 	private String proxyPassword = null;
 
-	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
+	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables file integrity checking with MD5")
 	private boolean ignoreMD5 = false;
 
 	@Parameter(names = {"-build"}, description = "Uses a specific Spoutcraft build")
 	private int build = -1;
 
-	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
+	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for property memory arguments")
 	private boolean relaunched = false;
 
-	@Parameter(names = {"-old_launcher"}, description = "Indicates old launcher")
-	private boolean oldLauncher = false;
-
-	@Parameter(names = {"-console"}, description = "Shows the console window")
+	@Parameter(names = {"-console"}, description = "Shows the Spoutcraft debug console window")
 	private boolean console = false;
 
 	public List<String> getParameters() {
@@ -95,15 +92,15 @@ public final class StartupParameters {
 	}
 
 	public void logParameters(Logger log) {
-		log.info("------------ Startup Parameters ------------");
+		log.info("------------- Startup Parameters ------------");
 		if (user != null) {
-			log.info("Minecraft Username: " + user);
+			log.info("Minecraft username: " + user);
 		}
 		if (pass != null) {
-			log.info("Minecraft Password exists");
+			log.info("Minecraft password exists");
 		}
 		if (server != null) {
-			log.info("Minecraft Server: " + server);
+			log.info("Minecraft server: " + server);
 		}
 		if (portable) {
 			log.info("Portable mode activated");
@@ -112,19 +109,19 @@ public final class StartupParameters {
 			log.info("Debug mode activated");
 		}
 		if (proxyHost != null) {
-			log.info("Proxy Host: " + proxyHost);
+			log.info("Proxy host: " + proxyHost);
 		}
 		if (proxyPort != null) {
-			log.info("Proxy Port: " + proxyPort);
+			log.info("Proxy port: " + proxyPort);
 		}
 		if (proxyUser != null) {
-			log.info("Proxy User exists");
+			log.info("Proxy user exists");
 		}
 		if (proxyPassword != null) {
-			log.info("Porxy Password exists");
+			log.info("Porxy password exists");
 		}
 		if (ignoreMD5) {
-			log.info("No MD5 Mode activated");
+			log.info("No MD5 mode activated");
 		}
 		if (build != -1) {
 			log.info("Spoutcraft build selected: " + build);
@@ -132,11 +129,8 @@ public final class StartupParameters {
 		if (relaunched) {
 			log.info("Relaunched with correct memory");
 		}
-		if (oldLauncher) {
-			log.info("Old Launcher detected");
-		}
 		if (console) {
-			log.info("Console frame enabled");
+			log.info("Debug console enabled");
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -168,8 +162,8 @@ public final class StartupParameters {
 			} catch (java.io.UnsupportedEncodingException ignore) { }
 
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
-			log.info("Attempting relaunch with " + memory + " mb of RAM");
-			log.info("Path to Launcher Jar: " + pathToJar);
+			log.info("Attempting relaunch with " + memory + "MB of RAM");
+			log.info("Path to launcher jar: " + pathToJar);
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
@@ -195,8 +189,6 @@ public final class StartupParameters {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		} else {
-			Main.old |= oldLauncher;
 		}
 		return false;
 	}
@@ -243,9 +235,6 @@ public final class StartupParameters {
 		if (build != -1) {
 			params.add("-build");
 			params.add(Integer.toString(build));
-		}
-		if (Main.isOldLauncher()) {
-			params.add("-old_launcher");
 		}
 		if (console) {
 			params.add("-console");

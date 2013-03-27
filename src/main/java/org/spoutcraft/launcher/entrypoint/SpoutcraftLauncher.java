@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.entrypoint;
@@ -36,8 +36,9 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
-import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -47,6 +48,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
+
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
@@ -54,7 +56,6 @@ import com.beust.jcommander.JCommander;
 import org.apache.commons.io.IOUtils;
 
 import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.GameLauncher;
@@ -96,8 +97,10 @@ public class SpoutcraftLauncher {
 		SpoutcraftLauncher.logger = setupLogger();
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
-		logger.info("------------------------------------------");
-		logger.info("Spoutcraft Launcher is starting....");
+		logger.info("---------------------------------------------");
+		logger.info("Spoutcraft Launcher is starting...");
+		logger.info("Operating System: " + System.getProperty("os.name") + " " + System.getProperty("os.version") + " " + System.getProperty("os.arch"));
+		logger.info("Java Version: " + System.getProperty("java.vendor") + " " + System.getProperty("java.version") + " <" + System.getProperty("java.vendor.url") + ">");
 		logger.info("Launcher Build: " + launcherBuild);
 
 		params.logParameters(logger);
@@ -122,12 +125,12 @@ public class SpoutcraftLauncher {
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
+			logger.info("Initial organization and look and feel time took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher settings took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Loading settings took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -147,12 +150,17 @@ public class SpoutcraftLauncher {
 
 		if (params.isConsole() || Settings.isDebugMode()) {
 			setupConsole();
-			logger.info("Console Mode Activated");
+			logger.info("Debug mode activated!");
 		}
 
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
 		Thread logThread = new LogFlushThread();
 		logThread.start();
+
+		if (Settings.isDebugMode()) {
+			logger.info("Internet validation and look and feel took " + (System.currentTimeMillis() - start) + " ms");
+			start = System.currentTimeMillis();
+		}
 
 		// Set up the launcher and load login frame
 		LoginFrame frame = new MetroLoginFrame();
@@ -172,7 +180,7 @@ public class SpoutcraftLauncher {
 		Launcher.getGameUpdater().start();
 
 		if (Settings.isDebugMode()) {
-			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
+			logger.info("Loading default launcher skin took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
 
@@ -183,34 +191,43 @@ public class SpoutcraftLauncher {
 			frame.doLogin(params.getUser(), params.getPass());
 		}
 
-		if (Settings.isDebugMode()) {
-			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+		logger.info("Launcher startup took " + (System.currentTimeMillis() - startupTime) + "ms");
 	}
 
 	private static void checkInternet() {
-		if (!pingURL("http://www.google.com")) {
-			JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
-		} else if (!pingURL("http://get.spout.org")) {
-			JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
-			System.exit(0);
+		String localHost = "127.0.0.1";
+		try {
+			localHost = InetAddress.getLocalHost().getHostAddress().toString();
+		} catch (Exception e) { }
+		logger.info("Localhost: " + localHost);
+
+		// May not be online, check
+		if (localHost.contains("127.0.0.1")) {
+			if (pingURL("http://www.google.com") / 100 != 2) {
+				JOptionPane.showMessageDialog(null, "You must have an internet connection to use Spoutcraft", "No Internet Connection!", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			} else if (pingURL("http://get.spout.org") / 100 != 2) {
+				JOptionPane.showMessageDialog(null, "The Spout webservers are currently not responding. Try again later.", "Spout Servers Down", JOptionPane.ERROR_MESSAGE);
+				System.exit(0);
+			}
 		}
 	}
 
-	private static boolean pingURL(String urlLoc) {
+	public static int pingURL(String urlLoc) {
 		try {
 			final URL url = new URL(urlLoc);
-			final URLConnection conn = url.openConnection();
-			conn.setConnectTimeout(10000);
-			conn.getInputStream();
-			return true;
-		} catch (IOException e) {
-			return false;
+			final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setConnectTimeout(5000);
+			int response = conn.getResponseCode();
+			if (logger != null) {
+				logger.info("Pinging [" + urlLoc + "], response: " + response);
+			}
+			return response;
+		} catch (IOException e) { }
+		if (logger != null) {
+			logger.info("Pinged [" + urlLoc + "], no response.");
 		}
+		return HttpURLConnection.HTTP_NOT_FOUND;
 	}
 
 	private static void setupProxy() {
@@ -248,10 +265,8 @@ public class SpoutcraftLauncher {
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
-		if (!Main.isOldLauncher()) {
-			temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
-			temp.delete();
-		}
+		temp = new File(Utils.getWorkingDirectory(), "launcherVersion");
+		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "mc.patch");
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "config/libraries.yml");
@@ -333,9 +348,7 @@ public class SpoutcraftLauncher {
 		String build = "0";
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
-		} catch (Exception e) {
-
-		}
+		} catch (Exception e) { }
 		return build;
 	}
 
@@ -376,6 +389,10 @@ public class SpoutcraftLauncher {
 		}
 
 		return new YAMLProcessor(file, false, YAMLFormat.EXTENDED);
+	}
+
+	public static void flush() {
+		if (handler != null) handler.flush();
 	}
 
 	public static void setupConsole() {

@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 /*
@@ -64,7 +64,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.swing.ImageIcon;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -91,9 +91,9 @@ import org.spoutcraft.launcher.util.Compatibility;
  *
  * @author sk89q
  *
- * This code reused & relicensed as LGPL v 3 with permission.
+ * This code reused and relicensed as LGPLv3 with permission.
  */
-public class ConsoleFrame extends JFrame implements MouseListener{
+public class ConsoleFrame extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger rootLogger = Logger.getLogger("launcher");
 	private Process trackProc;
@@ -213,10 +213,8 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	 * @param attributes attribute set, or null for none
 	 */
 	public void log(String line, AttributeSet attributes) {
-		if (colorEnabled) {
-			if (line.startsWith("(!!)")) {
-				attributes = highlightedAttributes;
-			}
+		if (colorEnabled && line.startsWith("(!!)")) {
+			attributes = highlightedAttributes;
 		}
 
 		try {
@@ -358,7 +356,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	/**
 	 * Used to send console messages to the console.
 	 */
-	public class ConsoleOutputStream extends ByteArrayOutputStream {
+	public final class ConsoleOutputStream extends ByteArrayOutputStream {
 		private AttributeSet attributes;
 
 		private ConsoleOutputStream(AttributeSet attributes) {
@@ -439,13 +437,13 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 		return result.toString();
 	}
 
-	public void mousePressed(MouseEvent e){
+	public void mousePressed(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			doPop(e);
 		}
 	}
 
-	public void mouseReleased(MouseEvent e){
+	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			doPop(e);
 		}
@@ -460,7 +458,7 @@ public class ConsoleFrame extends JFrame implements MouseListener{
 	public void mouseExited(MouseEvent e) {
 	}
 
-	private void doPop(MouseEvent e){
+	private void doPop(MouseEvent e) {
 		ContextMenu menu = new ContextMenu();
 		menu.show(e.getComponent(), e.getX(), e.getY());
 	}

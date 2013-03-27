@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.skin.components;
@@ -38,16 +38,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -62,15 +61,12 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 
-import org.spoutcraft.launcher.Main;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
-import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
@@ -82,7 +78,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public LoginFrame() {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setTitle("Spoutcraft SP");
+		setTitle("Spoutcraft Launcher");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 	}
 
@@ -312,25 +308,19 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				writeUsernameList();
 				Launcher.getGameUpdater().runGame();
 				break;
-            case BAD_LOGIN:
-                JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
-                writeUsernameList();
-                Launcher.getGameUpdater().runGame();
-                //enableForm();
-                break;
-            case ACCOUNT_MIGRATED:
-                JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
-                writeUsernameList();
-                Launcher.getGameUpdater().runGame();
-                //removeAccount(getSelectedUser());
-                //enableForm();
-                break;
-            case USER_NOT_PREMIUM:
-                JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
-                writeUsernameList();
-                Launcher.getGameUpdater().runGame();
-                //enableForm();
-                break;
+			case BAD_LOGIN:
+				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
+				enableForm();
+				break;
+			case ACCOUNT_MIGRATED:
+				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
+				removeAccount(getSelectedUser());
+				enableForm();
+				break;
+			case USER_NOT_PREMIUM:
+				JOptionPane.showConfirmDialog(getParent(), "Spoutcraft will not work without a premium Minecraft account. We do not encourage piracy!", "Premium Minecraft Account Required", JOptionPane.DEFAULT_OPTION);
+				enableForm();
+				break;
 			case MINECRAFT_NETWORK_DOWN:
 				if (!canPlayOffline()) {
 					JOptionPane.showMessageDialog(getParent(), "Unable to authenticate account with minecraft.net");
@@ -343,7 +333,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 					}
 				}
 				break;
-
 			case PERMISSION_DENIED:
 				JOptionPane.showMessageDialog(getParent(), "Ensure Spoutcraft is whitelisted with any antivirus applications.", "Permission Denied!", JOptionPane.WARNING_MESSAGE);
 				enableForm();
@@ -356,9 +345,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		super.setVisible(visible);
 		if (visible) {
 			showJava15Warning();
-			if (Main.isOldLauncher()) {
-				showOutdatedWarning();
-			}
+			showJava17MacWarning();
 		}
 	}
 
@@ -374,53 +361,58 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			style.append("font-size:" + arial12.getSize() + "pt;");
 
 			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-					+ "Spoutcraft requires Java 6 or greater to run, Download"
-					+ "<br>java updates from http://spout.in/javaupdates</body></html>");
+					+ "Spoutcraft is not compatible with Java 5."
+					+ "<br>"
+					+ "<br>Visit the following link for more information"
+					+ "<br><a href=\"http://spout.in/macjava5\">http://spout.in/macjava5</a></body></html>");
 
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
 
 			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
 			final String title = "Java 1.6 Required!";
-			final String[] options = {"Ok", "Copy URL to clipboard"};
+			final String[] options = {"Exit", "Copy URL to clipboard"};
 
 			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
-				StringSelection ss = new StringSelection("http://spout.in/javaupdates");
+				StringSelection ss = new StringSelection("http://spout.in/macjava5");
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 			}
 			dispose();
 			System.exit(0);
 		}
 	}
-	private void showOutdatedWarning() {
-		JLabel label = new JLabel();
-		Font arial12 = new Font("Arial", Font.PLAIN, 12);
-		label.setFont(arial12);
 
-		StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-		style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-		style.append("font-size:" + arial12.getSize() + "pt;");
+	private void showJava17MacWarning() {
+		String version = System.getProperty("java.version");
+		if (version.startsWith("1.7") && OperatingSystem.getOS().isMac()) {
+			JLabel label = new JLabel();
+			Font arial12 = new Font("Arial", Font.PLAIN, 12);
+			label.setFont(arial12);
 
-		JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-				+ "Please download our newest launcher from <a href=\"http://get.spout.org/\">http://get.spout.org</a></body></html>");
+			StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
+			style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
+			style.append("font-size:" + arial12.getSize() + "pt;");
 
-		ep.addHyperlinkListener(new HyperlinkListener() {
-			public void hyperlinkUpdate(HyperlinkEvent e) {
-				if (e.getEventType().equals(HyperlinkEvent.EventType.ACTIVATED)) {
-					try {
-						Compatibility.browse(e.getURL().toURI());
-					} catch (URISyntaxException e1) {
-						e1.printStackTrace();
-					}
-				}
+			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
+					+ "Spoutcraft has incompatibility issues with Java 7 on OS X."
+					+ "<br>"
+					+ "<br>Visit the following link for more information"
+					+ "<br><a href=\"http://spout.in/macjava7\">http://spout.in/macjava7</a></body></html>");
+
+			ep.setEditable(false);
+			ep.setBackground(label.getBackground());
+
+			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+			final String title = "Java 1.6 Required!";
+			final String[] options = {"Exit", "Copy URL to clipboard"};
+
+			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
+				StringSelection ss = new StringSelection("http://spout.in/macjava7");
+				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 			}
-		});
-		ep.setEditable(false);
-		ep.setBackground(label.getBackground());
-
-		JOptionPane.showMessageDialog(this, ep, "Outdated Launcher", JOptionPane.WARNING_MESSAGE);
-		dispose();
-		System.exit(0);
+			dispose();
+			System.exit(0);
+		}
 	}
 
 	protected static final class UserPasswordInformation {

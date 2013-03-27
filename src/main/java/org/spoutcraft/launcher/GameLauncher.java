@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher;
@@ -33,6 +33,8 @@ import java.awt.Toolkit;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
+import java.util.logging.Level;
+
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -144,13 +146,18 @@ public class GameLauncher extends JFrame implements WindowListener {
 
 		validate();
 		this.setVisible(true);
-		//TODO Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
-		//TODO Someone fix this better (or not, no harm as it just works)
+		// TODO: Incredibly hacky fix for grey screens due to Minecraft not making the resources directory.
+		// TODO: Someone fix this better (or not, no harm as it just works)
 		new File(Utils.getWorkingDirectory(), "resources").mkdirs();
-		minecraft.init();
-		minecraft.setSize(getWidth(), getHeight());
-		minecraft.start();
-		Launcher.getLoginFrame().onEvent(Event.GAME_LAUNCH);
+		try {
+			minecraft.init();
+			minecraft.setSize(getWidth(), getHeight());
+			minecraft.start();
+			Launcher.getLoginFrame().onEvent(Event.GAME_LAUNCH);
+		} catch (Throwable t) {
+			Launcher.getLogger().log(Level.SEVERE, "Unable to launch Spoutcraft", t);
+			SpoutcraftLauncher.flush();
+		}
 		return;
 	}
 

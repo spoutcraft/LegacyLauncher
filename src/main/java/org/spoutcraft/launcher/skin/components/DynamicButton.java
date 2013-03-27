@@ -1,10 +1,10 @@
 /*
- * This file is part of Spoutcraft.
+ * This file is part of Spoutcraft Launcher.
  *
- * Copyright (c) 2011-2012, Spout LLC <http://www.spout.org/>
- * Spoutcraft is licensed under the Spout License Version 1.
+ * Copyright (c) 2011 Spout LLC <http://www.spout.org/>
+ * Spoutcraft Launcher is licensed under the Spout License Version 1.
  *
- * Spoutcraft is free software: you can redistribute it and/or modify
+ * Spoutcraft Launcher is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -13,7 +13,7 @@
  * software, incorporating those changes, under the terms of the MIT license,
  * as described in the Spout License Version 1.
  *
- * Spoutcraft is distributed in the hope that it will be useful,
+ * Spoutcraft Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License for more details.
@@ -21,7 +21,7 @@
  * You should have received a copy of the GNU Lesser General Public License,
  * the MIT license and the Spout License Version 1 along with this program.
  * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
+ * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
 package org.spoutcraft.launcher.skin.components;
@@ -33,7 +33,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
 import java.util.concurrent.atomic.AtomicReference;
 
 import javax.swing.Icon;
@@ -45,15 +44,15 @@ import javax.swing.JLabel;
 import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.SwingWorker;
 
-public class DynamicButton extends JButton implements MouseListener{
+public class DynamicButton extends JButton implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private final AtomicReference<ResizingWorker> worker = new AtomicReference<ResizingWorker>(null);
-	private final BufferedImage icon;
+	private final FutureImage icon;
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
 	private final TransparentButton remove;
 	private final String account, userName;
-	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, String account, String userName) {
+	public DynamicButton(JFrame parent, FutureImage icon, int hoverIncrease, String account, String userName) {
 		this.icon = icon;
 		this.hoverIncrease = hoverIncrease;
 		this.account = account;
@@ -69,11 +68,11 @@ public class DynamicButton extends JButton implements MouseListener{
 		underLabel.setForeground(Color.WHITE);
 		parent.getContentPane().add(underLabel);
 		parent.getContentPane().add(remove);
-		
+
 		remove.setTransparency(0.4F);
 		remove.setHoverTransparency(1F);
 	}
-	
+
 	public JButton getRemoveIcon() {
 		return remove;
 	}
@@ -116,20 +115,20 @@ public class DynamicButton extends JButton implements MouseListener{
 
 	@Override
 	public void setBounds(int x, int y, int w, int h) {
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, w, h)));
+		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), w, h)));
 		super.setBounds(x, y, w, h);
 		remove.setBounds(x + w + 2, y, 16, 16);
-		
-		//Allow the label to overflow the button width
+
+		// Allow the label to overflow the button width
 		int sw = underLabel.getFontMetrics(underLabel.getFont()).stringWidth(underLabel.getText());
 		if (sw > w) {
 			x -= ((sw - w) / 2);
 			w = sw;
-			
+
 		}
 		underLabel.setBounds(x + (w - sw) / 2, y + h, w, 20);
-		
-		
+
+
 	}
 
 	private void updateSize(int size) {
@@ -146,7 +145,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		int width = getIcon().getIconWidth();
 		int height = getIcon().getIconHeight();
 		setBounds(getX() - size / 2, getY() - size / 2, width + size, height + size);
-		setIcon(new ImageIcon(ImageUtils.scaleImage(icon, width + size, height + size)));
+		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), width + size, height + size)));
 	}
 
 	public void mouseClicked(MouseEvent e) {
@@ -167,7 +166,7 @@ public class DynamicButton extends JButton implements MouseListener{
 		updateSize(-hoverIncrease);
 		underLabel.setVisible(false);
 	}
-	
+
 	private static class DynamicLabel extends JLabel {
 		private static final long serialVersionUID = 1L;
 		protected final AtomicReference<TransparencyWorker> worker = new AtomicReference<TransparencyWorker>(null);
