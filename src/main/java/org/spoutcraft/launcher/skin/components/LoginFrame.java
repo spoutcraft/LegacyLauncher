@@ -309,7 +309,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				Launcher.getGameUpdater().runGame();
 				break;
 			case BAD_LOGIN:
-				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
+				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination." + "\n\n" + "Spoutcraft will not work without a premium Minecraft account.", "Bad Login Information!", JOptionPane.WARNING_MESSAGE);
 				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:
