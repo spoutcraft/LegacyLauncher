@@ -335,6 +335,11 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		for (int i = 0; i < users; i++) {
 			String accountName = savedUsers.get(i);
 			String userName = this.getUsername(accountName);
+			
+			if (i == 0) {
+				name.setText(accountName);
+				pass.setText(this.getSavedPassword(accountName));
+			}
 
 			// Create callable
 			CallbackTask callback = getImage(userName);
