@@ -339,7 +339,7 @@ public class RestAPI {
 		boolean shouldPatch = false;
 		if (minecraft == null && (version.equals("1.2.3") || version.equals("1.2.5"))) {
 			shouldPatch = true;
-		} else {
+		} else if (minecraft != null) {
 			shouldPatch = minecraft.shouldUsePatch();
 		}
 		return shouldPatch;
