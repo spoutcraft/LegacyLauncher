@@ -519,11 +519,14 @@ public class UpdateThread extends Thread {
 		}
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (spoutcraft.exists() && Integer.parseInt(build.getInstalledBuild()) > 0) {
-			// Save our installed copy
-			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
-			if (!spoutcraftCache.exists()) {
-				Utils.copy(spoutcraft, spoutcraftCache);
+		if (spoutcraft.exists()) {
+			File spoutcraftCache;
+			if (Integer.parseInt(build.getInstalledBuild()) > 0) {
+				// Save our installed copy
+				spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
+				if (!spoutcraftCache.exists()) {
+					Utils.copy(spoutcraft, spoutcraftCache);
+				}
 			}
 			spoutcraft.delete();
 			// Check for an old copy of this build if it is already saved
