@@ -95,7 +95,7 @@ public final class SpoutcraftData {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
 			//Find the latest supported SC MC version
-			selected = Versions.getMinecraftVersions().get(0);
+			selected = Versions.getStableMinecraftVersions().get(0);
 		}
 		for (Minecraft minecraft : minecraftVersions) {
 			if (selected.equalsIgnoreCase(minecraft.getVersion())) {
