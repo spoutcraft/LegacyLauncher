@@ -51,7 +51,6 @@ import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public final class SpoutcraftData {

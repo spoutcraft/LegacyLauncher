@@ -60,7 +60,13 @@ public class Settings {
 	}
 
 	public static synchronized Channel getLauncherChannel() {
-		return Channel.getType(yaml.getInt("launcher.launcher.type", 0));
+		Channel channel = Channel.getType(yaml.getInt("launcher.launcher.type", 0));
+		//Custom is not a valid launcher channel
+		if (channel == Channel.CUSTOM) {
+			setLauncherChannel(Channel.STABLE);
+			return Channel.STABLE;
+		}
+		return channel;
 	}
 
 	public static synchronized void setLauncherChannel(Channel build) {
