@@ -229,13 +229,13 @@ public class Utils {
 			throw new MCNetworkException();
 		}
 		if (!result.contains(":")) {
-			if (result.trim().contains("Bad login")) {
+			if (result.toLowerCase().contains("bad login")) {
 				throw new BadLoginException();
-			} else if (result.trim().contains("User not premium")) {
+			} else if (result.toLowerCase().contains("not premium")) {
 				throw new MinecraftUserNotPremiumException();
-			} else if (result.trim().contains("Old version")) {
+			} else if (result.toLowerCase().contains("old version")) {
 				throw new OutdatedMCLauncherException();
-			} else if (result.trim().contains("Mojang account, use e-mail as username.")) {
+			} else if (result.toLowerCase().contains("migrated")) {
 				throw new AccountMigratedException();
 			} else {
 				System.err.print("Unknown login result: " + result);
