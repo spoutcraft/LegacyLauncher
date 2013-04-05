@@ -72,26 +72,25 @@ public final class Versions {
 	}
 
 	public static synchronized List<String> getStableMinecraftVersions() {
-		if (versions == null) {
-			InputStream stream = null;
-			try {
-				stream = RestAPI.getCachingInputStream(new URL(RestAPI.VERSIONS_URL), true);
-				ObjectMapper mapper = new ObjectMapper();
-				Channel c = mapper.readValue(stream, Channel.class);
+		InputStream stream = null;
+		ArrayList<String> stableVersions = new ArrayList<String>();
+		try {
+			stream = RestAPI.getCachingInputStream(new URL(RestAPI.VERSIONS_URL), true);
+			ObjectMapper mapper = new ObjectMapper();
+			Channel c = mapper.readValue(stream, Channel.class);
 
-				Set<String> versions = new HashSet<String>();
-				for (Version version : c.releaseChannel.stable) {
-					versions.add(version.version);
-				}
-				Versions.versions = new ArrayList<String>(versions);
-				Collections.sort(Versions.versions, new VersionComparator());
-			} catch (IOException e) {
-				throw new RuntimeException(e);
-			} finally {
-				IOUtils.closeQuietly(stream);
+			Set<String> versions = new HashSet<String>();
+			for (Version version : c.releaseChannel.stable) {
+				versions.add(version.version);
 			}
+			stableVersions.addAll(versions);
+			Collections.sort(stableVersions, new VersionComparator());
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} finally {
+			IOUtils.closeQuietly(stream);
 		}
-		return new ArrayList<String>(versions);
+		return stableVersions;
 	}
 
 	private static class Channel {
