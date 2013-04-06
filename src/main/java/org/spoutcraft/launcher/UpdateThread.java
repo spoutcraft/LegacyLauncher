@@ -334,7 +334,10 @@ public class UpdateThread extends Thread {
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
 		progress += 100F;
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
+		if (!spoutcraft.exists()) {
+			return true;
+		}
+		if (!Settings.isIgnoreMD5() && !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
 			return true;
 		}
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
