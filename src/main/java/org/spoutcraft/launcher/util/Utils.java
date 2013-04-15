@@ -229,7 +229,7 @@ public class Utils {
 			throw new MCNetworkException();
 		}
 		if (!result.contains(":")) {
-<<<<<<< HEAD
+
             //For SP login
             result=" : :"+user+": ";
             return result.split(":");
