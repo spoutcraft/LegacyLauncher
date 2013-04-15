@@ -145,7 +145,7 @@ public class Start {
 	public static int getLatestLauncherBuild() {
 		try {
 			return requestLatestLauncherBuild();
-		} catch (RestfulAPIException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return -1;

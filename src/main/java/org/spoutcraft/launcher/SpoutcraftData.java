@@ -51,7 +51,6 @@ import org.spoutcraft.launcher.rest.Project;
 import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.rest.Versions;
 import org.spoutcraft.launcher.util.MD5Utils;
-import org.spoutcraft.launcher.util.MirrorUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public final class SpoutcraftData {
@@ -95,7 +94,7 @@ public final class SpoutcraftData {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
 			//Find the latest supported SC MC version
-			selected = Versions.getMinecraftVersions().get(0);
+			selected = Versions.getStableMinecraftVersions().get(0);
 		}
 		for (Minecraft minecraft : minecraftVersions) {
 			if (selected.equalsIgnoreCase(minecraft.getVersion())) {

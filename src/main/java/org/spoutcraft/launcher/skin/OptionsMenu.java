@@ -213,7 +213,9 @@ public class OptionsMenu extends JDialog implements ActionListener {
 		version.addItem("Stable");
 		version.addItem("Beta");
 		version.addItem("Dev");
-		version.addItem("Custom");
+		if (custom) {
+			version.addItem("Custom");
+		}
 		version.setSelectedIndex(selection);
 		return Channel.getType(selection);
 	}

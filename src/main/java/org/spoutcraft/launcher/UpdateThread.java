@@ -334,7 +334,10 @@ public class UpdateThread extends Thread {
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
 		progress += 100F;
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (!spoutcraft.exists() || !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
+		if (!spoutcraft.exists()) {
+			return true;
+		}
+		if (!Settings.isIgnoreMD5() && !build.getMD5().equalsIgnoreCase(MD5Utils.getMD5(spoutcraft))) {
 			return true;
 		}
 		stateChanged("Checking for Spoutcraft update...", progress / steps);
@@ -519,11 +522,14 @@ public class UpdateThread extends Thread {
 		}
 
 		File spoutcraft = new File(Launcher.getGameUpdater().getBinDir(), "spoutcraft.jar");
-		if (spoutcraft.exists() && Integer.parseInt(build.getInstalledBuild()) > 0) {
-			// Save our installed copy
-			File spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
-			if (!spoutcraftCache.exists()) {
-				Utils.copy(spoutcraft, spoutcraftCache);
+		if (spoutcraft.exists()) {
+			File spoutcraftCache;
+			if (Integer.parseInt(build.getInstalledBuild()) > 0) {
+				// Save our installed copy
+				spoutcraftCache = new File(cacheDir, "spoutcraft_" + build.getInstalledBuild() + ".jar");
+				if (!spoutcraftCache.exists()) {
+					Utils.copy(spoutcraft, spoutcraftCache);
+				}
 			}
 			spoutcraft.delete();
 			// Check for an old copy of this build if it is already saved
