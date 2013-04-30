@@ -29,7 +29,6 @@ package org.spoutcraft.launcher;
 import java.util.Comparator;
 
 public class VersionComparator implements Comparator<String> {
-
 	public int compare(String o1, String o2) {
 		String[] versions = o1.split("\\.");
 		String[] otherVersions = o2.split("\\.");
