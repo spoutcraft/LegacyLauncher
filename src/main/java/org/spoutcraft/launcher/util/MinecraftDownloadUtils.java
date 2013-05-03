@@ -43,6 +43,7 @@ public class MinecraftDownloadUtils {
 		String version = build.getMinecraftVersion();
 		String url = RestAPI.getMinecraftURL(version);
 		String md5 = RestAPI.getMinecraftMD5(version);
+		pack.init();
 		Download download = DownloadUtils.downloadFile(url, output, null, md5, listener);
 		outFile = download.getOutFile();
 

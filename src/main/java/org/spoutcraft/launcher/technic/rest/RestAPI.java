@@ -32,9 +32,11 @@ import java.io.InputStream;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -56,8 +58,9 @@ public class RestAPI {
 	private static Map<String, Minecraft> mcVersions;
 	private static FullModpacks DEFAULT;
 
-	private final static String PATCH_VERSION = "1.4.7";
-	private final static ObjectMapper mapper = new ObjectMapper();
+	private static final String PLATFORM = "http://www.technicpack.net/";
+	private static final String PATCH_VERSION = "1.4.7";
+	private static final ObjectMapper mapper = new ObjectMapper();
 
 	private final String restURL;
 	private final String restInfoURL;
@@ -76,7 +79,7 @@ public class RestAPI {
 			mirrorURL = modpacks.getMirrorURL();
 
 		} catch (RestfulAPIException e) {
-			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.", e);
+			Launcher.getLogger().log(Level.SEVERE, "Unable to connect to the Rest API at " + url + " Running Offline instead.");
 			mirrorURL = "";
 		}
 
@@ -119,8 +122,12 @@ public class RestAPI {
 		return TECHNIC;
 	}
 
+	public static String getPlatformAPI() {
+		return PLATFORM + "api/";
+	}
+
 	public static String getPlatformURL() {
-		return "http://www.technicpack.net/api/";
+		return PLATFORM;
 	}
 
 	public String getRestURL() {
@@ -164,11 +171,11 @@ public class RestAPI {
 	}
 
 	public static String getCustomPackURL(String modpack) {
-		return getPlatformURL() + "modpack/" + modpack;
+		return getPlatformAPI() + "modpack/" + modpack;
 	}
 
 	public static String getMinecraftVersionURL() {
-		return getPlatformURL() + "minecraft";
+		return getPlatformAPI() + "minecraft";
 	}
 
 	public static String getDownloadCountURL(String modpack) {
@@ -242,7 +249,7 @@ public class RestAPI {
 	}
 
 	public static int getLatestLauncherBuild(String stream) throws RestfulAPIException {
-		LauncherBuild result = getRestObject(LauncherBuild.class, getPlatformURL() + "launcher/version/" + stream);
+		LauncherBuild result = getRestObject(LauncherBuild.class, getPlatformAPI() + "launcher/version/" + stream);
 		return result.getLatestBuild();
 	}
 	
@@ -254,7 +261,7 @@ public class RestAPI {
 			ext = "exe";
 		}
 		
-		String url = getPlatformURL() + "launcher/url/" + version + "/" + ext;
+		String url = getPlatformAPI() + "launcher/url/" + version + "/" + ext;
 		LauncherURL result = getRestObject(LauncherURL.class, url);
 		return result.getLauncherURL();
 	}
@@ -283,7 +290,33 @@ public class RestAPI {
 		}
 	}
 
-	@SuppressWarnings("resource")
+	public static List<Article> getNews() throws RestfulAPIException {
+		InputStream stream = null;
+		try {
+			URLConnection conn = new URL(getPlatformAPI() + "news/").openConnection();
+			conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Macintosh; U; Intel Mac OS X 10.4; en-US; rv:1.9.2.2) Gecko/20100316 Firefox/3.6.2");
+			conn.setConnectTimeout(15000);
+			conn.setReadTimeout(15000);
+
+			stream = conn.getInputStream();
+			List<Article> versions = mapper.readValue(stream, new TypeReference<List<Article>>() {});
+
+			for (Article result : versions) {
+				if (result.hasError()) {
+					throw new RestfulAPIException("Error in json response: " + result.getError());
+				}
+			}
+
+			return versions;
+		} catch (SocketTimeoutException e) {
+			throw new RestfulAPIException("Timed out accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} catch (IOException e) {
+			throw new RestfulAPIException("Error accessing URL [" + getMinecraftVersionURL() + "]", e);
+		} finally {
+			IOUtils.closeQuietly(stream);
+		}
+	}
+
 	public static HashMap<String, Minecraft> getMinecraftVersions() throws RestfulAPIException {
 		InputStream stream = null;
 		try {
@@ -317,8 +350,12 @@ public class RestAPI {
 		if (minecraft == null || minecraft.shouldUsePatch()) {
 			version = PATCH_VERSION;
 		}
-		version = version.replace('.', '_');
-		return "http://assets.minecraft.net/" + version + "/minecraft.jar";
+
+		if (Arrays.asList(Versions.OLD_ASSETS).contains(version)) {
+			version = version.replace('.', '_');
+			return "http://assets.minecraft.net/" + version + "/minecraft.jar";
+		}
+		return "https://s3.amazonaws.com/Minecraft.Download/versions/" + version +"/" + version + ".jar";
 	}
 
 	public static String getMinecraftMD5(String version) {

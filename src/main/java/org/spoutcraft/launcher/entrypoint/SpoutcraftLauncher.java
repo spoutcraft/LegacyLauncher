@@ -135,6 +135,7 @@ public class SpoutcraftLauncher {
 		PackManager.initPacks(selector);
 
 		frame.setUser(Settings.getLastUser());
+//		frame.getNews().loadArticles();
 
 		if (params.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
