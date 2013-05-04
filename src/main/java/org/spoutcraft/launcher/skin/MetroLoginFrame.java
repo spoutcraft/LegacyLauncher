@@ -423,7 +423,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			public BufferedImage call() throws Exception {
 				try {
 					System.out.println("Attempting to grab avatar helm for " + user + "...");
-					InputStream stream = RestAPI.getCache().get(new URL("http://skins.technicpack.net/helm/" + user + "/100"), new DownloadURLConnector() {
+					InputStream stream = RestAPI.getCache().get(new URL("https://minotar.net/helm/" + user + "/100"), new DownloadURLConnector() {
 						@Override
 						public void setHeaders(URLConnection conn) {
 							conn.setDoInput(true);
