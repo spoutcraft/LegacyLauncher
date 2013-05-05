@@ -432,7 +432,11 @@ public class UpdateThread extends Thread {
 		logger.info("Minecraft Version: " + build.getMinecraft());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			DownloadUtils.downloadFile("https://s3.amazonaws.com/Minecraft.Download/versions/" + minecraft.getVersion() + "/" + minecraft.getVersion() + ".jar", mcCache.getPath(), null, minecraftMD5, listener);
+			if (minecraft.getVersion().equals("1.4.7")) {
+				DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion() + "/minecraft.jar", mcCache.getPath(), null, minecraftMD5, listener);
+			} else {
+				DownloadUtils.downloadFile("http://s3.amazonaws.com/Minecraft.Download/versions/" + minecraft.getVersion() + "/" + minecraft.getVersion() + ".jar", mcCache.getPath(), null, minecraftMD5, listener);
+			}
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
 

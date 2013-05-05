@@ -109,10 +109,6 @@ public final class SpoutcraftData {
 		return minecraftVersions.get(0);
 	}
 
-	public String getMinecraftURL(String user) {
-		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
-	}
-
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
 		return RestAPI.getDownloadURL(build);
 	}
