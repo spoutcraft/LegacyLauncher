@@ -142,6 +142,10 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(pack.getName());
 	}
 
+	public void redraw() {
+		selectPack(packs.getSelected().getName());
+	}
+
 	public void selectPack(String name) {
 		PackInfo selected = packs.select(name);
 		if (selected == null) {

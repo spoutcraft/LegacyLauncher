@@ -30,6 +30,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.technic.rest.RestAPI;
+
 public class PackMap extends HashMap<String, PackInfo> {
 	private static final long serialVersionUID = 1L;
 
@@ -61,6 +64,9 @@ public class PackMap extends HashMap<String, PackInfo> {
 	}
 
 	public PackInfo getSelected() {
+		if (selected == null) {
+			select(0);
+		}
 		return selected;
 	}
 
@@ -138,5 +144,52 @@ public class PackMap extends HashMap<String, PackInfo> {
 
 	public int getPackIndex(String pack) {
 		return byIndex.indexOf(pack);
+	}
+
+	public void loadPack(String pack) {
+		OfflineInfo offline = new OfflineInfo(pack);
+		add(offline);
+		PackThread thread = new PackThread(this, pack);
+		thread.start();
+	}
+
+	public void initPacks() {
+		loadDefaults();
+
+		for (String pack : Settings.getInstalledPacks()) {
+			// Skip non custom packs
+			if (!Settings.isPackCustom(pack)) {
+				continue;
+			}
+			loadPack(pack);
+		}
+
+		// Add in the add pack button
+		put("addpack", new AddPack());
+	}
+
+	private void loadDefaults() {
+		for (String pack : Settings.getInstalledPacks()) {
+			// Skip custom packs
+			if (Settings.isPackCustom(pack)) {
+				continue;
+			}
+			OfflineInfo offline = new OfflineInfo(pack);
+			add(offline);
+		}
+
+		Thread thread = new Thread("Default Pack Thread") {
+			@Override
+			public void run() {
+				int index = 0;
+				for (PackInfo pack : RestAPI.getDefaults()) {
+					pack.setRest(RestAPI.getDefault());
+					add(pack);
+					reorder(index, pack.getName());
+					index++;
+				}
+			}
+		};
+		thread.start();
 	}
 }

@@ -202,7 +202,7 @@ public abstract class PackInfo extends RestObject {
 		return resourceDir;
 	}
 
-	public Image getLogo() {
+	public synchronized Image getLogo() {
 		if (logo == null) {
 			try {
 				logo = buildLogo();
@@ -213,7 +213,7 @@ public abstract class PackInfo extends RestObject {
 		return logo;
 	}
 
-	public Image getBackground() {
+	public synchronized Image getBackground() {
 		if (background == null) {
 			try {
 				background = buildBackground().getScaledInstance(880, 520, Image.SCALE_SMOOTH);
@@ -224,7 +224,7 @@ public abstract class PackInfo extends RestObject {
 		return background;
 	}
 
-	public Image getIcon() {
+	public synchronized Image getIcon() {
 		if (icon == null) {
 			try {
 				icon = buildIcon();
@@ -259,13 +259,29 @@ public abstract class PackInfo extends RestObject {
 				image = ImageIO.read(ResourceUtils.getResourceAsStream(backup));
 			}
 		} else {
-			if (temp.exists() && MD5Utils.getMD5(temp).equalsIgnoreCase(md5)) {
+			if (temp.exists() && (md5.equals("") || MD5Utils.getMD5(temp).equalsIgnoreCase(md5))) {
 				image = ImageIO.read(temp);
 			} else {
+				if (temp.exists()) {
+					System.out.println("Pack: " + getName() + " Calculated MD5: " + MD5Utils.getMD5(temp) + " Required MD5: " + md5);
+				}
 				Download download = DownloadUtils.downloadFile(url, temp.getAbsolutePath());
 				image = ImageIO.read(download.getOutFile());
 			}
 		}
 		return image;
+	}
+
+	@Override
+	public int hashCode() {
+		return getName().hashCode();
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof PackInfo) {
+			return ((File) obj).getName().equals(this.getName());
+		}
+		return false;
 	}
 }

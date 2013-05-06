@@ -47,23 +47,22 @@ import java.util.logging.StreamHandler;
 
 import javax.swing.UIManager;
 
-import com.beust.jcommander.JCommander;
 import org.apache.commons.io.IOUtils;
-
+import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.technic.PackManager;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
+
+import com.beust.jcommander.JCommander;
 
 public class SpoutcraftLauncher {
 	private static Logger logger = null;
@@ -132,15 +131,15 @@ public class SpoutcraftLauncher {
 		ModpackSelector selector = frame.getSelector();
 
 		new Launcher(updater, new GameLauncher(), frame);
-		PackManager.initPacks(selector);
 
 		frame.setUser(Settings.getLastUser());
-//		frame.getNews().loadArticles();
 
 		if (params.isDebugMode()) {
 			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
 			start = System.currentTimeMillis();
 		}
+
+		selector.getPackMap().initPacks();
 
 		splash.dispose();
 		frame.setVisible(true);
@@ -151,10 +150,7 @@ public class SpoutcraftLauncher {
 			lastPack = ModpackSelector.DEFAULT_PACK;
 		}
 		selector.selectPack(lastPack);
-		PackManager.loadPack(selector.getPackMap(), lastPack);
-
-		PackManager.addRestPacks(selector);
-		PackManager.addCustomPacks(selector);
+		
 		
 		frame.updateFaces();
 
