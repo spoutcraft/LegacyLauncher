@@ -53,11 +53,10 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 		setVerticalAlignment(SwingConstants.TOP);
 		setHorizontalAlignment(SwingConstants.LEFT);
-		setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		setIcon(MetroLoginFrame.getIcon("background.jpg", width, 22222));
 		background = new AnimatedBackground(this);
-		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, 22222));
 		background.setBounds(0, 0, width, height);
-		
 
 		tekkit = new AnimatedImage(650, 100, MetroLoginFrame.getIcon("creeper.png", 107, 69));
 		tekkit.setBounds(500, 100, 107, 69);
@@ -67,8 +66,8 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 		this.add(background);
 	}
 
-	public void changeBackground(String name, Icon icon) {
-		background.changeIcon(name, icon);
+	public synchronized void changeBackground(String name, Icon icon, boolean force) {
+		background.changeIcon(name, icon, force);
 		if (name.equals("tekkitmain")) {
 			tekkit.setVisible(true);
 			tekkit.setAnimating(true);

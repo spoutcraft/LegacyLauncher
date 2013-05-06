@@ -52,7 +52,7 @@ import org.spoutcraft.launcher.util.Utils;
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
-	public static final String DEFAULT_PACK = "tekkitlite";
+	public static final String DEFAULT_PACK = "tekkitmain";
 	private ImportOptions importOptions = null;
 
 	private final MetroLoginFrame frame;
@@ -142,21 +142,25 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(pack.getName());
 	}
 
-	public void redraw() {
-		selectPack(packs.getSelected().getName());
-	}
-
 	public void selectPack(String name) {
+		System.out.println(name);
 		PackInfo selected = packs.select(name);
 		if (selected == null) {
 			return;
 		}
+		redraw(selected, false);
+	}
 
+	public void redraw(boolean force) {
+		redraw(getSelectedPack(), force);
+	}
+
+	public void redraw(PackInfo selected, boolean force) {
 		// Determine if the pack is custom
 		boolean custom = Settings.isPackCustom(selected.getName());
 
 		// Set the background image based on the pack
-		frame.getBackgroundImage().changeBackground(name, new ImageIcon(selected.getBackground()));
+		frame.getBackgroundImage().changeBackground(selected.getName(), new ImageIcon(selected.getBackground()), force);
 
 		// Set the icon image based on the pack
 		frame.setIconImage(selected.getIcon());

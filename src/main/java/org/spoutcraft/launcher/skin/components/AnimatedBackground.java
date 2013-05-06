@@ -50,8 +50,8 @@ public class AnimatedBackground extends JLabel {
 		this.background = background;
 	}
 
-	public void changeIcon(String name, Icon newIcon) {
-		if (!name.equals(pack)) {
+	public void changeIcon(String name, Icon newIcon, boolean force) {
+		if (!name.equals(pack) || force) {
 			this.newIcon = newIcon;
 			if (worker.get() != null) {
 				worker.get().cancel(true);

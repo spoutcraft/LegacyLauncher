@@ -22,7 +22,10 @@ public class PackThread extends Thread {
 	public void run() {
 		PackInfo info = loadPack(packs, pack);
 		packs.add(info);
-		Launcher.getFrame().getSelector().redraw();
+		info.getLogo();
+		info.getIcon();
+		info.getBackground();
+		Launcher.getFrame().getSelector().redraw(false);
 	}
 
 	private PackInfo loadPack(PackMap packs, String pack) {
