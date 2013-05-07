@@ -194,6 +194,10 @@ public class FileUtils {
 				moveDirectory(dir, dest);
 				continue;
 			}
+			File destFile = new File(dest, file.getName());
+			if (destFile.exists()) {
+				destFile.delete();
+			}
 			file.renameTo(new File(dest, file.getName()));
 		}
 		deleteQuietly(dir);

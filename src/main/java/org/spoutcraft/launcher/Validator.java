@@ -27,6 +27,7 @@
 package org.spoutcraft.launcher;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.spoutcraft.launcher.api.Launcher;
@@ -77,51 +78,22 @@ public class Validator {
 			Launcher.err("There is no spoutcraft.jar");
 			return true;
 		}
-		
-		final Minecraft minecraft = build.getMinecraft();
-		final String jinputMD5 = UpdateThread.findMd5("jinput", null, minecraft.getLibraries());
 
-		File jinputJar = new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar");
-		if (jinputJar.exists()) {
-			if (!compareMD5(jinputMD5, jinputJar)) {
-				Launcher.err("Invalid jinput.jar");
-				return jinputJar.delete();
-			}
-		} else {
-			Launcher.err("There is no jinput.jar");
-			return true;
-		}
-
-		final String lwjglMD5 = UpdateThread.findMd5("lwjgl", null, minecraft.getLibraries());
-
-		File lwjglJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar");
-		if (lwjglJar.exists()) {
-			if (!compareMD5(lwjglMD5, lwjglJar)) {
-				Launcher.err("Invalid lwjgl.jar");
-				return lwjglJar.delete();
-			}
-		} else {
-			Launcher.err("There is no lwjgl.jar");
-			return true;
-		}
-
-		final String lwjgl_utilMD5 = UpdateThread.findMd5("lwjgl_util", null, minecraft.getLibraries());
-
-		File lwjgl_utilJar = new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar");
-		if (lwjgl_utilJar.exists()) {
-			if (!compareMD5(lwjgl_utilMD5, lwjgl_utilJar)) {
-				Launcher.err("Invalid lwjgl_util.jar");
-				return lwjgl_utilJar.delete();
-			}
-		} else {
-			Launcher.err("There is no lwjgl_util.jar");
-			return true;
-		}
 
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
+
 		List<Library> libraries = build.getLibraries();
-		for (Library lib : libraries) {
+		List<Library> allLibraries = new ArrayList<Library>();
+		allLibraries.addAll(libraries);
+		allLibraries.addAll(build.getMinecraft().getLibraries());
+
+		for (Library lib : allLibraries) {
 			File libraryFile = new File(libDir, lib.name() + ".jar");
+			if ((lib.name().contains("lwjgl") || lib.name().contains("jinput"))&& !lib.getVersion().contains("natives")) {
+				libraryFile = new File(Launcher.getGameUpdater().getBinDir(), lib.getArtifactId() + ".jar");
+			} else if (lib.getVersion().contains("natives")) {
+				continue;
+			}
 
 			if (libraryFile.exists()) {
 				String md5 = MD5Utils.getMD5(libraryFile);
