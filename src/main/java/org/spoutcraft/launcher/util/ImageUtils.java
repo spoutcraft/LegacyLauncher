@@ -49,6 +49,20 @@ public class ImageUtils {
 	private static int SKIN_WIDTH = 64;
 	private static int SKIN_HEIGHT = 32;
 
+	public static BufferedImage scaleWithAspectWidth(BufferedImage img, int width) {
+		int imgWidth = img.getWidth();
+		int imgHeight = img.getHeight();
+		int height = imgHeight * width / imgWidth;
+		return scaleImage(img, width, height);
+	}
+
+	public static BufferedImage scaleWithAspectHeight(BufferedImage img, int height) {
+		int imgWidth = img.getWidth();
+		int imgHeight = img.getHeight();
+		int width = imgWidth * height / imgHeight;
+		return scaleImage(img, width, height);
+	}
+
 	public static BufferedImage scaleImage(BufferedImage img, int width, int height) {
 		BufferedImage newImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = newImage.createGraphics();

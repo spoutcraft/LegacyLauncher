@@ -175,8 +175,9 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		logo.setBounds(600, 5, 282, 65);
-		logo.setIcon(getIcon("header.png", logo.getWidth(), logo.getHeight()));
+		ImageIcon logoIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("header.png"), 275));
+		logo.setIcon(logoIcon);
+		logo.setBounds(600, 6, logoIcon.getIconWidth(), logoIcon.getIconHeight());
 
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
@@ -412,6 +413,15 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 
 	public static ImageIcon getIcon(String iconName) {
 		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
+	}
+
+	public static BufferedImage getImage(String imageName) {
+		try {
+			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	public static BufferedImage getImage(String imageName, int w, int h) {
