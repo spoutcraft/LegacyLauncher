@@ -35,6 +35,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 
+import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -60,6 +61,15 @@ public class Mover {
 			temp = new File(Utils.getSystemTemporaryDirectory(), "temp.exe");
 		} else {
 			temp = new File(Utils.getSystemTemporaryDirectory(), "temp.jar");
+		}
+		//Legacy support
+		if (!temp.exists()) {
+			Utils.setStartupParameters(new StartupParameters(new String[0]));
+			if (exe) {
+				temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+			} else {
+				temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+			}
 		}
 		File codeSource = new File(args[0]);
 		codeSource.delete();
