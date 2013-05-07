@@ -234,6 +234,7 @@ public abstract class PackInfo extends RestObject {
 			return background.get();
 		} else {
 			if (buildImage(background, "background.jpg", getBackgroundURL(), getBackgroundMD5(), 880, 520)) {
+				Launcher.getFrame().getBackgroundImage().checkEnableTekkit(getName());
 				return background.get();
 			}
 		}
@@ -305,7 +306,8 @@ public abstract class PackInfo extends RestObject {
 		}
 
 		downloading.get(image).set(true);
-		Thread thread = new Thread(getName() + " Image Download Worker") {
+		final String name = getName();
+		Thread thread = new Thread(name + " Image Download Worker") {
 			@Override
 			public void run() {
 				try {
@@ -317,11 +319,15 @@ public abstract class PackInfo extends RestObject {
 					boolean force = false;
 					if (width > 0 && height > 0) {
 						newImage = ImageIO.read(download.getOutFile()).getScaledInstance(width, height, Image.SCALE_SMOOTH);
-						force = true; // This is a background. Need to rework design later.
+						if (Launcher.getFrame().getSelector().getSelectedPack().getName().equals(name)) {
+							force = true; // Force background fade in if the pack is selected and this is a background 
+							// (It is a background because width/height are being set. Bad I know.)
+						}
 					} else {
 						newImage = ImageIO.read(download.getOutFile());
 					}
 					image.set(newImage);
+					Launcher.getFrame().getBackgroundImage().checkEnableTekkit(name);
 					Launcher.getFrame().getSelector().redraw(force);
 					downloading.get(image).set(false);
 				} catch (IOException e) {

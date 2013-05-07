@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
+import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.util.SwingWorker;
 
 public class AnimatedBackground extends JLabel {
@@ -43,11 +44,18 @@ public class AnimatedBackground extends JLabel {
 	private String pack = null;
 	private Icon newIcon = null;
 	private BackgroundImage background;
+	private AnimatedImage tekkit;
+	private boolean enableTekkit = false;
 
 	public AnimatedBackground(BackgroundImage background) {
 		super();
 		super.setVisible(true);
 		this.background = background;
+
+		tekkit = new AnimatedImage(650, 100, MetroLoginFrame.getIcon("creeper.png", 107, 69));
+		tekkit.setBounds(500, 100, 107, 69);
+		tekkit.setVisible(false);
+		this.add(tekkit);
 	}
 
 	public void changeIcon(String name, Icon newIcon, boolean force) {
@@ -59,6 +67,10 @@ public class AnimatedBackground extends JLabel {
 			setVisible(false);
 			pack = name;
 			background.setIcon(getIcon());
+			if (!name.equals("tekkitmain")) {
+				tekkit.setVisible(false);
+				tekkit.setAnimating(false);
+			}
 		}
 	}
 
@@ -68,6 +80,22 @@ public class AnimatedBackground extends JLabel {
 
 	public BackgroundImage getBackgroundImg() {
 		return background;
+	}
+
+	public AnimatedImage getTekkit() {
+		return tekkit;
+	}
+
+	public String getPack() {
+		return pack;
+	}
+
+	public void setEnableTekkit(boolean enableTekkit) {
+		this.enableTekkit = enableTekkit;
+	}
+
+	public boolean isEnableTekkit() {
+		return enableTekkit;
 	}
 
 	@Override
@@ -131,6 +159,10 @@ public class AnimatedBackground extends JLabel {
 				} else {
 					label.setIcon(label.getNewIcon());
 					label.setVisible(true);
+					if (label.isEnableTekkit() && label.getPack().equals("tekkitmain")) {
+						label.getTekkit().setVisible(true);
+						label.getTekkit().setAnimating(true);
+					}
 				}
 			}
 		}

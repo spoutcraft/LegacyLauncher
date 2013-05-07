@@ -143,7 +143,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void selectPack(String name) {
-		System.out.println(name);
 		PackInfo selected = packs.select(name);
 		if (selected == null) {
 			return;
