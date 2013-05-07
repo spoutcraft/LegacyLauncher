@@ -680,10 +680,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			} else if (e.getComponent() == remember) {
 				remember.setSelected(!remember.isSelected());
 			}
-		} else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-			action(PACK_LEFT_ACTION, null);
-		} else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			action(PACK_RIGHT_ACTION, null);
 		}
 	}
 
