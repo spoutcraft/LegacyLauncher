@@ -47,7 +47,6 @@ public class Mover {
 
 	public static void main(String[] args, boolean exe) {
 		try {
-			SpoutcraftLauncher.setupLogger();
 			execute(args, exe);
 		} catch (Exception e) {
 			e.printStackTrace();
