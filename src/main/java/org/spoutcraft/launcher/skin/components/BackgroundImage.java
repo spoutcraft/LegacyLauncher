@@ -52,9 +52,9 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 		setVerticalAlignment(SwingConstants.TOP);
 		setHorizontalAlignment(SwingConstants.LEFT);
-		setIcon(MetroLoginFrame.getIcon("background.jpg", width, 22222));
+		setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
 		background = new AnimatedBackground(this);
-		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, 22222));
+		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
 		background.setBounds(0, 0, width, height);
 
 		this.add(background);

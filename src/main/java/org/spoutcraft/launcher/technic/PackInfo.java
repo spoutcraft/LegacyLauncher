@@ -27,7 +27,7 @@
 
 package org.spoutcraft.launcher.technic;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
@@ -45,18 +45,19 @@ import org.spoutcraft.launcher.technic.rest.RestObject;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
 public abstract class PackInfo extends RestObject {
-	private static Image BACKUP_LOGO;
-	private static Image BACKUP_BACKGROUND;
-	private static Image BACKUP_ICON;
-	private AtomicReference<Image> logo = new AtomicReference<Image>();
-	private AtomicReference<Image> background = new AtomicReference<Image>();
-	private AtomicReference<Image> icon = new AtomicReference<Image>();
-	private HashMap<AtomicReference<Image>, AtomicReference<Boolean>> downloading = new HashMap<AtomicReference<Image>, AtomicReference<Boolean>>(3);
+	private static BufferedImage BACKUP_LOGO;
+	private static BufferedImage BACKUP_BACKGROUND;
+	private static BufferedImage BACKUP_ICON;
+	private AtomicReference<BufferedImage> logo = new AtomicReference<BufferedImage>();
+	private AtomicReference<BufferedImage> background = new AtomicReference<BufferedImage>();
+	private AtomicReference<BufferedImage> icon = new AtomicReference<BufferedImage>();
+	private HashMap<AtomicReference<BufferedImage>, AtomicReference<Boolean>> downloading = new HashMap<AtomicReference<BufferedImage>, AtomicReference<Boolean>>(3);
 
 	// Directories
 	private File installedDirectory;
@@ -214,7 +215,7 @@ public abstract class PackInfo extends RestObject {
 		return resourceDir;
 	}
 
-	public synchronized Image getLogo() {
+	public synchronized BufferedImage getLogo() {
 		if (logo.get() != null) {
 			return logo.get();
 		} else {
@@ -229,7 +230,7 @@ public abstract class PackInfo extends RestObject {
 		return BACKUP_LOGO;
 	}
 
-	public synchronized Image getBackground() {
+	public synchronized BufferedImage getBackground() {
 		if (background.get() != null) {
 			return background.get();
 		} else {
@@ -240,12 +241,12 @@ public abstract class PackInfo extends RestObject {
 		}
 
 		if (BACKUP_BACKGROUND == null) {
-			BACKUP_BACKGROUND = loadBackup("/org/spoutcraft/launcher/resources/background.jpg").getScaledInstance(880, 520, Image.SCALE_SMOOTH);
+			BACKUP_BACKGROUND = ImageUtils.scaleImage(loadBackup("/org/spoutcraft/launcher/resources/background.jpg"), 880, 520);
 		}
 		return BACKUP_BACKGROUND;
 	}
 
-	public synchronized Image getIcon() {
+	public synchronized BufferedImage getIcon() {
 		if (icon.get() != null) {
 			return icon.get();
 		} else {
@@ -260,7 +261,7 @@ public abstract class PackInfo extends RestObject {
 		return BACKUP_ICON;
 	}
 
-	private Image loadBackup(String backup) {
+	private BufferedImage loadBackup(String backup) {
 		try {
 			return ImageIO.read(ResourceUtils.getResourceAsStream(backup));
 		} catch (IOException e) {
@@ -269,11 +270,11 @@ public abstract class PackInfo extends RestObject {
 		}
 	}
 
-	private boolean buildImage(AtomicReference<Image> image, String name, String url, String md5) {
+	private boolean buildImage(AtomicReference<BufferedImage> image, String name, String url, String md5) {
 		return buildImage(image, name, url, md5, 0, 0);
 	}
 
-	private boolean buildImage(AtomicReference<Image> image, String name, String url, String md5, int width, int height) {
+	private boolean buildImage(AtomicReference<BufferedImage> image, String name, String url, String md5, int width, int height) {
 		File assets = new File(Utils.getAssetsDirectory(), "packs");
 		File packs = new File(assets, getName());
 		packs.mkdirs();
@@ -281,9 +282,9 @@ public abstract class PackInfo extends RestObject {
 
 		try {
 			if (temp.exists() && (url.isEmpty() || md5.equals("") || MD5Utils.getMD5(temp).equalsIgnoreCase(md5))) {
-				Image newImage;
+				BufferedImage newImage;
 				if (width > 0 && height > 0) {
-					newImage = ImageIO.read(temp).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+					newImage = ImageUtils.scaleImage(ImageIO.read(temp), width, height);
 				} else {
 					newImage = ImageIO.read(temp);
 				}
@@ -300,7 +301,7 @@ public abstract class PackInfo extends RestObject {
 		return false;
 	}
 
-	private void downloadImage(final AtomicReference<Image> image, final String url, final File temp, final int width, final int height, final String md5) {
+	private void downloadImage(final AtomicReference<BufferedImage> image, final String url, final File temp, final int width, final int height, final String md5) {
 		if (url.isEmpty() || downloading.get(image).get()) {
 			return;
 		}
@@ -315,10 +316,10 @@ public abstract class PackInfo extends RestObject {
 						System.out.println("Pack: " + getName() + " Calculated MD5: " + MD5Utils.getMD5(temp) + " Required MD5: " + md5);
 					}
 					Download download = DownloadUtils.downloadFile(url, temp.getAbsolutePath());
-					Image newImage;
+					BufferedImage newImage;
 					boolean force = false;
 					if (width > 0 && height > 0) {
-						newImage = ImageIO.read(download.getOutFile()).getScaledInstance(width, height, Image.SCALE_SMOOTH);
+						newImage = ImageUtils.scaleImage(ImageIO.read(download.getOutFile()), width, height);
 						if (Launcher.getFrame().getSelector().getSelectedPack().getName().equals(name)) {
 							force = true; // Force background fade in if the pack is selected and this is a background 
 							// (It is a background because width/height are being set. Bad I know.)
