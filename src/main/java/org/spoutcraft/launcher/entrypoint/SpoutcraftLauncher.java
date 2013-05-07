@@ -259,9 +259,9 @@ public class SpoutcraftLauncher {
 	}
 
 	private static void cleanup() {
-		File temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+		File temp = new File(Utils.getSystemTemporaryDirectory(), "temp.jar");
 		temp.delete();
-		temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+		temp = new File(Utils.getSystemTemporaryDirectory(), "temp.exe");
 		temp.delete();
 		temp = new File(Utils.getWorkingDirectory(), "Spoutcraft-Launcher.jar");
 		temp.delete();
@@ -330,7 +330,7 @@ public class SpoutcraftLauncher {
 		return logger;
 	}
 
-	private static StartupParameters setupParameters(String[] args) {
+	public static StartupParameters setupParameters(String[] args) {
 		StartupParameters params = new StartupParameters(args);
 		try {
 			new JCommander(params, args);

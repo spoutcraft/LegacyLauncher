@@ -57,9 +57,9 @@ public class Mover {
 	private static void execute(String[] args, boolean exe) throws Exception {
 		File temp;
 		if (exe) {
-			temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+			temp = new File(Utils.getSystemTemporaryDirectory(), "temp.exe");
 		} else {
-			temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+			temp = new File(Utils.getSystemTemporaryDirectory(), "temp.jar");
 		}
 		File codeSource = new File(args[0]);
 		codeSource.delete();

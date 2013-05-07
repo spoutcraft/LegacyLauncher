@@ -65,6 +65,10 @@ public class Utils {
 	private static File workDir = null;
 	private static StartupParameters params = null;
 
+	public static File getSystemTemporaryDirectory() {
+		return new File(System.getProperty("java.io.tmpdir"));
+	}
+
 	public static File getWorkingDirectory() {
 		if (workDir == null) {
 			workDir = getWorkingDirectory("spoutcraft");
