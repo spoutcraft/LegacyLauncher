@@ -31,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 
@@ -201,6 +202,7 @@ public class PackMap extends HashMap<String, PackInfo> {
 						select(pack.getName());
 					}
 				}
+				Launcher.getFrame().getSelector().redraw(false);
 			}
 		};
 		thread.start();
