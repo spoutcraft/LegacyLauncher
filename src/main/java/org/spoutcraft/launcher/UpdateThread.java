@@ -367,7 +367,7 @@ public class UpdateThread extends Thread {
 		if (!nativesDir.exists()) {
 			return true;
 		}
-		// Empty dir
+		// Empty directory
 		if (nativesDir.listFiles().length == 0) {
 			return true;
 		}
@@ -398,7 +398,7 @@ public class UpdateThread extends Thread {
 		return installed == null || !installed.equals(required);
 	}
 
-	// Searches the MC libraries for the one matching the given artifact id, returns the md5
+	// Searches the Minecraft libraries for the one matching the given artifact ID, returns the MD5
 	protected static String findMd5(String artifactId, OperatingSystem platform, List<Library> libraries) {
 		for (Library lib : libraries) {
 			if (lib.getArtifactId().equalsIgnoreCase(artifactId)) {
@@ -428,12 +428,12 @@ public class UpdateThread extends Thread {
 		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
 		final String lwjglMD5 = findMd5("lwjgl", null, minecraft.getLibraries());
 
-		// Processs minecraft.jar
+		// Process minecraft.jar
 		logger.info("Minecraft Version: " + build.getMinecraft());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
 			if (minecraft.getVersion().equals("1.4.7")) {
-				DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion() + "/minecraft.jar", mcCache.getPath(), null, minecraftMD5, listener);
+				DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion().replaceAll("\\.", "_") + "/minecraft.jar", mcCache.getPath(), null, minecraftMD5, listener);
 			} else {
 				DownloadUtils.downloadFile("http://s3.amazonaws.com/Minecraft.Download/versions/" + minecraft.getVersion() + "/" + minecraft.getVersion() + ".jar", mcCache.getPath(), null, minecraftMD5, listener);
 			}
@@ -443,7 +443,7 @@ public class UpdateThread extends Thread {
 		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
 		nativesDir.mkdir();
 
-		// Process other downloads
+		// Process LWJGL libraries
 		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "jinput.jar");
 		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
 			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar", jinputMD5, listener);
