@@ -88,13 +88,13 @@ public class SpoutcraftLauncher {
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack" , "true");
 
-		cleanup();
-
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
 
 		StartupParameters params = setupParameters(args);
 		SpoutcraftLauncher.logger = setupLogger();
+		
+		cleanup();
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
 		logger.info("---------------------------------------------");
