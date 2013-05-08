@@ -40,7 +40,7 @@ public class PackMap extends HashMap<String, PackInfo> {
 
 	private final List<String> byIndex = new ArrayList<String>(0);
 
-	private PackInfo selected = null;
+	private String selected = null;
 	private int selectedIndex = 0;
 
 	public PackInfo select(int index) {
@@ -50,7 +50,7 @@ public class PackMap extends HashMap<String, PackInfo> {
 			info = this.get(name);
 		}
 		if (info != null) {
-			selected = info;
+			selected = name;
 			this.selectedIndex = index;
 		}
 		return info;
@@ -59,7 +59,7 @@ public class PackMap extends HashMap<String, PackInfo> {
 	public PackInfo select(String name) {
 		PackInfo info = get(name);
 		if (info != null) {
-			selected = info;
+			selected = name;
 			this.selectedIndex = byIndex.indexOf(name);
 		}
 		return info;
@@ -69,7 +69,7 @@ public class PackMap extends HashMap<String, PackInfo> {
 		if (selected == null) {
 			select(0);
 		}
-		return selected;
+		return get(selected);
 	}
 
 	public int getIndex() {
