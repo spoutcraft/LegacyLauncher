@@ -109,6 +109,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", params.isPortable() + "");
+		minecraft.addParameter("working_directory", Utils.getWorkingDirectory().getAbsolutePath());
 		if (params.getServer() != null) {
 			minecraft.addParameter("server", params.getServer());
 			if (params.getPort() != null) {
