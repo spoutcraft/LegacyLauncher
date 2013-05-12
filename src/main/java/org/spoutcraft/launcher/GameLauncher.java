@@ -86,7 +86,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
 			Launcher.clearCache();
-			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the appplication.");
+			JOptionPane.showMessageDialog(getParent(), "Your installation is corrupt, and has been cleaned. \nTry to login again.\n\n If that fails, close and restart this launcher.");
 			this.setVisible(false);
 			this.dispose();
 			Launcher.getLoginFrame().enableForm();
@@ -109,6 +109,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		minecraft.addParameter("downloadticket", downloadTicket);
 		minecraft.addParameter("spoutcraftlauncher", "true");
 		minecraft.addParameter("portable", params.isPortable() + "");
+		minecraft.addParameter("working_directory", Utils.getWorkingDirectory().getAbsolutePath());
 		if (params.getServer() != null) {
 			minecraft.addParameter("server", params.getServer());
 			if (params.getPort() != null) {

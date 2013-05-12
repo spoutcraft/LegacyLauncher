@@ -93,7 +93,7 @@ public final class SpoutcraftData {
 	public Minecraft getMinecraft() {
 		String selected = Settings.getMinecraftVersion();
 		if (selected.equals(Settings.DEFAULT_MINECRAFT_VERSION)) {
-			//Find the latest supported SC MC version
+			// Find the latest supported SC MC version
 			selected = Versions.getStableMinecraftVersions().get(0);
 		}
 		for (Minecraft minecraft : minecraftVersions) {
@@ -102,15 +102,11 @@ public final class SpoutcraftData {
 			}
 		}
 		// Should never get here...
-		throw new IllegalStateException("Unknown Minecraft Build: " + selected);
+		throw new IllegalStateException("Unknown Minecraft build: " + selected);
 	}
 
 	public Minecraft getLatestMinecraft() {
 		return minecraftVersions.get(0);
-	}
-
-	public String getMinecraftURL(String user) {
-		return "http://s3.amazonaws.com/MinecraftDownload/minecraft.jar?user=" + user + "&ticket=1";
 	}
 
 	public String getSpoutcraftURL() throws NoMirrorsAvailableException {
@@ -192,7 +188,7 @@ public final class SpoutcraftData {
 				}
 			}
 		} else {
-			// Find the newest build for the mc version
+			// Find the newest build for the Minecraft version
 			String url = RestAPI.ALL_BUILDS_URL;
 			try {
 				final String mcVersion = getMinecraft().getVersion();

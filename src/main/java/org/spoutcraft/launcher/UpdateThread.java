@@ -68,11 +68,7 @@ public class UpdateThread extends Thread {
 	 */
 	private static final AtomicBoolean cleaned = new AtomicBoolean(false);
 	private static final int PRELOAD_CLASSES = 100;
-
-	// Temporarily hardcoded
-	private static final String WINDOWS_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/windows_natives.jar";
-	private static final String OSX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/macosx_natives.jar";
-	private static final String LINUX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/linux_natives.jar";
+	public static final String[] OLD_ASSETS = { "1.2.3", "1.2.5", "1.3.1", "1.3.2", "1.4.2", "1.4.4", "1.4.5", "1.4.6", "1.4.7", "1.5" };
 
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
@@ -367,7 +363,7 @@ public class UpdateThread extends Thread {
 		if (!nativesDir.exists()) {
 			return true;
 		}
-		// Empty dir
+		// Empty directory
 		if (nativesDir.listFiles().length == 0) {
 			return true;
 		}
@@ -398,7 +394,7 @@ public class UpdateThread extends Thread {
 		return installed == null || !installed.equals(required);
 	}
 
-	// Searches the MC libraries for the one matching the given artifact id, returns the md5
+	// Searches the Minecraft libraries for the one matching the given artifact ID, returns the MD5
 	protected static String findMd5(String artifactId, OperatingSystem platform, List<Library> libraries) {
 		for (Library lib : libraries) {
 			if (lib.getArtifactId().equalsIgnoreCase(artifactId)) {
@@ -428,80 +424,25 @@ public class UpdateThread extends Thread {
 		final String lwjgl_utilMD5 = findMd5("lwjgl_util", null, minecraft.getLibraries());
 		final String lwjglMD5 = findMd5("lwjgl", null, minecraft.getLibraries());
 
-		// Processs minecraft.jar
+		// Process minecraft.jar
 		logger.info("Minecraft Version: " + build.getMinecraft());
 		File mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "minecraft_" + minecraft.getVersion() + ".jar");
 		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion().replaceAll("\\.", "_") + "/minecraft.jar", mcCache.getPath(), null, minecraftMD5, listener);
+			if (Arrays.asList(OLD_ASSETS).contains(minecraft.getVersion())) {
+				DownloadUtils.downloadFile("http://assets.minecraft.net/" + minecraft.getVersion().replaceAll("\\.", "_") + "/minecraft.jar", mcCache.getPath(), null, minecraftMD5, listener);
+			} else {
+				DownloadUtils.downloadFile("http://s3.amazonaws.com/Minecraft.Download/versions/" + minecraft.getVersion() + "/" + minecraft.getVersion() + ".jar", mcCache.getPath(), null, minecraftMD5, listener);
+			}
 		}
 		Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "minecraft.jar"));
 
 		File nativesDir = new File(Launcher.getGameUpdater().getBinDir(), "natives");
 		nativesDir.mkdir();
 
-		// Process other downloads
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "jinput.jar");
-		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar", jinputMD5, listener);
-		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "jinput.jar"));
-		}
-
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl.jar");
-		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar", lwjglMD5, listener);
-		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl.jar"));
-		}
-
-		mcCache = new File(Launcher.getGameUpdater().getBinCacheDir(), "lwjgl_util.jar");
-		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", Launcher.getGameUpdater().getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar", lwjgl_utilMD5, listener);
-		} else {
-			Utils.copy(mcCache, new File(Launcher.getGameUpdater().getBinDir(), "lwjgl_util.jar"));
-		}
-
-		try {
-			downloadNatives(minecraft);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		stateChanged("Extracting Files...", 0);
 
 		Settings.setInstalledMC(build.getMinecraft().getVersion());
 		Settings.getYAML().save();
-	}
-
-	public String getNativesUrl() {
-		return GameUpdater.baseURL;
-	}
-
-	public void downloadNatives(Minecraft minecraft) throws IOException, UnsupportedOSException {
-		final String url;
-
-		OperatingSystem os = OperatingSystem.getOS();
-		if (os.isUnix()) {
-			url = LINUX_NATIVES_URL;
-		} else if (os.isMac()) {
-			url = OSX_NATIVES_URL;
-		} else if (os.isWindows()) {
-			url = WINDOWS_NATIVES_URL;
-		} else {
-			throw new UnsupportedOperationException("Unknown OS: " + os);
-		}
-		final String md5 = findMd5("lwjgl-platform", OperatingSystem.getOS(), minecraft.getLibraries());
-
-		// Download natives
-		File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
-		DownloadUtils.downloadFile(url, nativesJar.getPath(), null, md5, listener);
-
-		// Extract natives
-		List<String> ignores = new ArrayList<String>();
-		ignores.add("META-INF");
-		File tempNatives = new File(Launcher.getGameUpdater().getUpdateDir(), "natives");
-		Utils.extractJar(new JarFile(nativesJar), tempNatives, ignores);
-		FileUtils.moveDirectory(tempNatives, new File(Launcher.getGameUpdater().getBinDir(), "natives"));
 	}
 
 	public void updateSpoutcraft(SpoutcraftData build) throws IOException {
@@ -553,9 +494,44 @@ public class UpdateThread extends Thread {
 		File libDir = new File(Launcher.getGameUpdater().getBinDir(), "lib");
 		libDir.mkdir();
 
-		List<Library> libraries = build.getLibraries();
-		for (Library lib : libraries) {
+		List<Library> allLibraries = new ArrayList<Library>();
+		allLibraries.addAll(build.getLibraries());
+		allLibraries.addAll(build.getMinecraft().getLibraries());
+		for (Library lib : allLibraries) {
 			File libraryFile = new File(libDir, lib.name() + ".jar");
+			if (lib.getArtifactId().contains("lwjgl") || lib.getArtifactId().contains("jinput")) {
+
+				if (lib.getVersion().contains("natives")) {
+					File nativesFolder = new File(Launcher.getGameUpdater().getBinDir(), "natives");
+					//This prevents downloading the wrong natives jar
+					if (lib.getVersion().contains("osx") && !OperatingSystem.getOS().isMac()) {
+						continue;
+					} else if (lib.getVersion().contains("linux") && !OperatingSystem.getOS().isUnix()) {
+						continue;
+					} else if (lib.getVersion().contains("windows") && !OperatingSystem.getOS().isWindows()) {
+						continue;
+					}
+
+					// Download natives
+
+					File nativesJar = new File(Launcher.getGameUpdater().getUpdateDir(), "natives.jar");
+					if (!nativesJar.exists() || !lib.valid(MD5Utils.getMD5(nativesJar))) {
+						lib.download(nativesJar, listener);
+
+						// Extract natives into the proper directory
+						List<String> ignores = new ArrayList<String>();
+						ignores.add("META-INF");
+						File tempNatives = new File(Launcher.getGameUpdater().getUpdateDir(), "natives");
+						Utils.extractJar(new JarFile(nativesJar), tempNatives, ignores);
+						FileUtils.moveDirectory(tempNatives, nativesFolder);
+
+					}
+					continue;
+				}
+
+				libraryFile = new File(Launcher.getGameUpdater().getBinDir(), lib.getArtifactId() + ".jar");
+			}
+
 			if (libraryFile.exists()) {
 				String computedMD5 = MD5Utils.getMD5(libraryFile);
 				if (!lib.valid(computedMD5)) {

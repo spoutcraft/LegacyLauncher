@@ -68,7 +68,6 @@ public class Start {
 		}
 
 		// Test for exe relaunch
-		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
 		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
 			String[] argsCopy = new String[args.length - 1];
 			for (int i = 1; i < args.length; i++) {
@@ -82,13 +81,14 @@ public class Start {
 			return;
 		}
 
-		migrateFolders();
-
+		SpoutcraftLauncher.setupParameters(args);
 		YAMLProcessor settings = SpoutcraftLauncher.setupSettings();
 		if (settings == null) {
 			throw new NullPointerException("The YAMLProcessor object was null for settings.");
 		}
 		Settings.setYAML(settings);
+
+		migrateFolders();
 
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		int latest = getLatestLauncherBuild();
@@ -96,9 +96,9 @@ public class Start {
 			File codeSource = new File(URLDecoder.decode(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
 			File temp;
 			if (codeSource.getName().endsWith(".exe")) {
-				temp = new File(Utils.getWorkingDirectory(), "temp.exe");
+				temp = new File(Utils.getSystemTemporaryDirectory(), "temp.exe");
 			} else {
-				temp = new File(Utils.getWorkingDirectory(), "temp.jar");
+				temp = new File(Utils.getSystemTemporaryDirectory(), "temp.jar");
 			}
 
 			try {

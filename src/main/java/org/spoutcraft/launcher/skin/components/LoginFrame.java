@@ -345,7 +345,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		super.setVisible(visible);
 		if (visible) {
 			showJava15Warning();
-			showJava17MacWarning();
 		}
 	}
 
@@ -375,39 +374,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 
 			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
 				StringSelection ss = new StringSelection("http://spout.in/macjava5");
-				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
-			}
-			dispose();
-			System.exit(0);
-		}
-	}
-
-	private void showJava17MacWarning() {
-		String version = System.getProperty("java.version");
-		if (version.startsWith("1.7") && OperatingSystem.getOS().isMac()) {
-			JLabel label = new JLabel();
-			Font arial12 = new Font("Arial", Font.PLAIN, 12);
-			label.setFont(arial12);
-
-			StringBuffer style = new StringBuffer("font-family:" + arial12.getFamily() + ";");
-			style.append("font-weight:" + (arial12.isBold() ? "bold" : "normal") + ";");
-			style.append("font-size:" + arial12.getSize() + "pt;");
-
-			JEditorPane ep = new JEditorPane("text/html", "<html><body style=\"" + style + "\">"
-					+ "Spoutcraft has incompatibility issues with Java 7 on OS X."
-					+ "<br>"
-					+ "<br>Visit the following link for more information"
-					+ "<br><a href=\"http://spout.in/macjava7\">http://spout.in/macjava7</a></body></html>");
-
-			ep.setEditable(false);
-			ep.setBackground(label.getBackground());
-
-			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
-			final String title = "Java 1.6 Required!";
-			final String[] options = {"Exit", "Copy URL to clipboard"};
-
-			if (JOptionPane.showOptionDialog(this, ep, title, JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, icon, options, options[0]) != 0) {
-				StringSelection ss = new StringSelection("http://spout.in/macjava7");
 				Toolkit.getDefaultToolkit().getSystemClipboard().setContents(ss, null);
 			}
 			dispose();

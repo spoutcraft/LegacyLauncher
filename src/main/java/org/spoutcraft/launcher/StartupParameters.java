@@ -60,6 +60,9 @@ public final class StartupParameters {
 	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable mode")
 	private boolean portable = false;
 
+	@Parameter(names = {"-portable_path", "--portable_path", "-pmode_path", "-portable_mode_path", "-pm_path"}, description = "Portable mode path (optional)")
+	private String portablePath = "./";
+
 	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
 	private boolean debug = false;
 
@@ -209,6 +212,8 @@ public final class StartupParameters {
 		}
 		if (portable) {
 			params.add("-portable");
+			params.add("-portable_path");
+			params.add(portablePath);
 		}
 		if (debug) {
 			params.add("-debug");
@@ -317,5 +322,9 @@ public final class StartupParameters {
 
 	public String getProxyPassword() {
 		return proxyPassword;
+	}
+
+	public String getPortablePath() {
+		return portablePath;
 	}
 }
