@@ -52,26 +52,6 @@
 		<url>http://build.technicpack.net/job/TechnicLauncher/</url>
 	</ciManagement>
 
-	<!-- Dependency repositories -->
-	<repositories>
-		<repository>
-			<id>spout-repo</id>
-			<url>http://repo.spout.org</url>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<!-- Build plugin repositories -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spout-repo</id>
-			<url>http://repo.spout.org</url>
-		</pluginRepository>
-	</pluginRepositories>
-
 	<!-- Project dependencies -->
 	<dependencies>
 		<!-- Included in final JAR -->
@@ -388,56 +368,6 @@
 								<phase>package</phase>
 								<goals>
 									<goal>launch4j</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<!-- Package for Mac -->
-		<profile>
-			<id>package-mac</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.spout</groupId>
-						<artifactId>osxapp-maven-plugin</artifactId>
-						<version>1.1-SNAPSHOT</version>
-						<executions>
-							<execution>
-								<configuration>
-									<mainClass>${mainClass}</mainClass>
-									<bundleName>${project.name}</bundleName>
-									<version>${project.version}</version>
-									<iconFile>${project.basedir}/src/main/resources/app/icon.icns</iconFile>
-									<dictionaryFile>${project.basedir}/src/main/resources/app/Info.plist.template</dictionaryFile>
-									<javaApplicationStub>${project.basedir}/src/main/resources/app/JavaApplicationStub</javaApplicationStub>
-									<zipFile>${project.build.directory}/${project.build.finalName}-app.zip</zipFile>
-									<internetEnable>true</internetEnable>
-									<jvmVersion>1.5+</jvmVersion>
-									<vmOptions>-Xms512M -Xmx1024M -Xdock:name=Spoutcraft -Xdock:icon="icon.icns"</vmOptions>
-									<excludeArtifactIds>
-										<excludeArtifactId>commons-io</excludeArtifactId>
-										<excludeArtifactId>commons-codec</excludeArtifactId>
-										<excludeArtifactId>jackson-core-asl</excludeArtifactId>
-										<excludeArtifactId>jackson-mapper-asl</excludeArtifactId>
-										<excludeArtifactId>jcommander</excludeArtifactId>
-										<excludeArtifactId>jdom</excludeArtifactId>
-										<excludeArtifactId>rome</excludeArtifactId>
-										<excludeArtifactId>snakeyaml</excludeArtifactId>
-										<excludeArtifactId>swing-layout</excludeArtifactId>
-										<excludeArtifactId>swing-worker</excludeArtifactId>
-									</excludeArtifactIds>
-								</configuration>
-								<phase>package</phase>
-								<goals>
-									<goal>bundle</goal>
 								</goals>
 							</execution>
 						</executions>
