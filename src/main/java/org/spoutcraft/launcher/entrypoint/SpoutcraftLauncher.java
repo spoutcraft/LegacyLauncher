@@ -156,7 +156,7 @@ public class SpoutcraftLauncher {
 
 		if (params.hasAccount()) {
 			frame.disableForm();
-			frame.doLogin(params.getUser(), params.getPass());
+			frame.doLogin(params.getUser(), params.getPass(), selector.getSelectedPack());
 		}
 
 		if (params.isDebugMode()) {

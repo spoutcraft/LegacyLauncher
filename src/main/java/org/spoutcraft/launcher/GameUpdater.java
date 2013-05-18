@@ -132,7 +132,7 @@ public final class GameUpdater extends Directories {
 		}
 	}
 
-	public void runGame() {
-		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, Launcher.getFrame().getSelector().getSelectedPack());
+	public void runGame(PackInfo pack) {
+		Launcher.getGameLauncher().runGame(user, minecraftSession, downloadTicket, pack);
 	}
 }

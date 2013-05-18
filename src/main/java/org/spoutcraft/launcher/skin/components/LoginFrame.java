@@ -47,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
@@ -65,6 +66,7 @@ import javax.swing.JProgressBar;
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ErrorDialog;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -74,6 +76,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 	public static final URL spoutcraftIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	protected boolean offline = false;
+	private PackInfo pack;
 
 	public LoginFrame() {
 		readSavedUsernames();
@@ -149,19 +152,20 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		return offline;
 	}
 
-	public final void doLogin(String user) {
+	public final void doLogin(String user, PackInfo pack) {
 		if (!hasSavedPassword(user)) {
 			throw new NullPointerException("There is no saved password for the user '" + user + "'");
 		}
-		doLogin(user, getSavedPassword(user));
+		doLogin(user, getSavedPassword(user), pack);
 	}
 
-	public final void doLogin(String user, String pass) {
+	public final void doLogin(String user, String pass, PackInfo pack) {
 		if (pass == null) {
 			throw new NullPointerException("The password was null when logging in as user: '" + user + "'");
 		}
 
 		Launcher.getGameUpdater().setDownloadListener(this);
+		this.pack = pack;
 
 		LoginWorker loginThread = new LoginWorker(this);
 		loginThread.setUser(user);
@@ -306,7 +310,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				break;
 			case SUCESSFUL_LOGIN:
 				writeUsernameList();
-				Launcher.getGameUpdater().runGame();
+				Launcher.getGameUpdater().runGame(pack);
 				break;
 			case BAD_LOGIN:
 				JOptionPane.showMessageDialog(getParent(), "Invalid username/password combination");
@@ -327,7 +331,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				} else {
 					int result = JOptionPane.showConfirmDialog(getParent(), "Would you like to run in offline mode?", "Unable to connect to minecraft.net", JOptionPane.YES_NO_OPTION);
 					if (result == JOptionPane.YES_OPTION) {
-						Launcher.getGameUpdater().runGame();
+						Launcher.getGameUpdater().runGame(pack);
 					} else {
 						enableForm();
 					}

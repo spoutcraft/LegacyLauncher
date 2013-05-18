@@ -529,7 +529,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			String pass = new String(this.pass.getPassword());
 			if (getSelectedUser().length() > 0 && pass.length() > 0) {
 				lockLoginButton(false);
-				this.doLogin(getSelectedUser(), pass);
+				this.doLogin(getSelectedUser(), pass, pack);
 				if (remember.isSelected()) {
 					saveUsername(getSelectedUser(), pass);
 					Settings.setLastUser(getSelectedUser());

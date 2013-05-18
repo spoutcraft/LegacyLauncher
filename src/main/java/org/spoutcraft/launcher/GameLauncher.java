@@ -78,10 +78,6 @@ public class GameLauncher extends JFrame implements WindowListener {
 		this.addWindowListener(this);
 		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
 	}
-	
-	public void runGame(String user, String session, String downloadTicket) {
-		runGame(user, session, downloadTicket, null);
-	}
 
 	public void setShouldRun(boolean shouldRun) {
 		this.shouldRun = shouldRun;
