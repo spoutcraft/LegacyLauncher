@@ -62,9 +62,12 @@ public class DynamicButton extends JButton implements MouseListener{
 		this.userName = userName;
 		underLabel = new DynamicLabel(userName);
 		remove = new TransparentButton();
-		this.setSize(icon.getWidth(), icon.getHeight());
+		this.setSize(32, 32);
 		this.setBorder(null);
-		setIcon(new ImageIcon(icon));
+		if (icon != null) {
+			setIcon(new ImageIcon(icon));
+			this.setSize(icon.getWidth(), icon.getHeight());
+		}
 		setRolloverEnabled(true);
 		setFocusable(false);
 		addMouseListener(this);
