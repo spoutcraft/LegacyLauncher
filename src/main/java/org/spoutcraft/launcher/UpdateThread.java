@@ -99,6 +99,10 @@ public class UpdateThread extends Thread {
 		setDaemon(true);
 		this.pack = pack;
 		this.build = pack.getModpack();
+		if (build == null) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error retrieving information for selected pack: " + pack.getDisplayName(), "Error", JOptionPane.WARNING_MESSAGE);
+			throw new RestfulAPIException("Error getting modpack build for " + pack.getName());
+		}
 		setDownloadListener(listener);
 	}
 
