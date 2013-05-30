@@ -192,7 +192,7 @@ public final class StartupParameters {
 				commands.add("javaw");
 			} else if (OperatingSystem.getOS().isMac()) {
 				commands.add("java");
-				commands.add("-Xdock:name=Spoutcraft");
+				commands.add("-Xdock:name=\"Technic Launcher\"");
 			} else {
 				commands.add("java");
 			}
