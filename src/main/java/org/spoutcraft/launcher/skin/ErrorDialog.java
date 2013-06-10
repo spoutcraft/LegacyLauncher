@@ -31,19 +31,30 @@
 
 package org.spoutcraft.launcher.skin;
 
-import java.awt.*;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.Frame;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
-import javax.swing.*;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.util.DesktopUtils;
 
 public class ErrorDialog extends JDialog implements ActionListener{
-	private static final URL spoutcraftIcon = ErrorDialog.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
+	private static final URL technicIcon = ErrorDialog.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	private static final String CLOSE_ACTION = "close";
 	private static final String REPORT_ACTION = "report";
 	private static final String PASTEBIN_URL = "http://pastebin.com";
@@ -55,17 +66,27 @@ public class ErrorDialog extends JDialog implements ActionListener{
 	private JTextArea errorArea;
 	private JButton reportButton;
 	private JButton closeButton;
+
+	private final String selected;
+
 	public ErrorDialog(Frame owner, Throwable t) {
 		super(owner);
 		this.cause = t;
 		initComponents();
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(technicIcon));
 		populateException(this.cause);
 		reportButton.addActionListener(this);
 		reportButton.setActionCommand(REPORT_ACTION);
 		closeButton.addActionListener(this);
 		closeButton.setActionCommand(CLOSE_ACTION);
+		String getSelected = null;
+		try {
+			getSelected = Launcher.getFrame().getSelector().getSelectedPack().getDisplayName();
+		} catch (Exception e) {
+			e.printStackTrace(); // This is probably a null pointer if it ever gets here, but I want to be sure the error window still launches, I'll just have less information
+		}
+		selected = getSelected;
 	}
 
 	private void populateException(Throwable e) {
@@ -98,13 +119,13 @@ public class ErrorDialog extends JDialog implements ActionListener{
 	private String generateExceptionReport() {
 		StringBuilder builder = new StringBuilder("Technic Launcher Error Report:\n");
 		builder.append("( Please submit this report to https://github.com/TechnicPack/TechnicLauncher/issues )\n");
-		builder.append("    Launcher Build: ").append(Settings.getLauncherBuild()).append("\n");
-		builder.append("----------------------------------------------------------------------").append("\n");
+		builder.append("    Launcher Build: ").append(Settings.getLauncherBuild()).append("\n").append("\n");
+		builder.append("    Selected Pack: ").append(selected).append("\n");
 		builder.append("Stack Trace:").append("\n");
 		builder.append("    Exception: ").append(cause.getClass().getSimpleName()).append("\n");
 		builder.append("    Message: ").append(cause.getMessage()).append("\n");
 		logTrace(builder, cause);
-		builder.append("----------------------------------------------------------------------").append("\n");
+		builder.append("\n");
 		builder.append("System Information:\n");
 		builder.append("    Operating System: ").append(System.getProperty("os.name")).append("\n");
 		builder.append("    Operating System Version: ").append(System.getProperty("os.version")).append("\n");
@@ -207,7 +228,7 @@ public class ErrorDialog extends JDialog implements ActionListener{
 			}
 			if (response.startsWith(PASTEBIN_URL)) {
 				try {
-					Compatibility.browse((new URL(response)).toURI());
+					DesktopUtils.browse((new URL(response)).toURI());
 				} catch (Exception e) {
 					System.err.println("Unable to generate error report. Response: " + response);
 					e.printStackTrace();

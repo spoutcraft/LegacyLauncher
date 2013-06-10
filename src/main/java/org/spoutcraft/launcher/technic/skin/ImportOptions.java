@@ -60,12 +60,12 @@ import javax.swing.text.SimpleAttributeSet;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.CustomInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.Utils;
 

@@ -24,56 +24,31 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest;
+package org.spoutcraft.launcher.rest;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-public class Article extends RestObject {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class RestObject {
+	@JsonProperty("error")
+	private String error;
 
-	@JsonProperty("title")
-	private String title;
-	@JsonProperty("image")
-	private String image;
-	@JsonProperty("display_title")
-	private String displayTitle;
-	@JsonProperty("category")
-	private String category;
-	@JsonProperty("user")
-	private String user;
-	@JsonProperty("summary")
-	private String summary;
-	@JsonProperty("created_at")
-	private String date;
+	private RestAPI rest;
 
-	public String getCategory() {
-		return category;
+	public String getError() {
+		return error;
 	}
 
-	public String getDate() {
-		return date;
+	public boolean hasError() {
+		return error != null;
 	}
 
-	public String getDisplayTitle() {
-		return displayTitle;
+	public void setRest(RestAPI rest) {
+		this.rest = rest;
 	}
 
-	public String getSummary() {
-		return summary;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public String getUrl() {
-		return RestAPI.getPlatformURL() + "article/view/" + title;
-	}
-
-	public String getImageUrl() {
-		return RestAPI.getPlatformURL() + "something" + image;
-	}
-
-	public String getUser() {
-		return user;
+	public RestAPI getRest() {
+		return rest;
 	}
 }

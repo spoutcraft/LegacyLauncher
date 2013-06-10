@@ -24,34 +24,33 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest;
 
-import java.util.Collection;
-import java.util.LinkedHashMap;
+package org.spoutcraft.launcher.skin;
 
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.spoutcraft.launcher.technic.RestInfo;
+import java.awt.Font;
+import java.awt.Toolkit;
 
-public class FullModpacks extends RestObject {
-	@JsonProperty("modpacks")
-	private LinkedHashMap<String, RestInfo> modpacks;
-	@JsonProperty("mirror_url")
-	private String mirrorURL;
+import javax.swing.JProgressBar;
 
-	public Collection<RestInfo> getModpacks() {
-		return modpacks.values();
+public class ProgressSplashScreen extends SplashScreen {
+	private static final long serialVersionUID = 1L;
+	private JProgressBar progressBar = new JProgressBar();
+
+	public ProgressSplashScreen() {
+		super(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
+
+		// Setup the progress bar
+		progressBar.setFont(new Font("Arial", Font.PLAIN, 11));
+		progressBar.setMaximum(100);
+		progressBar.setBounds(0, icon.getIconHeight(), icon.getIconWidth(), 20);
+		progressBar.setString("Downloading launcher updates...");
+		getContentPane().add(progressBar);
+		setVisible(true);
 	}
 
-	public String getMirrorURL() {
-		return mirrorURL;
-	}
-
-	@Override
-	public String toString() {
-		return "{ Full Modpacks [modpacks: " + modpacks + "] }";
-	}
-
-	public LinkedHashMap<String, RestInfo> getMap() {
-		return modpacks;
+	public void updateProgress(int percent) {
+		if (percent >= 0 && percent <= 100) {
+			progressBar.setValue(percent);
+		}
 	}
 }

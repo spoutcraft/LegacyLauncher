@@ -65,6 +65,7 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -82,9 +83,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 
 import org.apache.commons.io.IOUtils;
-
 import org.spoutcraft.launcher.skin.components.LoginFrame;
-import org.spoutcraft.launcher.util.Compatibility;
 
 /**
  * Console dialog for showing console messages.
@@ -147,7 +146,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		setSize(new Dimension(650, 400));
 		buildUI();
 
-		Compatibility.setIconImage(this, Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.technicIcon));
 
 		if (trackProc != null) {
 			track(trackProc);

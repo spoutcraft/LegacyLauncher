@@ -24,38 +24,19 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-
 package org.spoutcraft.launcher.rest;
 
-import java.io.File;
+import java.util.List;
 
-import org.spoutcraft.launcher.exceptions.DownloadException;
-import org.spoutcraft.launcher.util.DownloadListener;
+public abstract class Modpack extends RestObject {
+	
+	public abstract String getMinecraftVersion();
 
-/**
- * Represents a downloadable file
- */
-public interface Downloadable {
-	/**
-	 * Downloads the file from the maven repository and saves it in the given location
-	 *
-	 * @param file location to save the file
-	 * @param listener download listener, optional
-	 */
-	public void download(File location, DownloadListener listener) throws DownloadException;
+	public abstract String getMinecraftMd5();
 
-	/**
-	 * True if the md5 is a valid match
-	 *
-	 * @param md5
-	 * @return matches
-	 */
-	public boolean valid(String md5);
+	public abstract String getBuild();
 
-	/**
-	 * Name of the file
-	 *
-	 * @return file name
-	 */
-	public String name();
+	public abstract String getName();
+
+	public abstract List<Mod> getMods();
 }

@@ -40,8 +40,8 @@ import javax.imageio.ImageIO;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.RestObject;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.rest.RestObject;
 import org.spoutcraft.launcher.technic.skin.ModpackOptions;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadUtils;
@@ -62,10 +62,9 @@ public abstract class PackInfo extends RestObject {
 	// Directories
 	private File installedDirectory;
 	private File binDir;
-	private File cacheDir;
 	private File configDir;
 	private File savesDir;
-	private File tempDir;
+	private File cacheDir;
 	private File resourceDir;
 	private File coremodsDir;
 
@@ -121,14 +120,14 @@ public abstract class PackInfo extends RestObject {
 
 	public void init() {
 		String location = Settings.getPackDirectory(getName());
-		
+
 		if (location != null) {
 			installedDirectory = new File(location);
 			initDirectories();
 		}
-		
+
 		String build = Settings.getModpackBuild(getName());
-		
+
 		if (build == null) {
 			Settings.setModpackBuild(getName(), ModpackOptions.RECOMMENDED);
 			Settings.getYAML().save();
@@ -145,7 +144,7 @@ public abstract class PackInfo extends RestObject {
 			build = getRecommended();
 			saveBuild = ModpackOptions.RECOMMENDED;
 		}
-		
+
 		Settings.setModpackBuild(getName(), saveBuild);
 		Settings.getYAML().save();
 		return build;
@@ -153,22 +152,20 @@ public abstract class PackInfo extends RestObject {
 
 	public void initDirectories() {
 		binDir = new File(installedDirectory, "bin");
-		cacheDir = new File(installedDirectory, "cache");
 		configDir = new File(installedDirectory, "config");
 		savesDir = new File(installedDirectory, "saves");
-		tempDir = new File(installedDirectory, "temp");
+		cacheDir = new File(installedDirectory, "cache");
 		resourceDir = new File(installedDirectory, "resources");
 		coremodsDir = new File(installedDirectory, "coremods");
-		
+
 		binDir.mkdirs();
-		cacheDir.mkdirs();
 		configDir.mkdirs();
 		savesDir.mkdirs();
-		tempDir.mkdirs();
+		cacheDir.mkdirs();
 		resourceDir.mkdirs();
 		coremodsDir.mkdirs();
 	}
-	
+
 	public void setPackDirectory(File packPath) {
 		if (installedDirectory != null) {
 			try {
@@ -183,34 +180,30 @@ public abstract class PackInfo extends RestObject {
 		installedDirectory = packPath;
 		initDirectories();
 	}
-	
+
 	public File getPackDirectory() {
 		if (installedDirectory == null) {
 			setPackDirectory(new File(Utils.getLauncherDirectory(), getName()));
 		}
 		return installedDirectory;
 	}
-	
+
 	public File getBinDir() {
 		return binDir;
 	}
-	
-	public File getCacheDir() {
-		return cacheDir;
-	}
-	
+
 	public File getConfigDir() {
 		return configDir;
 	}
-	
+
 	public File getSavesDir() {
 		return savesDir;
 	}
-	
-	public File getTempDir() {
-		return tempDir;
+
+	public File getCacheDir() {
+		return cacheDir;
 	}
-	
+
 	public File getresourceDir() {
 		return resourceDir;
 	}
@@ -289,12 +282,15 @@ public abstract class PackInfo extends RestObject {
 					newImage = ImageIO.read(temp);
 				}
 				image.set(newImage);
-				return true; // We have successfully loaded the one from the file, with the correct md5
+				return true; // We have successfully loaded the one from the
+								// file, with the correct md5
 			}
 		} catch (IIOException e) {
 			Launcher.getLogger().log(Level.INFO, "Failed to load image " + temp.getAbsolutePath() + " from file, attempting download");
 		} catch (IOException e) {
-			e.printStackTrace(); // Failed to load image from file for some reason, continue on and debug the stack trace
+			e.printStackTrace(); // Failed to load image from file for some
+									// reason, continue on and debug the stack
+									// trace
 		}
 
 		downloadImage(image, url, temp, width, height, md5);
@@ -321,8 +317,11 @@ public abstract class PackInfo extends RestObject {
 					if (width > 0 && height > 0) {
 						newImage = ImageUtils.scaleImage(ImageIO.read(download.getOutFile()), width, height);
 						if (Launcher.getFrame().getSelector().getSelectedPack().getName().equals(name)) {
-							force = true; // Force background fade in if the pack is selected and this is a background 
-							// (It is a background because width/height are being set. Bad I know.)
+							force = true; // Force background fade in if the
+											// pack is selected and this is a
+											// background
+							// (It is a background because width/height are
+							// being set. Bad I know.)
 						}
 					} else {
 						newImage = ImageIO.read(download.getOutFile());

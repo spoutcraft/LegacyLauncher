@@ -76,7 +76,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 			this.setResizable(true);
 		}
 		this.addWindowListener(this);
-		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.spoutcraftIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.technicIcon));
 	}
 
 	public void setShouldRun(boolean shouldRun) {
@@ -112,7 +112,6 @@ public class GameLauncher extends JFrame implements WindowListener {
 			}
 		}
 
-		
 		Dimension size = WindowMode.getModeById(Settings.getWindowModeId()).getDimension(this);
 		if (width != -1 && height != -1) {
 			size = new Dimension(width, height);
@@ -141,8 +140,8 @@ public class GameLauncher extends JFrame implements WindowListener {
 			corruption.printStackTrace();
 		} catch (MinecraftVerifyException verify) {
 			Launcher.getLogger().log(Level.SEVERE, "Minecraft Verification error", verify);
-			Launcher.clearCache();
-			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the appplication.");
+			Launcher.clearCache(pack);
+			JOptionPane.showMessageDialog(getParent(), "Your Minecraft installation is corrupt, but has been cleaned. \nTry to login again.\n\n If that fails, close and restart the application.");
 			this.setVisible(false);
 			this.dispose();
 			Launcher.getFrame().enableForm();

@@ -30,6 +30,14 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.progress.ProgressMonitor;
+
+import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.UnzipException;
 
 /**
  * Apache Commons IO
@@ -244,5 +252,37 @@ public class FileUtils {
 		}
 
 		return dir.list().length == 0;
+	}
+
+	/**
+	 * Unzips a file into the specified directory.
+	 * 
+	 * @param zip file to unzip
+	 * @param output directory to unzip into
+	 * @param listener to update progress on - may be null for no progress indicator
+	 */
+	public static void unzipFile(File zip, File output, DownloadListener listener) {
+		if (!zip.exists()) {
+			Launcher.getLogger().log(Level.SEVERE, "File to unzip does not exist: " + zip.getAbsolutePath());
+			return;
+		}
+		if (!output.exists()) {
+			output.mkdirs();
+		}
+		try {
+			ZipFile zipFile = new ZipFile(zip);
+			zipFile.setRunInThread(true);
+			zipFile.extractAll(output.getAbsolutePath());
+
+			ProgressMonitor monitor = zipFile.getProgressMonitor();
+			while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
+				long totalProgress = monitor.getWorkCompleted() / (monitor.getTotalWork() + 1);
+				if (listener != null) {
+					listener.stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
+				}
+			}
+		} catch (ZipException e) {
+			throw new UnzipException("Error unzipping file: " + zip, e);
+		}
 	}
 }

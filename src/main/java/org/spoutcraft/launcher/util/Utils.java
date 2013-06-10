@@ -60,7 +60,6 @@ import javax.swing.JProgressBar;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
-import org.spoutcraft.launcher.entrypoint.SplashScreen;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.exceptions.AccountMigratedException;
 import org.spoutcraft.launcher.exceptions.BadLoginException;
@@ -68,6 +67,7 @@ import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
+import org.spoutcraft.launcher.skin.SplashScreen;
 
 public class Utils {
 	private static File workDir = null;

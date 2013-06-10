@@ -31,7 +31,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.net.URI;
 
-import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.DesktopUtils;
 
 public class HyperlinkJLabel extends TransparentJLabel implements MouseListener {
 	private static final long CLICK_DELAY = 250L;
@@ -75,6 +75,6 @@ public class HyperlinkJLabel extends TransparentJLabel implements MouseListener 
 	}
 
 	public static void browse(URI uri) {
-		Compatibility.browse(uri);
+		DesktopUtils.browse(uri);
 	}
 }

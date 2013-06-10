@@ -25,86 +25,48 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic.rest.pack;
+package org.spoutcraft.launcher.rest;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.technic.RestInfo;
-import org.spoutcraft.launcher.technic.rest.Mod;
-import org.spoutcraft.launcher.technic.rest.Modpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class RestModpack extends Modpack {
+public class Modpacks extends RestObject {
 
-	@JsonProperty("libraries")
-	private String libraries;
-	@JsonProperty("minecraft")
-	private String minecraftVersion;
-	@JsonProperty("minecraft_md5")
-	private String minecraftMd5;
-	@JsonProperty("use_patch")
-	boolean usePatch;
-	@JsonProperty("forge")
-	private String forgeVersion;
-	@JsonProperty("mods")
-	private List<Mod> mods;
+	@JsonProperty("modpacks")
+	private Map<String, String> modpacks;
+	@JsonProperty("mirror_url")
+	private String mirrorURL;
 
-	private String name;
-	private String displayName;
-	private String build;
-
-	private RestInfo info;
-
-	public RestModpack setInfo(RestInfo info, String build) {
-		this.info = info;
-		this.name = info.getName();
-		this.displayName = info.getDisplayName();
-		this.build = build;
-		return this;
+	public String getDisplayName(String modpack) {
+		return modpacks.get(modpack);
 	}
 
-	public RestInfo getInfo() {
-		return info;
+	public List<RestInfo> getModpacks() throws RestfulAPIException {
+		List<RestInfo> modpackInfos = new ArrayList<RestInfo>(modpacks.size());
+		for (String pack : modpacks.keySet()) {
+			RestInfo info = getRest().getModpackInfo(pack);
+			modpackInfos.add(info);
+		}
+		return modpackInfos;
 	}
 
-	@Override
-	public String getName() {
-		return name;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
-
-	@Override
-	public String getBuild() {
-		return build;
-	}
-
-	@Override
-	public String getMinecraftVersion() {
-		return minecraftVersion;
-	}
-
-	@Override
-	public String getMinecraftMd5() {
-		return minecraftMd5;
-	}
-
-	public String getForgeVersion() {
-		return forgeVersion;
-	}
-
-	@Override
-	public List<Mod> getMods() {
-		return mods;
+	public String getMirrorURL() {
+		return mirrorURL;
 	}
 
 	@Override
 	public String toString() {
-		return "{ Modpack [name: " + name + ", build: " + build + ", libraries: " + libraries + ", minecraft: " + minecraftVersion + ", forge: " + forgeVersion + ", mods: " + mods + "] }";
+		return "{ Modpacks [modpacks: " + modpacks + "] }";
+	}
+
+	public Map<String, String> getMap() {
+		return modpacks;
 	}
 }

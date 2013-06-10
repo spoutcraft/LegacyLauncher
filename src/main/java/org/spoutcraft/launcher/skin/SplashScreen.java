@@ -25,7 +25,7 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.entrypoint;
+package org.spoutcraft.launcher.skin;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -37,7 +37,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JWindow;
 
-public class SplashScreen extends JWindow{
+public class SplashScreen extends JWindow {
 	private static final long serialVersionUID = 1L;
 	protected final ImageIcon icon;
 
@@ -70,7 +70,7 @@ public class SplashScreen extends JWindow{
 		// Finalize
 		setSize(icon.getIconWidth(), icon.getIconHeight() + 20);
 		try {
-			//Not always supported...
+			// Not always supported...
 			this.setBackground(new Color(0, 0, 0, 0));
 		} catch (UnsupportedOperationException e) {
 			this.setBackground(new Color(0, 0, 0));

@@ -24,38 +24,56 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
+package org.spoutcraft.launcher.rest.pack;
 
-package org.spoutcraft.launcher.exceptions;
+import java.util.ArrayList;
+import java.util.List;
 
-public class InvalidDescriptionFileException extends Exception {
-	private static final long serialVersionUID = 1424408665150176335L;
-	private final Throwable cause;
-	private final String message;
+import org.spoutcraft.launcher.rest.Mod;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.technic.CustomInfo;
 
-	public InvalidDescriptionFileException(Throwable throwable) {
-		this(throwable, "Invalid skin.yml");
-	}
+public class CustomModpack extends Modpack {
+	private final CustomInfo info;
+	private final String name;
+	private final String build;
+	private final String minecraftVersion;
 
-	public InvalidDescriptionFileException(String message) {
-		this(null, message);
-	}
-
-	public InvalidDescriptionFileException(Throwable throwable, String message) {
-		this.cause = null;
-		this.message = message;
-	}
-
-	public InvalidDescriptionFileException() {
-		this(null, "Invalid skin.yml");
+	public CustomModpack(CustomInfo info) {
+		this.info = info;
+		this.name = info.getName();
+		this.build = info.getVersion();
+		this.minecraftVersion = info.getMinecraftVersion();
 	}
 
 	@Override
-	public Throwable getCause() {
-		return this.cause;
+	public String getMinecraftVersion() {
+		return minecraftVersion;
 	}
 
 	@Override
-	public String getMessage() {
-		return this.message;
+	public String getMinecraftMd5() {
+		return info.getMinecraftMd5();
+	}
+
+	@Override
+	public String getBuild() {
+		return build;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public List<Mod> getMods() {
+		List<Mod> mods = new ArrayList<Mod>(1);
+		mods.add(new Mod(getName(), getBuild(), getInfo().getURL()));
+		return mods;
+	}
+
+	public CustomInfo getInfo() {
+		return info;
 	}
 }

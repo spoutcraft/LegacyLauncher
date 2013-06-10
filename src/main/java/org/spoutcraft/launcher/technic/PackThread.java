@@ -31,7 +31,7 @@ import java.util.logging.Level;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.util.Utils;
 
 public class PackThread extends Thread {

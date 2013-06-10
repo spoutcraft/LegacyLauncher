@@ -69,4 +69,20 @@ public enum OperatingSystem {
 		}
 		return best;
 	}
+
+	public static String getNativeValue() {
+		OperatingSystem OS = getOS();
+		if (OS.isWindows()) {
+			return "win";
+		}
+
+		if (OS.isMac()) {
+			return "osx";
+		}
+
+		if (OS.isUnix()) {
+			return "nix";
+		}
+		return null;
+	}
 }

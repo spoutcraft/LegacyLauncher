@@ -34,8 +34,8 @@ import java.util.concurrent.atomic.AtomicReference;
 import javax.swing.Icon;
 import javax.swing.JLabel;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.util.SwingWorker;
 
 public class AnimatedBackground extends JLabel {
 	private static final long serialVersionUID = 1L;

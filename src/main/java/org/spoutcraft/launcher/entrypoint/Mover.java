@@ -35,8 +35,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
-
-import org.spoutcraft.launcher.util.Compatibility;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -76,8 +74,8 @@ public class Mover {
 			IOUtils.closeQuietly(fis);
 			IOUtils.closeQuietly(fos);
 		}
-		
-		Compatibility.setExecutable(codeSource, true, true);
+
+		codeSource.setExecutable(true, true);
 
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		ArrayList<String> commands = new ArrayList<String>();

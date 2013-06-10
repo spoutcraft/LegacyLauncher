@@ -25,47 +25,38 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.technic.rest;
+package org.spoutcraft.launcher.util;
 
-import org.codehaus.jackson.annotate.JsonCreator;
-import org.codehaus.jackson.annotate.JsonProperty;
+import java.awt.Desktop;
+import java.io.File;
+import java.net.URI;
 
-public class Mod {
-	private final String name;
-	private final String version;
-	private final String url;
-	private final String md5;
-
-	@JsonCreator
-	public Mod(@JsonProperty("name") String name, @JsonProperty("version") String version, @JsonProperty("md5") String md5, @JsonProperty("url") String url) {
-		this.name = name;
-		this.version = version;
-		this.md5 = md5;
-		this.url = url;
+/**
+ * Static utility class to preventing checking for IOExceptions everywhere you would like to open a folder or open the browser
+ */
+public class DesktopUtils {
+	/**
+	 * Replaces Desktop.getDesktop().browse(uri)
+	 *
+	 * @param uri
+	 */
+	public static void browse(URI uri) {
+		try {
+			Desktop.getDesktop().browse(uri);
+		} catch (Exception e) {
+			if (Utils.getStartupParameters().isDebugMode()) {
+				e.printStackTrace();
+			}
+		}
 	}
 
-	public Mod(String name, String version, String url) {
-		this(name, version, null, url);
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getVersion() {
-		return version;
-	}
-
-	public String getURL() {
-		return url;
-	}
-
-	public String getMD5() {
-		return md5;
-	}
-
-	@Override
-	public String toString() {
-		return "{ Mod [name: " + name + ", version: " + version + "] }";
+	public static void open(File file) {
+		try {
+			Desktop.getDesktop().open(file);
+		} catch (Exception e) {
+			if (Utils.getStartupParameters().isDebugMode()) {
+				e.printStackTrace();
+			}
+		}
 	}
 }

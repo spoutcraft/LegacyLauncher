@@ -32,7 +32,7 @@ import java.util.List;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 
 public class PackMap extends HashMap<String, PackInfo> {

@@ -30,8 +30,8 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.List;
 
+import org.spoutcraft.launcher.rest.pack.RestModpack;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.technic.rest.pack.RestModpack;
 
 public class AddPack extends PackInfo {
 	private final static BufferedImage icon = MetroLoginFrame.getImage("icon.png", 32, 32);

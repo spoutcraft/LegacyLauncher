@@ -72,7 +72,7 @@ import org.spoutcraft.launcher.util.Utils;
 
 public abstract class LoginFrame extends JFrame implements DownloadListener {
 	private static final long serialVersionUID = 2L;
-	public static final URL spoutcraftIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
+	public static final URL technicIcon = LoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	protected Map<String, UserPasswordInformation> usernames = new HashMap<String, UserPasswordInformation>();
 	protected boolean offline = false;
 	private PackInfo pack;
@@ -81,7 +81,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 		readSavedUsernames();
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setTitle("Technic Launcher");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(technicIcon));
 	}
 
 	public final List<String> getSavedUsernames() {
@@ -98,16 +98,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			return pass.password;
 		}
 		return null;
-	}
-
-	public final String getSkinURL(String user) {
-		for (String key : usernames.keySet()) {
-			if (key.equalsIgnoreCase(user)) {
-				UserPasswordInformation info = usernames.get(key);
-				return "http://cdn.spout.org/game/vanilla/skin/" + info.username + ".png";
-			}
-		}
-		return "http://cdn.spout.org/game/vanilla/skin/" + user + ".png";
 	}
 
 	public final String getUsername(String account) {
@@ -163,7 +153,6 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			throw new NullPointerException("The password was null when logging in as user: '" + user + "'");
 		}
 
-		Launcher.getGameUpdater().setDownloadListener(this);
 		this.pack = pack;
 
 		LoginWorker loginThread = new LoginWorker(this);
@@ -316,12 +305,12 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 				enableForm();
 				break;
 			case ACCOUNT_MIGRATED:
-				JOptionPane.showMessageDialog(getParent(), "Please use your email address instead of your username.", "Account Migrated!", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(getParent(), "Your account is a Mojang account, and uses your email address to login, not your game username.\nPlease use your email address to log in.", "Account Migrated", JOptionPane.WARNING_MESSAGE);
 				removeAccount(getSelectedUser());
 				enableForm();
 				break;
 			case USER_NOT_PREMIUM:
-				JOptionPane.showMessageDialog(getParent(), "You purchase a Minecraft account to play");
+				JOptionPane.showMessageDialog(getParent(), "You must purchase a Minecraft account to play");
 				enableForm();
 				break;
 			case MINECRAFT_NETWORK_DOWN:
@@ -370,7 +359,7 @@ public abstract class LoginFrame extends JFrame implements DownloadListener {
 			ep.setEditable(false);
 			ep.setBackground(label.getBackground());
 
-			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(spoutcraftIcon));
+			final Icon icon = new ImageIcon(Toolkit.getDefaultToolkit().getImage(technicIcon));
 			final String title = "Java 1.6 Required!";
 			final String[] options = {"Ok", "Copy URL to clipboard"};
 

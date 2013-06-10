@@ -43,8 +43,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import org.jdesktop.swingworker.SwingWorker;
 import org.spoutcraft.launcher.util.ImageUtils;
-import org.spoutcraft.launcher.util.SwingWorker;
 
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;

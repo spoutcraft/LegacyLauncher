@@ -36,7 +36,8 @@ import javax.swing.UIManager;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
+import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.skin.ProgressSplashScreen;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;

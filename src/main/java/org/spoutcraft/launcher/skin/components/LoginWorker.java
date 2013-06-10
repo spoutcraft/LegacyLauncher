@@ -80,7 +80,6 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 			Launcher.getGameUpdater().setMinecraftUser(values[2].trim());
 			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
-			Launcher.getGameUpdater().setMinecraftPass(pass);
 
 			UserPasswordInformation info = null;
 

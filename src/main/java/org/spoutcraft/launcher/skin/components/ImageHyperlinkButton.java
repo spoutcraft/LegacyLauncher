@@ -34,7 +34,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import javax.swing.JButton;
 
-import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.DesktopUtils;
 
 public class ImageHyperlinkButton extends JButton{
 	private static final long serialVersionUID = 1L;
@@ -52,7 +52,7 @@ public class ImageHyperlinkButton extends JButton{
 		@Override
 		public void actionPerformed(ActionEvent event) {
 			try {
-				Compatibility.browse((new URL(url).toURI()));
+				DesktopUtils.browse((new URL(url).toURI()));
 			} catch (MalformedURLException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {

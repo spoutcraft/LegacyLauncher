@@ -24,36 +24,31 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.technic.rest.pack;
+package org.spoutcraft.launcher.rest.pack;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import org.spoutcraft.launcher.technic.CustomInfo;
-import org.spoutcraft.launcher.technic.rest.Mod;
-import org.spoutcraft.launcher.technic.rest.Modpack;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.rest.Mod;
+import org.spoutcraft.launcher.rest.Modpack;
 
-public class CustomModpack extends Modpack {
-	private final CustomInfo info;
+public class OfflineModpack extends Modpack {
 	private final String name;
 	private final String build;
-	private final String minecraftVersion;
 
-	public CustomModpack(CustomInfo info) {
-		this.info = info;
-		this.name = info.getName();
-		this.build = info.getVersion();
-		this.minecraftVersion = info.getMinecraftVersion();
+	public OfflineModpack(String name, String build) {
+		this.name = name;
+		this.build = build;
 	}
 
 	@Override
 	public String getMinecraftVersion() {
-		return minecraftVersion;
+		return Settings.getInstalledMC(name);
 	}
 
 	@Override
 	public String getMinecraftMd5() {
-		return info.getMinecraftMd5();
+		return null;
 	}
 
 	@Override
@@ -68,12 +63,8 @@ public class CustomModpack extends Modpack {
 
 	@Override
 	public List<Mod> getMods() {
-		List<Mod> mods = new ArrayList<Mod>(1);
-		mods.add(new Mod(getName(), getBuild(), getInfo().getURL()));
-		return mods;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-	public CustomInfo getInfo() {
-		return info;
-	}
 }

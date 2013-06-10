@@ -36,35 +36,26 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JOptionPane;
 
-import net.lingala.zip4j.core.ZipFile;
-import net.lingala.zip4j.exception.ZipException;
-import net.lingala.zip4j.progress.ProgressMonitor;
-
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.exceptions.UnsupportedOSException;
+import org.spoutcraft.launcher.exceptions.UnzipException;
 import org.spoutcraft.launcher.launch.MinecraftClassLoader;
 import org.spoutcraft.launcher.launch.MinecraftLauncher;
-import org.spoutcraft.launcher.rest.Versions;
+import org.spoutcraft.launcher.rest.Mod;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.technic.OfflineInfo;
 import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.technic.rest.Mod;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.FileType;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
-import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
@@ -76,16 +67,6 @@ public class UpdateThread extends Thread {
 	private static final AtomicBoolean cleaned = new AtomicBoolean(false);
 	private static final int PRELOAD_CLASSES = 100;
 
-	// Temporarily hardcoded
-	private static final String WINDOWS_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/windows_natives.jar";
-	private static final String WINDOWS_NATIVES_MD5 = "9406d7d376b131d20c5717ee9fd89a7f";
-
-	private static final String OSX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/macosx_natives.jar";
-	private static final String OSX_NATIVES_MD5 = "2f60f009723553622af280c920bb7431";
-
-	private static final String LINUX_NATIVES_URL = "http://s3.amazonaws.com/MinecraftDownload/linux_natives.jar";
-	private static final String LINUX_NATIVES_MD5 = "3b4435ec85e63faa041b4c080b815b22";
-
 	private final Logger logger = Logger.getLogger("launcher");
 	private final AtomicBoolean waiting = new AtomicBoolean(false);
 	private final AtomicBoolean valid = new AtomicBoolean(false);
@@ -94,7 +75,7 @@ public class UpdateThread extends Thread {
 	private final Modpack build;
 	private final PackInfo pack;
 
-	public UpdateThread(PackInfo pack, DownloadListener listener) throws RestfulAPIException {
+	public UpdateThread(PackInfo pack) throws RestfulAPIException {
 		super("Update Thread");
 		setDaemon(true);
 		this.pack = pack;
@@ -103,7 +84,7 @@ public class UpdateThread extends Thread {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error retrieving information for selected pack: " + pack.getDisplayName(), "Error", JOptionPane.WARNING_MESSAGE);
 			throw new RestfulAPIException("Error getting modpack build for " + pack.getName());
 		}
-		setDownloadListener(listener);
+		setDownloadListener(Launcher.getFrame());
 	}
 
 	@Override
@@ -116,6 +97,13 @@ public class UpdateThread extends Thread {
 				JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
 				Launcher.getFrame().enableForm();
 				Launcher.getGameUpdater().resetUpdateThread();
+				e.printStackTrace();
+				return;
+			} catch (UnzipException e) {
+				JOptionPane.showMessageDialog(Launcher.getFrame(), "Error unzipping file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author, or try to run the pack again.", "Error", JOptionPane.WARNING_MESSAGE);
+				Launcher.getFrame().enableForm();
+				Launcher.getGameUpdater().resetUpdateThread();
+				e.printStackTrace();
 				return;
 			} catch (Exception e) {
 				Launcher.getFrame().handleException(e);
@@ -129,30 +117,26 @@ public class UpdateThread extends Thread {
 			if (!pack.isLoading() && build.getMinecraftVersion() != null && !(pack instanceof OfflineInfo)) {
 				boolean minecraftUpdate = isMinecraftUpdateAvailable(build);
 
-				if (minecraftUpdate) {
-					updateMinecraft(build);
-				}
-
 				boolean modpackUpdate = minecraftUpdate || isModpackUpdateAvailable(build);
 				if (modpackUpdate) {
 					File installed = new File(pack.getBinDir(), "installed");
 					if(!installed.exists()) {
+						if (minecraftUpdate) {
+							updateMinecraft(build);
+						}
 						updateModpack(build);
 					}
 					else {
 						int result = JOptionPane.showConfirmDialog(Launcher.getFrame(), "Would you like to update this pack?", "Update Found", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 						if (result == JOptionPane.YES_OPTION) {
+							if (minecraftUpdate) {
+								updateMinecraft(build);
+							}
 							updateModpack(build);
 						}
 					}
 				}
 			}
-
-			// Download assets
-			if (cleaned.compareAndSet(false, true)) {
-				Versions.getMinecraftVersions();
-			}
-
 			cleanLogs();
 
 			valid.set(true);
@@ -177,6 +161,9 @@ public class UpdateThread extends Thread {
 	}
 
 	private void cleanLogs() {
+		if (!cleaned.compareAndSet(false, true)) {
+			return;
+		}
 		File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 		if (logDirectory.exists() && logDirectory.isDirectory()) {
 			for (File log : logDirectory.listFiles()) {
@@ -234,10 +221,6 @@ public class UpdateThread extends Thread {
 
 	public boolean isFinished() {
 		return finished.get();
-	}
-
-	public boolean isValidInstall() {
-		return valid.get();
 	}
 
 	public boolean isModpackUpdateAvailable(Modpack build) throws RestfulAPIException {
@@ -314,88 +297,31 @@ public class UpdateThread extends Thread {
 	public void updateMinecraft(Modpack build) throws IOException {
 		pack.init();
 
+		String minecraft = build.getMinecraftVersion();
 		String minecraftMD5 = build.getMinecraftMd5();
-		String jinputMD5 = FileType.JINPUT.getMD5();
-		String lwjglMD5 = FileType.LWJGL.getMD5();
-		String lwjgl_utilMD5 = FileType.LWJGL_UTIL.getMD5();
 
 		// Processs minecraft.jar
-		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + build.getMinecraftVersion());
-		File mcCache = new File(Utils.getCacheDirectory(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		if (!mcCache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(mcCache)))) {
-			String output = pack.getTempDir() + File.separator + "minecraft.jar";
-			MinecraftDownloadUtils.downloadMinecraft(Launcher.getGameUpdater().getMinecraftUser(), output, pack, build, listener);
+		logger.info("Mod pack Build: " + build.getBuild() + " Minecraft Version: " + minecraft);
+		File cache = new File(Utils.getCacheDirectory(), "minecraft_" + minecraft + ".jar");
+		if (!cache.exists() || (minecraftMD5 == null || !minecraftMD5.equals(MD5Utils.getMD5(cache)))) {
+			String output = pack.getCacheDir() + File.separator + "minecraft.jar";
+			MinecraftDownloadUtils.downloadMinecraft(output, pack, build, listener);
 		}
-		Utils.copy(mcCache, new File(pack.getBinDir(), "minecraft.jar"));
+		Utils.copy(cache, new File(pack.getBinDir(), "minecraft.jar"));
 
-		File nativesDir = new File(pack.getBinDir(), "natives");
-		nativesDir.mkdir();
-
-		// Process other downloads
-		mcCache = new File(Utils.getCacheDirectory(), "jinput.jar");
-		if (!mcCache.exists() || !jinputMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "jinput.jar", pack.getBinDir().getPath() + File.separator + "jinput.jar", "jinput.jar");
-		} else {
-			Utils.copy(mcCache, new File(pack.getBinDir(), "jinput.jar"));
+		// Process forge downloads ahead of time
+		String fmlZip = RestAPI.getFmlLibZip(minecraft);
+		if (RestAPI.getFmlLibZip(minecraft) != null) {
+			File forgeCache = new File(Utils.getCacheDirectory(), fmlZip);
+			if (!forgeCache.exists()) {
+				String output = new File(pack.getCacheDir(), fmlZip).getAbsolutePath();
+				DownloadUtils.downloadFile(RestAPI.getFmlLibURL() + "/" + fmlZip, output, fmlZip, null, listener);
+			}
+			FileUtils.unzipFile(forgeCache, new File(pack.getPackDirectory(), "lib"), listener);
 		}
-
-		mcCache = new File(Utils.getCacheDirectory(), "lwjgl.jar");
-		if (!mcCache.exists() || !lwjglMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl.jar", pack.getBinDir().getPath() + File.separator + "lwjgl.jar", "lwjgl.jar");
-		} else {
-			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl.jar"));
-		}
-
-		mcCache = new File(Utils.getCacheDirectory(), "lwjgl_util.jar");
-		if (!mcCache.exists() || !lwjgl_utilMD5.equals(MD5Utils.getMD5(mcCache))) {
-			DownloadUtils.downloadFile(getNativesUrl() + "lwjgl_util.jar", pack.getBinDir().getPath() + File.separator + "lwjgl_util.jar", "lwjgl_util.jar");
-		} else {
-			Utils.copy(mcCache, new File(pack.getBinDir(), "lwjgl_util.jar"));
-		}
-
-		try {
-			getNatives();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		stateChanged("Extracting Files...", 0);
 
 		Settings.setInstalledMC(build.getName(), build.getMinecraftVersion());
 		Settings.getYAML().save();
-	}
-
-	public String getNativesUrl() {
-		return GameUpdater.baseURL;
-	}
-
-	public void getNatives() throws IOException, UnsupportedOSException {
-		String url, md5;
-
-		OperatingSystem os = OperatingSystem.getOS();
-		if (os.isUnix()) {
-			url = LINUX_NATIVES_URL;
-			md5 = LINUX_NATIVES_MD5;
-		} else if (os.isMac()) {
-			url = OSX_NATIVES_URL;
-			md5 = OSX_NATIVES_MD5;
-		} else if (os.isWindows()) {
-			url = WINDOWS_NATIVES_URL;
-			md5 = WINDOWS_NATIVES_MD5;
-		} else {
-			throw new UnsupportedOperationException("Unknown OS: " + os);
-		}
-
-		// Download natives
-		File nativesJar = new File(pack.getTempDir(), "natives.jar");
-		DownloadUtils.downloadFile(url, nativesJar.getPath(), null, md5, listener);
-
-		// Extract natives
-		List<String> ignores = new ArrayList<String>();
-		ignores.add("META-INF");
-		File tempNatives = new File(pack.getTempDir(), "natives");
-		Utils.extractJar(new JarFile(nativesJar), tempNatives, ignores);
-		FileUtils.moveDirectory(tempNatives, new File(pack.getBinDir(), "natives"));
 	}
 
 	public void updateModpack(Modpack modpack) throws IOException {
@@ -403,17 +329,10 @@ public class UpdateThread extends Thread {
 		cleanupModsFolders(pack);
 		File workingDir = pack.getPackDirectory();
 
-		pack.getTempDir().mkdirs();
 		pack.getCacheDir().mkdirs();
 		pack.getConfigDir().mkdirs();
 
-		File temp = pack.getTempDir();
-
-		File mcCache = new File(pack.getCacheDir(), "minecraft_" + build.getMinecraftVersion() + ".jar");
-		File updateMC = new File(pack.getTempDir().getPath() + File.separator + "minecraft.jar");
-		if (mcCache.exists()) {
-			Utils.copy(mcCache, updateMC);
-		}
+		File temp = pack.getCacheDir();
 
 		List<Mod> mods = build.getMods();
 		for (Mod mod : mods) {
@@ -437,22 +356,9 @@ public class UpdateThread extends Thread {
 				DownloadUtils.downloadFile(mod.getURL(), modFile.getAbsolutePath(), null, mod.getMD5(), listener);
 			}
 
-			try {
-				ZipFile zipFile = new ZipFile(modFile);
-				zipFile.setRunInThread(true);
-				zipFile.extractAll(workingDir.getAbsolutePath());
-
-				ProgressMonitor monitor = zipFile.getProgressMonitor();
-				while (monitor.getState() == ProgressMonitor.STATE_BUSY) {
-					long totalProgress = monitor.getWorkCompleted() / (monitor.getTotalWork() + 1);
-					stateChanged("Extracting " + monitor.getFileName() + "...", totalProgress);
-				}
-			} catch (ZipException e) {
-				Launcher.getLogger().log(Level.SEVERE, "An error occurred while extracting file: " + modFile.getAbsolutePath());
-				e.printStackTrace();
-			}
+			FileUtils.unzipFile(modFile, workingDir, listener);
 		}
-		cleanupPackTemp(modpack);
+		cleanupPackCache(modpack);
 
 		File installed = new File(pack.getBinDir(), "installed");
 		if (!installed.exists()) {
@@ -464,12 +370,12 @@ public class UpdateThread extends Thread {
 		yaml.save();
 	}
 
-	public void cleanupPackTemp(Modpack modpack) {
-		if (!pack.getTempDir().isDirectory()) {
+	public void cleanupPackCache(Modpack modpack) {
+		if (!pack.getCacheDir().isDirectory()) {
 			return;
 		}
 
-		File[] files = pack.getTempDir().listFiles();
+		File[] files = pack.getCacheDir().listFiles();
 		List<String> keepFiles = new ArrayList<String>(modpack.getMods().size());
 		for (Mod mod : modpack.getMods()) {
 			keepFiles.add(mod.getName() + "-" + mod.getVersion() + ".zip");

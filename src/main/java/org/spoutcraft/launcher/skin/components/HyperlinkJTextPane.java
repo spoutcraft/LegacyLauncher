@@ -36,7 +36,7 @@ import java.net.URI;
 import javax.swing.JTextPane;
 
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.DesktopUtils;
 
 public class HyperlinkJTextPane extends JTextPane implements MouseListener {
 	private static final long CLICK_DELAY = 250L;
@@ -70,6 +70,7 @@ public class HyperlinkJTextPane extends JTextPane implements MouseListener {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		if (lastClick + CLICK_DELAY > System.currentTimeMillis()) {
+			System.out.println("click");
 			return;
 		}
 		lastClick = System.currentTimeMillis();
@@ -98,6 +99,6 @@ public class HyperlinkJTextPane extends JTextPane implements MouseListener {
 	}
 
 	public static void browse(URI uri) {
-		Compatibility.browse(uri);
+		DesktopUtils.browse(uri);
 	}
 }

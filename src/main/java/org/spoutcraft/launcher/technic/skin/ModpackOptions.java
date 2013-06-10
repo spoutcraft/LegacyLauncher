@@ -56,7 +56,7 @@ import org.spoutcraft.launcher.skin.MetroLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.util.Compatibility;
+import org.spoutcraft.launcher.util.DesktopUtils;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.Utils;
 
@@ -287,7 +287,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();
 		} else if (action.equals(OPENFOLDER_ACTION)) {
 			if (installedDirectory.exists()) {
-				Compatibility.open(installedDirectory);
+				DesktopUtils.open(installedDirectory);
 			}
 		} else if (action.equals(CHANGEFOLDER_ACTION)) {
 			int result = fileChooser.showOpenDialog(this);

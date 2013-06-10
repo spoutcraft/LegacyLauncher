@@ -24,7 +24,9 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.technic.skin;
+
+import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -36,16 +38,16 @@ import javax.swing.JComponent;
 
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.rest.Article;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
-import org.spoutcraft.launcher.technic.rest.Article;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.technic.skin.RoundedBox;
+import org.spoutcraft.launcher.skin.components.HyperlinkJTextPane;
 
 public class NewsComponent extends JComponent {
 	private static final long serialVersionUID = 1L;
 
 	public NewsComponent() {
-		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(MetroLoginFrame.getMinecraftFont(12));
+		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(getArticleFont(10));
 	}
 
 	public void loadArticles() {
@@ -60,26 +62,34 @@ public class NewsComponent extends JComponent {
 	}
 
 	private void setupArticles(List<Article> articles) {
-		int i = 0;
-		Font minecraft = MetroLoginFrame.getMinecraftFont(12);
-		for (Article article : articles) {
-			String date = article.getDate();
-			String title = article.getDisplayTitle();
+		Font articleFont = getArticleFont(10);
+		Article article = articles.get(0);
+		String date = article.getDate();
+		String title = article.getDisplayTitle();
 
-			HyperlinkJTextPane link = new HyperlinkJTextPane(date + " " + title, article.getUrl());
-			link.setFont(minecraft);
-			link.setForeground(Color.WHITE);
-			link.setBackground(new Color(255, 255, 255, 0));
-			link.setBounds(8, i * 50 + 5, getWidth() - 8, 42);
-			if (i == 0) {
-				this.add(link);
-			}
-			
-			i++;
-		}
+		HyperlinkJTextPane link = new HyperlinkJTextPane(date + "\n" + title, article.getUrl());
+		link.setFont(articleFont);
+		link.setForeground(Color.WHITE);
+		link.setBackground(new Color(255, 255, 255, 0));
+		link.setBounds(8, 8, getWidth() - 8, getHeight() - 16);
+
+		this.add(link);
+
 		RoundedBox background = new RoundedBox(MetroLoginFrame.TRANSPARENT);
 		background.setBounds(0, 0, getWidth(), getHeight());
 		this.add(background);
 		this.repaint();
+	}
+
+	public static final Font getArticleFont(int size) {
+		Font articleFont;
+		try {
+			articleFont = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/04B_03.ttf")).deriveFont((float)size);
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Fallback
+			articleFont = new Font("Arial", Font.PLAIN, 12);
+		}
+		return articleFont;
 	}
 }

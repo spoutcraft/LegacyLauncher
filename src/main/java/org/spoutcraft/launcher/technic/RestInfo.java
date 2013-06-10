@@ -33,8 +33,8 @@ import java.util.List;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.rest.pack.OfflineModpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RestInfo extends PackInfo {

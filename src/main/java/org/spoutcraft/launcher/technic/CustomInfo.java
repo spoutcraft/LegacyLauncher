@@ -32,8 +32,8 @@ import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
-import org.spoutcraft.launcher.technic.rest.pack.CustomModpack;
+import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.rest.pack.CustomModpack;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CustomInfo extends PackInfo {

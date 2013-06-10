@@ -34,6 +34,7 @@ import java.util.logging.Logger;
 import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.GameUpdater;
 import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.FileUtils;
 
 public class Launcher {
@@ -72,10 +73,9 @@ public class Launcher {
 		return instance.launcher;
 	}
 
-	public static boolean clearCache() {
+	public static boolean clearCache(PackInfo pack) {
 		try {
-			FileUtils.deleteDirectory(instance.updater.getTempDir());
-			FileUtils.deleteDirectory(instance.updater.getBinDir());
+			FileUtils.deleteDirectory(pack.getBinDir());
 			return true;
 		} catch (IOException e) {
 			e.printStackTrace();

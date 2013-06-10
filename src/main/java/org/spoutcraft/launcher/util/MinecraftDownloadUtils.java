@@ -31,14 +31,14 @@ import java.io.File;
 import java.io.IOException;
 
 import org.spoutcraft.diff.JBPatch;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.RestAPI;
 import org.spoutcraft.launcher.util.Download.Result;
 
 public class MinecraftDownloadUtils {
 
-	public static void downloadMinecraft(String user, String output, PackInfo pack, Modpack build, DownloadListener listener) throws IOException {
+	public static void downloadMinecraft(String output, PackInfo pack, Modpack build, DownloadListener listener) throws IOException {
 		File outFile = null;
 		String version = build.getMinecraftVersion();
 		String url = RestAPI.getMinecraftURL(version);
@@ -56,9 +56,9 @@ public class MinecraftDownloadUtils {
 
 	private static void patchMinecraft(PackInfo pack, String version, String md5, File outFile, DownloadListener listener) throws IOException {
 		File patch = new File(pack.getPackDirectory(), "mc.patch");
-		Download patchDownload = DownloadUtils.downloadFile(RestAPI.getPatchURL(version), patch.getPath(), null, null, listener);
+		Download patchDownload = DownloadUtils.downloadFile(RestAPI.get123PatchURL(), patch.getPath(), null, null, listener);
 		if (patchDownload.getResult() == Result.SUCCESS) {
-			File patchedMinecraft = new File(pack.getTempDir(), "patched_minecraft.jar");
+			File patchedMinecraft = new File(pack.getCacheDir(), "patched_minecraft.jar");
 			patchedMinecraft.delete();
 			JBPatch.bspatch(outFile, patchedMinecraft, patch);
 

@@ -66,30 +66,6 @@ public class Settings {
 		yaml.setProperty("launcher.launcher.buildNumber", build);
 	}
 
-	public static synchronized Channel getLauncherChannel() {
-		return Channel.getType(yaml.getInt("launcher.launcher.type", 0));
-	}
-
-	public static synchronized void setLauncherChannel(Channel build) {
-		yaml.setProperty("launcher.launcher.type", build.type());
-	}
-
-	public static synchronized Channel getSpoutcraftChannel() {
-		return Channel.getType(yaml.getInt("launcher.client.type", 0));
-	}
-
-	public static synchronized void setSpoutcraftChannel(Channel build) {
-		yaml.setProperty("launcher.client.type", build.type());
-	}
-
-	public static synchronized String getSpoutcraftSelectedBuild() {
-		return yaml.getString("launcher.client.buildNumber", "-1");
-	}
-
-	public static synchronized void setSpoutcraftSelectedBuild(String build) {
-		yaml.setProperty("launcher.client.buildNumber", build);
-	}
-
 	public static synchronized int getMemory() {
 		return yaml.getInt("launcher.memory", 0);
 	}

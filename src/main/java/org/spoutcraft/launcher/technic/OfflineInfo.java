@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.technic.rest.Modpack;
-import org.spoutcraft.launcher.technic.rest.pack.OfflineModpack;
+import org.spoutcraft.launcher.rest.Modpack;
+import org.spoutcraft.launcher.rest.pack.OfflineModpack;
 
 public class OfflineInfo extends PackInfo {
 	private final String name;
