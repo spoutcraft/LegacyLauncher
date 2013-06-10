@@ -56,6 +56,7 @@ import org.spoutcraft.launcher.util.DownloadUtils;
 import org.spoutcraft.launcher.util.FileUtils;
 import org.spoutcraft.launcher.util.MD5Utils;
 import org.spoutcraft.launcher.util.MinecraftDownloadUtils;
+import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
 import org.spoutcraft.launcher.yml.YAMLFormat;
 import org.spoutcraft.launcher.yml.YAMLProcessor;
@@ -309,7 +310,7 @@ public class UpdateThread extends Thread {
 		}
 		Utils.copy(cache, new File(pack.getBinDir(), "minecraft.jar"));
 
-		// Process forge downloads ahead of time
+		// Process forge library downloads ahead of time
 		String fmlZip = RestAPI.getFmlLibZip(minecraft);
 		if (RestAPI.getFmlLibZip(minecraft) != null) {
 			File forgeCache = new File(Utils.getCacheDirectory(), fmlZip);
@@ -319,6 +320,27 @@ public class UpdateThread extends Thread {
 			}
 			FileUtils.unzipFile(forgeCache, new File(pack.getPackDirectory(), "lib"), listener);
 		}
+
+		// Process lwjgl downloads
+		String lwjgl = "2.4.2"; // TODO: Get this from the API/Settings
+
+		File lwjglCache = new File(Utils.getCacheDirectory(), "lwjgl-jar-" + lwjgl + ".zip");
+		if (!lwjglCache.exists()) {
+			String output = new File(pack.getCacheDir(), "lwjgl-jar-" + lwjgl + ".zip").getAbsolutePath();
+			DownloadUtils.downloadFile(RestAPI.getLwjglURL(lwjgl), output, "lwjgl-jar-" + lwjgl + ".zip", null, listener);
+		}
+		FileUtils.unzipFile(lwjglCache, pack.getBinDir(), listener);
+
+		String os = OperatingSystem.getNativeValue();
+		File nativesCache = new File(Utils.getCacheDirectory(), "lwjgl-natives-" + os + "-" + lwjgl + ".zip");
+		File natives = new File(pack.getBinDir(), "natives");
+		natives.mkdir();
+
+		if (!nativesCache.exists()) {
+			String output = new File(pack.getCacheDir(), "lwjgl-natives-" + os + "-" + lwjgl + ".zip").getAbsolutePath();
+			DownloadUtils.downloadFile(RestAPI.getLwjglNativeURL(lwjgl, os), output, "lwjgl-natives-" + os + "-" + lwjgl + ".zip", null, listener);
+		}
+		FileUtils.unzipFile(nativesCache, natives, listener);
 
 		Settings.setInstalledMC(build.getName(), build.getMinecraftVersion());
 		Settings.getYAML().save();

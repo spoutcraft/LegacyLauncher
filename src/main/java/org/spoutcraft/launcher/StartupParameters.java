@@ -76,17 +76,8 @@ public final class StartupParameters {
 	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
 	private String proxyPassword = null;
 
-	@Parameter(names = {"-nomd5", "-ignoremd5"}, description = "Disables the MD5 checking of required files")
-	private boolean ignoreMD5 = false;
-
-	@Parameter(names = {"-build"}, description = "Uses a specific mod pack build")
-	private int build = -1;
-
 	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
 	private boolean relaunched = false;
-
-	@Parameter(names = {"-old_launcher"}, description = "Indicates old launcher")
-	private boolean oldLauncher = false;
 
 	@Parameter(names = {"-console"}, description = "Shows the console window")
 	private boolean console = false;
@@ -130,17 +121,8 @@ public final class StartupParameters {
 		if (proxyPassword != null) {
 			log.info("Proxy Password exists");
 		}
-		if (ignoreMD5) {
-			log.info("No MD5 Mode activated");
-		}
-		if (build != -1) {
-			log.info("Mod pack build selected: " + build);
-		}
 		if (relaunched) {
 			log.info("Relaunched with correct memory");
-		}
-		if (oldLauncher) {
-			log.info("Old Launcher detected");
 		}
 		if (console) {
 			log.info("Console frame enabled");
@@ -258,13 +240,6 @@ public final class StartupParameters {
 			params.add("-proxy_password");
 			params.add(proxyPassword);
 		}
-		if (ignoreMD5) {
-			params.add("-nomd5");
-		}
-		if (build != -1) {
-			params.add("-build");
-			params.add(Integer.toString(build));
-		}
 		if (console) {
 			params.add("-console");
 		}
@@ -315,20 +290,8 @@ public final class StartupParameters {
 		return debug;
 	}
 
-	public boolean isIgnoreMD5() {
-		return ignoreMD5;
-	}
-
-	public int getSpoutcraftBuild() {
-		return build;
-	}
-
 	public boolean isConsole() {
 		return console;
-	}
-
-	public void setSpoutcraftBuild(int build) {
-		this.build = build;
 	}
 
 	public void setupProxy() {

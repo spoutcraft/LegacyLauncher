@@ -59,11 +59,11 @@ public class Settings {
 	}
 
 	public static synchronized int getLauncherBuild() {
-		return yaml.getInt("launcher.launcher.buildNumber", -1);
+		return yaml.getInt("launcher.buildNumber", -1);
 	}
 
 	public static synchronized void setLauncherBuild(int build) {
-		yaml.setProperty("launcher.launcher.buildNumber", build);
+		yaml.setProperty("launcher.buildNumber", build);
 	}
 
 	public static synchronized int getMemory() {
@@ -140,14 +140,6 @@ public class Settings {
 
 	public static synchronized void setWindowModeId(int id) {
 		yaml.setProperty("launcher.windowmode", id);
-	}
-
-	public static synchronized String getMinecraftVersion() {
-		return yaml.getString("launcher.mc", DEFAULT_MINECRAFT_VERSION);
-	}
-
-	public static synchronized void setMinecraftVersion(String version) {
-		yaml.setProperty("launcher.mc", version);
 	}
 
 	public static synchronized String getDirectJoin() {
