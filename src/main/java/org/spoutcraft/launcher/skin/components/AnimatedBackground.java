@@ -35,7 +35,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 
 public class AnimatedBackground extends JLabel {
 	private static final long serialVersionUID = 1L;
@@ -52,7 +52,7 @@ public class AnimatedBackground extends JLabel {
 		super.setVisible(true);
 		this.background = background;
 
-		tekkit = new AnimatedImage(650, 100, MetroLoginFrame.getIcon("creeper.png", 107, 69));
+		tekkit = new AnimatedImage(650, 100, TechnicLoginFrame.getIcon("creeper.png", 107, 69));
 		tekkit.setBounds(500, 100, 107, 69);
 		tekkit.setVisible(false);
 		this.add(tekkit);

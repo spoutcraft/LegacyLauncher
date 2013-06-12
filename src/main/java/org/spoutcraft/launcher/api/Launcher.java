@@ -33,7 +33,7 @@ import java.util.logging.Logger;
 
 import org.spoutcraft.launcher.GameLauncher;
 import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.FileUtils;
 
@@ -42,9 +42,9 @@ public class Launcher {
 	private final Logger logger = Logger.getLogger("org.spoutcraft.launcher.Main");
 	private final GameUpdater updater;
 	private final GameLauncher launcher;
-	private final MetroLoginFrame loginFrame;
+	private final TechnicLoginFrame loginFrame;
 
-	public Launcher(final GameUpdater updater, final GameLauncher launcher, final MetroLoginFrame frame) {
+	public Launcher(final GameUpdater updater, final GameLauncher launcher, final TechnicLoginFrame frame) {
 		if (Launcher.instance != null) {
 			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
@@ -83,7 +83,7 @@ public class Launcher {
 		}
 	}
 
-	public static MetroLoginFrame getFrame() {
+	public static TechnicLoginFrame getFrame() {
 		return instance.loginFrame;
 	}
 }

@@ -26,8 +26,6 @@
  */
 package org.spoutcraft.launcher.technic.skin;
 
-import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
@@ -40,14 +38,14 @@ import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.RestfulAPIException;
 import org.spoutcraft.launcher.rest.Article;
 import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.HyperlinkJTextPane;
 
 public class NewsComponent extends JComponent {
 	private static final long serialVersionUID = 1L;
 
 	public NewsComponent() {
-		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(getArticleFont(10));
+		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(TechnicLoginFrame.getMinecraftFont(10));
 	}
 
 	public void loadArticles() {
@@ -62,34 +60,25 @@ public class NewsComponent extends JComponent {
 	}
 
 	private void setupArticles(List<Article> articles) {
-		Font articleFont = getArticleFont(10);
-		Article article = articles.get(0);
-		String date = article.getDate();
-		String title = article.getDisplayTitle();
+		Font articleFont = TechnicLoginFrame.getMinecraftFont(10);
+		int width = getWidth() - 16;
+		int height = getHeight() / 2 - 16;
 
-		HyperlinkJTextPane link = new HyperlinkJTextPane(date + "\n" + title, article.getUrl());
-		link.setFont(articleFont);
-		link.setForeground(Color.WHITE);
-		link.setBackground(new Color(255, 255, 255, 0));
-		link.setBounds(8, 8, getWidth() - 8, getHeight() - 16);
+		for (int i = 0; i < 2; i++) {
+			Article article = articles.get(i);
+			String date = article.getDate();
+			String title = article.getDisplayTitle();
+			HyperlinkJTextPane link = new HyperlinkJTextPane(date + "\n" + title, article.getUrl());
+			link.setFont(articleFont);
+			link.setForeground(Color.WHITE);
+			link.setBackground(new Color(255, 255, 255, 0));
+			link.setBounds(8, 8 + ((height + 8) * i), width, height);
+			this.add(link);
+		}
 
-		this.add(link);
-
-		RoundedBox background = new RoundedBox(MetroLoginFrame.TRANSPARENT);
+		RoundedBox background = new RoundedBox(TechnicLoginFrame.TRANSPARENT);
 		background.setBounds(0, 0, getWidth(), getHeight());
 		this.add(background);
 		this.repaint();
-	}
-
-	public static final Font getArticleFont(int size) {
-		Font articleFont;
-		try {
-			articleFont = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/04B_03.ttf")).deriveFont((float)size);
-		} catch (Exception e) {
-			e.printStackTrace();
-			// Fallback
-			articleFont = new Font("Arial", Font.PLAIN, 12);
-		}
-		return articleFont;
 	}
 }

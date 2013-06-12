@@ -63,12 +63,12 @@ import net.minecraft.Launcher;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.skin.components.LoginFrame;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.technic.skin.ImageButton;
@@ -84,7 +84,7 @@ import org.spoutcraft.launcher.util.ImageUtils;
 import org.spoutcraft.launcher.util.ResourceUtils;
 import org.spoutcraft.launcher.util.Utils;
 
-public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyListener, MouseWheelListener {
+public class TechnicLoginFrame extends LoginFrame implements ActionListener, KeyListener, MouseWheelListener {
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
@@ -119,7 +119,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 	private NewsComponent news;
 	private long previous = 0L;
 
-	public MetroLoginFrame() {
+	public TechnicLoginFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
@@ -178,6 +178,12 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		ImageIcon logoIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("header.png"), 275));
 		logo.setIcon(logoIcon);
 		logo.setBounds(600, 6, logoIcon.getIconWidth(), logoIcon.getIconHeight());
+
+		// Tear
+		HyperlinkJLabel tear = new HyperlinkJLabel("", "http://www.technicpack.net");
+		ImageIcon tearIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("tear1.png"), 100));
+		tear.setIcon(tearIcon);
+		tear.setBounds(520, 0, 140, 361);
 
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
@@ -378,6 +384,7 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 		contentPane.add(linkArea);
 		contentPane.add(logo);
 		contentPane.add(news);
+		contentPane.add(tear);
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);

@@ -35,16 +35,16 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 
 public class BackgroundImage extends JLabel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
 
-	private final MetroLoginFrame frame;
+	private final TechnicLoginFrame frame;
 	private int mouseX = 0, mouseY = 0;
 	private AnimatedBackground background;
 
-	public BackgroundImage(MetroLoginFrame frame, int width, int height) {
+	public BackgroundImage(TechnicLoginFrame frame, int width, int height) {
 		this.frame = frame;
 		setVerticalAlignment(SwingConstants.CENTER);
 		setHorizontalAlignment(SwingConstants.CENTER);
@@ -52,9 +52,9 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 		setVerticalAlignment(SwingConstants.TOP);
 		setHorizontalAlignment(SwingConstants.LEFT);
-		setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		setIcon(TechnicLoginFrame.getIcon("background.jpg", width, height));
 		background = new AnimatedBackground(this);
-		background.setIcon(MetroLoginFrame.getIcon("background.jpg", width, height));
+		background.setIcon(TechnicLoginFrame.getIcon("background.jpg", width, height));
 		background.setBounds(0, 0, width, height);
 
 		this.add(background);

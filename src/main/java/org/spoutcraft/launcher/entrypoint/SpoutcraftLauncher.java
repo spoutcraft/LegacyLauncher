@@ -55,7 +55,7 @@ import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.OperatingSystem;
@@ -132,7 +132,7 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the launcher and load login frame
-		MetroLoginFrame frame = new MetroLoginFrame();
+		TechnicLoginFrame frame = new TechnicLoginFrame();
 		ModpackSelector selector = frame.getSelector();
 
 		new Launcher(updater, new GameLauncher(), frame);

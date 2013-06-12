@@ -33,7 +33,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 
 public class PackButton extends ImageButton {
 	private static final long serialVersionUID = 1L;
@@ -43,7 +43,7 @@ public class PackButton extends ImageButton {
 	public PackButton() {
 		super();
 		label = new JLabel("Loading...");
-		label.setFont(MetroLoginFrame.getMinecraftFont(12));
+		label.setFont(TechnicLoginFrame.getMinecraftFont(12));
 		label.setForeground(Color.WHITE);
 		label.setBackground(new Color(35, 35, 35));
 		label.setOpaque(true);

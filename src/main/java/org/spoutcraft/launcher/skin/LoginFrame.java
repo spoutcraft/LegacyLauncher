@@ -25,7 +25,7 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.skin;
 
 import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
 
@@ -65,7 +65,6 @@ import javax.swing.JProgressBar;
 
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.Utils;

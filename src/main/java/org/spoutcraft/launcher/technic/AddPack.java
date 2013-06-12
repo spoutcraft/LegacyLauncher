@@ -31,12 +31,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.spoutcraft.launcher.rest.pack.RestModpack;
-import org.spoutcraft.launcher.skin.MetroLoginFrame;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 
 public class AddPack extends PackInfo {
-	private final static BufferedImage icon = MetroLoginFrame.getImage("icon.png", 32, 32);
-	private final static BufferedImage logo = MetroLoginFrame.getImage("addNewPack.png", 180, 110);
-	private final static BufferedImage background = MetroLoginFrame.getImage("background.jpg", 880, 520);
+	private final static BufferedImage icon = TechnicLoginFrame.getImage("icon.png", 32, 32);
+	private final static BufferedImage logo = TechnicLoginFrame.getImage("addNewPack.png", 180, 110);
+	private final static BufferedImage background = TechnicLoginFrame.getImage("background.jpg", 880, 520);
 
 	@Override
 	public String getName() {

@@ -25,15 +25,15 @@
  * including the MIT license.
  */
 
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.skin;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+
 import javax.swing.JOptionPane;
 
 import org.jdesktop.swingworker.SwingWorker;
-
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.exceptions.AccountMigratedException;
@@ -42,7 +42,7 @@ import org.spoutcraft.launcher.exceptions.MCNetworkException;
 import org.spoutcraft.launcher.exceptions.MinecraftUserNotPremiumException;
 import org.spoutcraft.launcher.exceptions.OutdatedMCLauncherException;
 import org.spoutcraft.launcher.exceptions.PermissionDeniedException;
-import org.spoutcraft.launcher.skin.components.LoginFrame.UserPasswordInformation;
+import org.spoutcraft.launcher.skin.LoginFrame.UserPasswordInformation;
 import org.spoutcraft.launcher.util.Utils;
 
 public class LoginWorker extends SwingWorker<Object, Object> {
