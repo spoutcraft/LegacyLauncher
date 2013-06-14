@@ -88,6 +88,12 @@ public final class StartupParameters {
 	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
 	private int height = -1;
 
+	@Parameter(names = {"-solderpack"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
+	private String solderPack = null;
+
+	@Parameter(names = {"-solderrest"}, description = "URL point towards the rest api for a solder pack you want to force add to the launcher.")
+	private String solderRest = null;
+
 	public List<String> getParameters() {
 		return parameters;
 	}
@@ -132,6 +138,12 @@ public final class StartupParameters {
 		}
 		if (height != -1) {
 			log.info("Minecraft frame height: " + height);
+		}
+		if (solderPack != null) {
+			log.info("Forced solder pack: " + solderPack);
+		}
+		if (solderRest != null) {
+			log.info("Forced solder pack rest: " + solderRest);
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -251,6 +263,14 @@ public final class StartupParameters {
 			params.add("-height");
 			params.add(Integer.toString(height));
 		}
+		if (solderPack != null) {
+			params.add("-solderpack");
+			params.add(solderPack);
+		}
+		if (solderRest != null) {
+			params.add("-solderrest");
+			params.add(solderRest);
+		}
 		return params;
 	}
 
@@ -325,5 +345,13 @@ public final class StartupParameters {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public String getSolderPack() {
+		return solderPack;
+	}
+
+	public String getSolderRest() {
+		return solderRest;
 	}
 }

@@ -54,9 +54,12 @@ import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.rest.RestAPI;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.technic.RestInfo;
 import org.spoutcraft.launcher.technic.skin.ModpackSelector;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
@@ -153,6 +156,24 @@ public class SpoutcraftLauncher {
 		
 		if (!Settings.getInstalledPacks().contains(lastPack)) {
 			lastPack = ModpackSelector.DEFAULT_PACK;
+		}
+		if (params.getSolderPack() != null && params.getSolderRest() != null) {
+			String forcedSolder = params.getSolderPack();
+			String forcedRest = params.getSolderRest();
+
+			RestAPI restAPI = new RestAPI(forcedRest);
+			RestInfo pack = null;
+			try {
+				pack = restAPI.getModpackInfo(forcedSolder);
+			} catch (RestfulAPIException e) {
+				e.printStackTrace();
+			}
+
+			if (pack != null) {
+				pack.init();
+				selector.addPack(pack);
+				lastPack = pack.getName();
+			}
 		}
 		selector.selectPack(lastPack);
 		frame.getNews().loadArticles();
