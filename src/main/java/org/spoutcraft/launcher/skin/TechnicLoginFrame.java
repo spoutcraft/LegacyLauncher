@@ -113,7 +113,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
 	private ImageHyperlinkButton platform;
-	private JLabel packShadow;
 	private JLabel customName;
 	private RoundedBox barBox;
 	private NewsComponent news;
@@ -178,12 +177,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		ImageIcon logoIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("header.png"), 275));
 		logo.setIcon(logoIcon);
 		logo.setBounds(600, 6, logoIcon.getIconWidth(), logoIcon.getIconHeight());
-
-		// Tear
-		HyperlinkJLabel tear = new HyperlinkJLabel("", "http://www.technicpack.net");
-		ImageIcon tearIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("tear1.png"), 100));
-		tear.setIcon(tearIcon);
-		tear.setBounds(520, 0, 140, 361);
 
 		// Pack Selector Background
 		JLabel selectorBackground = new JLabel();
@@ -384,7 +377,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		contentPane.add(linkArea);
 		contentPane.add(logo);
 		contentPane.add(news);
-		contentPane.add(tear);
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
@@ -608,10 +600,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		return packRemoveBtn;
 	}
 
-	public JLabel getPackShadow() {
-		return packShadow;
-	}
-	
 	public JLabel getCustomName() {
 		return customName;
 	}

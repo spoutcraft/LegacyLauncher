@@ -64,12 +64,6 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 		background.changeIcon(name, icon, force);
 	}
 
-	public void checkEnableTekkit(String pack) {
-		if (pack.equals("tekkitmain")) {
-			background.setEnableTekkit(true);
-		}
-	}
-
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub

@@ -26,32 +26,19 @@
  */
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
-import javax.swing.Icon;
 import javax.swing.JLabel;
-import javax.swing.Timer;
 
-public abstract class AnimatedImage extends JLabel implements ActionListener {
-	private static final long serialVersionUID = 1;
+public class EnhancedBackground extends JLabel {
+	private final String name;
+	private boolean active = false;
 
-	private final Timer timer;
-
-	public AnimatedImage(Icon image, int delay) {
-		this.setIcon(image);
-		timer = new Timer(delay, this);
+	public EnhancedBackground(String name) {
+		this.name = name;
+		this.setBounds(0, 0, 880, 520);
 	}
 
-	public void setAnimating(boolean animate) {
-		if (animate) {
-			timer.start();
-		} else {
-			timer.stop();
-		}
-	}
-
-	public Timer getTimer() {
-		return timer;
+	@Override
+	public String getName() {
+		return name;
 	}
 }

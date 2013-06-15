@@ -24,34 +24,69 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.skin.components.backgrounds;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
 import javax.swing.Icon;
-import javax.swing.JLabel;
 import javax.swing.Timer;
+import java.awt.event.ActionEvent;
 
-public abstract class AnimatedImage extends JLabel implements ActionListener {
+public class TekkitCreeper extends AnimatedImage {
 	private static final long serialVersionUID = 1;
 
-	private final Timer timer;
+	private final int x;
+	private final int y;
+	private static final int delay = 50;
+	private final int distance = 30;
+	private int modX = 0;
+	private boolean xReverse = false;
+	private int modY = 0;
+	private boolean yReverse = false;
 
-	public AnimatedImage(Icon image, int delay) {
-		this.setIcon(image);
-		timer = new Timer(delay, this);
+
+	public TekkitCreeper(int x, int y, Icon image) {
+		super(image, delay);
+		this.x = x;
+		this.y = y;
 	}
 
-	public void setAnimating(boolean animate) {
-		if (animate) {
-			timer.start();
-		} else {
-			timer.stop();
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (modX == distance) {
+			xReverse = true;
 		}
-	}
+		if (modX == 0) {
+			xReverse = false;
+		}
+		if (modY == distance) {
+			yReverse = true;
+		}
+		if (modY == 0) {
+			yReverse = false;
+		}
 
-	public Timer getTimer() {
-		return timer;
+		if (xReverse) {
+			modX--;
+		} else {
+			modX++;
+		}
+
+		if (yReverse) {
+			modY--;
+		} else {
+			modY++;
+		}
+
+		int delayChange = 0;
+		if (modX < distance / 2) {
+			delayChange = distance - modX - (distance / 2);
+		} else {
+			delayChange = modX - (distance / 2);
+		}
+		getTimer().setDelay(delay + (delayChange * 10));
+
+		this.setBounds(x + modX, y + modY, getWidth(), getHeight());
+		this.repaint();
 	}
 }

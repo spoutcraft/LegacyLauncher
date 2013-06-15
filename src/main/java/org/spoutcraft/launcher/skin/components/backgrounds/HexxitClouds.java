@@ -24,34 +24,32 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.skin.components.backgrounds;
+
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.Timer;
+public class HexxitClouds extends AnimatedImage {
+	private int x = 0;
+	private int y = 0;
 
-public abstract class AnimatedImage extends JLabel implements ActionListener {
-	private static final long serialVersionUID = 1;
-
-	private final Timer timer;
-
-	public AnimatedImage(Icon image, int delay) {
-		this.setIcon(image);
-		timer = new Timer(delay, this);
+	public HexxitClouds(int startX, int y, String image, int delay) {
+		super(TechnicLoginFrame.getIcon(image), delay);
+		this.x = startX;
+		this.y = y;
 	}
 
-	public void setAnimating(boolean animate) {
-		if (animate) {
-			timer.start();
-		} else {
-			timer.stop();
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		x -= 1;
+
+		if (x <= -880) {
+			x = 880;
 		}
-	}
 
-	public Timer getTimer() {
-		return timer;
+		this.setBounds(x, y, 880, 520);
+		this.repaint();
 	}
 }

@@ -26,16 +26,18 @@
  */
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.util.concurrent.atomic.AtomicReference;
+import org.jdesktop.swingworker.SwingWorker;
+import org.spoutcraft.launcher.skin.components.backgrounds.HexxitBackground;
+import org.spoutcraft.launcher.skin.components.backgrounds.TekkitBackground;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
-
-import org.jdesktop.swingworker.SwingWorker;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import java.awt.AlphaComposite;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class AnimatedBackground extends JLabel {
 	private static final long serialVersionUID = 1L;
@@ -44,18 +46,19 @@ public class AnimatedBackground extends JLabel {
 	private String pack = null;
 	private Icon newIcon = null;
 	private BackgroundImage background;
-	private AnimatedImage tekkit;
-	private boolean enableTekkit = false;
+	private Map<String, EnhancedBackground> enhanced = new HashMap<String, EnhancedBackground>();
 
 	public AnimatedBackground(BackgroundImage background) {
 		super();
 		super.setVisible(true);
 		this.background = background;
 
-		tekkit = new AnimatedImage(650, 100, TechnicLoginFrame.getIcon("creeper.png", 107, 69));
-		tekkit.setBounds(500, 100, 107, 69);
-		tekkit.setVisible(false);
-		this.add(tekkit);
+		enhanced.put("tekkitmain", new TekkitBackground());
+		enhanced.put("hexxit", new HexxitBackground());
+
+		for (EnhancedBackground enhance : enhanced.values()) {
+			this.add(enhance);
+		}
 	}
 
 	public void changeIcon(String name, Icon newIcon, boolean force) {
@@ -67,35 +70,25 @@ public class AnimatedBackground extends JLabel {
 			setVisible(false);
 			pack = name;
 			background.setIcon(getIcon());
-			if (!name.equals("tekkitmain")) {
-				tekkit.setVisible(false);
-				tekkit.setAnimating(false);
+
+			for (EnhancedBackground enhance : enhanced.values()) {
+				if (!name.equals(enhance.getName())) {
+//					enhance.setVisible(false);
+				}
 			}
 		}
 	}
 
-	public Icon getNewIcon() {
-		return newIcon;
-	}
-
-	public BackgroundImage getBackgroundImg() {
-		return background;
-	}
-
-	public AnimatedImage getTekkit() {
-		return tekkit;
+	public Map<String, EnhancedBackground> getEnhanced() {
+		return enhanced;
 	}
 
 	public String getPack() {
 		return pack;
 	}
 
-	public void setEnableTekkit(boolean enableTekkit) {
-		this.enableTekkit = enableTekkit;
-	}
-
-	public boolean isEnableTekkit() {
-		return enableTekkit;
+	public Icon getNewIcon() {
+		return newIcon;
 	}
 
 	@Override
@@ -106,7 +99,7 @@ public class AnimatedBackground extends JLabel {
 			}
 			worker.set(new TransparencyWorker(this, true));
 			worker.get().execute();
-		} else if (!visible) {
+		} else {
 			if (worker.get() != null) {
 				worker.get().cancel(true);
 			}
@@ -126,6 +119,7 @@ public class AnimatedBackground extends JLabel {
 	private static class TransparencyWorker extends SwingWorker<Object, Object> {
 		private final AnimatedBackground label;
 		private final boolean increase;
+
 		TransparencyWorker(AnimatedBackground label, boolean increase) {
 			this.label = label;
 			this.increase = increase;
@@ -159,9 +153,13 @@ public class AnimatedBackground extends JLabel {
 				} else {
 					label.setIcon(label.getNewIcon());
 					label.setVisible(true);
-					if (label.isEnableTekkit() && label.getPack().equals("tekkitmain")) {
-						label.getTekkit().setVisible(true);
-						label.getTekkit().setAnimating(true);
+					String pack = label.getPack();
+					for (EnhancedBackground enhance : label.getEnhanced().values()) {
+						if (pack.equals(enhance.getName())) {
+							enhance.setVisible(true);
+						} else {
+							enhance.setVisible(false);
+						}
 					}
 				}
 			}

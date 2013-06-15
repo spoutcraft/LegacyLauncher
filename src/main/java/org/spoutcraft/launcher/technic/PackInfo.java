@@ -228,7 +228,6 @@ public abstract class PackInfo extends RestObject {
 			return background.get();
 		} else {
 			if (buildImage(background, "background.jpg", getBackgroundURL(), getBackgroundMD5(), 880, 520)) {
-				Launcher.getFrame().getBackgroundImage().checkEnableTekkit(getName());
 				return background.get();
 			}
 		}
@@ -327,7 +326,6 @@ public abstract class PackInfo extends RestObject {
 						newImage = ImageIO.read(download.getOutFile());
 					}
 					image.set(newImage);
-					Launcher.getFrame().getBackgroundImage().checkEnableTekkit(name);
 					Launcher.getFrame().getSelector().redraw(force);
 					downloading.get(image).set(false);
 				} catch (IOException e) {

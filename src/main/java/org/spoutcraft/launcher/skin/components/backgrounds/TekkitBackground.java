@@ -24,34 +24,28 @@
  * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
  * including the MIT license.
  */
-package org.spoutcraft.launcher.skin.components;
+package org.spoutcraft.launcher.skin.components.backgrounds;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.AnimatedImage;
+import org.spoutcraft.launcher.skin.components.EnhancedBackground;
 
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.Timer;
+public class TekkitBackground extends EnhancedBackground {
+	private AnimatedImage tekkit;
 
-public abstract class AnimatedImage extends JLabel implements ActionListener {
-	private static final long serialVersionUID = 1;
-
-	private final Timer timer;
-
-	public AnimatedImage(Icon image, int delay) {
-		this.setIcon(image);
-		timer = new Timer(delay, this);
+	public TekkitBackground() {
+		super("tekkitmain");
+		tekkit = new TekkitCreeper(650, 100, TechnicLoginFrame.getIcon("creeper.png", 107, 69));
+		tekkit.setBounds(500, 100, 107, 69);
+		tekkit.setVisible(false);
+		this.add(tekkit);
 	}
 
-	public void setAnimating(boolean animate) {
-		if (animate) {
-			timer.start();
-		} else {
-			timer.stop();
-		}
-	}
 
-	public Timer getTimer() {
-		return timer;
+	@Override
+	public void setVisible(boolean aFlag) {
+		tekkit.setAnimating(aFlag);
+		tekkit.setVisible(aFlag);
+		super.setVisible(aFlag);
 	}
 }
