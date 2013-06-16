@@ -27,19 +27,6 @@
 
 package org.spoutcraft.launcher;
 
-import java.applet.Applet;
-import java.awt.Dimension;
-import java.awt.Point;
-import java.awt.Toolkit;
-import java.awt.Window;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
-import java.io.File;
-import java.util.logging.Level;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import org.spoutcraft.launcher.api.Event;
 import org.spoutcraft.launcher.api.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -51,6 +38,17 @@ import org.spoutcraft.launcher.skin.LoginFrame;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.OperatingSystem;
 import org.spoutcraft.launcher.util.Utils;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.applet.Applet;
+import java.awt.Dimension;
+import java.awt.Point;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.logging.Level;
 
 public class GameLauncher extends JFrame implements WindowListener {
 	private static final long serialVersionUID = 1L;
@@ -96,10 +94,7 @@ public class GameLauncher extends JFrame implements WindowListener {
 		}
 
 		this.setTitle(pack.getDisplayName());
-		File icon = new File(Utils.getAssetsDirectory(), pack.getName() + File.separator + "icon.png");
-		if (icon.exists()) {
-			this.setIconImage(Toolkit.getDefaultToolkit().createImage(icon.getAbsolutePath()));
-		}
+		this.setIconImage(pack.getIcon());
 
 		if (OperatingSystem.getOS().isMac()) {
 			try {
