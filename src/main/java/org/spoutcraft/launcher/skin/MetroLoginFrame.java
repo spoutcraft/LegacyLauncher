@@ -339,7 +339,6 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			if (i == 0) {
 				name.setText(accountName);
 				pass.setText(this.getSavedPassword(accountName));
-				remember.setSelected(true);
 			}
 
 			// Create callable
@@ -529,17 +528,15 @@ public class MetroLoginFrame extends LoginFrame implements ActionListener, KeyLi
 			action(LOGIN_ACTION, userButton);
 		}  else if (action.equals(REMOVE_USER)) {
 			DynamicButton userButton = removeButtons.get((JButton)c);
-			if (userButton.getRemoveIcon().getTransparency() > 0.1F) {
-				this.removeAccount(userButton.getAccount());
-				userButton.setVisible(false);
-				userButton.setEnabled(false);
-				getContentPane().remove(userButton);
-				c.setVisible(false);
-				c.setEnabled(false);
-				getContentPane().remove(c);
-				removeButtons.remove(c);
-				writeUsernameList();
-			}
+			this.removeAccount(userButton.getAccount());
+			userButton.setVisible(false);
+			userButton.setEnabled(false);
+			getContentPane().remove(userButton);
+			c.setVisible(false);
+			c.setEnabled(false);
+			getContentPane().remove(c);
+			removeButtons.remove(c);
+			writeUsernameList();
 		} else if (action.equals(STEAM_ACTION)) {
 			try {
 				steamURL = new URI("http://spout.in/steam");

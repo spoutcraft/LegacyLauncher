@@ -69,11 +69,10 @@ public class DynamicButton extends JButton implements MouseListener {
 		parent.getContentPane().add(underLabel);
 		parent.getContentPane().add(remove);
 
-		remove.setTransparency(0.0F);
-		remove.setHoverTransparency(0F);
+		remove.setTransparency(0F);
 	}
 
-	public TransparentButton getRemoveIcon() {
+	public JButton getRemoveIcon() {
 		return remove;
 	}
 
@@ -147,11 +146,11 @@ public class DynamicButton extends JButton implements MouseListener {
 		setBounds(getX() - size / 2, getY() - size / 2, width + size, height + size);
 		setIcon(new ImageIcon(ImageUtils.scaleImage(icon.getRaw(), width + size, height + size)));
 		if (size > 0) {
-			remove.setTransparency(Math.min(1, remove.getTransparency() + 0.05F));
+			remove.setTransparency(0.4F);
 			remove.setHoverTransparency(1F);
 		} else {
-			remove.setTransparency(Math.max(0, remove.getTransparency() - 0.05F));
-			remove.setHoverTransparency(0F);
+			remove.setTransparency(0.0F);
+			remove.setHoverTransparency(1.0F);
 		}
 	}
 
