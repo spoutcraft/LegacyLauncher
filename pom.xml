@@ -6,38 +6,23 @@
 	<name>Technic Launcher</name>
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>launcher</artifactId>
-	<version>2.0.0-${buildNumber}</version>
+	<version>3.0-${buildNumber}</version>
 	<url>http://www.technicpack.net</url>
 	<inceptionYear>2013</inceptionYear>
-	<description>Custom launcher for installing and updating Modpacks with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
+	<description>Minecraft launcher for installing and updating Modpacks from the Technic Platform.</description>
 
 	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<currentYear>2013</currentYear>
 		<mainClass>${project.groupId}.${project.artifactId}.entrypoint.Start</mainClass>
 		<buildNumber>0</buildNumber>
-		<keystore.path>${project.basedir}/src/main/resources/keystore.jks</keystore.path>
-		<keystore.alias>spoutdev</keystore.alias>
-		<keystore.keypass>unleashtheflow</keystore.keypass>
-		<keystore.storepass>unleashtheflow</keystore.storepass>
 	</properties>
 
 	<!-- Company information -->
 	<organization>
 		<url>http://www.technicpack.net</url>
-		<name>Technic</name>
+		<name>Syndicate, LLC</name>
 	</organization>
-
-	<!-- License information -->
-	<licenses>
-		<license>
-			<name>Spout License Version 1</name>
-			<url>http://cdn.spout.org/license/spoutv1.txt</url>
-			<distribution>repo</distribution>
-			<comments>GNU Lesser General Public License Version 3, but with a provision that files are released under the MIT license 180 days after they are published</comments>
-		</license>
-	</licenses>
 
 	<!-- Source code access -->
 	<scm>
@@ -119,8 +104,6 @@
 				<excludes>
 					<exclude>app/*</exclude>
 					<exclude>exe/*</exclude>
-					<exclude>keystore.jks</exclude>
-					<exclude>jalopy.xml</exclude>
 				</excludes>
 			</resource>
 			<resource>
@@ -135,42 +118,6 @@
 
 		<!-- Build plugins -->
 		<plugins>
-			<!-- License headers plugin -->
-			<plugin>
-				<groupId>com.mycila.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-				<version>1.10.b1</version>
-				<executions>
-					<execution>
-						<configuration>
-							<properties>
-								<name>${project.name}</name>
-								<url>${project.organization.url}</url>
-								<copyright>Copyright (c) ${project.inceptionYear}-${currentYear}, ${project.organization.name}</copyright>
-							</properties>
-							<quiet>true</quiet>
-							<encoding>UTF-8</encoding>
-							<strictCheck>true</strictCheck>
-							<header>${basedir}/HEADER.txt</header>
-							<mapping>
-								<java>SLASHSTAR_STYLE</java>
-							</mapping>
-							<keywords>
-								<keyword>${project.name}</keyword>
-								<keyword>license</keyword>
-							</keywords>
-							<includes>
-								<include>src/main/java/**</include>
-								<include>src/test/java/**</include>
-							</includes>
-						</configuration>
-						<phase>clean</phase>
-						<goals>
-							<goal>format</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
 			<!-- Source compiler plugin -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -243,26 +190,6 @@
 						<phase>package</phase>
 						<goals>
 							<goal>shade</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- JAR signing plugin -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<configuration>
-							<keystore>${keystore.path}</keystore>
-							<alias>${keystore.alias}</alias>
-							<storepass>${keystore.storepass}</storepass>
-							<keypass>${keystore.keypass}</keypass>
-							<verbose>true</verbose>
-						</configuration>
-						<goals>
-							<goal>sign</goal>
 						</goals>
 					</execution>
 				</executions>

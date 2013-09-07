@@ -2,17 +2,17 @@ Technic Launcher
 ===================
 
 ## What is The Technic Launcher?
-The Technic Launcher is a modified version of the Spoutcraft Launcher, which has been modified for the distribution of Technic mod packs.  It features automated minecraft.jar version patching, automated updates, and more!  
+The Technic Launcher is a Minecraft launcher designed to install and manage modpacks from the [Technic Platform][Homepage].
+Features automatic updating, custom platform pack installation, and easy simple UI design.
 The launcher in it's current form is maintained by [Olloth](https://github.com/Olloth)
 
 [![Technic][Logo]][Homepage]  
 [Homepage] | [Forums] | [Twitter] | [Facebook] | [Steam]
 
 ## The License
-The Technic Launcher is licensed under the same license as the Spoutcraft Launcher it is derived from. The [GNU Lesser General Public License Version 3][License], but with a provision that files are released under the MIT license 180 days after they are published. Please see the `LICENSE.txt` file for details.
+The Technic Launcher is licensed under the [GNU General Public License Version 3][License]. Please see the `LICENSE.txt` file for details.
 
-Copyright (c) 2012, Technic <<http://www.technicpack.net/>>  
-Upstream Copyright (c) 2011-2012, Spout LLC <<http://www.spout.org/>>
+Copyright (c) 2013 Syndicate, LLC <<http://www.technicpack.net/>>
 
 ## Getting the Source
 The latest and greatest source can be found here on [GitHub][Source].  
@@ -42,13 +42,13 @@ Track and submit issues and bugs on our [GitHub issues page][Issues].
 
 **Please follow the above conventions if you want your pull request(s) accepted.**
 
-[Logo]: http://i.imgur.com/H23l53N.png
+[Logo]: http://i.imgur.com/PCI0pIo.png
 [Homepage]: http://www.technicpack.net
 [Forums]: http://forums.technicpack.net
-[License]: http://cdn.spout.org/license/spoutv1.txt
-[Source]: https://github.com/TechnicPack/Spoutcraft-Launcher/tree/dev
+[License]: http://www.gnu.org/licenses/gpl-3.0.txt
+[Source]: https://github.com/TechnicPack/TechnicLauncher
 [Builds]: http://build.technicpack.net/job/TechnicLauncher/
-[Issues]: https://github.com/TechnicPack/Spoutcraft-Launcher/issues
+[Issues]: https://github.com/TechnicPack/TechnicLauncher/issues
 [Twitter]: https://twitter.com/TechnicPack
 [Facebook]: https://www.facebook.com/TechnicPack
 [Steam]: http://steamcommunity.com/groups/technic-pack
