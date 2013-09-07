@@ -1,31 +1,22 @@
 /*
  * This file is part of Technic Launcher.
- *
- * Copyright (c) 2013-2013, Technic <http://www.technicpack.net/>
- * Technic Launcher is licensed under the Spout License Version 1.
+ * Copyright (C) 2013 Syndicate, LLC
  *
  * Technic Launcher is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
  *
  * Technic Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
- * including the MIT license.
+ * You should have received a copy of the GNU General Public License
+ * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.technic.skin;
+package org.spoutcraft.launcher.skin;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -52,7 +43,6 @@ import javax.swing.KeyStroke;
 
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.UpdateThread;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.PackInfo;

@@ -1,32 +1,52 @@
 /*
  * This file is part of Technic Launcher.
- *
- * Copyright (c) 2013-2013, Technic <http://www.technicpack.net/>
- * Technic Launcher is licensed under the Spout License Version 1.
+ * Copyright (C) 2013 Syndicate, LLC
  *
  * Technic Launcher is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
  *
  * Technic Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
- * including the MIT license.
+ * You should have received a copy of the GNU General Public License
+ * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.spoutcraft.launcher.skin;
 
+import net.minecraft.Launcher;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.skin.components.BackgroundImage;
+import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
+import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LitePasswordBox;
+import org.spoutcraft.launcher.skin.components.LiteProgressBar;
+import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.technic.AddPack;
+import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.Download.Result;
+import org.spoutcraft.launcher.util.DownloadUtils;
+import org.spoutcraft.launcher.util.ImageUtils;
+import org.spoutcraft.launcher.util.ResourceUtils;
+import org.spoutcraft.launcher.util.Utils;
+
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
+import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -47,44 +67,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JProgressBar;
-import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
-
-import net.minecraft.Launcher;
-
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.skin.components.BackgroundImage;
-import org.spoutcraft.launcher.skin.components.DynamicButton;
-import org.spoutcraft.launcher.skin.components.HyperlinkJLabel;
-import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
-import org.spoutcraft.launcher.skin.components.LiteButton;
-import org.spoutcraft.launcher.skin.components.LitePasswordBox;
-import org.spoutcraft.launcher.skin.components.LiteProgressBar;
-import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.technic.skin.ImageButton;
-import org.spoutcraft.launcher.technic.skin.LauncherOptions;
-import org.spoutcraft.launcher.technic.skin.ModpackOptions;
-import org.spoutcraft.launcher.technic.skin.ModpackSelector;
-import org.spoutcraft.launcher.technic.skin.NewsComponent;
-import org.spoutcraft.launcher.technic.skin.RoundedBox;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.Download.Result;
-import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.ImageUtils;
-import org.spoutcraft.launcher.util.ResourceUtils;
-import org.spoutcraft.launcher.util.Utils;
-
-public class TechnicLoginFrame extends LoginFrame implements ActionListener, KeyListener, MouseWheelListener {
+public class TechnicLoginFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener {
+	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
@@ -97,7 +81,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 	private static final String LOGIN_ACTION = "login";
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
-	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
 	private static final int SPACING = 7;
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
@@ -248,7 +231,7 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		donate.setBorderPainted(false);
 
 		// Options Button
-		ImageButton options = new ImageButton(getIcon("gear.png", 28 ,28), getIcon("gearInverted.png", 28, 28));
+		ImageButton options = new ImageButton(getIcon("gear.png", 28, 28), getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 34 * 2, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
@@ -311,10 +294,10 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		// Pack Selector
 		packSelector = new ModpackSelector(this);
 		packSelector.setBounds(15, 0, 200, 520);
-		
+
 		// Custom Pack Name Label
 		customName = new JLabel("", JLabel.CENTER);
-		customName.setBounds(FRAME_WIDTH / 2 - (192 /2), FRAME_HEIGHT / 2 + (110 / 2) - 30, 192, 30);
+		customName.setBounds(FRAME_WIDTH / 2 - (192 / 2), FRAME_HEIGHT / 2 + (110 / 2) - 30, 192, 30);
 		customName.setFont(minecraft.deriveFont(14F));
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
@@ -338,7 +321,7 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 					e.printStackTrace();
 				}
 			}
-			
+
 			DynamicButton userButton = new DynamicButton(this, image, 1, accountName, userName);
 			userButton.setFont(minecraft.deriveFont(12F));
 
@@ -380,43 +363,22 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
-		
-		
+
+
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
-	public void setUser(String name) {
-		if (name != null) {
-			DynamicButton user = userButtons.get(this.getUsername(name));
-			if (user != null) {
-				user.doClick();
-			}
+	private void setIcon(JButton button, String iconName, int size) {
+		try {
+			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
-	public ModpackSelector getSelector() {
-		return packSelector;
-	}
-
-	public NewsComponent getNews() {
-		return news;
-	}
-
-	public BackgroundImage getBackgroundImage() {
-		return packBackground;
-	}
-
-	public RoundedBox getBarBox() {
-		return barBox;
-	}
-
-	public static ImageIcon getIcon(String iconName) {
-		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
-	}
-
-	public static BufferedImage getImage(String imageName) {
+	public static ImageIcon getIcon(String iconName, int w, int h) {
 		try {
-			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
+			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -432,20 +394,17 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		}
 	}
 
-	public static ImageIcon getIcon(String iconName, int w, int h) {
+	public static BufferedImage getImage(String imageName) {
 		try {
-			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
+			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
-	private void setIcon(JButton button, String iconName, int size) {
-		try {
-			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+	public static ImageIcon getIcon(String iconName) {
+		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
 	}
 
 	public static void setIcon(JLabel label, String iconName, int w, int h) {
@@ -454,6 +413,27 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void setUser(String name) {
+		if (name != null) {
+			DynamicButton user = userButtons.get(this.getUsername(name));
+			if (user != null) {
+				user.doClick();
+			}
+		}
+	}
+
+	public NewsComponent getNews() {
+		return news;
+	}
+
+	public BackgroundImage getBackgroundImage() {
+		return packBackground;
+	}
+
+	public RoundedBox getBarBox() {
+		return barBox;
 	}
 
 	public void updateFaces() {
@@ -487,7 +467,7 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent)e.getSource());
+			action(e.getActionCommand(), (JComponent) e.getSource());
 		}
 	}
 
@@ -498,7 +478,7 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 				launcherOptions.setModal(true);
 				launcherOptions.setVisible(true);
 			}
-		} else if(action.equals(PACK_REMOVE_ACTION)) {
+		} else if (action.equals(PACK_REMOVE_ACTION)) {
 			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this pack?\n This will delete all files in: " + getSelector().getSelectedPack().getPackDirectory(), "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (result == JOptionPane.YES_OPTION) {
 				getSelector().removePack();
@@ -536,14 +516,14 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 				}
 			}
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
-			DynamicButton userButton = (DynamicButton)c;
+			DynamicButton userButton = (DynamicButton) c;
 			this.name.setText(userButton.getAccount());
 			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
 			this.remember.setSelected(true);
 			pass.setLabelVisible(false);
 			name.setLabelVisible(false);
-		}  else if (action.equals(REMOVE_USER)) {
-			DynamicButton userButton = removeButtons.get((JButton)c);
+		} else if (action.equals(REMOVE_USER)) {
+			DynamicButton userButton = removeButtons.get((JButton) c);
 			this.removeAccount(userButton.getAccount());
 			userButton.setVisible(false);
 			userButton.setEnabled(false);
@@ -554,6 +534,26 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 			removeButtons.remove(c);
 			writeUsernameList();
 		}
+	}
+
+	public void lockLoginButton(boolean unlock) {
+		if (unlock) {
+			login.setText("Login");
+		} else {
+			login.setText("Launching...");
+		}
+		login.setEnabled(unlock);
+		packRemoveBtn.setEnabled(unlock);
+		packOptionsBtn.setEnabled(unlock);
+	}
+
+	@Override
+	public String getSelectedUser() {
+		return this.name.getText();
+	}
+
+	public ModpackSelector getSelector() {
+		return packSelector;
 	}
 
 	@Override
@@ -587,11 +587,6 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		lockLoginButton(true);
 	}
 
-	@Override
-	public String getSelectedUser() {
-		return this.name.getText();
-	}
-
 	public ImageButton getPackOptionsBtn() {
 		return packOptionsBtn;
 	}
@@ -604,6 +599,10 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		return customName;
 	}
 
+	public void setCustomName(String packName) {
+		customName.setText(packName);
+	}
+
 	public ImageHyperlinkButton getPlatform() {
 		return platform;
 	}
@@ -613,23 +612,41 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 		component.setEnabled(enable);
 	}
 
-	public void setCustomName(String packName) {
-		customName.setText(packName);
+	@Override
+	public void keyTyped(KeyEvent e) {
 	}
-	
-	public void lockLoginButton(boolean unlock) {
-		if (unlock) {
-			login.setText("Login");
-		} else {
-			login.setText("Launching...");
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
+			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
+				action(LOGIN_ACTION, (JComponent) e.getComponent());
+			} else if (e.getComponent() == remember) {
+				remember.setSelected(!remember.isSelected());
+			}
 		}
-		login.setEnabled(unlock);
-		packRemoveBtn.setEnabled(unlock);
-		packOptionsBtn.setEnabled(unlock);
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+	}
+
+	@Override
+	public void mouseWheelMoved(MouseWheelEvent e) {
+		if (e.getWhen() != previous) {
+			if (e.getUnitsToScroll() > 0) {
+				getSelector().selectNextPack();
+			} else if (e.getUnitsToScroll() < 0) {
+				getSelector().selectPreviousPack();
+			}
+			this.previous = e.getWhen();
+		}
+
 	}
 
 	// Emulates tab focus policy of name -> pass -> remember -> login
-	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy{
+	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy {
 		@Override
 		public Component getComponentAfter(Container con, Component c) {
 			if (c == name) {
@@ -673,38 +690,5 @@ public class TechnicLoginFrame extends LoginFrame implements ActionListener, Key
 			return name;
 		}
 
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER){
-			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
-			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
-				action(LOGIN_ACTION, (JComponent) e.getComponent());
-			} else if (e.getComponent() == remember) {
-				remember.setSelected(!remember.isSelected());
-			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-	}
-
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent e) {
-		if (e.getWhen() != previous) {
-			if (e.getUnitsToScroll() > 0) {
-				getSelector().selectNextPack();
-			} else if (e.getUnitsToScroll() < 0){
-				getSelector().selectPreviousPack();
-			}
-			this.previous = e.getWhen();
-		}
-		
 	}
 }

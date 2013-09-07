@@ -55,34 +55,16 @@
 	<!-- Project dependencies -->
 	<dependencies>
 		<!-- Included in final JAR -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-			<version>2.1</version><!-- Stay on 2.1 for Java 5 compatibility -->
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-			<version>1.6</version><!-- Stay on 1.6 for Java 5 compatibility -->
-			<scope>compile</scope>
-		</dependency>
+        <dependency>
+            <groupId>net.technicpack</groupId>
+            <artifactId>launchercore</artifactId>
+            <version>1.0.0</version>
+            <scope>compile</scope>
+        </dependency>
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
 			<artifactId>zip4j</artifactId>
 			<version>1.3.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-core-asl</artifactId>
-			<version>1.9.11</version>
-			<scope>compile</scope>
-		</dependency> 
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-			<version>1.9.11</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -108,13 +90,6 @@
 			<artifactId>swing-worker</artifactId>
 			<version>1.1</version>
 			<scope>compile</scope>
-		</dependency>
-		<!-- Testing only -->
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.11</version>
-			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -338,10 +313,6 @@
 								<configuration>
 									<headerType>gui</headerType>
 									<stayAlive>false</stayAlive>
-									<singleInstance>
-										<mutexName>${project.name}</mutexName>
-										<windowTitle>${project.name}</windowTitle>
-									</singleInstance>
 									<jar>${project.build.directory}/${project.artifactId}-${project.version}.jar</jar>
 									<outfile>${project.build.directory}/${project.artifactId}-${project.version}.exe</outfile>
 									<classPath>

@@ -1,32 +1,38 @@
 /*
  * This file is part of Technic Launcher.
- *
- * Copyright (c) 2013-2013, Technic <http://www.technicpack.net/>
- * Technic Launcher is licensed under the Spout License Version 1.
+ * Copyright (C) 2013 Syndicate, LLC
  *
  * Technic Launcher is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
+ * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- *
- * In addition, 180 days after any changes are published, you can use the
- * software, incorporating those changes, under the terms of the MIT license,
- * as described in the Spout License Version 1.
  *
  * Technic Launcher is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License,
- * the MIT license and the Spout License Version 1 along with this program.
- * If not, see <http://www.gnu.org/licenses/> for the GNU Lesser General Public
- * License and see <http://www.spout.org/SpoutDevLicenseV1.txt> for the full license,
- * including the MIT license.
+ * You should have received a copy of the GNU General Public License
+ * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.spoutcraft.launcher.entrypoint;
 
+import com.beust.jcommander.JCommander;
+import org.apache.commons.io.IOUtils;
+import org.spoutcraft.launcher.Proxy;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.skin.ConsoleFrame;
+import org.spoutcraft.launcher.skin.SplashScreen;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.yml.YAMLFormat;
+import org.spoutcraft.launcher.yml.YAMLProcessor;
+
+import javax.swing.UIManager;
 import java.awt.Toolkit;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,33 +51,10 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import javax.swing.UIManager;
-
-import org.apache.commons.io.IOUtils;
-import org.spoutcraft.launcher.GameLauncher;
-import org.spoutcraft.launcher.GameUpdater;
-import org.spoutcraft.launcher.Proxy;
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.StartupParameters;
-import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.skin.ConsoleFrame;
-import org.spoutcraft.launcher.skin.SplashScreen;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
-import org.spoutcraft.launcher.technic.RestInfo;
-import org.spoutcraft.launcher.technic.skin.ModpackSelector;
-import org.spoutcraft.launcher.util.OperatingSystem;
-import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.YAMLFormat;
-import org.spoutcraft.launcher.yml.YAMLProcessor;
-
-import com.beust.jcommander.JCommander;
-
 public class SpoutcraftLauncher {
-	private static Logger logger = null;
 	protected static RotatingFileHandler handler = null;
 	protected static ConsoleFrame console;
+	private static Logger logger = null;
 	private static StartupParameters params;
 
 	public SpoutcraftLauncher() {
@@ -80,7 +63,6 @@ public class SpoutcraftLauncher {
 
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
-		final long startupTime = start;
 
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -106,22 +88,8 @@ public class SpoutcraftLauncher {
 
 		params.logParameters(logger);
 
-		// Setup directories
-		GameUpdater updater = new GameUpdater();
-		Utils.getAssetsDirectory().mkdirs();
-
 		Settings.setLauncherBuild(launcherBuild);
 		setupProxy();
-
-		if (params.isDebugMode()) {
-			logger.info("Initial launcher organization and look and feel time took " + (System.currentTimeMillis() - start)	 + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		if (params.isDebugMode()) {
-			logger.info("Launcher settings took " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-		}
 
 		relaunch(false);
 
@@ -136,120 +104,45 @@ public class SpoutcraftLauncher {
 
 		// Set up the launcher and load login frame
 		TechnicLoginFrame frame = new TechnicLoginFrame();
-		ModpackSelector selector = frame.getSelector();
-
-		new Launcher(updater, new GameLauncher(), frame);
-
+		new Launcher(frame);
 		frame.setUser(Settings.getLastUser());
-
-		if (params.isDebugMode()) {
-			logger.info("Launcher skin manager took " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		selector.getPackMap().initPacks();
 
 		splash.dispose();
 		frame.setVisible(true);
 
-		String lastPack = Settings.getLastModpack();
-		
-		if (!Settings.getInstalledPacks().contains(lastPack)) {
-			lastPack = ModpackSelector.DEFAULT_PACK;
-		}
-		if (params.getSolderPack() != null && params.getSolderRest() != null) {
-			String forcedSolder = params.getSolderPack();
-			String forcedRest = params.getSolderRest();
-
-			RestAPI restAPI = new RestAPI(forcedRest);
-			RestInfo pack = null;
-			try {
-				pack = restAPI.getModpackInfo(forcedSolder);
-			} catch (RestfulAPIException e) {
-				e.printStackTrace();
-			}
-
-			if (pack != null) {
-				pack.init();
-				selector.addPack(pack);
-				lastPack = pack.getName();
-			}
-		}
-		selector.selectPack(lastPack);
-		frame.getNews().loadArticles();
-		
-		frame.updateFaces();
-
-		if (params.hasAccount()) {
-			frame.disableForm();
-			frame.doLogin(params.getUser(), params.getPass(), selector.getSelectedPack());
-		}
-
-		if (params.isDebugMode()) {
-			logger.info("Launcher default skin loading took " + (System.currentTimeMillis() - start) + " ms");
-			start = System.currentTimeMillis();
-		}
-
-		logger.info("Launcher took: " + (System.currentTimeMillis() - startupTime) + "ms to start");
+		logger.info("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
 	}
 
-	public static void relaunch(boolean force) {
-		if (params.relaunch(logger, force)) {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) { }
-			System.exit(0);
-			return;
+	public static void setupConsole() {
+		if (console != null) {
+			console.dispose();
 		}
+		console = new ConsoleFrame(2500, true);
+		console.setVisible(true);
 	}
 
-	private static void setupProxy() {
-		Proxy proxy = new Proxy();
-		proxy.setHost(Settings.getProxyHost());
-		proxy.setPort(Settings.getProxyPort());
-		proxy.setUser(Settings.getProxyUsername());
-		String pass = Settings.getProxyPassword();
-		proxy.setPass(pass != null ? pass.toCharArray() : null);
-		proxy.setup();
-	}
-
-
-	private static void cleanup() {
-		File temp = new File(Utils.getLauncherDirectory(), "temp.jar");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "temp.exe");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "Spoutcraft-Launcher.jar");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "mc.patch");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/libraries.yml");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/spoutcraft.yml");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/minecraft.yml");
-		temp.delete();
-	}
-
-	private static void setLookAndFeel() {
-		OperatingSystem os = OperatingSystem.getOS();
-		if (os.isMac()) {
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
-		}
+	public static String getLauncherBuild() {
+		String build = "0";
 		try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
 		} catch (Exception e) {
-			logger.log(Level.WARNING, "Failed to setup look and feel", e);
+			e.printStackTrace();
 		}
+		return build;
 	}
 
-	private static int parseInt(String s, int def) {
+	private static StartupParameters setupParameters(String[] args) {
+		StartupParameters params = new StartupParameters(args);
 		try {
-			return Integer.parseInt(s);
-		} catch (NumberFormatException e) {
-			return def;
+			new JCommander(params, args);
+		} catch (Exception ex) {
+			ex.printStackTrace();
 		}
+		Utils.setStartupParameters(params);
+
+		params.setupProxy();
+
+		return params;
 	}
 
 	protected static Logger setupLogger() {
@@ -287,42 +180,68 @@ public class SpoutcraftLauncher {
 		return logger;
 	}
 
-	private static StartupParameters setupParameters(String[] args) {
-		StartupParameters params = new StartupParameters(args);
+	private static int parseInt(String s, int def) {
 		try {
-			new JCommander(params, args);
-		} catch (Exception ex) {
-			ex.printStackTrace();
+			return Integer.parseInt(s);
+		} catch (NumberFormatException e) {
+			return def;
 		}
-		Utils.setStartupParameters(params);
-
-		params.setupProxy();
-
-		return params;
 	}
 
-	public static String getLauncherBuild() {
-		String build = "0";
-		try {
-			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
-		} catch (Exception e) {
-			e.printStackTrace();
+	private static void setLookAndFeel() {
+		OperatingSystem os = OperatingSystem.getOS();
+		if (os.isMac()) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
 		}
-		return build;
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Failed to setup look and feel", e);
+		}
+	}
+
+	private static void cleanup() {
+		File temp = new File(Utils.getLauncherDirectory(), "temp.jar");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "temp.exe");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "Spoutcraft-Launcher.jar");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "mc.patch");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "config/libraries.yml");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "config/spoutcraft.yml");
+		temp.delete();
+		temp = new File(Utils.getLauncherDirectory(), "config/minecraft.yml");
+		temp.delete();
+	}
+
+	private static void setupProxy() {
+		Proxy proxy = new Proxy();
+		proxy.setHost(Settings.getProxyHost());
+		proxy.setPort(Settings.getProxyPort());
+		proxy.setUser(Settings.getProxyUsername());
+		String pass = Settings.getProxyPassword();
+		proxy.setPass(pass != null ? pass.toCharArray() : null);
+		proxy.setup();
+	}
+
+	public static void relaunch(boolean force) {
+		if (params.relaunch(logger, force)) {
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+			}
+			System.exit(0);
+		}
 	}
 
 	public static void setupSettings(File file) {
 		File settingsFile = new File(file, "settings.yml");
 		YAMLProcessor settings = new YAMLProcessor(settingsFile, false, YAMLFormat.EXTENDED);
 		Settings.setYAML(settings);
-	}
-
-	public static void setupConsole() {
-		if (console != null) {
-			console.dispose();
-		}
-		console = new ConsoleFrame(2500, true);
-		console.setVisible(true);
 	}
 
 	public static void destroyConsole() {
@@ -347,7 +266,8 @@ class LogFlushThread extends Thread {
 			}
 			try {
 				sleep(60000);
-			} catch (InterruptedException e) { }
+			} catch (InterruptedException e) {
+			}
 		}
 	}
 }
@@ -408,6 +328,10 @@ class RotatingFileHandler extends StreamHandler {
 		}
 	}
 
+	private String calculateFilename() {
+		return logFile.replace("%D", date.format(new Date()));
+	}
+
 	@Override
 	public synchronized void flush() {
 		if (!filename.equals(calculateFilename())) {
@@ -419,10 +343,6 @@ class RotatingFileHandler extends StreamHandler {
 			}
 		}
 		super.flush();
-	}
-
-	private String calculateFilename() {
-		return logFile.replace("%D", date.format(new Date()));
 	}
 }
 
