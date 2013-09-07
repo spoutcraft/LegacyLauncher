@@ -19,14 +19,17 @@
 package org.spoutcraft.launcher.skin;
 
 import net.minecraft.Launcher;
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
+import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.skin.components.RoundedBox;
+import org.spoutcraft.launcher.skin.options.LauncherOptions;
+import org.spoutcraft.launcher.skin.options.ModpackOptions;
 import org.spoutcraft.launcher.technic.AddPack;
 import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Download;
@@ -63,12 +66,16 @@ import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
+
 public class TechnicLoginFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener {
 	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
+	public static URL icon = TechnicLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
@@ -368,17 +375,13 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
-	private void setIcon(JButton button, String iconName, int size) {
-		try {
-			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public static ImageIcon getIcon(String iconName) {
+		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
 	}
 
-	public static ImageIcon getIcon(String iconName, int w, int h) {
+	public static BufferedImage getImage(String imageName) {
 		try {
-			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
+			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
@@ -394,17 +397,33 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		}
 	}
 
-	public static BufferedImage getImage(String imageName) {
+	public static ImageIcon getIcon(String iconName, int w, int h) {
 		try {
-			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
+			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
 	}
 
-	public static ImageIcon getIcon(String iconName) {
-		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
+	private void setIcon(JButton button, String iconName, int size) {
+		try {
+			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static Font getMinecraftFont(int size) {
+		Font minecraft;
+		try {
+			minecraft = Font.createFont(Font.TRUETYPE_FONT, getResourceAsStream("/org/spoutcraft/launcher/resources/minecraft.ttf")).deriveFont((float) size);
+		} catch (Exception e) {
+			e.printStackTrace();
+			// Fallback
+			minecraft = new Font("Arial", Font.PLAIN, 12);
+		}
+		return minecraft;
 	}
 
 	public static void setIcon(JLabel label, String iconName, int w, int h) {
@@ -456,9 +475,9 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 			}
 		} catch (IOException e) {
 			if (Utils.getStartupParameters().isDebugMode()) {
-				org.spoutcraft.launcher.api.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
+				org.spoutcraft.launcher.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
 			} else {
-				org.spoutcraft.launcher.api.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
+				org.spoutcraft.launcher.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
 			}
 		}
 		return null;
@@ -496,44 +515,20 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
-			PackInfo pack = getSelector().getSelectedPack();
-			if (pack instanceof AddPack) {
-				return;
-			}
-			if (pack.getModpack() == null || pack.getModpack().getMinecraftVersion() == null) {
-				JOptionPane.showMessageDialog(this, "Error retrieving information for selected pack: " + pack.getDisplayName(), "Error", JOptionPane.WARNING_MESSAGE);
-				return;
-			}
-
-			String pass = new String(this.pass.getPassword());
-			if (getSelectedUser().length() > 0 && pass.length() > 0) {
-				lockLoginButton(false);
-				this.doLogin(getSelectedUser(), pass, pack);
-				if (remember.isSelected()) {
-					saveUsername(getSelectedUser(), pass);
-					Settings.setLastUser(getSelectedUser());
-					Settings.getYAML().save();
-				}
-			}
+			// LOGIN ACTIOn
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton) c;
-			this.name.setText(userButton.getAccount());
-			this.pass.setText(this.getSavedPassword(userButton.getAccount()));
-			this.remember.setSelected(true);
-			pass.setLabelVisible(false);
-			name.setLabelVisible(false);
 		} else if (action.equals(REMOVE_USER)) {
 			DynamicButton userButton = removeButtons.get((JButton) c);
-			this.removeAccount(userButton.getAccount());
-			userButton.setVisible(false);
-			userButton.setEnabled(false);
-			getContentPane().remove(userButton);
-			c.setVisible(false);
-			c.setEnabled(false);
-			getContentPane().remove(c);
-			removeButtons.remove(c);
-			writeUsernameList();
 		}
+	}
+
+	public ModpackSelector getSelector() {
+		return packSelector;
+	}
+
+	public String getSelectedUser() {
+		return this.name.getText();
 	}
 
 	public void lockLoginButton(boolean unlock) {
@@ -545,15 +540,6 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		login.setEnabled(unlock);
 		packRemoveBtn.setEnabled(unlock);
 		packOptionsBtn.setEnabled(unlock);
-	}
-
-	@Override
-	public String getSelectedUser() {
-		return this.name.getText();
-	}
-
-	public ModpackSelector getSelector() {
-		return packSelector;
 	}
 
 	@Override
@@ -572,16 +558,13 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		});
 	}
 
-	@Override
 	public JProgressBar getProgressBar() {
 		return progressBar;
 	}
 
-	@Override
 	public void disableForm() {
 	}
 
-	@Override
 	public void enableForm() {
 		progressBar.setVisible(false);
 		lockLoginButton(true);

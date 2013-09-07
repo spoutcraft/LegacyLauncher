@@ -17,19 +17,21 @@
  */
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.restful.PlatformConstants;
+import net.technicpack.launchercore.restful.RestObject;
+import net.technicpack.launchercore.restful.platform.Article;
+import net.technicpack.launchercore.restful.platform.News;
+import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.skin.components.HyperlinkJTextPane;
+import org.spoutcraft.launcher.skin.components.RoundedBox;
+
+import javax.swing.JComponent;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.util.List;
 import java.util.logging.Level;
-
-import javax.swing.JComponent;
-
-import org.spoutcraft.launcher.api.Launcher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.Article;
-import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.skin.components.HyperlinkJTextPane;
 
 public class NewsComponent extends JComponent {
 	private static final long serialVersionUID = 1L;
@@ -40,7 +42,7 @@ public class NewsComponent extends JComponent {
 
 	public void loadArticles() {
 		try {
-			List<Article> articles = RestAPI.getNews();
+			List<Article> articles = RestObject.getRestObject(News.class, PlatformConstants.NEWS).getNews();
 			setupArticles(articles);
 		} catch (RestfulAPIException e) {
 			Launcher.getLogger().log(Level.WARNING, "Unable to load news, hiding news section", e);

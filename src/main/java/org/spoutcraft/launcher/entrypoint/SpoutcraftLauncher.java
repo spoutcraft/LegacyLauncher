@@ -23,7 +23,7 @@ import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Proxy;
 import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.StartupParameters;
-import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
 import org.spoutcraft.launcher.skin.TechnicLoginFrame;

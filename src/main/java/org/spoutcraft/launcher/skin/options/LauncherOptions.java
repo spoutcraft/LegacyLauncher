@@ -15,20 +15,20 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin.options;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.File;
-import java.lang.management.ManagementFactory;
-import java.lang.management.OperatingSystemMXBean;
+import org.spoutcraft.launcher.Memory;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.exceptions.RestfulAPIException;
+import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.skin.components.ImageButton;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.util.DesktopUtils;
+import org.spoutcraft.launcher.util.FileUtils;
+import org.spoutcraft.launcher.util.Utils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,21 +43,21 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
-
-import org.spoutcraft.launcher.Memory;
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.skin.components.LiteButton;
-import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.util.DesktopUtils;
-import org.spoutcraft.launcher.util.FileUtils;
-import org.spoutcraft.launcher.util.Utils;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 
 public class LauncherOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-
 	private static final int FRAME_WIDTH = 300;
 	private static final int FRAME_HEIGHT = 300;
 	private static final String LAUNCHER_PREPEND = "Launcher Build:    ";
@@ -69,7 +69,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private static final String BETA_ACTION = "beta";
 	private static final String STABLE_ACTION = "stable";
 	private static final String ESCAPE_ACTION = "escape";
-
 	private JLabel background;
 	private JLabel build;
 	private LiteButton logs;
@@ -99,7 +98,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 
 	private void initComponents() {
 		Font minecraft = TechnicLoginFrame.getMinecraftFont(12);
-		
+
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -114,7 +113,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		getRootPane().getActionMap().put(ESCAPE_ACTION, escapeAction);
 
 		background = new JLabel();
-		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
+		background.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 		TechnicLoginFrame.setIcon(background, "optionsBackground.png", background.getWidth(), background.getHeight());
 
 		ImageButton optionsQuit = new ImageButton(TechnicLoginFrame.getIcon("quit.png", 28, 28), TechnicLoginFrame.getIcon("quit.png", 28, 28));
@@ -133,9 +132,9 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		build.setFont(minecraft);
 		build.setForeground(Color.WHITE);
-		
+
 		ButtonGroup group = new ButtonGroup();
-		
+
 		stable = new JRadioButton("Always use Stable Launcher Builds");
 		stable.setBounds(10, build.getY() + build.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		stable.setFont(minecraft);
@@ -158,7 +157,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		beta.setActionCommand(BETA_ACTION);
 		beta.addActionListener(this);
 		group.add(beta);
-		
+
 		buildStream = Settings.getBuildStream();
 		if (buildStream.equals("stable")) {
 			stable.setSelected(true);
@@ -244,90 +243,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		setLocationRelativeTo(this.getOwner());
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent) e.getSource());
-		}
-	}
-
-	public void action(String action, JComponent c) {
-		if (action.equals(QUIT_ACTION)) {
-			dispose();
-		} else if (action.equals(SAVE_ACTION)) {
-			int oldMem = Settings.getMemory();
-			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
-			Settings.setMemory(mem);
-			boolean oldperm = Settings.getPermGen();
-			boolean perm = permgen.isSelected();
-			Settings.setPermGen(perm);
-			Settings.setBuildStream(buildStream);
-			if (directoryChanged) {
-				Settings.setMigrate(true);
-				Settings.setMigrateDir(installedDirectory);
-			}
-			Settings.getYAML().save();
-
-			if (directoryChanged || streamChanged) {
-				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
-				dispose();
-			}
-			if (mem != oldMem || oldperm != perm) {
-				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-				if (result == JOptionPane.YES_OPTION) {
-					SpoutcraftLauncher.relaunch(true);
-				}
-			}
-			dispose();
-		} else if (action.equals(LOGS_ACTION)) {
-			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
-			DesktopUtils.open(logDirectory);
-		} else if (action.equals(CONSOLE_ACTION)) {
-			consoleToggle =! consoleToggle;
-			Settings.setShowLauncherConsole(consoleToggle);
-			if (consoleToggle) {
-				SpoutcraftLauncher.setupConsole();
-			} else {
-				SpoutcraftLauncher.destroyConsole();
-			}
-			console.setText(consoleToggle ? "Hide Console" : "Show Console");
-		} else if (action.equals(CHANGEFOLDER_ACTION)) {
-			int result = fileChooser.showOpenDialog(this);
-			
-			if (result == JFileChooser.APPROVE_OPTION) {
-				File file = fileChooser.getSelectedFile();
-				if (!FileUtils.checkLaunchDirectory(file)) {
-					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
-					return;
-				}
-				packLocation.setText(file.getPath());
-				installedDirectory = file.getAbsolutePath();
-				directoryChanged = true;
-			}
-		} else if (action.equals(BETA_ACTION)) {
-			buildStream = "beta";
-			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
-			streamChanged = true;
-		} else if (action.equals(STABLE_ACTION)) {
-			buildStream = "stable";
-			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
-			streamChanged = true;
-		}
-		
-	}
-	
-	private int getLatestLauncherBuild(String buildStream) {
-		int build = Settings.getLauncherBuild();
-		try {
-			build = RestAPI.getLatestLauncherBuild(buildStream);
-			return build;
-		} catch (RestfulAPIException e) {
-			e.printStackTrace();
-		}
-		
-		return build;
-	}
-
 	@SuppressWarnings("restriction")
 	private void populateMemory(JComboBox memory) {
 		long maxMemory = 1024;
@@ -375,32 +290,104 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() instanceof JComponent) {
+			action(e.getActionCommand(), (JComponent) e.getSource());
+		}
+	}
+
+	@Override
 	public void mouseDragged(MouseEvent e) {
 		this.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+	}
+
+	public void action(String action, JComponent c) {
+		if (action.equals(QUIT_ACTION)) {
+			dispose();
+		} else if (action.equals(SAVE_ACTION)) {
+			int oldMem = Settings.getMemory();
+			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
+			Settings.setMemory(mem);
+			boolean oldperm = Settings.getPermGen();
+			boolean perm = permgen.isSelected();
+			Settings.setPermGen(perm);
+			Settings.setBuildStream(buildStream);
+			if (directoryChanged) {
+				Settings.setMigrate(true);
+				Settings.setMigrateDir(installedDirectory);
+			}
+			Settings.getYAML().save();
+
+			if (directoryChanged || streamChanged) {
+				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
+				dispose();
+			}
+			if (mem != oldMem || oldperm != perm) {
+				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+				if (result == JOptionPane.YES_OPTION) {
+					SpoutcraftLauncher.relaunch(true);
+				}
+			}
+			dispose();
+		} else if (action.equals(LOGS_ACTION)) {
+			File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
+			DesktopUtils.open(logDirectory);
+		} else if (action.equals(CONSOLE_ACTION)) {
+			consoleToggle = !consoleToggle;
+			Settings.setShowLauncherConsole(consoleToggle);
+			if (consoleToggle) {
+				SpoutcraftLauncher.setupConsole();
+			} else {
+				SpoutcraftLauncher.destroyConsole();
+			}
+			console.setText(consoleToggle ? "Hide Console" : "Show Console");
+		} else if (action.equals(CHANGEFOLDER_ACTION)) {
+			int result = fileChooser.showOpenDialog(this);
+
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = fileChooser.getSelectedFile();
+				if (!FileUtils.checkLaunchDirectory(file)) {
+					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
+				packLocation.setText(file.getPath());
+				installedDirectory = file.getAbsolutePath();
+				directoryChanged = true;
+			}
+		} else if (action.equals(BETA_ACTION)) {
+			buildStream = "beta";
+			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
+		} else if (action.equals(STABLE_ACTION)) {
+			buildStream = "stable";
+			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
+			streamChanged = true;
+		}
+
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	private int getLatestLauncherBuild(String buildStream) {
+		int build = Settings.getLauncherBuild();
+		try {
+			build = RestAPI.getLatestLauncherBuild(buildStream);
+			return build;
+		} catch (RestfulAPIException e) {
+			e.printStackTrace();
+		}
+
+		return build;
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -412,7 +399,20 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
 
 }

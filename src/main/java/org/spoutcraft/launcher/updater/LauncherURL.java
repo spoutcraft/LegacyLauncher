@@ -16,28 +16,14 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.updater;
 
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import net.technicpack.launchercore.restful.RestObject;
 
-public class ImageButton extends JButton {
-	private static final long serialVersionUID = 1L;
+public class LauncherURL extends RestObject {
+	private String URL;
 
-	public ImageButton(ImageIcon image) {
-		this(image, image);
-	}
-
-	public ImageButton(ImageIcon image, ImageIcon rollover) {
-		this();
-		this.setIcon(image);
-		this.setRolloverIcon(rollover);
-		
-	}
-
-	public ImageButton() {
-		this.setBorderPainted(false);
-		this.setFocusPainted(false);
-		this.setContentAreaFilled(false);
+	public String getURL() {
+		return URL;
 	}
 }

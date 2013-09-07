@@ -16,8 +16,25 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-ackage org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin;
 
+import org.apache.commons.io.IOUtils;
+
+import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextPane;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.WindowConstants;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultCaret;
+import javax.swing.text.Document;
+import javax.swing.text.JTextComponent;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -40,50 +57,33 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
-import javax.swing.WindowConstants;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultCaret;
-import javax.swing.text.Document;
-import javax.swing.text.JTextComponent;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-
-import org.apache.commons.io.IOUtils;
-
 /**
  * Console dialog for showing console messages.
  *
  * @author sk89q
- *
- * This code reused & relicensed as LGPL v 3 with permission.
+ *         <p/>
+ *         This code reused & relicensed as LGPL v 3 with permission.
  */
 public class ConsoleFrame extends JFrame implements MouseListener {
 	private static final long serialVersionUID = 1L;
 	private static final Logger rootLogger = Logger.getLogger("launcher");
+	private static String[] monospaceFontNames = {"Consolas", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Lucida Console"};
+	private final SimpleAttributeSet defaultAttributes = new SimpleAttributeSet();
+	private final SimpleAttributeSet highlightedAttributes;
+	private final SimpleAttributeSet errorAttributes;
+	private final SimpleAttributeSet infoAttributes;
+	private final SimpleAttributeSet debugAttributes;
 	private Process trackProc;
 	private Handler loggerHandler;
 	private JTextComponent textComponent;
 	private Document document;
 	private int numLines;
 	private boolean colorEnabled = false;
-	private final SimpleAttributeSet defaultAttributes = new SimpleAttributeSet();
-	private final SimpleAttributeSet highlightedAttributes;
-	private final SimpleAttributeSet errorAttributes;
-	private final SimpleAttributeSet infoAttributes;
-	private final SimpleAttributeSet debugAttributes;
 
 	/**
 	 * Construct the frame.
 	 *
-	 * @param numLines number of lines to show at a time
+	 * @param numLines     number of lines to show at a time
 	 * @param colorEnabled true to enable a colored console
 	 */
 	public ConsoleFrame(int numLines, boolean colorEnabled) {
@@ -94,10 +94,10 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	/**
 	 * Construct the frame.
 	 *
-	 * @param numLines number of lines to show at a time
+	 * @param numLines     number of lines to show at a time
 	 * @param colorEnabled true to enable a colored console
-	 * @param trackProc process to track
-	 * @param killProcess true to kill the process on console close
+	 * @param trackProc    process to track
+	 * @param killProcess  true to kill the process on console close
 	 */
 	public ConsoleFrame(int numLines, boolean colorEnabled, final Process trackProc, final boolean killProcess) {
 		super("Technic Launcher Console");
@@ -119,7 +119,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		setSize(new Dimension(650, 400));
 		buildUI();
 
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(LoginFrame.technicIcon));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(TechnicLoginFrame.icon));
 
 		if (trackProc != null) {
 			track(trackProc);
@@ -140,6 +140,50 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Track a process in a separate daemon thread.
+	 *
+	 * @param process process
+	 */
+	private void track(Process process) {
+		final PrintWriter out = new PrintWriter(getOutputStream(Color.MAGENTA), true);
+		Thread thread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					int code = trackProc.waitFor();
+					out.println("Process ended with code " + code);
+				} catch (InterruptedException e) {
+					out.println("Process tracking interrupted!");
+				}
+			}
+		});
+		thread.setDaemon(true);
+		thread.start();
+	}
+
+	/**
+	 * Get an output stream using the give color.
+	 *
+	 * @param color color to use
+	 * @return output stream
+	 */
+	public ConsoleOutputStream getOutputStream(Color color) {
+		SimpleAttributeSet attributes = new SimpleAttributeSet();
+		StyleConstants.setForeground(attributes, color);
+		return getOutputStream(attributes);
+	}
+
+	/**
+	 * Get an output stream with the given attribute set.
+	 *
+	 * @param attributes attributes
+	 * @return output stream
+	 */
+	public ConsoleOutputStream getOutputStream(AttributeSet attributes) {
+		return new ConsoleOutputStream(attributes);
 	}
 
 	/**
@@ -173,6 +217,38 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	}
 
 	/**
+	 * Get a supported monospace font.
+	 *
+	 * @return font
+	 */
+	public static Font getMonospaceFont() {
+		for (String fontName : monospaceFontNames) {
+			Font font = Font.decode(fontName + "-11");
+			if (!font.getFamily().equalsIgnoreCase("Dialog")) {
+				return font;
+			}
+		}
+		return new Font("Monospace", Font.PLAIN, 11);
+	}
+
+	/**
+	 * Get a stack trace as a string.
+	 *
+	 * @param t exception
+	 * @return stack trace
+	 */
+	public static String getStackTrace(Throwable t) {
+		Writer result = new StringWriter();
+		try {
+			PrintWriter printWriter = new PrintWriter(result);
+			t.printStackTrace(printWriter);
+		} finally {
+			IOUtils.closeQuietly(result);
+		}
+		return result.toString();
+	}
+
+	/**
 	 * Log a message.
 	 *
 	 * @param line line
@@ -184,11 +260,11 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	/**
 	 * Log a message given the {@link AttributeSet}.
 	 *
-	 * @param line line
+	 * @param line       line
 	 * @param attributes attribute set, or null for none
 	 */
 	public void log(String line, AttributeSet attributes) {
-		line = line.replace("\n\n","\n");
+		line = line.replace("\n\n", "\n");
 		if (colorEnabled) {
 			if (line.startsWith("(!!)")) {
 				attributes = highlightedAttributes;
@@ -197,42 +273,11 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 
 		try {
 			int offset = document.getLength();
-			document.insertString(offset, line,	(attributes != null && colorEnabled) ? attributes : defaultAttributes);
+			document.insertString(offset, line, (attributes != null && colorEnabled) ? attributes : defaultAttributes);
 			textComponent.setCaretPosition(document.getLength());
 		} catch (BadLocationException ble) {
 		} catch (NullPointerException npe) {
 		}
-	}
-
-	/**
-	 * Get an output stream that can be written to.
-	 *
-	 * @return output stream
-	 */
-	public ConsoleOutputStream getOutputStream() {
-		return getOutputStream((AttributeSet) null);
-	}
-
-	/**
-	 * Get an output stream with the given attribute set.
-	 *
-	 * @param attributes attributes
-	 * @return output stream
-	 */
-	public ConsoleOutputStream getOutputStream(AttributeSet attributes) {
-		return new ConsoleOutputStream(attributes);
-	}
-
-	/**
-	 * Get an output stream using the give color.
-	 *
-	 * @param color color to use
-	 * @return output stream
-	 */
-	public ConsoleOutputStream getOutputStream(Color color) {
-		SimpleAttributeSet attributes = new SimpleAttributeSet();
-		StyleConstants.setForeground(attributes, color);
-		return getOutputStream(attributes);
 	}
 
 	/**
@@ -246,31 +291,9 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	}
 
 	/**
-	 * Consume an input stream and print it to the dialog. The consumer
-	 * will be in a separate daemon thread.
-	 *
-	 * @param from stream to read
-	 * @param color color to use
-	 */
-	public void consume(InputStream from, Color color) {
-		consume(from, getOutputStream(color));
-	}
-
-	/**
-	 * Consume an input stream and print it to the dialog. The consumer
-	 * will be in a separate daemon thread.
-	 *
-	 * @param from stream to read
-	 * @param attributes attributes
-	 */
-	public void consume(InputStream from, AttributeSet attributes) {
-		consume(from, getOutputStream(attributes));
-	}
-
-	/**
 	 * Internal method to consume a stream.
 	 *
-	 * @param from stream to consume
+	 * @param from         stream to consume
 	 * @param outputStream console stream to write to
 	 */
 	private void consume(InputStream from, ConsoleOutputStream outputStream) {
@@ -300,25 +323,34 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	}
 
 	/**
-	 * Track a process in a separate daemon thread.
+	 * Get an output stream that can be written to.
 	 *
-	 * @param process process
+	 * @return output stream
 	 */
-	private void track(Process process) {
-		final PrintWriter out = new PrintWriter(getOutputStream(Color.MAGENTA), true);
-		Thread thread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					int code = trackProc.waitFor();
-					out.println("Process ended with code " + code);
-				} catch (InterruptedException e) {
-					out.println("Process tracking interrupted!");
-				}
-			}
-		});
-		thread.setDaemon(true);
-		thread.start();
+	public ConsoleOutputStream getOutputStream() {
+		return getOutputStream((AttributeSet) null);
+	}
+
+	/**
+	 * Consume an input stream and print it to the dialog. The consumer
+	 * will be in a separate daemon thread.
+	 *
+	 * @param from  stream to read
+	 * @param color color to use
+	 */
+	public void consume(InputStream from, Color color) {
+		consume(from, getOutputStream(color));
+	}
+
+	/**
+	 * Consume an input stream and print it to the dialog. The consumer
+	 * will be in a separate daemon thread.
+	 *
+	 * @param from       stream to read
+	 * @param attributes attributes
+	 */
+	public void consume(InputStream from, AttributeSet attributes) {
+		consume(from, getOutputStream(attributes));
 	}
 
 	/**
@@ -331,6 +363,37 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 
 		loggerHandler = new ConsoleLoggerHandler();
 		rootLogger.addHandler(loggerHandler);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			doPop(e);
+		}
+	}
+
+	private void doPop(MouseEvent e) {
+		ContextMenu menu = new ContextMenu();
+		menu.show(e.getComponent(), e.getX(), e.getY());
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (e.isPopupTrigger()) {
+			doPop(e);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
 	}
 
 	/**
@@ -383,75 +446,11 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		}
 	}
 
-	private static String[] monospaceFontNames = {"Consolas", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", "Lucida Console"};
-
-	/**
-	 * Get a supported monospace font.
-	 *
-	 * @return font
-	 */
-	public static Font getMonospaceFont() {
-		for (String fontName : monospaceFontNames) {
-			Font font = Font.decode(fontName + "-11");
-			if (!font.getFamily().equalsIgnoreCase("Dialog")) {
-				return font;
-			}
-		}
-		return new Font("Monospace", Font.PLAIN, 11);
-	}
-
-	/**
-	 * Get a stack trace as a string.
-	 *
-	 * @param t exception
-	 * @return stack trace
-	 */
-	public static String getStackTrace(Throwable t) {
-		Writer result = new StringWriter();
-		try {
-			PrintWriter printWriter = new PrintWriter(result);
-			t.printStackTrace(printWriter);
-		} finally {
-			IOUtils.closeQuietly(result);
-		}
-		return result.toString();
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e){
-		if (e.isPopupTrigger()) {
-			doPop(e);
-		}
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e){
-		if (e.isPopupTrigger()) {
-			doPop(e);
-		}
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-	}
-
-	private void doPop(MouseEvent e){
-		ContextMenu menu = new ContextMenu();
-		menu.show(e.getComponent(), e.getX(), e.getY());
-	}
-
 	private class ContextMenu extends JPopupMenu {
 		private static final long serialVersionUID = 1L;
 		JMenuItem copy;
 		JMenuItem clear;
+
 		public ContextMenu() {
 			copy = new JMenuItem("Copy");
 			add(copy);

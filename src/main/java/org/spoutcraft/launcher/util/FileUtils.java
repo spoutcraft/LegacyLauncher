@@ -27,7 +27,7 @@ import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.progress.ProgressMonitor;
 
-import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.exceptions.UnzipException;
 
 /**

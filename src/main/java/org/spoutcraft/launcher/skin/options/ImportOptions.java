@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin.options;
 
 import java.awt.Color;
 import java.awt.Container;
@@ -50,8 +50,10 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 
 import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.api.Launcher;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.skin.components.ImageButton;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.technic.CustomInfo;

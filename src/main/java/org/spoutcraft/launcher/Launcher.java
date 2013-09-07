@@ -16,7 +16,7 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.api;
+package org.spoutcraft.launcher;
 
 import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 

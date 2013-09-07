@@ -18,21 +18,20 @@
 
 package org.spoutcraft.launcher.entrypoint;
 
+import net.technicpack.launchercore.exception.RestfulAPIException;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.skin.ProgressSplashScreen;
+import org.spoutcraft.launcher.updater.LauncherInfo;
+import org.spoutcraft.launcher.util.Download;
+import org.spoutcraft.launcher.util.DownloadListener;
+import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.util.Utils;
+
+import javax.swing.UIManager;
 import java.io.File;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import javax.swing.UIManager;
-
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.RestAPI;
-import org.spoutcraft.launcher.skin.ProgressSplashScreen;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.util.OperatingSystem;
 
 public class Start {
 	public static void main(String[] args) {
@@ -54,9 +53,9 @@ public class Start {
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));
 		if (args.length > 0 && (args[0].equals("-Mover") || args[0].equals("-Launcher"))) {
 			String[] argsCopy = new String[args.length - 1];
-			for (int i = 1; i < args.length; i++) {
-				argsCopy[i-1] = args[i];
-			}
+
+			System.arraycopy(args, 1, argsCopy, 0, args.length - 1);
+
 			if (args[0].equals("-Mover")) {
 				Mover.main(argsCopy, true);
 			} else {
@@ -71,9 +70,9 @@ public class Start {
 		int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
 		String buildStream = Settings.getBuildStream();
 		int latest = version;
-		
+
 		try {
-			latest = RestAPI.getLatestLauncherBuild(buildStream);
+			latest = LauncherInfo.getLatestBuild(buildStream);
 			if (buildStream.equals("beta") && version < latest) {
 				update = true;
 			} else if (buildStream.equals("stable") && version != latest) {
@@ -82,7 +81,7 @@ public class Start {
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (update) {
 			File codeSource = new File(URLDecoder.decode(Start.class.getProtectionDomain().getCodeSource().getLocation().getPath(), "UTF-8"));
 			File temp;
@@ -95,10 +94,11 @@ public class Start {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (Exception e) {
+				e.printStackTrace();
 			}
 
 			ProgressSplashScreen splash = new ProgressSplashScreen();
-			Download download = new Download(RestAPI.getLauncherDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getPath());
+			Download download = new Download(LauncherInfo.getDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getPath());
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
 
@@ -135,13 +135,14 @@ public class Start {
 
 	private static class LauncherDownloadListener implements DownloadListener {
 		private final ProgressSplashScreen screen;
+
 		LauncherDownloadListener(ProgressSplashScreen screen) {
 			this.screen = screen;
 		}
 
 		@Override
 		public void stateChanged(String text, float progress) {
-			screen.updateProgress((int)progress);
+			screen.updateProgress((int) progress);
 		}
 	}
 }

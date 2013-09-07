@@ -15,15 +15,33 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
+package org.spoutcraft.launcher.skin.backgrounds;
 
-package org.spoutcraft.launcher.api;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
-public enum Event {
-	BAD_LOGIN,
-	MINECRAFT_NETWORK_DOWN,
-	SUCESSFUL_LOGIN,
-	USER_NOT_PREMIUM,
-	GAME_LAUNCH,
-	PERMISSION_DENIED,
-	ACCOUNT_MIGRATED,
+import java.awt.event.ActionEvent;
+
+public class HexxitFlash extends AnimatedImage {
+	private int counter = 0;
+
+	public HexxitFlash() {
+		super(TechnicLoginFrame.getIcon("flash.jpg"), 75);
+		this.setBounds(0, 0, 0, 0);
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		counter++;
+
+		if (counter == 41 || counter == 42 || counter == 47 || counter == 49) {
+			this.setBounds(0, 0, 880, 520);
+		} else {
+			this.setBounds(0, 0, 0, 0);
+		}
+
+		if (counter >= 100) {
+			counter = 0;
+		}
+	}
 }

@@ -16,40 +16,28 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.exceptions;
+package org.spoutcraft.launcher.skin.components;
 
-import java.io.IOException;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 
-public class RestfulAPIException extends IOException{
-	private final Throwable cause;
-	private final String message;
-
-	public RestfulAPIException(String message, Throwable cause) {
-		this.cause = cause;
-		this.message = message;
-	}
-
-	public RestfulAPIException(Throwable cause) {
-		this(null, cause);
-	}
-
-	public RestfulAPIException(String message) {
-		this(message, null);
-	}
-
-	public RestfulAPIException() {
-		this(null, null);
-	}
-
-	@Override
-	public Throwable getCause() {
-		return this.cause;
-	}
-
-	@Override
-	public String getMessage() {
-		return message;
-	}
-
+public class ImageButton extends JButton {
 	private static final long serialVersionUID = 1L;
+
+	public ImageButton(ImageIcon image) {
+		this(image, image);
+	}
+
+	public ImageButton(ImageIcon image, ImageIcon rollover) {
+		this();
+		this.setIcon(image);
+		this.setRolloverIcon(rollover);
+		
+	}
+
+	public ImageButton() {
+		this.setBorderPainted(false);
+		this.setFocusPainted(false);
+		this.setContentAreaFilled(false);
+	}
 }

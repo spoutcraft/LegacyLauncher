@@ -15,33 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.skin.components.backgrounds;
+package org.spoutcraft.launcher.skin.backgrounds;
 
 import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
 import java.awt.event.ActionEvent;
 
-public class HexxitFlash extends AnimatedImage {
-	private int counter = 0;
+public class HexxitClouds extends AnimatedImage {
+	private int x = 0;
+	private int y = 0;
 
-	public HexxitFlash() {
-		super(TechnicLoginFrame.getIcon("flash.jpg"), 75);
-		this.setBounds(0, 0, 0, 0);
+	public HexxitClouds(int startX, int y, String image, int delay) {
+		super(TechnicLoginFrame.getIcon(image), delay);
+		this.x = startX;
+		this.y = y;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		counter++;
+		x -= 1;
 
-		if (counter == 41 || counter == 42 || counter == 47 || counter == 49) {
-			this.setBounds(0, 0, 880, 520);
-		} else {
-			this.setBounds(0, 0, 0, 0);
+		if (x <= -880) {
+			x = 880;
 		}
 
-		if (counter >= 100) {
-			counter = 0;
-		}
+		this.setBounds(x, y, 880, 520);
+		this.repaint();
 	}
 }

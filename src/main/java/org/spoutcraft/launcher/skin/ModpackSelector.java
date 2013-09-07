@@ -18,6 +18,15 @@
 
 package org.spoutcraft.launcher.skin;
 
+import org.apache.commons.io.FileUtils;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.skin.components.PackButton;
+import org.spoutcraft.launcher.skin.options.ImportOptions;
+import org.spoutcraft.launcher.util.Utils;
+
+import javax.swing.ImageIcon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,31 +35,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-
-import org.apache.commons.io.FileUtils;
-
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.technic.PackMap;
-import org.spoutcraft.launcher.technic.RestInfo;
-import org.spoutcraft.launcher.util.Utils;
-
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
-	public static final String DEFAULT_PACK = "tekkitmain";
-	private ImportOptions importOptions = null;
-
 	private final TechnicLoginFrame frame;
 	private final PackMap packs = new PackMap();
 	private final List<PackButton> buttons = new ArrayList<PackButton>(7);
-
 	private final int height = 520;
-//	private final int width = 200;
 	private final int bigWidth = 180;
 	private final int bigHeight = 110;
 	private final float smallScale = 0.7F;
@@ -60,6 +51,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int bigX = 100 - (bigWidth / 2);
 	private final int bigY = (height / 2) - (bigHeight / 2);
 	private final int smallX = 100 - (smallWidth / 2);
+	private ImportOptions importOptions = null;
 
 	public ModpackSelector(TechnicLoginFrame frame) {
 		this.frame = frame;
@@ -101,9 +93,13 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(pack);
 	}
 
+	public void selectPack(PackInfo pack) {
+		selectPack(pack.getName());
+	}
+
 	public void removePack() {
 		PackInfo pack = packs.get(getSelectedPack().getName());
-		
+
 		Settings.removePack(pack.getName());
 		Settings.getYAML().save();
 		File file = pack.getPackDirectory();
@@ -114,7 +110,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 				e.printStackTrace();
 			}
 		}
-		
+
 		file = new File(Utils.getAssetsDirectory(), pack.getName());
 		if (file.exists()) {
 			try {
@@ -128,8 +124,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(packs.getPrevious(1));
 	}
 
-	public void selectPack(PackInfo pack) {
-		selectPack(pack.getName());
+	public PackInfo getSelectedPack() {
+		return packs.getSelected();
 	}
 
 	public void selectPack(String name) {
@@ -138,10 +134,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			return;
 		}
 		redraw(selected, false);
-	}
-
-	public void redraw(boolean force) {
-		redraw(getSelectedPack(), force);
 	}
 
 	public void redraw(PackInfo selected, boolean force) {
@@ -156,7 +148,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 		// Set the frame title based on the pack
 		frame.setTitle(selected.getDisplayName());
-		
+
 		// Set the big button image in the middle
 		buttons.get(3).setIcon(new ImageIcon(selected.getLogo().getScaledInstance(bigWidth, bigHeight, Image.SCALE_SMOOTH)));
 		buttons.get(3).getJLabel().setVisible(selected.isLoading());
@@ -210,6 +202,10 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		this.repaint();
 	}
 
+	public void redraw(boolean force) {
+		redraw(getSelectedPack(), force);
+	}
+
 	public void selectNextPack() {
 		selectPack(packs.getNext(1));
 	}
@@ -218,21 +214,17 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		selectPack(packs.getPrevious(1));
 	}
 
-	public PackInfo getSelectedPack() {
-		return packs.getSelected();
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent)e.getSource());
+			action(e.getActionCommand(), (JComponent) e.getSource());
 		}
 	}
 
 	public void action(String action, JComponent c) {
 		if (action.equals(PACK_SELECT_ACTION) && c instanceof PackButton) {
 			PackButton button = (PackButton) c;
-			
+
 			if (button.getIndex() == 0 && getSelectedPack() instanceof AddPack) {
 				if (importOptions == null || !importOptions.isVisible()) {
 					importOptions = new ImportOptions();

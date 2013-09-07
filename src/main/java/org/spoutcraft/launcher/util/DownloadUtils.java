@@ -21,6 +21,7 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.util.Download.Result;
 
@@ -65,7 +66,7 @@ public class DownloadUtils {
 			File cacheFolder = Utils.getCacheDirectory();
 			cacheFolder.mkdirs();
 			File cacheFile = new File(cacheFolder, cacheName);
-			Utils.copy(outputFile, cacheFile);
+			org.apache.commons.io.FileUtils.copyFile(outputFile, cacheFile);
 		}
 		return download;
 	}

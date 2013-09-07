@@ -16,7 +16,7 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-ackage org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.DocumentEvent;
@@ -39,7 +39,7 @@ public class LimitLinesDocumentListener implements DocumentListener {
 	 * will be removed from the start or end of the Document, depending on
 	 * the boolean value specified.
 	 *
-	 * @param maximumLines number of lines
+	 * @param maximumLines      number of lines
 	 * @param isRemoveFromStart
 	 */
 	public LimitLinesDocumentListener(int maximumLines, boolean isRemoveFromStart) {
@@ -73,14 +73,6 @@ public class LimitLinesDocumentListener implements DocumentListener {
 		});
 	}
 
-	@Override
-	public void removeUpdate(DocumentEvent e) {
-	}
-
-	@Override
-	public void changedUpdate(DocumentEvent e) {
-	}
-
 	private void removeLines(DocumentEvent e) {
 		// The root Element of the Document will tell us the total number
 		// of line in the Document.
@@ -96,17 +88,6 @@ public class LimitLinesDocumentListener implements DocumentListener {
 		}
 	}
 
-	private void removeFromStart(Document document, Element root) {
-		Element line = root.getElement(0);
-		int end = line.getEndOffset();
-
-		try {
-			document.remove(0, end);
-		} catch (BadLocationException ble) {
-			System.out.println(ble);
-		}
-	}
-
 	private void removeFromEnd(Document document, Element root) {
 		// We use start minus 1 to make sure we remove the newline
 		// character of the previous line
@@ -119,5 +100,24 @@ public class LimitLinesDocumentListener implements DocumentListener {
 		} catch (BadLocationException ble) {
 			System.out.println(ble);
 		}
+	}
+
+	private void removeFromStart(Document document, Element root) {
+		Element line = root.getElement(0);
+		int end = line.getEndOffset();
+
+		try {
+			document.remove(0, end);
+		} catch (BadLocationException ble) {
+			System.out.println(ble);
+		}
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
 	}
 }

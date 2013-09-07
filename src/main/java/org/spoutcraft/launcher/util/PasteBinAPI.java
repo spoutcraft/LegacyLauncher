@@ -16,7 +16,7 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.util;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -27,7 +27,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-class PasteBinAPI {
+public class PasteBinAPI {
 	private final static String pasteURL = "http://www.pastebin.com/api/api_post.php";
 	private String token;
 	private String devkey;

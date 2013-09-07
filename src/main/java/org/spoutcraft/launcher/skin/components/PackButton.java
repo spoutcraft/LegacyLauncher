@@ -16,7 +16,10 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin.components;
+
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.ImageButton;
 
 import java.awt.Color;
 

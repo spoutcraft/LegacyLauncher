@@ -18,8 +18,8 @@
 package org.spoutcraft.launcher.skin.components;
 
 import org.jdesktop.swingworker.SwingWorker;
-import org.spoutcraft.launcher.skin.components.backgrounds.HexxitBackground;
-import org.spoutcraft.launcher.skin.components.backgrounds.TekkitBackground;
+import org.spoutcraft.launcher.skin.backgrounds.HexxitBackground;
+import org.spoutcraft.launcher.skin.backgrounds.TekkitBackground;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;

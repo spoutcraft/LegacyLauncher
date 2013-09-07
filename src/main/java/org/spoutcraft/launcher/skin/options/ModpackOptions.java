@@ -16,18 +16,18 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.skin;
+package org.spoutcraft.launcher.skin.options;
 
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.io.File;
+import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.UpdateThread;
+import org.spoutcraft.launcher.skin.components.ImageButton;
+import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.components.LiteButton;
+import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.technic.PackInfo;
+import org.spoutcraft.launcher.util.DesktopUtils;
+import org.spoutcraft.launcher.util.FileUtils;
+import org.spoutcraft.launcher.util.Utils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -40,17 +40,20 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.KeyStroke;
-
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.UpdateThread;
-import org.spoutcraft.launcher.skin.components.LiteButton;
-import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.util.DesktopUtils;
-import org.spoutcraft.launcher.util.FileUtils;
-import org.spoutcraft.launcher.util.Utils;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+import java.io.File;
 
 public class ModpackOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
+	public static final String RECOMMENDED = "recommended";
+	public static final String LATEST = "latest";
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 300;
 	private static final int FRAME_HEIGHT = 300;
@@ -64,10 +67,6 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private static final String OPENFOLDER_ACTION = "openfolder";
 	private static final String CLEAN_BIN_ACTION = "cleanbin";
 	private static final String ESCAPE_ACTION = "escape";
-
-	public static final String RECOMMENDED = "recommended";
-	public static final String LATEST = "latest";
-
 	private String build;
 	private JLabel buildLabel;
 	private JLabel background;
@@ -80,7 +79,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private JFileChooser fileChooser;
 	private boolean directoryChanged = false;
 	private int mouseX = 0, mouseY = 0;
-	
+
 	public ModpackOptions(PackInfo installedPack) {
 		this.installedPack = installedPack;
 		setTitle("Modpack Options");
@@ -91,10 +90,10 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		setUndecorated(true);
 		initComponents();
 	}
-	
+
 	private void initComponents() {
 		Font minecraft = TechnicLoginFrame.getMinecraftFont(12);
-		
+
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
 			private static final long serialVersionUID = 1L;
@@ -109,43 +108,43 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		getRootPane().getActionMap().put(ESCAPE_ACTION, escapeAction);
 
 		background = new JLabel();
-		background.setBounds(0,0, FRAME_WIDTH, FRAME_HEIGHT);
+		background.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
 		TechnicLoginFrame.setIcon(background, "optionsBackground.png", background.getWidth(), background.getHeight());
-		
+
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
-		
+
 		JLabel optionsTitle = new JLabel();
 		optionsTitle.setBounds(10, 10, FRAME_WIDTH, 25);
 		optionsTitle.setText(installedPack.getDisplayName() + " Options");
 		optionsTitle.setForeground(Color.white);
 		optionsTitle.setFont(minecraft.deriveFont(14F));
-		
+
 		ImageButton optionsQuit = new ImageButton(TechnicLoginFrame.getIcon("quit.png", 28, 28), TechnicLoginFrame.getIcon("quit.png", 28, 28));
 		optionsQuit.setRolloverIcon(TechnicLoginFrame.getIcon("quitHover.png", 28, 28));
 		optionsQuit.setBounds(FRAME_WIDTH - 38, 10, 28, 28);
 		optionsQuit.setActionCommand(QUIT_ACTION);
 		optionsQuit.addActionListener(this);
-		
+
 		buildLabel = new JLabel();
 		buildLabel.setBounds(10, 50, 140, 25);
 		buildLabel.setText("Select Build");
 		buildLabel.setForeground(Color.white);
 		buildLabel.setFont(minecraft);
-		
+
 		buildSelector = new JComboBox();
 		buildSelector.setBounds(FRAME_WIDTH / 2, 50, 140, 25);
 		buildSelector.setActionCommand(BUILD_ACTION);
 		buildSelector.addActionListener(this);
 		populateBuilds(buildSelector);
-		
+
 		build = Settings.getModpackBuild(installedPack.getName());
 		if (build == null) {
 			build = RECOMMENDED;
 		}
-		
+
 		ButtonGroup group = new ButtonGroup();
-		
+
 		JRadioButton versionRec = new JRadioButton("Always use recommended builds");
 		versionRec.setBounds(10, buildLabel.getY() + buildLabel.getHeight() + 10, FRAME_WIDTH - 20, 30);
 		versionRec.setFont(minecraft);
@@ -154,7 +153,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		versionRec.setActionCommand(REC_ACTION);
 		versionRec.addActionListener(this);
 		group.add(versionRec);
-		
+
 		JRadioButton versionLatest = new JRadioButton("Always use latest builds");
 		versionLatest.setBounds(10, versionRec.getY() + versionRec.getHeight(), FRAME_WIDTH - 20, 30);
 		versionLatest.setFont(minecraft);
@@ -163,7 +162,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		versionLatest.setActionCommand(LATEST_ACTION);
 		versionLatest.addActionListener(this);
 		group.add(versionLatest);
-		
+
 		JRadioButton versionManual = new JRadioButton("Manually select a build");
 		versionManual.setBounds(10, versionLatest.getY() + versionLatest.getHeight(), FRAME_WIDTH - 20, 30);
 		versionManual.setFont(minecraft);
@@ -172,7 +171,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		versionManual.setActionCommand(MANUAL_ACTION);
 		versionManual.addActionListener(this);
 		group.add(versionManual);
-		
+
 		if (build.equals("latest")) {
 			buildSelector.setEnabled(false);
 			buildSelector.setSelectedItem(new BuildLabel(installedPack.getLatest()));
@@ -187,30 +186,30 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			versionManual.setSelected(true);
 			buildSelector.setSelectedItem(new BuildLabel(build));
 		}
-		
+
 		installedDirectory = installedPack.getPackDirectory();
-		
+
 		packLocation = new LiteTextBox(this, "");
 		packLocation.setBounds(10, versionManual.getY() + versionManual.getHeight() + 10, FRAME_WIDTH - 20, 25);
 		packLocation.setFont(minecraft.deriveFont(10F));
 		packLocation.setText(installedDirectory.getPath());
 		packLocation.setEnabled(false);
-		
+
 		fileChooser = new JFileChooser(Utils.getLauncherDirectory());
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		
+
 		LiteButton changeFolder = new LiteButton("Change Folder");
 		changeFolder.setBounds(FRAME_WIDTH / 2 + 10, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 20, 25);
 		changeFolder.setFont(minecraft);
 		changeFolder.setActionCommand(CHANGEFOLDER_ACTION);
 		changeFolder.addActionListener(this);
-		
+
 		openFolder = new LiteButton("Open Folder");
 		openFolder.setBounds(10, packLocation.getY() + packLocation.getHeight() + 10, FRAME_WIDTH / 2 - 20, 25);
 		openFolder.setFont(minecraft);
 		openFolder.setActionCommand(OPENFOLDER_ACTION);
 		openFolder.addActionListener(this);
-		
+
 		if (!installedDirectory.exists()) {
 			openFolder.setVisible(false);
 		}
@@ -226,7 +225,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		cleanBin.setBounds(10, FRAME_HEIGHT - 40, FRAME_WIDTH / 2 - 20, 25);
 		cleanBin.setActionCommand(CLEAN_BIN_ACTION);
 		cleanBin.addActionListener(this);
-		
+
 		contentPane.add(optionsTitle);
 		contentPane.add(optionsQuit);
 		contentPane.add(buildLabel);
@@ -240,17 +239,35 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		contentPane.add(save);
 		contentPane.add(cleanBin);
 		contentPane.add(background);
-		
+
 		setLocationRelativeTo(this.getOwner());
+	}
+
+	private void populateBuilds(JComboBox buildSelector) {
+		for (String build : installedPack.getBuilds()) {
+			String display = build;
+			if (build.equals(installedPack.getLatest())) {
+				display += " - Latest";
+			} else if (build.equals(installedPack.getRecommended())) {
+				display += " - Recommended";
+			}
+			BuildLabel label = new BuildLabel(build, display);
+			buildSelector.addItem(label);
+		}
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent)e.getSource());
+			action(e.getActionCommand(), (JComponent) e.getSource());
 		}
 	}
-	
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		this.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+	}
+
 	private void action(String action, JComponent c) {
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
@@ -281,7 +298,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			}
 		} else if (action.equals(CHANGEFOLDER_ACTION)) {
 			int result = fileChooser.showOpenDialog(this);
-			
+
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				if (!FileUtils.checkEmpty(file)) {
@@ -304,22 +321,45 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		}
 	}
 
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
 	private void cleanBin() {
 		UpdateThread.cleanupBinFolders(installedPack);
 		UpdateThread.cleanupModsFolders(installedPack);
 	}
 
-	private void populateBuilds(JComboBox buildSelector) {
-		for (String build : installedPack.getBuilds()) {
-			String display = build;
-			if (build.equals(installedPack.getLatest())) {
-				display += " - Latest";
-			} else if (build.equals(installedPack.getRecommended())) {
-				display += " - Recommended";
-			}
-			BuildLabel label = new BuildLabel(build, display);
-			buildSelector.addItem(label);
-		}
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 	private class BuildLabel {
@@ -335,13 +375,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			this.display = display;
 		}
 
-		public String getBuild() {
-			return build;
-		}
-
 		@Override
-		public String toString() {
-			return display;
+		public int hashCode() {
+			return build.hashCode();
 		}
 
 		@Override
@@ -352,52 +388,16 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			}
 			return false;
 		}
-		
+
 		@Override
-		public int hashCode() {
-			return build.hashCode();
+		public String toString() {
+			return display;
+		}
+
+		public String getBuild() {
+			return build;
 		}
 	}
 
-	@Override
-	public void mouseDragged(MouseEvent e) {
-		this.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
-	}
-
-	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

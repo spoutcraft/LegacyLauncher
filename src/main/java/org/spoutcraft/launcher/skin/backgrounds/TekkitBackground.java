@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.skin.components.backgrounds;
+package org.spoutcraft.launcher.skin.backgrounds;
 
 import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.AnimatedImage;

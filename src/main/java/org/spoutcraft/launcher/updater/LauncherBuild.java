@@ -15,32 +15,16 @@
  * You should have received a copy of the GNU General Public License
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.spoutcraft.launcher.skin.components.backgrounds;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
-import org.spoutcraft.launcher.skin.components.AnimatedImage;
+package org.spoutcraft.launcher.updater;
 
-import java.awt.event.ActionEvent;
+import net.technicpack.launchercore.restful.RestObject;
 
-public class HexxitRain extends AnimatedImage {
-	private int x = 0;
-	private int y = 0;
+public class LauncherBuild extends RestObject {
+	private int LatestBuild;
 
-	public HexxitRain(int x, int startY) {
-		super(TechnicLoginFrame.getIcon("rain.png"), 5);
-		this.x = x;
-		this.y = startY;
-	}
-
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		y += 5;
-
-		if (y >= 520) {
-			y = -520;
-		}
-
-		this.setBounds(x, y, 880, 520);
-		this.repaint();
+	public int getLatestBuild() {
+		return LatestBuild;
 	}
 }
+
