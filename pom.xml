@@ -11,6 +11,13 @@
 	<inceptionYear>2011</inceptionYear>
 	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
+	<!-- Parent information -->
+	<parent>
+		<groupId>org.spout</groupId>
+		<artifactId>shared-parent</artifactId>
+		<version>1</version>
+	</parent>
+
 	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
