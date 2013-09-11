@@ -7,7 +7,6 @@ Like the project? Feel free to [donate] to help continue development!
 ## What is Spoutcraft?
 Spoutcraft is a modified version of the Minecraft client, which you can access through the the Spoutcraft Launcher, and when connecting to a server with SpoutPlugin, it allows you to unlock most of the features of SpoutPlugin, such as custom blocks, items, texture packs, etc. It also gives several speed improvements, a minimap, an overview map, etc.
 
-[![Spoutcraft][Logo]][Homepage]  
 [Homepage] | [Forums] | [Twitter] | [Facebook]
 
 ## The License
@@ -44,13 +43,11 @@ Track and submit issues and bugs on our [issue tracker][Issues].
 
 **Please follow the above conventions if you want your pull request(s) accepted.**
 
-[Logo]: http://cdn.spout.org/spoutcraft-github.png
 [Homepage]: http://www.spout.org
 [Forums]: http://forums.spout.org
-[License]: http://cdn.spout.org/license/spoutv1.txt
+[License]: http://spout.in/licensev1
 [Source]: https://github.com/SpoutDev/SpoutcraftLauncher
-[Builds]: http://build.spout.org/job/SpoutcraftLauncher
-[Issues]: http://issues.spout.org/browse/SPOUTCRAFT
+[Issues]: https://spoutdev.atlassian.net/browse/SPOUTCRAFT
 [Twitter]: http://spout.in/twitter
 [Facebook]: http://spout.in/facebook
 [Donate]: http://spout.in/donate
