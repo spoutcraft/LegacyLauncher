@@ -1,12 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Project information -->
 	<name>Spoutcraft Launcher</name>
 	<groupId>org.spoutcraft</groupId>
 	<artifactId>launcher</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
+	<version>4.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<url>http://www.spout.org</url>
 	<inceptionYear>2011</inceptionYear>
 	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
@@ -14,12 +14,12 @@
 	<!-- Build properties -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<buildNumber>0</buildNumber>
 		<mainClass>${project.groupId}.${project.artifactId}.entrypoint.Start</mainClass>
 		<keystore.path>${project.basedir}/src/main/resources/keystore.jks</keystore.path>
 		<keystore.alias>spoutdev</keystore.alias>
 		<keystore.keypass>unleashtheflow</keystore.keypass>
 		<keystore.storepass>unleashtheflow</keystore.storepass>
-		<buildNumber>0</buildNumber>
 	</properties>
 
 	<!-- Organization information -->
@@ -40,18 +40,18 @@
 
 	<!-- Source code access -->
 	<scm>
-		<developerConnection>scm:git:git@github.com:Legacy/SpoutcraftLauncher.git</developerConnection>
 		<connection>scm:git:git://github.com/Legacy/SpoutcraftLauncher.git</connection>
+		<developerConnection>scm:git:git@github.com:Legacy/SpoutcraftLauncher.git</developerConnection>
 		<url>https://github.com/Legacy/SpoutcraftLauncher</url>
 	</scm>
 
-	<!-- Build server -->
+	<!-- Continuous integration -->
 	<ciManagement>
-		<system>jenkins</system>
-		<url>http://build.spout.org/job/SpoutcraftLauncher</url>
+		<system>travis</system>
+		<url>https://travis-ci.org/Legacy/SpoutcraftLauncher</url>
 	</ciManagement>
 
-	<!-- Issue tracker -->
+	<!-- Issue management -->
 	<issueManagement>
 		<system>jira</system>
 		<url>http://issues.spout.org/browse/LEGACY</url>
@@ -61,21 +61,13 @@
 	<repositories>
 		<repository>
 			<id>spout-repo</id>
-			<url>http://repo.spout.org</url>
+			<url>http://nexus.spout.org/content/groups/public</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
-
-	<!-- Build plugin repositories -->
-	<pluginRepositories>
-		<pluginRepository>
-			<id>spout-repo</id>
-			<url>http://repo.spout.org</url>
-		</pluginRepository>
-	</pluginRepositories>
 
 	<!-- Project dependencies -->
 	<dependencies>
@@ -95,7 +87,7 @@
 		<dependency>
 			<groupId>org.spout</groupId>
 			<artifactId>downpour</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -119,7 +111,7 @@
 		<dependency>
 			<groupId>org.yaml</groupId>
 			<artifactId>snakeyaml</artifactId>
-			<version>1.11</version>
+			<version>1.12</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -152,16 +144,15 @@
 			<!-- Static resources -->
 			<resource>
 				<filtering>false</filtering>
-				<directory>${project.basedir}</directory>
+				<directory>.</directory>
 				<targetPath>.</targetPath>
 				<includes>
 					<include>LICENSE.txt</include>
 				</includes>
 			</resource>
-			<!-- Filtered resources -->
 			<resource>
 				<filtering>false</filtering>
-				<directory>${project.basedir}/src/main/resources</directory>
+				<directory>src/main/resources</directory>
 				<targetPath>org/spoutcraft/launcher/resources</targetPath>
 				<includes>
 					<include>**/*</include>
@@ -174,10 +165,11 @@
 					<exclude>jalopy.xml</exclude>
 				</excludes>
 			</resource>
+			<!-- Filtered resources -->
 			<resource>
-				<directory>${project.basedir}/src/main/resources</directory>
-				<targetPath>org/spoutcraft/launcher/resources</targetPath>
 				<filtering>true</filtering>
+				<directory>src/main/resources</directory>
+				<targetPath>org/spoutcraft/launcher/resources</targetPath>
 				<includes>
 					<include>version</include>
 				</includes>
@@ -186,7 +178,7 @@
 
 		<!-- Build plugins -->
 		<plugins>
-			<!-- License headers plugin -->
+			<!-- License header plugin -->
 			<plugin>
 				<groupId>com.mycila.maven-license-plugin</groupId>
 				<artifactId>maven-license-plugin</artifactId>
@@ -203,7 +195,7 @@
 							<quiet>true</quiet>
 							<encoding>UTF-8</encoding>
 							<strictCheck>true</strictCheck>
-							<header>${project.basedir}/HEADER.txt</header>
+							<header>HEADER.txt</header>
 							<mapping>
 								<java>SLASHSTAR_STYLE</java>
 							</mapping>
@@ -227,7 +219,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>3.1</version>
 				<configuration>
 					<source>1.5</source>
 					<target>1.5</target>
@@ -256,10 +248,11 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>2.0</version>
+				<version>2.1</version>
 				<executions>
 					<execution>
 						<configuration>
+							<createDependencyReducedPom>false</createDependencyReducedPom>
 							<minimizeJar>true</minimizeJar>
 							<filters>
 								<filter>
@@ -347,10 +340,10 @@
 									</jre>
 									<icon>${project.basedir}/src/main/resources/exe/icon.ico</icon>
 									<versionInfo>
-										<fileVersion>3.0.0.${buildNumber}</fileVersion>
-										<txtFileVersion>3.0.0.${buildNumber}</txtFileVersion>
-										<productVersion>3.0.0.${buildNumber}</productVersion>
-										<txtProductVersion>3.0.0.${buildNumber}</txtProductVersion>
+										<fileVersion>4.0.0.${buildNumber}</fileVersion>
+										<txtFileVersion>4.0.0.${buildNumber}</txtFileVersion>
+										<productVersion>4.0.0.${buildNumber}</productVersion>
+										<txtProductVersion>4.0.0.${buildNumber}</txtProductVersion>
 										<fileDescription>${project.name}</fileDescription>
 										<productName>${project.name}</productName>
 										<copyright>${project.organization.name}, ${project.organization.url}</copyright>
