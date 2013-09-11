@@ -3,8 +3,14 @@ language: java
 jdk: oraclejdk7
 
 before_install:
-  #  Downgrade package needed for EXE building.
-  - sudo apt-get install librtmp0/precise
+  # Fix apt preferences for ia32-libs installation.
+  - "sudo echo Package: * >> /etc/apt/preferences"
+  - "sudo echo Pin: release a=quantal* >> /etc/apt/preferences"
+  - "sudo echo Pin-Priority: 2012 >> /etc/apt/preferences"
+  # Update package list and perform upgrades.
+  - sudo apt-get dist-upgrade
+  # Install packages needed for EXE building.
+  - sudo apt-get install -qq ia32-libs
 # Compile and package JAR and set build properties.
 install: mvn package -Ppackage-win -Ppackage-mac -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
 after_success:
