@@ -1,6 +1,6 @@
-# LF line endings on repository and locally
-* text eol=lf
-*.java text eol=lf
+# Normalize as LF in the repository, OS native locally
+* text=auto
+*.java text
 
 # Binary files that should not be modified
 *.dat binary
