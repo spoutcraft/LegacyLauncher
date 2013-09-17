@@ -7,8 +7,8 @@
 	<artifactId>launcher</artifactId>
 	<version>4.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<url>http://www.spout.org</url>
 	<inceptionYear>2011</inceptionYear>
+	<url>https://www.spoutcraft.org</url>
 	<description>Custom launcher for installing and updating Spoutcraft with built-in byte patching for easy upgrading/downgrading of Minecraft versions.</description>
 
 	<!-- Parent information -->
@@ -22,6 +22,8 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<buildNumber>0</buildNumber>
+		<ciSystem>unknown</ciSystem>
+		<commit>unknown</commit>
 		<mainClass>${project.groupId}.${project.artifactId}.entrypoint.Start</mainClass>
 		<keystore.path>${project.basedir}/src/main/resources/keystore.jks</keystore.path>
 		<keystore.alias>spoutdev</keystore.alias>
@@ -67,14 +69,34 @@
 	<!-- Dependency repositories -->
 	<repositories>
 		<repository>
-			<id>spout-repo</id>
-			<url>http://nexus.spout.org/content/groups/public</url>
+			<id>sonatype-nexus-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases</url>
+		</repository>
+		<repository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 			<snapshots>
 				<enabled>true</enabled>
 				<updatePolicy>always</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
+
+	<!-- Build plugin repositories -->
+	<pluginRepositories>
+		<pluginRepository>
+			<id>sonatype-nexus-releases</id>
+			<url>https://oss.sonatype.org/content/repositories/releases</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>sonatype-nexus-snapshots</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 
 	<!-- Project dependencies -->
 	<dependencies>

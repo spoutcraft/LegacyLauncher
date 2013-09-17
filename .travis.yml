@@ -13,11 +13,6 @@ before_install:
   - sudo apt-get install -qq ia32-libs
 # Compile and package JAR and set build properties.
 install: mvn package -Ppackage-win -Ppackage-mac -DbuildNumber=$TRAVIS_BUILD_NUMBER -DciSystem=travis -Dcommit=${TRAVIS_COMMIT:0:7}
-after_success:
-  # Get files for use with build, namely the custom Maven settings.xml.
-  - "git clone -b travis `git config --get remote.origin.url` target/travis"
-  # Check if commit s not a pull request, if git repo is official, and if branch is master. If checks pass, deploy artifacts to Maven repository.
-  - "[[ $TRAVIS_PULL_REQUEST == false ]] && [[ $TRAVIS_REPO_SLUG == Legacy/SpoutcraftLauncher ]] && [[ $TRAVIS_BRANCH == master ]] && mvn deploy --settings target/travis/settings.xml"
 
 notifications:
   # Disable build status email notifications, until the issue with forks is fixed.
@@ -25,8 +20,3 @@ notifications:
   webhooks:
     # Send build information and status to Notifico.
     - http://n.tkte.ch/h/514/yplHJIS2_UOXhgqq_q4lfnHc
-
-env:
-  global:
-    - secure: "CUTU/VZUNE71pyAi4GU+c1c6H/zPpV/qrCTToPfbxcrbCDXIwcXy4KsOQEYXA4SbsCrM9aK/3EsqOUhFsY03qReHMyyBzytwjUylfRP6GJNizIeXfV8Q4as6uZkgrQmysmUKquf47Zl2vZFthZFmqgrJyyIwnNkfELX3o+qt4C4="
-    - secure: "A2a73ZdNHzcdEUukGCKopKja+XB23+z/dged5GzEp2OCyR0D5LJM8tNHPcmTD7IFwLHJY54/zYXnB0+BXw6H7f3n/Es2wngfhyWTb1LQDH4j4HJ+yzPYM//3vm49lNZ/hJX5pLFgV8J0dXjd4hjutsjBhMzRG8GPRExPeEv74wc="
