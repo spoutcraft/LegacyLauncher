@@ -51,6 +51,7 @@ import javax.swing.text.SimpleAttributeSet;
 
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.restful.PackInfo;
+import net.technicpack.launchercore.restful.PlatformConstants;
 import net.technicpack.launchercore.restful.RestObject;
 import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
@@ -216,8 +217,8 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				enableComponent(save, true);
 			}
 		} else if (action.equals(IMPORT_ACTION)) {
-			if (info != null || url.isEmpty()) {
-				InstalledPack pack = new InstalledPack();
+			if (info != null) {
+				InstalledPack pack = new InstalledPack(info.getName(), true);
 				pack.setInfo(info);
 				Launcher.getFrame().getSelector().addPack(pack);
 				dispose();
@@ -278,8 +279,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 								msgLabel.setText("Modpack has invalid download link. Consult modpack author.");
 								return;
 							} else {
-								info = SolderPackInfo.getSolderPackInfo(result.getSolder(), result.getName());
+								if (result.hasSolder()) {
+									info = SolderPackInfo.getSolderPackInfo(result.getSolder(), result.getName());
+								} else {
+									info = result;
+								}
 							}
+							System.out.println(info.getName());
 							msgLabel.setText("Modpack: " + info.getDisplayName());
 							ImportOptions.this.url = url;
 							enableComponent(folder, true);
@@ -335,6 +341,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 	public boolean matchUrl(String url) {
 		boolean result = false;
+		result = (url.matches(PlatformConstants.MODPACK + "([a-zA-Z0-9-]+)") || result);
 		result = (url.matches("http://beta.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
 		result = (url.matches("http://www.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
 		result = (url.matches("http://technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);

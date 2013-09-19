@@ -23,7 +23,9 @@ import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.InstalledPacks;
 import net.technicpack.launchercore.install.Users;
+import net.technicpack.launchercore.restful.PackInfo;
 import net.technicpack.launchercore.restful.RestObject;
+import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
 import net.technicpack.launchercore.restful.solder.FullModpacks;
 import net.technicpack.launchercore.restful.solder.Solder;
 import net.technicpack.launchercore.restful.solder.SolderConstants;
@@ -65,10 +67,34 @@ public class Launcher {
 	}
 
 	private void loadInstalledPacks() {
-		for (InstalledPack pack : installedPacks.getPacks()) {
+		for (final InstalledPack pack : installedPacks.getPacks()) {
 			if (pack.isPlatform()) {
-//				PlatformPackInfo info = PlatformPackInfo.getPlatformPackInfo(pack.getName());
+				Thread thread = new Thread(pack.getName() + " Info Loading Thread") {
+					@Override
+					public void run() {
+						try {
+							String name = pack.getName();
+							PlatformPackInfo platformPackInfo = PlatformPackInfo.getPlatformPackInfo(name);
+							PackInfo info = platformPackInfo;
+							if (platformPackInfo.hasSolder()) {
+								SolderPackInfo solderPackInfo = SolderPackInfo.getSolderPackInfo(platformPackInfo.getSolder(), name);
+								Solder solder = RestObject.getRestObject(Solder.class, platformPackInfo.getSolder());
+								solder.setUrl(platformPackInfo.getSolder());
+								solderPackInfo.setSolder(solder);
+								info = solderPackInfo;
+							}
 
+							info.getLogo();
+							info.getIcon();
+							info.getBackground();
+							pack.setInfo(info);
+							launcherFrame.getSelector().redraw(false);
+						} catch (RestfulAPIException e) {
+							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
+						}
+					}
+				};
+				thread.start();
 			}
 		}
 	}

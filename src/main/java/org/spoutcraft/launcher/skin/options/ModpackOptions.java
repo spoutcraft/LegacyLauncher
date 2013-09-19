@@ -20,6 +20,7 @@ package org.spoutcraft.launcher.skin.options;
 
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.util.ResourceUtils;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
@@ -242,6 +243,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 
 	private void populateBuilds(JComboBox buildSelector) {
 		for (String build : installedPack.getInfo().getBuilds()) {
+			System.out.println(installedPack.getInfo());
 			String display = build;
 			if (build.equals(installedPack.getInfo().getLatest())) {
 				display += " - Latest";
@@ -272,6 +274,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			if (directoryChanged) {
 				directoryChanged = false;
 				installedPack.setPackDirectory(installedDirectory);
+				Launcher.getInstalledPacks().save();
 			}
 			dispose();
 		} else if (action.equals(BUILD_ACTION)) {
