@@ -18,24 +18,26 @@
 
 package org.spoutcraft.launcher.skin.components;
 
+import net.technicpack.launchercore.util.ImageUtils;
+import net.technicpack.launchercore.util.ResourceUtils;
+import org.spoutcraft.launcher.skin.LauncherFrame;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.SwingConstants;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-
-import javax.swing.Icon;
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import java.awt.image.BufferedImage;
 
 public class BackgroundImage extends JLabel implements MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
-
-	private final TechnicLoginFrame frame;
+	private final LauncherFrame frame;
 	private int mouseX = 0, mouseY = 0;
 	private AnimatedBackground background;
 
-	public BackgroundImage(TechnicLoginFrame frame, int width, int height) {
+	public BackgroundImage(LauncherFrame frame, int width, int height) {
 		this.frame = frame;
 		setVerticalAlignment(SwingConstants.CENTER);
 		setHorizontalAlignment(SwingConstants.CENTER);
@@ -43,34 +45,22 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 		setVerticalAlignment(SwingConstants.TOP);
 		setHorizontalAlignment(SwingConstants.LEFT);
-		setIcon(TechnicLoginFrame.getIcon("background.jpg", width, height));
+		setIcon(ResourceUtils.getIcon("background.jpg", width, height));
 		background = new AnimatedBackground(this);
-		background.setIcon(TechnicLoginFrame.getIcon("background.jpg", width, height));
+		background.setIcon(ResourceUtils.getIcon("background.jpg", width, height));
 		background.setBounds(0, 0, width, height);
 
 		this.add(background);
 	}
 
-	public synchronized void changeBackground(String name, Icon icon, boolean force) {
-		background.changeIcon(name, icon, force);
+	public synchronized void changeBackground(String name, BufferedImage image, boolean force) {
+		background.changeIcon(name, new ImageIcon(ImageUtils.scaleImage(image, 880, 520)), force);
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -82,7 +72,19 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
@@ -93,6 +95,6 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

@@ -17,7 +17,7 @@
  */
 package org.spoutcraft.launcher.skin.backgrounds;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.skin.components.EnhancedBackground;
 
 import javax.swing.JLabel;
@@ -36,7 +36,7 @@ public class HexxitBackground extends EnhancedBackground {
 		super("hexxit");
 		foreground = new JLabel();
 		foreground.setBounds(0, 0, 880, 520);
-		foreground.setIcon(TechnicLoginFrame.getIcon("foreground.png"));
+		foreground.setIcon(ResourceUtils.getIcon("foreground.png"));
 		firstBackgroundClouds = new HexxitClouds(0, -50, "clouds.png", 100);
 		secondBackgroundClouds = new HexxitClouds(880, -50, "clouds.png", 100);
 		firstForegroundClouds = new HexxitClouds(0, -200, "foregroundClouds.png", 50);

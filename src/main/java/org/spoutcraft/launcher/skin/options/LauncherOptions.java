@@ -17,23 +17,23 @@
  */
 package org.spoutcraft.launcher.skin.options;
 
+import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.Memory;
-import org.spoutcraft.launcher.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
-import org.spoutcraft.launcher.exceptions.RestfulAPIException;
-import org.spoutcraft.launcher.rest.RestAPI;
+import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
+import org.spoutcraft.launcher.updater.LauncherInfo;
 import org.spoutcraft.launcher.util.DesktopUtils;
-import org.spoutcraft.launcher.util.FileUtils;
-import org.spoutcraft.launcher.util.Utils;
+import org.spoutcraft.launcher.util.ZipUtils;
+import net.technicpack.launchercore.util.Utils;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -73,7 +73,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private JLabel build;
 	private LiteButton logs;
 	private JComboBox memory;
-	private JCheckBox permgen;
 	private JRadioButton beta;
 	private JRadioButton stable;
 	private JFileChooser fileChooser;
@@ -97,7 +96,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	private void initComponents() {
-		Font minecraft = TechnicLoginFrame.getMinecraftFont(12);
+		Font minecraft = LauncherFrame.getMinecraftFont(12);
 
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
@@ -114,10 +113,10 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 
 		background = new JLabel();
 		background.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-		TechnicLoginFrame.setIcon(background, "optionsBackground.png", background.getWidth(), background.getHeight());
+		LauncherFrame.setIcon(background, "optionsBackground.png", background.getWidth(), background.getHeight());
 
-		ImageButton optionsQuit = new ImageButton(TechnicLoginFrame.getIcon("quit.png", 28, 28), TechnicLoginFrame.getIcon("quit.png", 28, 28));
-		optionsQuit.setRolloverIcon(TechnicLoginFrame.getIcon("quitHover.png", 28, 28));
+		ImageButton optionsQuit = new ImageButton(ResourceUtils.getIcon("quit.png", 28, 28), ResourceUtils.getIcon("quit.png", 28, 28));
+		optionsQuit.setRolloverIcon(ResourceUtils.getIcon("quitHover.png", 28, 28));
 		optionsQuit.setBounds(FRAME_WIDTH - 38, 10, 28, 28);
 		optionsQuit.setActionCommand(QUIT_ACTION);
 		optionsQuit.addActionListener(this);
@@ -128,7 +127,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		title.setForeground(Color.WHITE);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 
-		build = new JLabel(LAUNCHER_PREPEND + Settings.getLauncherBuild());
+		build = new JLabel(LAUNCHER_PREPEND + Settings.getBuild());
 		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		build.setFont(minecraft);
 		build.setForeground(Color.WHITE);
@@ -175,20 +174,11 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		memory.setBounds(memoryLabel.getX() + memoryLabel.getWidth() + 10, memoryLabel.getY(), 100, 20);
 		populateMemory(memory);
 
-		permgen = new JCheckBox("Increase PermGen Size");
-		permgen.setFont(minecraft);
-		permgen.setBounds(10, memoryLabel.getY() + memoryLabel.getHeight() + 10, FRAME_WIDTH - 20, 25);
-		permgen.setSelected(Settings.getPermGen());
-		permgen.setBorderPainted(false);
-		permgen.setFocusPainted(false);
-		permgen.setContentAreaFilled(false);
-		permgen.setForeground(Color.WHITE);
-		permgen.setIconTextGap(15);
 
-		installedDirectory = Settings.getLauncherDir();
+		installedDirectory = Settings.getDirectory();
 
 		packLocation = new LiteTextBox(this, "");
-		packLocation.setBounds(10, permgen.getY() + permgen.getHeight() + 10, FRAME_WIDTH - 20, 25);
+		packLocation.setBounds(10, memoryLabel.getY() + memoryLabel.getHeight() + 10, FRAME_WIDTH - 20, 25);
 		packLocation.setFont(minecraft.deriveFont(10F));
 		packLocation.setText(installedDirectory);
 		packLocation.setEnabled(false);
@@ -198,7 +188,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		changeFolder.setFont(minecraft);
 		changeFolder.setActionCommand(CHANGEFOLDER_ACTION);
 		changeFolder.addActionListener(this);
-		changeFolder.setEnabled(!Utils.getStartupParameters().isPortable());
+		changeFolder.setEnabled(!SpoutcraftLauncher.params.isPortable());
 
 		logs = new LiteButton("Logs");
 		logs.setFont(minecraft.deriveFont(14F));
@@ -213,7 +203,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		save.setActionCommand(SAVE_ACTION);
 		save.addActionListener(this);
 
-		consoleToggle = Settings.getShowLauncherConsole();
+		consoleToggle = Settings.getShowConsole();
 		console = new LiteButton(consoleToggle ? "Hide Console" : "Show Console");
 		console.setFont(minecraft.deriveFont(14F));
 		console.setBounds(10, logs.getY() + logs.getHeight() + 10, FRAME_WIDTH / 2 - 15, 25);
@@ -225,7 +215,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 
 		Container contentPane = getContentPane();
-		contentPane.add(permgen);
 		contentPane.add(build);
 		contentPane.add(beta);
 		contentPane.add(stable);
@@ -290,6 +279,15 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	@Override
+	public void mouseDragged(MouseEvent e) {
+		this.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent e) {
+	}
+
+	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
 			action(e.getActionCommand(), (JComponent) e.getSource());
@@ -297,8 +295,17 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	@Override
-	public void mouseDragged(MouseEvent e) {
-		this.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		mouseX = e.getX();
+		mouseY = e.getY();
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
 	}
 
 	public void action(String action, JComponent c) {
@@ -308,21 +315,17 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			int oldMem = Settings.getMemory();
 			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
 			Settings.setMemory(mem);
-			boolean oldperm = Settings.getPermGen();
-			boolean perm = permgen.isSelected();
-			Settings.setPermGen(perm);
 			Settings.setBuildStream(buildStream);
 			if (directoryChanged) {
 				Settings.setMigrate(true);
 				Settings.setMigrateDir(installedDirectory);
 			}
-			Settings.getYAML().save();
 
 			if (directoryChanged || streamChanged) {
 				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
 				dispose();
 			}
-			if (mem != oldMem || oldperm != perm) {
+			if (mem != oldMem) {
 				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION) {
 					SpoutcraftLauncher.relaunch(true);
@@ -334,7 +337,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			DesktopUtils.open(logDirectory);
 		} else if (action.equals(CONSOLE_ACTION)) {
 			consoleToggle = !consoleToggle;
-			Settings.setShowLauncherConsole(consoleToggle);
+			Settings.setShowConsole(consoleToggle);
 			if (consoleToggle) {
 				SpoutcraftLauncher.setupConsole();
 			} else {
@@ -346,7 +349,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
-				if (!FileUtils.checkLaunchDirectory(file)) {
+				if (!ZipUtils.checkLaunchDirectory(file)) {
 					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
@@ -367,51 +370,23 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+	public void mouseEntered(MouseEvent e) {
+	}
 
+	@Override
+	public void mouseExited(MouseEvent e) {
 	}
 
 	private int getLatestLauncherBuild(String buildStream) {
-		int build = Settings.getLauncherBuild();
+		int build = Settings.getBuild();
 		try {
-			build = RestAPI.getLatestLauncherBuild(buildStream);
+			build = LauncherInfo.getLatestBuild(buildStream);
 			return build;
 		} catch (RestfulAPIException e) {
 			e.printStackTrace();
 		}
 
 		return build;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 

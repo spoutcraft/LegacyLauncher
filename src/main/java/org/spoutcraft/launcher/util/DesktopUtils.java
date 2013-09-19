@@ -18,6 +18,9 @@
 
 package org.spoutcraft.launcher.util;
 
+import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+
 import java.awt.Desktop;
 import java.io.File;
 import java.net.URI;
@@ -35,7 +38,7 @@ public class DesktopUtils {
 		try {
 			Desktop.getDesktop().browse(uri);
 		} catch (Exception e) {
-			if (Utils.getStartupParameters().isDebugMode()) {
+			if (SpoutcraftLauncher.params.isDebugMode()) {
 				e.printStackTrace();
 			}
 		}
@@ -45,7 +48,7 @@ public class DesktopUtils {
 		try {
 			Desktop.getDesktop().open(file);
 		} catch (Exception e) {
-			if (Utils.getStartupParameters().isDebugMode()) {
+			if (SpoutcraftLauncher.params.isDebugMode()) {
 				e.printStackTrace();
 			}
 		}

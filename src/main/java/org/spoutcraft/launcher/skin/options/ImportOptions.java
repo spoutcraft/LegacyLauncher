@@ -49,17 +49,20 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 
-import org.spoutcraft.launcher.Settings;
+import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.restful.PackInfo;
+import net.technicpack.launchercore.restful.RestObject;
+import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
+import net.technicpack.launchercore.restful.solder.SolderPackInfo;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.Launcher;
-import org.spoutcraft.launcher.rest.RestAPI;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
-import org.spoutcraft.launcher.technic.CustomInfo;
-import org.spoutcraft.launcher.technic.PackInfo;
-import org.spoutcraft.launcher.util.FileUtils;
-import org.spoutcraft.launcher.util.Utils;
+
+import org.spoutcraft.launcher.util.ZipUtils;
+import net.technicpack.launchercore.util.Utils;
 
 public class ImportOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener, DocumentListener {
 	private static final long serialVersionUID = 1L;
@@ -96,7 +99,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	}
 
 	public void initComponents() {
-		Font minecraft = TechnicLoginFrame.getMinecraftFont(12);
+		Font minecraft = LauncherFrame.getMinecraftFont(12);
 
 		KeyStroke escape = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		Action escapeAction = new AbstractAction() {
@@ -113,13 +116,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 		background = new JLabel();
 		background.setBounds(0, 0, FRAME_WIDTH, FRAME_HEIGHT);
-		TechnicLoginFrame.setIcon(background, "platformBackground.png", background.getWidth(), background.getHeight());
+		LauncherFrame.setIcon(background, "platformBackground.png", background.getWidth(), background.getHeight());
 
 		Container contentPane = getContentPane();
 		contentPane.setLayout(null);
 
-		ImageButton optionsQuit = new ImageButton(TechnicLoginFrame.getIcon("quit.png", 28, 28), TechnicLoginFrame.getIcon("quit.png", 28, 28));
-		optionsQuit.setRolloverIcon(TechnicLoginFrame.getIcon("quitHover.png", 28, 28));
+		ImageButton optionsQuit = new ImageButton(ResourceUtils.getIcon("quit.png", 28, 28), ResourceUtils.getIcon("quit.png", 28, 28));
+		optionsQuit.setRolloverIcon(ResourceUtils.getIcon("quitHover.png", 28, 28));
 		optionsQuit.setBounds(FRAME_WIDTH - 38, 10, 28, 28);
 		optionsQuit.setActionCommand(QUIT_ACTION);
 		optionsQuit.addActionListener(this);
@@ -196,12 +199,12 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 
-				if (!FileUtils.checkEmpty(file)) {
+				if (!ZipUtils.checkEmpty(file)) {
 					install.setText("Please select an empty directory.");
 					return;
 				}
 
-				if (info.isForceDir() && file.getAbsolutePath().startsWith(Utils.getSettingsDirectory().getAbsolutePath())) {
+				if (info.shouldForceDirectory() && file.getAbsolutePath().startsWith(Utils.getSettingsDirectory().getAbsolutePath())) {
 					install.setText("This pack requires a directory outside of " + Utils.getSettingsDirectory().getAbsolutePath());
 					return;
 				}
@@ -214,11 +217,9 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			}
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null || url.isEmpty()) {
-				Settings.setPackCustom(info.getName(), true);
-				Settings.setPackDirectory(info.getName(), installDir);
-				Settings.getYAML().save();
-				info.init();
-				Launcher.getFrame().getSelector().addPack(info);
+				InstalledPack pack = new InstalledPack();
+				pack.setInfo(info);
+				Launcher.getFrame().getSelector().addPack(pack);
 				dispose();
 			}
 		} else if (action.equals(PASTE_URL)) {
@@ -253,7 +254,6 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				enableComponent(install, false);
 				info = null;
 				this.url = "";
-				return;
 			} else if (matchUrl(url)) {
 				msgLabel.setText("Attempting to fetch Modpack info...");
 				// Turn everything off while the data is being fetched
@@ -263,29 +263,28 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 				enableComponent(folder, false);
 				enableComponent(save, false);
 				// fetch the info asynchronously
-				SwingWorker<CustomInfo, Void> worker = new SwingWorker<CustomInfo, Void>() {
+				SwingWorker<PlatformPackInfo, Void> worker = new SwingWorker<PlatformPackInfo, Void>() {
 
 					@Override
-					protected CustomInfo doInBackground() throws Exception {
-						CustomInfo result = RestAPI.getCustomModpack(url);
-						return result;
+					protected PlatformPackInfo doInBackground() throws Exception {
+						return RestObject.getRestObject(PlatformPackInfo.class, url);
 					}
 
 					@Override
 					public void done() {
 						try {
-							CustomInfo result = get();
-							if (!result.hasMirror() && !(result.getURL().startsWith("http://") || result.getURL().startsWith("https://"))) {
+							PlatformPackInfo result = get();
+							if (!result.hasSolder() && !(result.getUrl().startsWith("http://") || result.getUrl().startsWith("https://"))) {
 								msgLabel.setText("Modpack has invalid download link. Consult modpack author.");
 								return;
 							} else {
-								info = result.getPack();
+								info = SolderPackInfo.getSolderPackInfo(result.getSolder(), result.getName());
 							}
 							msgLabel.setText("Modpack: " + info.getDisplayName());
 							ImportOptions.this.url = url;
 							enableComponent(folder, true);
 							enableComponent(install, true);
-							if (info.isForceDir()) {
+							if (info.shouldForceDirectory()) {
 								install.setText("This pack requires a directory outside of " + Utils.getSettingsDirectory().getAbsolutePath());
 								folder.setText("Select");
 								folder.setLocation(FRAME_WIDTH - 145, FRAME_HEIGHT - 40);

@@ -22,7 +22,7 @@ import net.technicpack.launchercore.restful.PlatformConstants;
 import net.technicpack.launchercore.restful.RestObject;
 import net.technicpack.launchercore.restful.platform.Article;
 import net.technicpack.launchercore.restful.platform.News;
-import org.spoutcraft.launcher.Launcher;
+import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.skin.components.HyperlinkJTextPane;
 import org.spoutcraft.launcher.skin.components.RoundedBox;
 
@@ -37,7 +37,7 @@ public class NewsComponent extends JComponent {
 	private static final long serialVersionUID = 1L;
 
 	public NewsComponent() {
-		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(TechnicLoginFrame.getMinecraftFont(10));
+		GraphicsEnvironment.getLocalGraphicsEnvironment().registerFont(LauncherFrame.getMinecraftFont(10));
 	}
 
 	public void loadArticles() {
@@ -45,14 +45,14 @@ public class NewsComponent extends JComponent {
 			List<Article> articles = RestObject.getRestObject(News.class, PlatformConstants.NEWS).getNews();
 			setupArticles(articles);
 		} catch (RestfulAPIException e) {
-			Launcher.getLogger().log(Level.WARNING, "Unable to load news, hiding news section", e);
+			Utils.getLogger().log(Level.WARNING, "Unable to load news, hiding news section", e);
 			this.setVisible(false);
 			this.setEnabled(false);
 		}
 	}
 
 	private void setupArticles(List<Article> articles) {
-		Font articleFont = TechnicLoginFrame.getMinecraftFont(10);
+		Font articleFont = LauncherFrame.getMinecraftFont(10);
 		int width = getWidth() - 16;
 		int height = getHeight() / 2 - 16;
 
@@ -68,7 +68,7 @@ public class NewsComponent extends JComponent {
 			this.add(link);
 		}
 
-		RoundedBox background = new RoundedBox(TechnicLoginFrame.TRANSPARENT);
+		RoundedBox background = new RoundedBox(LauncherFrame.TRANSPARENT);
 		background.setBounds(0, 0, getWidth(), getHeight());
 		this.add(background);
 		this.repaint();

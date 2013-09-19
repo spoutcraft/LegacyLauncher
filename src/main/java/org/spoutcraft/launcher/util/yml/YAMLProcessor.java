@@ -16,7 +16,7 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.yml;
+package org.spoutcraft.launcher.util.yml;
 
 import java.io.File;
 import java.io.FileInputStream;

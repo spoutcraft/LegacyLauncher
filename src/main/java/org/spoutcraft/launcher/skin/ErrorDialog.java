@@ -21,7 +21,7 @@ package org.spoutcraft.launcher.skin;
 import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.Launcher;
-import org.spoutcraft.launcher.Settings;
+import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.util.DesktopUtils;
 import org.spoutcraft.launcher.util.PasteBinAPI;
 
@@ -68,7 +68,7 @@ public class ErrorDialog extends JDialog implements ActionListener {
 		closeButton.setActionCommand(CLOSE_ACTION);
 		String getSelected = null;
 		try {
-			getSelected = Launcher.getFrame().getSelector().getSelectedPack().getDisplayName();
+			getSelected = Launcher.getFrame().getSelector().getSelectedPack().getInfo().getDisplayName();
 		} catch (Exception e) {
 			e.printStackTrace();
 			// This is probably a null pointer if it ever gets here
@@ -76,6 +76,33 @@ public class ErrorDialog extends JDialog implements ActionListener {
 			// I'll just have less information to work with.
 		}
 		selected = getSelected;
+	}
+
+	private void populateException(Throwable e) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Stack Trace:").append("\n");
+		builder.append("    Exception: ").append(e.getClass().getSimpleName()).append("\n");
+		builder.append("    Message: ").append(e.getMessage()).append("\n");
+		logTrace(builder, e);
+		errorArea.setText(builder.toString());
+	}
+
+	private void logTrace(StringBuilder builder, Throwable e) {
+		Throwable parent = e;
+		String indent = "    ";
+		while (parent != null) {
+			if (parent == e) {
+				builder.append(indent).append("Trace:").append("\n");
+			} else {
+				builder.append(indent).append("Caused By: (").append(parent.getClass().getSimpleName()).append(")").append("\n");
+				builder.append(indent).append("    ").append("[").append(parent.getMessage()).append("]").append("\n");
+			}
+			for (StackTraceElement ele : e.getStackTrace()) {
+				builder.append(indent).append("    ").append(ele.toString()).append("\n");
+			}
+			indent += "    ";
+			parent = parent.getCause();
+		}
 	}
 
 	private void initComponents() {
@@ -150,33 +177,6 @@ public class ErrorDialog extends JDialog implements ActionListener {
 		setLocationRelativeTo(getOwner());
 	}
 
-	private void populateException(Throwable e) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Stack Trace:").append("\n");
-		builder.append("    Exception: ").append(e.getClass().getSimpleName()).append("\n");
-		builder.append("    Message: ").append(e.getMessage()).append("\n");
-		logTrace(builder, e);
-		errorArea.setText(builder.toString());
-	}
-
-	private void logTrace(StringBuilder builder, Throwable e) {
-		Throwable parent = e;
-		String indent = "    ";
-		while (parent != null) {
-			if (parent == e) {
-				builder.append(indent).append("Trace:").append("\n");
-			} else {
-				builder.append(indent).append("Caused By: (").append(parent.getClass().getSimpleName()).append(")").append("\n");
-				builder.append(indent).append("    ").append("[").append(parent.getMessage()).append("]").append("\n");
-			}
-			for (StackTraceElement ele : e.getStackTrace()) {
-				builder.append(indent).append("    ").append(ele.toString()).append("\n");
-			}
-			indent += "    ";
-			parent = parent.getCause();
-		}
-	}
-
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		action(e.getActionCommand());
@@ -207,15 +207,10 @@ public class ErrorDialog extends JDialog implements ActionListener {
 		}
 	}
 
-	private void closeForm() {
-		this.dispose();
-		System.exit(0);
-	}
-
 	private String generateExceptionReport() {
 		StringBuilder builder = new StringBuilder("Technic Launcher Error Report:\n");
 		builder.append("( Please submit this report to https://github.com/TechnicPack/TechnicLauncher/issues )\n");
-		builder.append("    Launcher Build: ").append(Settings.getLauncherBuild()).append("\n").append("\n");
+		builder.append("    Launcher Build: ").append(Settings.getBuild()).append("\n").append("\n");
 		builder.append("    Selected Pack: ").append(selected).append("\n");
 		builder.append("Stack Trace:").append("\n");
 		builder.append("    Exception: ").append(cause.getClass().getSimpleName()).append("\n");
@@ -232,5 +227,10 @@ public class ErrorDialog extends JDialog implements ActionListener {
 		builder.append("    Memory Free: ").append(Runtime.getRuntime().freeMemory() / 1024L / 1024L).append(" MB\n");
 		builder.append("    CPU Cores: ").append(Runtime.getRuntime().availableProcessors()).append("\n");
 		return builder.toString();
+	}
+
+	private void closeForm() {
+		this.dispose();
+		System.exit(0);
 	}
 }

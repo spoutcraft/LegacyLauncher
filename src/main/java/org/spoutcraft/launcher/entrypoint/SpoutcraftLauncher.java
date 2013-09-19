@@ -19,18 +19,17 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import com.beust.jcommander.JCommander;
+import net.technicpack.launchercore.util.Directories;
+import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.IOUtils;
-import org.spoutcraft.launcher.Proxy;
-import org.spoutcraft.launcher.Settings;
-import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.settings.LauncherDirectories;
+import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
 import org.spoutcraft.launcher.util.OperatingSystem;
-import org.spoutcraft.launcher.util.Utils;
-import org.spoutcraft.launcher.yml.YAMLFormat;
-import org.spoutcraft.launcher.yml.YAMLProcessor;
 
 import javax.swing.UIManager;
 import java.awt.Toolkit;
@@ -52,10 +51,10 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 public class SpoutcraftLauncher {
+	public static StartupParameters params;
 	protected static RotatingFileHandler handler = null;
 	protected static ConsoleFrame console;
 	private static Logger logger = null;
-	private static StartupParameters params;
 
 	public SpoutcraftLauncher() {
 		main(new String[0]);
@@ -63,6 +62,8 @@ public class SpoutcraftLauncher {
 
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
+		LauncherDirectories directories = new LauncherDirectories();
+		Directories.instance = directories;
 
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack", "true");
@@ -76,7 +77,7 @@ public class SpoutcraftLauncher {
 
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
-		Utils.setSplashScreen(splash);
+		directories.setSplashScreen(splash);
 		setLookAndFeel();
 
 		SpoutcraftLauncher.logger = setupLogger();
@@ -88,12 +89,9 @@ public class SpoutcraftLauncher {
 
 		params.logParameters(logger);
 
-		Settings.setLauncherBuild(launcherBuild);
-		setupProxy();
-
 		relaunch(false);
 
-		if (params.isConsole() || Settings.getShowLauncherConsole()) {
+		if (params.isConsole() || Settings.getShowConsole()) {
 			setupConsole();
 			logger.info("Console Mode Activated");
 		}
@@ -103,9 +101,8 @@ public class SpoutcraftLauncher {
 		logThread.start();
 
 		// Set up the launcher and load login frame
-		TechnicLoginFrame frame = new TechnicLoginFrame();
-		new Launcher(frame);
-		frame.setUser(Settings.getLastUser());
+		Launcher launcher = new Launcher();
+		LauncherFrame frame = Launcher.getFrame();
 
 		splash.dispose();
 		frame.setVisible(true);
@@ -138,7 +135,6 @@ public class SpoutcraftLauncher {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		Utils.setStartupParameters(params);
 
 		params.setupProxy();
 
@@ -206,26 +202,6 @@ public class SpoutcraftLauncher {
 		temp.delete();
 		temp = new File(Utils.getLauncherDirectory(), "temp.exe");
 		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "Spoutcraft-Launcher.jar");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "mc.patch");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/libraries.yml");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/spoutcraft.yml");
-		temp.delete();
-		temp = new File(Utils.getLauncherDirectory(), "config/minecraft.yml");
-		temp.delete();
-	}
-
-	private static void setupProxy() {
-		Proxy proxy = new Proxy();
-		proxy.setHost(Settings.getProxyHost());
-		proxy.setPort(Settings.getProxyPort());
-		proxy.setUser(Settings.getProxyUsername());
-		String pass = Settings.getProxyPassword();
-		proxy.setPass(pass != null ? pass.toCharArray() : null);
-		proxy.setup();
 	}
 
 	public static void relaunch(boolean force) {
@@ -236,12 +212,6 @@ public class SpoutcraftLauncher {
 			}
 			System.exit(0);
 		}
-	}
-
-	public static void setupSettings(File file) {
-		File settingsFile = new File(file, "settings.yml");
-		YAMLProcessor settings = new YAMLProcessor(settingsFile, false, YAMLFormat.EXTENDED);
-		Settings.setYAML(settings);
 	}
 
 	public static void destroyConsole() {

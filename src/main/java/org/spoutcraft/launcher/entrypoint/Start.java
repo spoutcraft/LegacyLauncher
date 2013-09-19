@@ -19,13 +19,13 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import net.technicpack.launchercore.exception.RestfulAPIException;
-import org.spoutcraft.launcher.Settings;
+import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.skin.ProgressSplashScreen;
 import org.spoutcraft.launcher.updater.LauncherInfo;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.OperatingSystem;
-import org.spoutcraft.launcher.util.Utils;
+import net.technicpack.launchercore.util.Utils;
 
 import javax.swing.UIManager;
 import java.io.File;

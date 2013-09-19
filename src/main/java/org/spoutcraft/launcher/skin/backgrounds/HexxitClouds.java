@@ -17,7 +17,7 @@
  */
 package org.spoutcraft.launcher.skin.backgrounds;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ public class HexxitClouds extends AnimatedImage {
 	private int y = 0;
 
 	public HexxitClouds(int startX, int y, String image, int delay) {
-		super(TechnicLoginFrame.getIcon(image), delay);
+		super(ResourceUtils.getIcon(image), delay);
 		this.x = startX;
 		this.y = y;
 	}

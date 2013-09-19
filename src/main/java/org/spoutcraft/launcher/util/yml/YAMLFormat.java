@@ -16,33 +16,21 @@
  * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.spoutcraft.launcher.exceptions;
+package org.spoutcraft.launcher.util.yml;
 
-public class MCNetworkException extends Exception {
-	private static final long serialVersionUID = 5521671148991031931L;
-	private final Throwable cause;
-	private final String message;
+import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
-	public MCNetworkException(String message) {
-		this(null, message);
+public enum YAMLFormat {
+	EXTENDED(FlowStyle.BLOCK),
+	COMPACT(FlowStyle.AUTO);
+
+	private final FlowStyle style;
+
+	YAMLFormat(FlowStyle style) {
+		this.style = style;
 	}
 
-	public MCNetworkException(Throwable throwable, String message) {
-		this.cause = null;
-		this.message = message;
-	}
-
-	public MCNetworkException() {
-		this(null, "Could not connect to minecraft.net");
-	}
-
-	@Override
-	public Throwable getCause() {
-		return this.cause;
-	}
-
-	@Override
-	public String getMessage() {
-		return this.message;
+	public FlowStyle getStyle() {
+		return style;
 	}
 }

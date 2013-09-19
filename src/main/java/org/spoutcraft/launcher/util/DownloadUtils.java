@@ -21,7 +21,7 @@ package org.spoutcraft.launcher.util;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.IOUtils;
+import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.exceptions.DownloadException;
 import org.spoutcraft.launcher.util.Download.Result;
 

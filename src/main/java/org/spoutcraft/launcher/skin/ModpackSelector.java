@@ -18,16 +18,18 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.install.AddPack;
+import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.restful.solder.SolderPackInfo;
+import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.FileUtils;
-import org.spoutcraft.launcher.Settings;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.skin.components.PackButton;
 import org.spoutcraft.launcher.skin.options.ImportOptions;
-import org.spoutcraft.launcher.util.Utils;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -38,8 +40,7 @@ import java.util.List;
 public class ModpackSelector extends JComponent implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
-	private final TechnicLoginFrame frame;
-	private final PackMap packs = new PackMap();
+	private final LauncherFrame frame;
 	private final List<PackButton> buttons = new ArrayList<PackButton>(7);
 	private final int height = 520;
 	private final int bigWidth = 180;
@@ -53,7 +54,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int smallX = 100 - (smallWidth / 2);
 	private ImportOptions importOptions = null;
 
-	public ModpackSelector(TechnicLoginFrame frame) {
+	public ModpackSelector(LauncherFrame frame) {
 		this.frame = frame;
 
 		for (int i = 0; i < 7; i++) {
@@ -84,79 +85,46 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		}
 	}
 
-	public PackMap getPackMap() {
-		return packs;
-	}
-
-	public void addPack(PackInfo pack) {
-		packs.addNew(pack);
+	public void addPack(InstalledPack pack) {
+		Launcher.getInstalledPacks().addNew(pack);
 		selectPack(pack);
 	}
 
-	public void selectPack(PackInfo pack) {
+	public void selectPack(InstalledPack pack) {
+		System.out.println(pack);
 		selectPack(pack.getName());
 	}
 
-	public void removePack() {
-		PackInfo pack = packs.get(getSelectedPack().getName());
-
-		Settings.removePack(pack.getName());
-		Settings.getYAML().save();
-		File file = pack.getPackDirectory();
-		if (file.exists()) {
-			try {
-				FileUtils.deleteDirectory(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		file = new File(Utils.getAssetsDirectory(), pack.getName());
-		if (file.exists()) {
-			try {
-				FileUtils.deleteDirectory(file);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-
-		packs.remove(pack.getName());
-		selectPack(packs.getPrevious(1));
-	}
-
-	public PackInfo getSelectedPack() {
-		return packs.getSelected();
-	}
-
 	public void selectPack(String name) {
-		PackInfo selected = packs.select(name);
+		InstalledPack selected = Launcher.getInstalledPacks().select(name);
 		if (selected == null) {
 			return;
 		}
 		redraw(selected, false);
 	}
 
-	public void redraw(PackInfo selected, boolean force) {
-		// Determine if the pack is custom
-		boolean custom = Settings.isPackCustom(selected.getName());
+	public void redraw(InstalledPack selected, boolean force) {
+		String packName = selected.getName();
+		String displayName = selected.getDisplayName();
+		// Determine if the pack is from the platform.
+		boolean custom = selected.isPlatform();
 
 		// Set the background image based on the pack
-		frame.getBackgroundImage().changeBackground(selected.getName(), new ImageIcon(selected.getBackground()), force);
+		frame.getBackgroundImage().changeBackground(packName, selected.getBackground(), force);
 
 		// Set the icon image based on the pack
 		frame.setIconImage(selected.getIcon());
 
 		// Set the frame title based on the pack
-		frame.setTitle(selected.getDisplayName());
+		frame.setTitle(displayName);
 
 		// Set the big button image in the middle
-		buttons.get(3).setIcon(new ImageIcon(selected.getLogo().getScaledInstance(bigWidth, bigHeight, Image.SCALE_SMOOTH)));
-		buttons.get(3).getJLabel().setVisible(selected.isLoading());
+		buttons.get(3).setPack(selected);
 
 		// Set the URL for the platform button
-		String url = "http://www.technicpack.net/modpack/details/" + selected.getName();
-		if (selected instanceof RestInfo && !custom) {
-			String newUrl = ((RestInfo) selected).getWebURL();
+		String url = "http://www.technicpack.net/modpack/details/" + packName;
+		if (selected.getInfo() instanceof SolderPackInfo && !custom) {
+			String newUrl = selected.getInfo().getUrl();
 			if (newUrl != null && !newUrl.isEmpty()) {
 				url = newUrl;
 				frame.enableComponent(frame.getPlatform(), true);
@@ -168,16 +136,14 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 		// Add the first 3 buttons to the left
 		for (int i = 0; i < 3; i++) {
-			PackInfo pack = packs.getPrevious(i + 1);
-			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
-			buttons.get(i).getJLabel().setVisible(pack.isLoading());
+			InstalledPack pack = Launcher.getInstalledPacks().getPrevious(i + 1);
+			buttons.get(i).setPack(pack);
 		}
 
 		// Add the last 3 buttons to the right
 		for (int i = 4; i < 7; i++) {
-			PackInfo pack = packs.getNext(i - 3);
-			buttons.get(i).setIcon(new ImageIcon(pack.getLogo().getScaledInstance(smallWidth, smallHeight, Image.SCALE_SMOOTH)));
-			buttons.get(i).getJLabel().setVisible(pack.isLoading());
+			InstalledPack pack = Launcher.getInstalledPacks().getNext(i - 3);
+			buttons.get(i).setPack(pack);
 		}
 
 		if (selected instanceof AddPack) {
@@ -186,10 +152,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			frame.enableComponent(frame.getCustomName(), false);
 			frame.enableComponent(frame.getPlatform(), false);
 		} else if (custom) {
-			if (selected.getLogoURL().equals("") && !selected.isLoading()) {
-				buttons.get(3).getJLabel().setText(selected.getDisplayName());
-				buttons.get(3).getJLabel().setVisible(true);
-			}
 			frame.enableComponent(frame.getPackOptionsBtn(), true);
 			frame.enableComponent(frame.getPackRemoveBtn(), true);
 			frame.enableComponent(frame.getPlatform(), true);
@@ -202,16 +164,46 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		this.repaint();
 	}
 
+	public void removePack() {
+		String packName = getSelectedPack().getName();
+		InstalledPack pack = Launcher.getInstalledPacks().get(packName);
+
+		File file = pack.getInstalledDirectory();
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		file = new File(Utils.getAssetsDirectory(), packName);
+		if (file.exists()) {
+			try {
+				FileUtils.deleteDirectory(file);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		Launcher.getInstalledPacks().remove(packName);
+		selectPack(Launcher.getInstalledPacks().getPrevious(1));
+	}
+
+	public InstalledPack getSelectedPack() {
+		return Launcher.getInstalledPacks().getSelected();
+	}
+
 	public void redraw(boolean force) {
 		redraw(getSelectedPack(), force);
 	}
 
 	public void selectNextPack() {
-		selectPack(packs.getNext(1));
+		selectPack(Launcher.getInstalledPacks().getNext(1));
 	}
 
 	public void selectPreviousPack() {
-		selectPack(packs.getPrevious(1));
+		selectPack(Launcher.getInstalledPacks().getPrevious(1));
 	}
 
 	@Override
@@ -232,7 +224,7 @@ public class ModpackSelector extends JComponent implements ActionListener {
 					importOptions.setVisible(true);
 				}
 			} else {
-				selectPack(packs.get(packs.getIndex() + button.getIndex()));
+				selectPack(Launcher.getInstalledPacks().get(Launcher.getInstalledPacks().getIndex() + button.getIndex()));
 			}
 		}
 	}

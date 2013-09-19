@@ -18,12 +18,15 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
-import org.spoutcraft.launcher.skin.components.ImageButton;
+import net.technicpack.launchercore.install.AddPack;
+import net.technicpack.launchercore.install.InstalledPack;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 
 import java.awt.Color;
+import java.awt.Image;
 
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
 public class PackButton extends ImageButton {
@@ -34,11 +37,16 @@ public class PackButton extends ImageButton {
 	public PackButton() {
 		super();
 		label = new JLabel("Loading...");
-		label.setFont(TechnicLoginFrame.getMinecraftFont(12));
+		label.setFont(LauncherFrame.getMinecraftFont(12));
 		label.setForeground(Color.WHITE);
 		label.setBackground(new Color(35, 35, 35));
 		label.setOpaque(true);
 		label.setHorizontalAlignment(CENTER);
+	}
+
+	public void setPack(InstalledPack pack) {
+		setIcon(new ImageIcon(pack.getLogo().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH)));
+		label.setVisible(pack.getInfo() == null && !(pack instanceof AddPack));
 	}
 
 	@Override

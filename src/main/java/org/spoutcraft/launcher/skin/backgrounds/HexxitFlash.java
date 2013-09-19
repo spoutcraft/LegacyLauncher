@@ -17,7 +17,7 @@
  */
 package org.spoutcraft.launcher.skin.backgrounds;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.skin.components.AnimatedImage;
 
 import java.awt.event.ActionEvent;
@@ -26,7 +26,7 @@ public class HexxitFlash extends AnimatedImage {
 	private int counter = 0;
 
 	public HexxitFlash() {
-		super(TechnicLoginFrame.getIcon("flash.jpg"), 75);
+		super(ResourceUtils.getIcon("flash.jpg"), 75);
 		this.setBounds(0, 0, 0, 0);
 	}
 

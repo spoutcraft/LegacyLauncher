@@ -23,14 +23,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.JProgressBar;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 
 public class LiteProgressBar extends JProgressBar implements Transparent{
 	private static final long serialVersionUID = 1L;
 	private final TransparentComponent transparency = new TransparentComponent(this, false);
-	private final TechnicLoginFrame frame;
+	private final LauncherFrame frame;
 
-	public LiteProgressBar(TechnicLoginFrame frame) {
+	public LiteProgressBar(LauncherFrame frame) {
 		setFocusable(false);
 		setOpaque(false);
 		this.frame = frame;

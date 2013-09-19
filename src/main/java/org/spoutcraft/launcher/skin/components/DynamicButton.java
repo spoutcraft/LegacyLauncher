@@ -34,8 +34,9 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
+import net.technicpack.launchercore.install.User;
 import org.jdesktop.swingworker.SwingWorker;
-import org.spoutcraft.launcher.util.ImageUtils;
+import net.technicpack.launchercore.util.ImageUtils;
 
 public class DynamicButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
@@ -44,14 +45,13 @@ public class DynamicButton extends JButton implements MouseListener{
 	private final int hoverIncrease;
 	private final DynamicLabel underLabel;
 	private final TransparentButton remove;
-	private final String account, userName;
+	private final User user;
 
-	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, String account, String userName) {
+	public DynamicButton(JFrame parent, BufferedImage icon, int hoverIncrease, User user) {
 		this.icon = icon;
 		this.hoverIncrease = hoverIncrease;
-		this.account = account;
-		this.userName = userName;
-		underLabel = new DynamicLabel(userName);
+		this.user = user;
+		underLabel = new DynamicLabel(user.getDisplayName());
 		remove = new TransparentButton();
 		this.setSize(32, 32);
 		this.setBorder(null);
@@ -69,17 +69,13 @@ public class DynamicButton extends JButton implements MouseListener{
 		remove.setTransparency(0F);
 		remove.setHoverTransparency(1F);
 	}
-	
+
+	public User getUser() {
+		return user;
+	}
+
 	public JButton getRemoveIcon() {
 		return remove;
-	}
-
-	public String getUsername() {
-		return userName;
-	}
-
-	public String getAccount() {
-		return account;
 	}
 
 	@Override

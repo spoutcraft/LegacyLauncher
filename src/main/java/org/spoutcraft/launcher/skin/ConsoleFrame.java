@@ -119,7 +119,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		setSize(new Dimension(650, 400));
 		buildUI();
 
-		this.setIconImage(Toolkit.getDefaultToolkit().getImage(TechnicLoginFrame.icon));
+		this.setIconImage(Toolkit.getDefaultToolkit().getImage(LauncherFrame.icon));
 
 		if (trackProc != null) {
 			track(trackProc);

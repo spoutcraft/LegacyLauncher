@@ -18,6 +18,12 @@
 
 package org.spoutcraft.launcher;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.internal.Lists;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.util.OperatingSystem;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -25,65 +31,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
-import com.beust.jcommander.Parameter;
-import com.beust.jcommander.internal.Lists;
-
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
-import org.spoutcraft.launcher.util.OperatingSystem;
-
 public final class StartupParameters {
 	@SuppressWarnings("unused")
 	private final String[] args;
+	@Parameter
+	private List<String> parameters = Lists.newArrayList();
+	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft Username")
+	private String user = null;
+	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft Password")
+	private String pass = null;
+	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft Server to join")
+	private String server = null;
+	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
+	private boolean portable = false;
+	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
+	private boolean debug = false;
+	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
+	private String proxyHost = null;
+	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
+	private String proxyPort = null;
+	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
+	private String proxyUser = null;
+	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
+	private String proxyPassword = null;
+	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
+	private boolean relaunched = false;
+	@Parameter(names = {"-console"}, description = "Shows the console window")
+	private boolean console = false;
+	@Parameter(names = {"-width"}, description = "Sets the width of the minecraft window to be fixed to this.")
+	private int width = -1;
+	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
+	private int height = -1;
+	@Parameter(names = {"-solderpack"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
+	private String solderPack = null;
+	@Parameter(names = {"-solderrest"}, description = "URL point towards the rest api for a solder pack you want to force add to the launcher.")
+	private String solderRest = null;
+
 	public StartupParameters(String[] args) {
 		this.args = args;
 	}
-	@Parameter
-	private List<String> parameters = Lists.newArrayList();
-
-	@Parameter(names = {"-username", "-user", "-u"}, description = "Minecraft Username")
-	private String user = null;
-
-	@Parameter(names = {"-password", "-pass", "-p"}, description = "Minecraft Password")
-	private String pass = null;
-
-	@Parameter(names = {"-server", "-host", "-join", "-j", "-h", "-s"}, description = "Minecraft Server to join")
-	private String server = null;
-
-	@Parameter(names = {"-portable", "--portable", "-pmode", "-portable_mode", "-pm"}, description = "Portable Mode")
-	private boolean portable = false;
-
-	@Parameter(names = {"-debug", "--debug", "-verbose", "-v", "-d"}, description = "Debug mode")
-	private boolean debug = false;
-
-	@Parameter(names = {"-proxy_host"}, description = "HTTP Proxy Host")
-	private String proxyHost = null;
-
-	@Parameter(names = {"-proxy_port"}, description = "HTTP Proxy Port")
-	private String proxyPort = null;
-
-	@Parameter(names = {"-proxy_user"}, description = "HTTP Proxy Username")
-	private String proxyUser = null;
-
-	@Parameter(names = {"-proxy_password"}, description = "HTTP Proxy Password")
-	private String proxyPassword = null;
-
-	@Parameter(names = {"-relaunched"}, description = "Used to indicate the process has been relaunched for the property memory arguments")
-	private boolean relaunched = false;
-
-	@Parameter(names = {"-console"}, description = "Shows the console window")
-	private boolean console = false;
-
-	@Parameter(names = {"-width"}, description = "Sets the width of the minecraft window to be fixed to this.")
-	private int width = -1;
-
-	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
-	private int height = -1;
-
-	@Parameter(names = {"-solderpack"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
-	private String solderPack = null;
-
-	@Parameter(names = {"-solderrest"}, description = "URL point towards the rest api for a solder pack you want to force add to the launcher.")
-	private String solderRest = null;
 
 	public List<String> getParameters() {
 		return parameters;
@@ -143,17 +129,6 @@ public final class StartupParameters {
 		return user != null && user.length() > 0 && pass != null && pass.length() > 0;
 	}
 
-	private boolean shouldRelaunch() {
-		if (relaunched) {
-			return false;
-		}
-		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
-		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
-		boolean memory = mb < min;
-		boolean permgen = Settings.getPermGen();
-		return memory || permgen;
-	}
-
 	public boolean relaunch(Logger log, boolean force) {
 		if (shouldRelaunch() || force) {
 			String pathToJar;
@@ -165,7 +140,8 @@ public final class StartupParameters {
 			}
 			try {
 				pathToJar = URLDecoder.decode(pathToJar, "UTF-8");
-			} catch (java.io.UnsupportedEncodingException ignore) { }
+			} catch (java.io.UnsupportedEncodingException ignore) {
+			}
 
 			final int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			log.info("Attempting relaunch with " + memory + " mb of RAM");
@@ -182,14 +158,12 @@ public final class StartupParameters {
 				commands.add("java");
 			}
 			commands.add("-Xmx" + memory + "m");
-			if (Settings.getPermGen()) {
-				int permSize = 128;
-				if (memory >= 2048) {
-					permSize = 256;
-				}
-				log.info("Attempting relaunch with " + "-XX:MaxPermSize=" + permSize + "m" + " as permgen");
-				commands.add("-XX:MaxPermSize=" + permSize + "m");
+			int permSize = 128;
+			if (memory >= 2048) {
+				permSize = 256;
 			}
+			log.info("Attempting relaunch with " + "-XX:MaxPermSize=" + permSize + "m" + " as permgen");
+			commands.add("-XX:MaxPermSize=" + permSize + "m");
 			commands.add("-cp");
 			commands.add(pathToJar);
 			commands.add(SpoutcraftLauncher.class.getName());
@@ -263,6 +237,15 @@ public final class StartupParameters {
 			params.add(solderRest);
 		}
 		return params;
+	}
+
+	private boolean shouldRelaunch() {
+		if (relaunched) {
+			return false;
+		}
+		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
+		return mb < min;
 	}
 
 	public String getUser() {

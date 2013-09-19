@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.util.OperatingSystem;
-import org.spoutcraft.launcher.util.Utils;
+import net.technicpack.launchercore.util.Utils;
 
 public class Mover {
 	public static void main(String[] args) {

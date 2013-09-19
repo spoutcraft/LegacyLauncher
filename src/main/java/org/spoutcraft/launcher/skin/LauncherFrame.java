@@ -18,7 +18,9 @@
 
 package org.spoutcraft.launcher.skin;
 
-import net.minecraft.Launcher;
+import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.ImageButton;
@@ -30,14 +32,12 @@ import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.RoundedBox;
 import org.spoutcraft.launcher.skin.options.LauncherOptions;
 import org.spoutcraft.launcher.skin.options.ModpackOptions;
-import org.spoutcraft.launcher.technic.AddPack;
-import org.spoutcraft.launcher.technic.PackInfo;
 import org.spoutcraft.launcher.util.Download;
 import org.spoutcraft.launcher.util.Download.Result;
+import org.spoutcraft.launcher.util.DownloadListener;
 import org.spoutcraft.launcher.util.DownloadUtils;
-import org.spoutcraft.launcher.util.ImageUtils;
-import org.spoutcraft.launcher.util.ResourceUtils;
-import org.spoutcraft.launcher.util.Utils;
+import net.technicpack.launchercore.util.ImageUtils;
+import net.technicpack.launchercore.util.ResourceUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -67,15 +67,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
-import static org.spoutcraft.launcher.util.ResourceUtils.getResourceAsStream;
+import static net.technicpack.launchercore.util.ResourceUtils.getResourceAsStream;
 
-public class TechnicLoginFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener {
+public class LauncherFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener, DownloadListener {
 	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
-	public static URL icon = TechnicLoginFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
 	private static final int FRAME_HEIGHT = 520;
@@ -89,6 +89,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 	private static final String IMAGE_LOGIN_ACTION = "image_login";
 	private static final String REMOVE_USER = "remove";
 	private static final int SPACING = 7;
+	public static URL icon = LauncherFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
 	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
 	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
 	private LiteTextBox name;
@@ -108,7 +109,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 	private NewsComponent news;
 	private long previous = 0L;
 
-	public TechnicLoginFrame() {
+	public LauncherFrame() {
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
@@ -164,7 +165,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 
 		// Technic logo
 		JLabel logo = new JLabel();
-		ImageIcon logoIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(getImage("header.png"), 275));
+		ImageIcon logoIcon = new ImageIcon(ImageUtils.scaleWithAspectWidth(ResourceUtils.getImage("header.png"), 275));
 		logo.setIcon(logoIcon);
 		logo.setBounds(600, 6, logoIcon.getIconWidth(), logoIcon.getIconHeight());
 
@@ -175,13 +176,13 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		selectorBackground.setOpaque(true);
 
 		// Pack Select Up
-		ImageButton packUp = new ImageButton(getIcon("upButton.png", 65, 65));
+		ImageButton packUp = new ImageButton(ResourceUtils.getIcon("upButton.png", 65, 65));
 		packUp.setBounds(-7, 0, 65, 65);
 		packUp.setActionCommand(PACK_LEFT_ACTION);
 		packUp.addActionListener(this);
 
 		// Pack Select Down
-		ImageButton packDown = new ImageButton(getIcon("downButton.png", 65, 65));
+		ImageButton packDown = new ImageButton(ResourceUtils.getIcon("downButton.png", 65, 65));
 		packDown.setBounds(-7, FRAME_HEIGHT - 65, 65, 65);
 		packDown.setActionCommand(PACK_RIGHT_ACTION);
 		packDown.addActionListener(this);
@@ -214,8 +215,8 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		JButton browse = new ImageHyperlinkButton("http://www.technicpack.net");
 		browse.setToolTipText("Get More Modpacks");
 		browse.setBounds(linkArea.getX() + SPACING, linkArea.getY() + SPACING, linkWidth, linkHeight);
-		browse.setIcon(getIcon("platformLinkButton.png"));
-		browse.setRolloverIcon(getIcon("platformLinkButtonBright.png"));
+		browse.setIcon(ResourceUtils.getIcon("platformLinkButton.png"));
+		browse.setRolloverIcon(ResourceUtils.getIcon("platformLinkButtonBright.png"));
 		browse.setContentAreaFilled(false);
 		browse.setBorderPainted(false);
 
@@ -223,8 +224,8 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		JButton forums = new ImageHyperlinkButton("http://forums.technicpack.net/");
 		forums.setToolTipText("Visit the forums");
 		forums.setBounds(linkArea.getX() + SPACING, browse.getY() + browse.getHeight() + SPACING, linkWidth, linkHeight);
-		forums.setIcon(getIcon("forumsLinkButton.png"));
-		forums.setRolloverIcon(getIcon("forumsLinkButtonBright.png"));
+		forums.setIcon(ResourceUtils.getIcon("forumsLinkButton.png"));
+		forums.setRolloverIcon(ResourceUtils.getIcon("forumsLinkButtonBright.png"));
 		forums.setContentAreaFilled(false);
 		forums.setBorderPainted(false);
 
@@ -232,65 +233,65 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		JButton donate = new ImageHyperlinkButton("http://www.technicpack.net/donate/");
 		donate.setToolTipText("Donate to the modders");
 		donate.setBounds(linkArea.getX() + SPACING, forums.getY() + forums.getHeight() + SPACING, linkWidth, linkHeight);
-		donate.setIcon(getIcon("donateLinkButton.png"));
-		donate.setRolloverIcon(getIcon("donateLinkButtonBright.png"));
+		donate.setIcon(ResourceUtils.getIcon("donateLinkButton.png"));
+		donate.setRolloverIcon(ResourceUtils.getIcon("donateLinkButtonBright.png"));
 		donate.setContentAreaFilled(false);
 		donate.setBorderPainted(false);
 
 		// Options Button
-		ImageButton options = new ImageButton(getIcon("gear.png", 28, 28), getIcon("gearInverted.png", 28, 28));
+		ImageButton options = new ImageButton(ResourceUtils.getIcon("gear.png", 28, 28), ResourceUtils.getIcon("gearInverted.png", 28, 28));
 		options.setBounds(FRAME_WIDTH - 34 * 2, 6, 28, 28);
 		options.setActionCommand(OPTIONS_ACTION);
 		options.addActionListener(this);
 		options.addKeyListener(this);
 
 		// Pack Options Button
-		packOptionsBtn = new ImageButton(getIcon("packOptions.png", 20, 20), getIcon("packOptionsInverted.png", 20, 20));
+		packOptionsBtn = new ImageButton(ResourceUtils.getIcon("packOptions.png", 20, 20), ResourceUtils.getIcon("packOptionsInverted.png", 20, 20));
 		packOptionsBtn.setBounds(25, FRAME_HEIGHT / 2 + 56, 20, 20);
 		packOptionsBtn.setActionCommand(PACK_OPTIONS_ACTION);
 		packOptionsBtn.addActionListener(this);
 
 		// Platform website button
 		platform = new ImageHyperlinkButton("http://www.technicpack.net/");
-		platform.setIcon(getIcon("openPlatformPage.png", 20, 20));
+		platform.setIcon(ResourceUtils.getIcon("openPlatformPage.png", 20, 20));
 		platform.setBounds(50, FRAME_HEIGHT / 2 + 56, 20, 20);
 
 		// Pack Remove Button
-		packRemoveBtn = new ImageButton(getIcon("packDelete.png", 20, 20), getIcon("packDeleteInverted.png", 20, 20));
+		packRemoveBtn = new ImageButton(ResourceUtils.getIcon("packDelete.png", 20, 20), ResourceUtils.getIcon("packDeleteInverted.png", 20, 20));
 		packRemoveBtn.setBounds(185, FRAME_HEIGHT / 2 + 56, 20, 20);
 		packRemoveBtn.setActionCommand(PACK_REMOVE_ACTION);
 		packRemoveBtn.addActionListener(this);
 
 		// Exit Button
-		ImageButton exit = new ImageButton(getIcon("quit.png", 28, 28), getIcon("quitHover.png", 28, 28));
+		ImageButton exit = new ImageButton(ResourceUtils.getIcon("quit.png", 28, 28), ResourceUtils.getIcon("quitHover.png", 28, 28));
 		exit.setBounds(FRAME_WIDTH - 34, 6, 28, 28);
 		exit.setActionCommand(EXIT_ACTION);
 		exit.addActionListener(this);
 
 		// Steam button
 		JButton steam = new ImageHyperlinkButton("http://steamcommunity.com/groups/technic-pack");
-		steam.setRolloverIcon(getIcon("steamInverted.png", 28, 28));
+		steam.setRolloverIcon(ResourceUtils.getIcon("steamInverted.png", 28, 28));
 		steam.setToolTipText("Game with us on Steam");
 		steam.setBounds(215 + 6, 6, 28, 28);
 		setIcon(steam, "steam.png", 28);
 
 		// Twitter button
 		JButton twitter = new ImageHyperlinkButton("https://twitter.com/TechnicPack");
-		twitter.setRolloverIcon(getIcon("twitterInverted.png", 28, 28));
+		twitter.setRolloverIcon(ResourceUtils.getIcon("twitterInverted.png", 28, 28));
 		twitter.setToolTipText("Follow us on Twitter");
 		twitter.setBounds(215 + 6 + 34 * 3, 6, 28, 28);
 		setIcon(twitter, "twitter.png", 28);
 
 		// Facebook button
 		JButton facebook = new ImageHyperlinkButton("https://www.facebook.com/TechnicPack");
-		facebook.setRolloverIcon(getIcon("facebookInverted.png", 28, 28));
+		facebook.setRolloverIcon(ResourceUtils.getIcon("facebookInverted.png", 28, 28));
 		facebook.setToolTipText("Like us on Facebook");
 		facebook.setBounds(215 + 6 + 34 * 2, 6, 28, 28);
 		setIcon(facebook, "facebook.png", 28);
 
 		// YouTube button
 		JButton youtube = new ImageHyperlinkButton("http://www.youtube.com/user/kakermix");
-		youtube.setRolloverIcon(getIcon("youtubeInverted.png", 28, 28));
+		youtube.setRolloverIcon(ResourceUtils.getIcon("youtubeInverted.png", 28, 28));
 		youtube.setToolTipText("Subscribe to our videos");
 		youtube.setBounds(215 + 6 + 34, 6, 28, 28);
 		setIcon(youtube, "youtube.png", 28);
@@ -310,14 +311,16 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		customName.setForeground(Color.white);
 
 		// User Faces
-		java.util.List<String> savedUsers = getSavedUsernames();
-		int users = Math.min(5, this.getSavedUsernames().size());
+		Collection<String> savedUsers = Launcher.getUsers().getUsers();
+		int users = Math.min(5, savedUsers.size());
+		int index = 0;
 
-		for (int i = 0; i < users; i++) {
-			String accountName = savedUsers.get(i);
-			String userName = this.getUsername(accountName);
+		for (String userName : savedUsers) {
+			if (index >= users) {
+				break;
+			}
 
-			BufferedImage image = getImage("face.png", 45, 45);
+			BufferedImage image = ResourceUtils.getImage("face.png", 45, 45);
 			File assets = new File(Utils.getAssetsDirectory(), "avatars");
 			File face = new File(assets, userName + ".png");
 			if (face.exists()) {
@@ -329,10 +332,10 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 				}
 			}
 
-			DynamicButton userButton = new DynamicButton(this, image, 1, accountName, userName);
+			DynamicButton userButton = new DynamicButton(this, image, 1, Launcher.getUsers().getUser(userName));
 			userButton.setFont(minecraft.deriveFont(12F));
 
-			userButton.setBounds(FRAME_WIDTH - ((i + 1) * 70), FRAME_HEIGHT - 57, 45, 45);
+			userButton.setBounds(FRAME_WIDTH - ((index + 1) * 70), FRAME_HEIGHT - 57, 45, 45);
 			contentPane.add(userButton);
 			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
 			userButton.addActionListener(this);
@@ -341,6 +344,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 			userButton.getRemoveIcon().setActionCommand(REMOVE_USER);
 			removeButtons.put(userButton.getRemoveIcon(), userButton);
 			userButtons.put(userName, userButton);
+			index++;
 		}
 
 		contentPane.add(progressBar);
@@ -375,37 +379,6 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
-	public static ImageIcon getIcon(String iconName) {
-		return new ImageIcon(Launcher.class.getResource("/org/spoutcraft/launcher/resources/" + iconName));
-	}
-
-	public static BufferedImage getImage(String imageName) {
-		try {
-			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static BufferedImage getImage(String imageName, int w, int h) {
-		try {
-			return ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + imageName)), w, h);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
-	public static ImageIcon getIcon(String iconName, int w, int h) {
-		try {
-			return new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), w, h));
-		} catch (IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-
 	private void setIcon(JButton button, String iconName, int size) {
 		try {
 			button.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/" + iconName)), size, size)));
@@ -436,7 +409,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 
 	public void setUser(String name) {
 		if (name != null) {
-			DynamicButton user = userButtons.get(this.getUsername(name));
+			DynamicButton user = userButtons.get(name);
 			if (user != null) {
 				user.doClick();
 			}
@@ -474,10 +447,10 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 				return ImageIO.read(download.getOutFile());
 			}
 		} catch (IOException e) {
-			if (Utils.getStartupParameters().isDebugMode()) {
-				org.spoutcraft.launcher.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
+			if (SpoutcraftLauncher.params.isDebugMode()) {
+				Utils.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
 			} else {
-				org.spoutcraft.launcher.Launcher.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
+				Utils.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
 			}
 		}
 		return null;
@@ -498,7 +471,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 				launcherOptions.setVisible(true);
 			}
 		} else if (action.equals(PACK_REMOVE_ACTION)) {
-			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this pack?\n This will delete all files in: " + getSelector().getSelectedPack().getPackDirectory(), "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+			int result = JOptionPane.showConfirmDialog(this, "Are you sure you want to remove this pack?\n This will delete all files in: " + getSelector().getSelectedPack().getInstalledDirectory(), "Remove Pack", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 			if (result == JOptionPane.YES_OPTION) {
 				getSelector().removePack();
 			}
@@ -515,7 +488,7 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
-			// LOGIN ACTIOn
+			// LOGIN ACTION
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton) c;
 		} else if (action.equals(REMOVE_USER)) {
@@ -529,17 +502,6 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 
 	public String getSelectedUser() {
 		return this.name.getText();
-	}
-
-	public void lockLoginButton(boolean unlock) {
-		if (unlock) {
-			login.setText("Login");
-		} else {
-			login.setText("Launching...");
-		}
-		login.setEnabled(unlock);
-		packRemoveBtn.setEnabled(unlock);
-		packOptionsBtn.setEnabled(unlock);
 	}
 
 	@Override
@@ -568,6 +530,17 @@ public class TechnicLoginFrame extends JFrame implements ActionListener, KeyList
 	public void enableForm() {
 		progressBar.setVisible(false);
 		lockLoginButton(true);
+	}
+
+	public void lockLoginButton(boolean unlock) {
+		if (unlock) {
+			login.setText("Login");
+		} else {
+			login.setText("Launching...");
+		}
+		login.setEnabled(unlock);
+		packRemoveBtn.setEnabled(unlock);
+		packOptionsBtn.setEnabled(unlock);
 	}
 
 	public ImageButton getPackOptionsBtn() {

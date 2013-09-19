@@ -17,7 +17,7 @@
  */
 package org.spoutcraft.launcher.skin.backgrounds;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.skin.components.AnimatedImage;
 import org.spoutcraft.launcher.skin.components.EnhancedBackground;
 
@@ -26,7 +26,7 @@ public class TekkitBackground extends EnhancedBackground {
 
 	public TekkitBackground() {
 		super("tekkitmain");
-		tekkit = new TekkitCreeper(650, 100, TechnicLoginFrame.getIcon("creeper.png", 107, 69));
+		tekkit = new TekkitCreeper(650, 100, ResourceUtils.getIcon("creeper.png", 107, 69));
 		tekkit.setBounds(500, 100, 107, 69);
 		tekkit.setVisible(false);
 		this.add(tekkit);

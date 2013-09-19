@@ -18,31 +18,104 @@
 
 package org.spoutcraft.launcher;
 
-import org.spoutcraft.launcher.skin.TechnicLoginFrame;
+import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.install.AddPack;
+import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.install.InstalledPacks;
+import net.technicpack.launchercore.install.Users;
+import net.technicpack.launchercore.restful.RestObject;
+import net.technicpack.launchercore.restful.solder.FullModpacks;
+import net.technicpack.launchercore.restful.solder.Solder;
+import net.technicpack.launchercore.restful.solder.SolderConstants;
+import net.technicpack.launchercore.restful.solder.SolderPackInfo;
+import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.skin.LauncherFrame;
 
 import java.util.logging.ConsoleHandler;
-import java.util.logging.Logger;
+import java.util.logging.Level;
 
 public class Launcher {
 	private static Launcher instance;
-	private final Logger logger = Logger.getLogger("org.spoutcraft.launcher.Main");
-	private final TechnicLoginFrame loginFrame;
+	private final LauncherFrame launcherFrame;
+	private Users users;
+	private InstalledPacks installedPacks;
 
-	public Launcher(final TechnicLoginFrame frame) {
+	public Launcher() {
 		if (Launcher.instance != null) {
 			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
 
-		this.loginFrame = frame;
-		logger.addHandler(new ConsoleHandler());
+		Utils.getLogger().addHandler(new ConsoleHandler());
 		instance = this;
+
+		users = new Users();
+		installedPacks = InstalledPacks.load();
+
+		if (installedPacks == null) {
+			installedPacks = new InstalledPacks();
+		}
+
+		this.launcherFrame = new LauncherFrame();
+
+		loadDefaultPacks();
+		loadInstalledPacks();
+		installedPacks.add(new AddPack());
+
+		System.out.println(installedPacks);
 	}
 
-	public static Logger getLogger() {
-		return instance.logger;
+	private void loadInstalledPacks() {
+		for (InstalledPack pack : installedPacks.getPacks()) {
+			if (pack.isPlatform()) {
+//				PlatformPackInfo info = PlatformPackInfo.getPlatformPackInfo(pack.getName());
+
+			}
+		}
 	}
 
-	public static TechnicLoginFrame getFrame() {
-		return instance.loginFrame;
+	private void loadDefaultPacks() {
+
+		Thread thread = new Thread("Technic Solder Defaults") {
+			@Override
+			public void run() {
+				int index = 0;
+
+				InstalledPacks packs = Launcher.getInstalledPacks();
+				try {
+					FullModpacks technic = RestObject.getRestObject(FullModpacks.class, SolderConstants.getFullSolderUrl(SolderConstants.TECHNIC));
+					Solder solder = new Solder(SolderConstants.TECHNIC, technic.getMirrorUrl());
+					for (SolderPackInfo info : technic.getModpacks().values()) {
+						String name = info.getName();
+						info.setSolder(solder);
+						if (packs.getInstalledPacks().containsKey(name)) {
+							InstalledPack pack = installedPacks.get(info.getName());
+							pack.setInfo(info);
+						} else {
+							InstalledPack pack = new InstalledPack(name, false);
+							pack.setInfo(info);
+							packs.add(pack);
+						}
+						packs.reorder(index, name);
+						index++;
+					}
+					launcherFrame.getSelector().redraw(false);
+				} catch (RestfulAPIException e) {
+					Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", e);
+				}
+			}
+		};
+		thread.start();
+	}
+
+	public static InstalledPacks getInstalledPacks() {
+		return instance.installedPacks;
+	}
+
+	public static LauncherFrame getFrame() {
+		return instance.launcherFrame;
+	}
+
+	public static Users getUsers() {
+		return instance.users;
 	}
 }

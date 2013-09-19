@@ -17,16 +17,13 @@
  */
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.Timer;
+import java.awt.event.ActionListener;
 
 public abstract class AnimatedImage extends JLabel implements ActionListener {
 	private static final long serialVersionUID = 1;
-
 	private final Timer timer;
 
 	public AnimatedImage(Icon image, int delay) {
