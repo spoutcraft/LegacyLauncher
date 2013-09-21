@@ -56,7 +56,7 @@ public class RestAPI {
 	static {
 		try {
 			int response = SpoutcraftLauncher.pingURL(REST_URL);
-			cache.setOfflineMode(response / 100 != 2);
+			cache.setOfflineMode(response / 100 != 2); 
 		} catch (Exception e) {
 			e.printStackTrace();
 			cache.setOfflineMode(true);
