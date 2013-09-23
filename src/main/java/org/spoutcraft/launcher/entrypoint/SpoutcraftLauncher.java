@@ -20,16 +20,16 @@ package org.spoutcraft.launcher.entrypoint;
 
 import com.beust.jcommander.JCommander;
 import net.technicpack.launchercore.util.Directories;
+import net.technicpack.launchercore.util.OperatingSystem;
+import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
-import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
-import org.spoutcraft.launcher.util.OperatingSystem;
 
 import javax.swing.UIManager;
 import java.awt.Toolkit;
@@ -185,8 +185,8 @@ public class SpoutcraftLauncher {
 	}
 
 	private static void setLookAndFeel() {
-		OperatingSystem os = OperatingSystem.getOS();
-		if (os.isMac()) {
+		OperatingSystem os = OperatingSystem.getOperatingSystem();
+		if (os.equals(OperatingSystem.OSX)) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
 			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Technic Launcher");
 		}

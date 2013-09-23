@@ -25,8 +25,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.technicpack.launchercore.util.OperatingSystem;
 import org.apache.commons.io.IOUtils;
-import org.spoutcraft.launcher.util.OperatingSystem;
+
 import net.technicpack.launchercore.util.Utils;
 
 public class Mover {
@@ -71,7 +72,7 @@ public class Mover {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		ArrayList<String> commands = new ArrayList<String>();
 		if (!exe) {
-			if (OperatingSystem.getOS().isWindows()) {
+			if (OperatingSystem.getOperatingSystem().equals(OperatingSystem.WINDOWS)) {
 				commands.add("javaw");
 			} else {
 				commands.add("java");

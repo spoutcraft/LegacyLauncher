@@ -20,9 +20,9 @@ package org.spoutcraft.launcher;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Settings;
-import org.spoutcraft.launcher.util.OperatingSystem;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 import java.io.File;
 import java.io.IOException;
@@ -149,9 +149,9 @@ public final class StartupParameters {
 
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
-			if (OperatingSystem.getOS().isWindows()) {
+			if (OperatingSystem.getOperatingSystem().equals(OperatingSystem.WINDOWS)) {
 				commands.add("javaw");
-			} else if (OperatingSystem.getOS().isMac()) {
+			} else if (OperatingSystem.getOperatingSystem().equals(OperatingSystem.OSX)) {
 				commands.add("java");
 				commands.add("-Xdock:name=\"Technic Launcher\"");
 			} else {
@@ -179,6 +179,15 @@ public final class StartupParameters {
 			}
 		}
 		return false;
+	}
+
+	private boolean shouldRelaunch() {
+		if (relaunched) {
+			return false;
+		}
+		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
+		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
+		return mb < min;
 	}
 
 	private List<String> getRelaunchParameters() {
@@ -237,15 +246,6 @@ public final class StartupParameters {
 			params.add(solderRest);
 		}
 		return params;
-	}
-
-	private boolean shouldRelaunch() {
-		if (relaunched) {
-			return false;
-		}
-		int mb = (int) (Runtime.getRuntime().maxMemory() / 1024 / 1024);
-		int min = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
-		return mb < min;
 	}
 
 	public String getUser() {

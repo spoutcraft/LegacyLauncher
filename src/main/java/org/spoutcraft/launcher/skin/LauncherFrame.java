@@ -18,6 +18,11 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.util.Download;
+import net.technicpack.launchercore.util.DownloadListener;
+import net.technicpack.launchercore.util.DownloadUtils;
+import net.technicpack.launchercore.util.ImageUtils;
+import net.technicpack.launchercore.util.ResourceUtils;
 import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -32,12 +37,6 @@ import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.RoundedBox;
 import org.spoutcraft.launcher.skin.options.LauncherOptions;
 import org.spoutcraft.launcher.skin.options.ModpackOptions;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.Download.Result;
-import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.util.DownloadUtils;
-import net.technicpack.launchercore.util.ImageUtils;
-import net.technicpack.launchercore.util.ResourceUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -443,7 +442,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		File file = new File(assets, user + ".png");
 		try {
 			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/helm/" + user + "/100", file.getAbsolutePath());
-			if (download.getResult().equals(Result.SUCCESS)) {
+			if (download.getResult().equals(Download.Result.SUCCESS)) {
 				return ImageIO.read(download.getOutFile());
 			}
 		} catch (IOException e) {

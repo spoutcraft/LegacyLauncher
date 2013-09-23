@@ -28,7 +28,7 @@ import org.spoutcraft.launcher.skin.components.LiteButton;
 import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.updater.LauncherInfo;
 import org.spoutcraft.launcher.util.DesktopUtils;
-import org.spoutcraft.launcher.util.ZipUtils;
+import net.technicpack.launchercore.util.ZipUtils;
 import net.technicpack.launchercore.util.Utils;
 
 import javax.swing.AbstractAction;

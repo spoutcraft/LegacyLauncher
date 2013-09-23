@@ -19,13 +19,13 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.util.Download;
+import net.technicpack.launchercore.util.DownloadListener;
+import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Settings;
+import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.skin.ProgressSplashScreen;
 import org.spoutcraft.launcher.updater.LauncherInfo;
-import org.spoutcraft.launcher.util.Download;
-import org.spoutcraft.launcher.util.DownloadListener;
-import org.spoutcraft.launcher.util.OperatingSystem;
-import net.technicpack.launchercore.util.Utils;
 
 import javax.swing.UIManager;
 import java.io.File;
@@ -105,7 +105,7 @@ public class Start {
 			ProcessBuilder processBuilder = new ProcessBuilder();
 			ArrayList<String> commands = new ArrayList<String>();
 			if (!codeSource.getName().endsWith(".exe")) {
-				if (OperatingSystem.getOS().isWindows()) {
+				if (OperatingSystem.getOperatingSystem().equals(OperatingSystem.WINDOWS)) {
 					commands.add("javaw");
 				} else {
 					commands.add("java");

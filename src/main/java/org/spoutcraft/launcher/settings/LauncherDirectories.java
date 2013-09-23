@@ -18,13 +18,13 @@
 
 package org.spoutcraft.launcher.settings;
 
-import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Directories;
+import net.technicpack.launchercore.util.OperatingSystem;
+import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.SplashScreen;
-import org.spoutcraft.launcher.util.ZipUtils;
 import org.spoutcraft.launcher.util.MigrateUtils;
-import org.spoutcraft.launcher.util.OperatingSystem;
+import net.technicpack.launchercore.util.ZipUtils;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -137,20 +137,28 @@ public class LauncherDirectories extends Directories {
 		String userHome = System.getProperty("user.home", ".");
 		File workingDirectory;
 
-		OperatingSystem os = OperatingSystem.getOS();
-		if (os.isUnix()) {
-			workingDirectory = new File(userHome, '.' + applicationName + '/');
-		} else if (os.isWindows()) {
-			String applicationData = System.getenv("APPDATA");
-			if (applicationData != null) {
-				workingDirectory = new File(applicationData, "." + applicationName + '/');
-			} else {
+		OperatingSystem os = OperatingSystem.getOperatingSystem();
+		switch (os) {
+			case LINUX:
 				workingDirectory = new File(userHome, '.' + applicationName + '/');
-			}
-		} else if (os.isMac()) {
-			workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
-		} else {
-			workingDirectory = new File(userHome, applicationName + '/');
+				break;
+			case WINDOWS:
+				String applicationData = System.getenv("APPDATA");
+				if (applicationData != null) {
+					workingDirectory = new File(applicationData, "." + applicationName + '/');
+				} else {
+					workingDirectory = new File(userHome, '.' + applicationName + '/');
+				}
+				break;
+			case OSX:
+				workingDirectory = new File(userHome, "Library/Application Support/" + applicationName);
+				break;
+			case UNKNOWN:
+				workingDirectory = new File(userHome, applicationName + '/');
+				break;
+			default:
+				workingDirectory = new File(userHome, applicationName + '/');
+				break;
 		}
 
 		return workingDirectory;
