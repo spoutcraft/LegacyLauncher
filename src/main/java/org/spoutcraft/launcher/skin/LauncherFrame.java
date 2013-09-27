@@ -24,6 +24,7 @@ import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.InstallThread;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
@@ -194,7 +195,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		// Progress Bar
 		progressBar = new LiteProgressBar(this);
 		progressBar.setBounds(barBox.getX() + SPACING, barBox.getY() + SPACING, barBox.getWidth() - (SPACING * 2), barBox.getHeight() - (SPACING * 2));
-		progressBar.setVisible(false);
+//		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		progressBar.setFont(minecraft);
@@ -489,6 +490,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
 			// LOGIN ACTION
+			InstallThread thread = new InstallThread(packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
+			thread.start();
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton) c;
 		} else if (action.equals(REMOVE_USER)) {
