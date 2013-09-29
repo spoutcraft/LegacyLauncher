@@ -35,10 +35,10 @@ public class MigrateUtils {
 		File settingsFile = new File(Utils.getSettingsDirectory(), "settings.yml");
 		if (!settingsFile.exists()) {
 			Settings.load();
-			System.out.println("Skipping migration");
-			System.out.println(Settings.instance);
 			return;
 		}
+
+		System.out.println("Old settings found, migrating...");
 
 		YAMLProcessor settings = new YAMLProcessor(settingsFile, false, YAMLFormat.EXTENDED);
 		OldSettings.setYAML(settings);

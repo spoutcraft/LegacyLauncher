@@ -21,44 +21,33 @@ package org.spoutcraft.launcher.entrypoint;
 import com.beust.jcommander.JCommander;
 import net.technicpack.launchercore.util.Directories;
 import net.technicpack.launchercore.util.OperatingSystem;
-import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.log.Console;
+import org.spoutcraft.launcher.log.DateOutputFormatter;
+import org.spoutcraft.launcher.log.LoggerOutputStream;
+import org.spoutcraft.launcher.log.RotatingFileHandler;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
-import org.spoutcraft.launcher.skin.ConsoleFrame;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
+import org.spoutcraft.launcher.util.ShutdownThread;
 
 import javax.swing.UIManager;
 import java.awt.Toolkit;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Formatter;
 import java.util.logging.Handler;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
 
 public class SpoutcraftLauncher {
 	public static StartupParameters params;
 	protected static RotatingFileHandler handler = null;
-	protected static ConsoleFrame console;
+	protected static Console console;
 	private static Logger logger = null;
-
-	public SpoutcraftLauncher() {
-		main(new String[0]);
-	}
 
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
@@ -68,7 +57,7 @@ public class SpoutcraftLauncher {
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack", "true");
 
-		// Tell forge to download from our mirror instead
+		// Tell forge 1.5 to download from our mirror instead
 		System.setProperty("fml.core.libraries.mirror", "http://mirror.technicpack.net/Technic/lib/fml/%s");
 
 		params = setupParameters(args);
@@ -89,16 +78,9 @@ public class SpoutcraftLauncher {
 
 		params.logParameters(logger);
 
-		relaunch(false);
+		console = new Console(params.isConsole());
 
-		if (params.isConsole() || Settings.getShowConsole()) {
-			setupConsole();
-			logger.info("Console Mode Activated");
-		}
-
-		Runtime.getRuntime().addShutdownHook(new ShutdownThread());
-		Thread logThread = new LogFlushThread();
-		logThread.start();
+		Runtime.getRuntime().addShutdownHook(new ShutdownThread(console));
 
 		// Set up the launcher and load login frame
 		Launcher launcher = new Launcher();
@@ -108,14 +90,6 @@ public class SpoutcraftLauncher {
 		frame.setVisible(true);
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
-	}
-
-	public static void setupConsole() {
-		if (console != null) {
-			console.dispose();
-		}
-		console = new ConsoleFrame(2500, true);
-		console.setVisible(true);
 	}
 
 	public static String getLauncherBuild() {
@@ -142,7 +116,7 @@ public class SpoutcraftLauncher {
 	}
 
 	protected static Logger setupLogger() {
-		final Logger logger = Logger.getLogger("launcher");
+		final Logger logger = Logger.getLogger("net.technicpack.launcher.Main");
 		File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();
@@ -162,8 +136,8 @@ public class SpoutcraftLauncher {
 		if (params != null && !params.isDebugMode()) {
 			logger.setUseParentHandlers(false);
 
-			System.setOut(new PrintStream(new LoggerOutputStream(Level.INFO, logger), true));
-			System.setErr(new PrintStream(new LoggerOutputStream(Level.SEVERE, logger), true));
+			System.setOut(new PrintStream(new LoggerOutputStream(console, Level.INFO, logger), true));
+			System.setErr(new PrintStream(new LoggerOutputStream(console, Level.SEVERE, logger), true));
 		}
 
 		Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -204,142 +178,12 @@ public class SpoutcraftLauncher {
 		temp.delete();
 	}
 
-	public static void relaunch(boolean force) {
-		if (params.relaunch(logger, force)) {
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-			}
-			System.exit(0);
-		}
+	public static void setupConsole() {
+		console.setupConsole();
 	}
 
 	public static void destroyConsole() {
-		if (console != null) {
-			console.setVisible(false);
-			console.dispose();
-		}
+		console.destroyConsole();
 	}
 }
 
-class LogFlushThread extends Thread {
-	public LogFlushThread() {
-		super("Log Flush Thread");
-		this.setDaemon(true);
-	}
-
-	@Override
-	public void run() {
-		while (!this.isInterrupted()) {
-			if (SpoutcraftLauncher.handler != null) {
-				SpoutcraftLauncher.handler.flush();
-			}
-			try {
-				sleep(60000);
-			} catch (InterruptedException e) {
-			}
-		}
-	}
-}
-
-class ShutdownThread extends Thread {
-	public ShutdownThread() {
-		super("Shutdown Thread");
-		this.setDaemon(true);
-	}
-
-	@Override
-	public void run() {
-		if (SpoutcraftLauncher.handler != null) {
-			SpoutcraftLauncher.handler.flush();
-		}
-	}
-}
-
-class LoggerOutputStream extends ByteArrayOutputStream {
-	private final String separator = System.getProperty("line.separator");
-	private final Level level;
-	private final Logger log;
-
-	public LoggerOutputStream(Level level, Logger log) {
-		super();
-		this.level = level;
-		this.log = log;
-	}
-
-	@Override
-	public synchronized void flush() throws IOException {
-		super.flush();
-		String record = this.toString();
-		super.reset();
-
-		if (record.length() > 0 && !record.equals(separator)) {
-			log.logp(level, "LoggerOutputStream", "log" + level, record);
-			if (SpoutcraftLauncher.console != null) {
-				SpoutcraftLauncher.console.log(record + "\n");
-			}
-		}
-	}
-}
-
-class RotatingFileHandler extends StreamHandler {
-	private final SimpleDateFormat date;
-	private final String logFile;
-	private String filename;
-
-	public RotatingFileHandler(String logFile) {
-		this.logFile = logFile;
-		date = new SimpleDateFormat("yyyy-MM-dd");
-		filename = calculateFilename();
-		try {
-			setOutputStream(new FileOutputStream(filename, true));
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-		}
-	}
-
-	private String calculateFilename() {
-		return logFile.replace("%D", date.format(new Date()));
-	}
-
-	@Override
-	public synchronized void flush() {
-		if (!filename.equals(calculateFilename())) {
-			filename = calculateFilename();
-			try {
-				setOutputStream(new FileOutputStream(filename, true));
-			} catch (FileNotFoundException ex) {
-				ex.printStackTrace();
-			}
-		}
-		super.flush();
-	}
-}
-
-class DateOutputFormatter extends Formatter {
-	private final SimpleDateFormat date;
-
-	public DateOutputFormatter(SimpleDateFormat date) {
-		this.date = date;
-	}
-
-	@Override
-	public String format(LogRecord record) {
-		StringBuilder builder = new StringBuilder();
-
-		builder.append(date.format(record.getMillis()));
-		builder.append(" [");
-		builder.append(record.getLevel().getLocalizedName().toUpperCase());
-		builder.append("] ");
-		builder.append(formatMessage(record));
-		builder.append('\n');
-
-		if (record.getThrown() != null) {
-			StringWriter writer = new StringWriter();
-			record.getThrown().printStackTrace(new PrintWriter(writer));
-			builder.append(writer.toString());
-		}
-
-		return builder.toString();
-	}
-}

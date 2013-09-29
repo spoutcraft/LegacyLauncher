@@ -18,6 +18,11 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.auth.AuthResponse;
+import net.technicpack.launchercore.auth.AuthenticationService;
+import net.technicpack.launchercore.auth.RefreshResponse;
+import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.Users;
 import net.technicpack.launchercore.util.Download;
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.launchercore.util.DownloadUtils;
@@ -134,6 +139,9 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 110, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
+		if (Launcher.getUsers().getLastUser() != null) {
+			name.setText(Launcher.getUsers().getLastUser());
+		}
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
@@ -489,22 +497,52 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getSelector().selectNextPack();
 		} else if (action.equals(LOGIN_ACTION)) {
-			// LOGIN ACTION
-			InstallThread thread = new InstallThread(packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
-			thread.start();
+			if (Launcher.isLaunching()) {
+				return;
+			}
+			User user = Launcher.getUsers().getUser(this.name.getText());
+			if (user == null || !refresh(user)) {
+				if (this.pass.getPassword().length == 0) {
+					return;
+				}
+				user = login(Launcher.getUsers(), this.name.getText(), new String(this.pass.getPassword()));
+				if (user == null) {
+					return;
+				}
+				if (remember.isSelected()) {
+					Launcher.getUsers().addUser(user);
+					Launcher.getUsers().setLastUser(user.getUsername());
+				}
+			}
+
+			Launcher.launch(user, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
 		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
 			DynamicButton userButton = (DynamicButton) c;
+			this.name.setText(userButton.getUser().getUsername());
 		} else if (action.equals(REMOVE_USER)) {
 			DynamicButton userButton = removeButtons.get((JButton) c);
+			Launcher.getUsers().removeUser(userButton.getUser().getUsername());
 		}
+	}
+
+	public boolean refresh(User user) {
+		RefreshResponse response = AuthenticationService.requestRefresh(user);
+		return response.getError() != null;
+	}
+
+	public User login(Users users, String username, String password) {
+		AuthResponse response = AuthenticationService.requestLogin(username, password, users.getClientToken());
+
+		if (response.getError() != null) {
+			JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
+			return null;
+		}
+
+		return new User(username, response);
 	}
 
 	public ModpackSelector getSelector() {
 		return packSelector;
-	}
-
-	public String getSelectedUser() {
-		return this.name.getText();
 	}
 
 	@Override
@@ -552,14 +590,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public ImageButton getPackRemoveBtn() {
 		return packRemoveBtn;
-	}
-
-	public JLabel getCustomName() {
-		return customName;
-	}
-
-	public void setCustomName(String packName) {
-		customName.setText(packName);
 	}
 
 	public ImageHyperlinkButton getPlatform() {

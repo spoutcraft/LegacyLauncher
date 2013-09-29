@@ -20,21 +20,33 @@ package org.spoutcraft.launcher;
 
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
+import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.launch.MinecraftLauncher;
+import net.technicpack.launchercore.minecraft.CompleteVersion;
+import net.technicpack.launchercore.util.Settings;
 
 import java.io.IOException;
 
 public class InstallThread extends Thread {
+	private final User user;
+	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
 
-	public InstallThread(InstalledPack pack, String build) {
+	public InstallThread(User user, InstalledPack pack, String build) {
 		super("InstallThread");
+		this.user = user;
+		this.pack = pack;
 		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build);
 	}
 
 	@Override
 	public void run() {
 		try {
-			modpackInstaller.installPack();
+			CompleteVersion version = modpackInstaller.installPack();
+			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
+			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
+			minecraftLauncher.launch(user);
+//			Launcher.getFrame().setVisible(false);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

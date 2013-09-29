@@ -312,7 +312,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(SAVE_ACTION)) {
-			int oldMem = Settings.getMemory();
 			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
 			Settings.setMemory(mem);
 			Settings.setBuildStream(buildStream);
@@ -324,12 +323,6 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			if (directoryChanged || streamChanged) {
 				JOptionPane.showMessageDialog(c, "A manual restart is required for changes to take effect. Please exit and restart your launcher.", "Restart Required", JOptionPane.INFORMATION_MESSAGE);
 				dispose();
-			}
-			if (mem != oldMem) {
-				int result = JOptionPane.showConfirmDialog(c, "Restart required for settings to take effect. Would you like to restart?", "Restart Required", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-				if (result == JOptionPane.YES_OPTION) {
-					SpoutcraftLauncher.relaunch(true);
-				}
 			}
 			dispose();
 		} else if (action.equals(LOGS_ACTION)) {
@@ -350,7 +343,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			if (result == JFileChooser.APPROVE_OPTION) {
 				File file = fileChooser.getSelectedFile();
 				if (!ZipUtils.checkLaunchDirectory(file)) {
-					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.yml in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(c, "Please select an empty directory, or your default install folder with settings.json in it.", "Invalid Location", JOptionPane.WARNING_MESSAGE);
 					return;
 				}
 				packLocation.setText(file.getPath());

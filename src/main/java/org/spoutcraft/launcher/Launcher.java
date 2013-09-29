@@ -22,6 +22,7 @@ import net.technicpack.launchercore.exception.RestfulAPIException;
 import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.InstalledPacks;
+import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.install.Users;
 import net.technicpack.launchercore.restful.PackInfo;
 import net.technicpack.launchercore.restful.RestObject;
@@ -41,6 +42,7 @@ public class Launcher {
 	private final LauncherFrame launcherFrame;
 	private Users users;
 	private InstalledPacks installedPacks;
+	private InstallThread installThread;
 
 	public Launcher() {
 		if (Launcher.instance != null) {
@@ -50,7 +52,12 @@ public class Launcher {
 		Utils.getLogger().addHandler(new ConsoleHandler());
 		instance = this;
 
-		users = new Users();
+		users = Users.load();
+
+		if (users == null) {
+			users = new Users();
+		}
+
 		installedPacks = InstalledPacks.load();
 
 		if (installedPacks == null) {
@@ -63,40 +70,8 @@ public class Launcher {
 		loadInstalledPacks();
 		installedPacks.add(new AddPack());
 
+//		launcherFrame.getNews().loadArticles();
 		System.out.println(installedPacks);
-	}
-
-	private void loadInstalledPacks() {
-		for (final InstalledPack pack : installedPacks.getPacks()) {
-			if (pack.isPlatform()) {
-				Thread thread = new Thread(pack.getName() + " Info Loading Thread") {
-					@Override
-					public void run() {
-						try {
-							String name = pack.getName();
-							PlatformPackInfo platformPackInfo = PlatformPackInfo.getPlatformPackInfo(name);
-							PackInfo info = platformPackInfo;
-							if (platformPackInfo.hasSolder()) {
-								SolderPackInfo solderPackInfo = SolderPackInfo.getSolderPackInfo(platformPackInfo.getSolder(), name);
-								Solder solder = RestObject.getRestObject(Solder.class, platformPackInfo.getSolder());
-								solder.setUrl(platformPackInfo.getSolder());
-								solderPackInfo.setSolder(solder);
-								info = solderPackInfo;
-							}
-
-							info.getLogo();
-							info.getIcon();
-							info.getBackground();
-							pack.setInfo(info);
-							launcherFrame.getSelector().redraw(false);
-						} catch (RestfulAPIException e) {
-							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
-						}
-					}
-				};
-				thread.start();
-			}
-		}
 	}
 
 	private void loadDefaultPacks() {
@@ -135,6 +110,48 @@ public class Launcher {
 
 	public static InstalledPacks getInstalledPacks() {
 		return instance.installedPacks;
+	}
+
+	private void loadInstalledPacks() {
+		for (final InstalledPack pack : installedPacks.getPacks()) {
+			if (pack.isPlatform()) {
+				Thread thread = new Thread(pack.getName() + " Info Loading Thread") {
+					@Override
+					public void run() {
+						try {
+							String name = pack.getName();
+							PlatformPackInfo platformPackInfo = PlatformPackInfo.getPlatformPackInfo(name);
+							PackInfo info = platformPackInfo;
+							if (platformPackInfo.hasSolder()) {
+								SolderPackInfo solderPackInfo = SolderPackInfo.getSolderPackInfo(platformPackInfo.getSolder(), name);
+								Solder solder = RestObject.getRestObject(Solder.class, platformPackInfo.getSolder());
+								solder.setUrl(platformPackInfo.getSolder());
+								solderPackInfo.setSolder(solder);
+								info = solderPackInfo;
+							}
+
+							info.getLogo();
+							info.getIcon();
+							info.getBackground();
+							pack.setInfo(info);
+							launcherFrame.getSelector().redraw(false);
+						} catch (RestfulAPIException e) {
+							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
+						}
+					}
+				};
+				thread.start();
+			}
+		}
+	}
+
+	public static void launch(User user, InstalledPack pack, String build) {
+		instance.installThread = new InstallThread(user, pack, build);
+		instance.installThread.start();
+	}
+
+	public static boolean isLaunching() {
+		return instance.installThread != null && !instance.installThread.isFinished();
 	}
 
 	public static LauncherFrame getFrame() {

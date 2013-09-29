@@ -149,7 +149,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		if (selected instanceof AddPack) {
 			frame.enableComponent(frame.getPackOptionsBtn(), false);
 			frame.enableComponent(frame.getPackRemoveBtn(), false);
-			frame.enableComponent(frame.getCustomName(), false);
 			frame.enableComponent(frame.getPlatform(), false);
 		} else if (custom) {
 			frame.enableComponent(frame.getPackOptionsBtn(), true);
@@ -158,7 +157,6 @@ public class ModpackSelector extends JComponent implements ActionListener {
 		} else {
 			frame.enableComponent(frame.getPackOptionsBtn(), true);
 			frame.enableComponent(frame.getPackRemoveBtn(), false);
-			frame.enableComponent(frame.getCustomName(), false);
 		}
 
 		this.repaint();
