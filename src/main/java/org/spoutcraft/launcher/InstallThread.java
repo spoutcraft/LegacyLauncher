@@ -42,13 +42,15 @@ public class InstallThread extends Thread {
 	@Override
 	public void run() {
 		try {
+			Launcher.getFrame().getProgressBar().setVisible(true);
 			CompleteVersion version = modpackInstaller.installPack();
 			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
 			minecraftLauncher.launch(user);
-//			Launcher.getFrame().setVisible(false);
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			Launcher.getFrame().getProgressBar().setVisible(false);
 		}
 	}
 

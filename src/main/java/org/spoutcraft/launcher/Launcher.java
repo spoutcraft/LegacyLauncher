@@ -70,6 +70,7 @@ public class Launcher {
 		loadInstalledPacks();
 		installedPacks.add(new AddPack());
 
+		launcherFrame.updateFaces();
 //		launcherFrame.getNews().loadArticles();
 		System.out.println(installedPacks);
 	}

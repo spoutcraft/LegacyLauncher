@@ -203,7 +203,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		// Progress Bar
 		progressBar = new LiteProgressBar(this);
 		progressBar.setBounds(barBox.getX() + SPACING, barBox.getY() + SPACING, barBox.getWidth() - (SPACING * 2), barBox.getHeight() - (SPACING * 2));
-//		progressBar.setVisible(false);
+		progressBar.setVisible(false);
 		progressBar.setStringPainted(true);
 		progressBar.setOpaque(true);
 		progressBar.setFont(minecraft);
@@ -509,10 +509,11 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				if (user == null) {
 					return;
 				}
-				if (remember.isSelected()) {
-					Launcher.getUsers().addUser(user);
-					Launcher.getUsers().setLastUser(user.getUsername());
-				}
+
+			}
+			if (remember.isSelected()) {
+				Launcher.getUsers().addUser(user);
+				Launcher.getUsers().setLastUser(user.getUsername());
 			}
 
 			Launcher.launch(user, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
