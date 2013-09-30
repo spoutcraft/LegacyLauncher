@@ -35,6 +35,7 @@ import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 
+import javax.swing.JOptionPane;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
@@ -73,7 +74,12 @@ public class Launcher implements PackRefreshListener {
 
 		launcherFrame.updateFaces();
 //		launcherFrame.getNews().loadArticles();
-		System.out.println(installedPacks);
+
+		JOptionPane.showMessageDialog(launcherFrame, "Warning! This is an early beta of a complete back-end rewrite.\n" +
+				"Your mod installs may be corrupted or worse.\n" +
+				"Use at your own risk.\n\n" +
+				"Known issue: Yogbox and Hack/Mine DO NOT WORK.",
+				"Warning! Beta Build of Launcher!", JOptionPane.WARNING_MESSAGE);
 	}
 
 	private void loadDefaultPacks() {

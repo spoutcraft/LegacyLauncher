@@ -158,9 +158,9 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		group.add(beta);
 
 		buildStream = Settings.getBuildStream();
-		if (buildStream.equals("stable")) {
+		if (buildStream.equals(Settings.STABLE)) {
 			stable.setSelected(true);
-		} else if (buildStream.equals("beta")) {
+		} else if (buildStream.equals(Settings.BETA)) {
 			beta.setSelected(true);
 		}
 
@@ -351,11 +351,11 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 				directoryChanged = true;
 			}
 		} else if (action.equals(BETA_ACTION)) {
-			buildStream = "beta";
+			buildStream = Settings.BETA;
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
 			streamChanged = true;
 		} else if (action.equals(STABLE_ACTION)) {
-			buildStream = "stable";
+			buildStream = Settings.STABLE;
 			build.setText(LAUNCHER_PREPEND + getLatestLauncherBuild(buildStream));
 			streamChanged = true;
 		}

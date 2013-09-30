@@ -43,7 +43,7 @@
         <dependency>
             <groupId>net.technicpack</groupId>
             <artifactId>launchercore</artifactId>
-            <version>1.0.0</version>
+            <version>1.0.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 		<dependency>
