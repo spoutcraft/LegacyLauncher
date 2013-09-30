@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher;
 
+import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
 import net.technicpack.launchercore.install.User;
@@ -25,12 +26,14 @@ import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
 import net.technicpack.launchercore.util.Settings;
 
+import java.io.File;
 import java.io.IOException;
 
 public class InstallThread extends Thread {
 	private final User user;
 	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
+	private boolean finished = false;
 
 	public InstallThread(User user, InstalledPack pack, String build) {
 		super("InstallThread");
@@ -42,8 +45,10 @@ public class InstallThread extends Thread {
 	@Override
 	public void run() {
 		try {
+
 			Launcher.getFrame().getProgressBar().setVisible(true);
-			CompleteVersion version = modpackInstaller.installPack();
+			CompleteVersion version = modpackInstaller.installPack(Launcher.getFrame());
+
 			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
 			minecraftLauncher.launch(user);
@@ -51,10 +56,11 @@ public class InstallThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
+			finished = true;
 		}
 	}
 
 	public boolean isFinished() {
-		return modpackInstaller.isFinished();
+		return modpackInstaller.isFinished() || finished;
 	}
 }

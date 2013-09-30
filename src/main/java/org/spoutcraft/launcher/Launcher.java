@@ -22,6 +22,7 @@ import net.technicpack.launchercore.exception.RestfulAPIException;
 import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.InstalledPacks;
+import net.technicpack.launchercore.install.PackRefreshListener;
 import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.install.Users;
 import net.technicpack.launchercore.restful.PackInfo;
@@ -37,7 +38,7 @@ import org.spoutcraft.launcher.skin.LauncherFrame;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 
-public class Launcher {
+public class Launcher implements PackRefreshListener {
 	private static Launcher instance;
 	private final LauncherFrame launcherFrame;
 	private Users users;
@@ -94,6 +95,7 @@ public class Launcher {
 							pack.setInfo(info);
 						} else {
 							InstalledPack pack = new InstalledPack(name, false);
+							pack.setRefreshListener(instance);
 							pack.setInfo(info);
 							packs.add(pack);
 						}
@@ -111,6 +113,10 @@ public class Launcher {
 
 	public static InstalledPacks getInstalledPacks() {
 		return instance.installedPacks;
+	}
+
+	public static Launcher getInstance() {
+		return instance;
 	}
 
 	private void loadInstalledPacks() {
@@ -135,6 +141,7 @@ public class Launcher {
 							info.getIcon();
 							info.getBackground();
 							pack.setInfo(info);
+							pack.setRefreshListener(instance);
 							launcherFrame.getSelector().redraw(false);
 						} catch (RestfulAPIException e) {
 							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
@@ -161,5 +168,10 @@ public class Launcher {
 
 	public static Users getUsers() {
 		return instance.users;
+	}
+
+	@Override
+	public void refreshPack(InstalledPack pack) {
+		launcherFrame.getSelector().redraw(true);
 	}
 }

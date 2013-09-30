@@ -136,7 +136,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		buildSelector.addActionListener(this);
 		populateBuilds(buildSelector);
 
-		build = installedPack.getBuild();
+		build = installedPack.getRawBuild();
 		if (build == null) {
 			build = InstalledPack.RECOMMENDED;
 		}
@@ -274,8 +274,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 			if (directoryChanged) {
 				directoryChanged = false;
 				installedPack.setPackDirectory(installedDirectory);
-				Launcher.getInstalledPacks().save();
 			}
+			installedPack.setBuild(build);
+			Launcher.getInstalledPacks().save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION)) {
 			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();

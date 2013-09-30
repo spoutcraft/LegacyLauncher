@@ -18,15 +18,18 @@
 
 package org.spoutcraft.launcher.util;
 
+import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.InstalledPacks;
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.settings.OldSettings;
 import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.util.yml.YAMLFormat;
 import org.spoutcraft.launcher.util.yml.YAMLProcessor;
 
 import java.io.File;
+import java.util.logging.Level;
 
 public class MigrateUtils {
 
@@ -56,6 +59,9 @@ public class MigrateUtils {
 			String build = OldSettings.getModpackBuild(modpack);
 			String directory = OldSettings.getPackDirectory(modpack);
 			InstalledPack pack = new InstalledPack(modpack, custom, build, directory);
+			pack.setRefreshListener(Launcher.getInstance());
+			pack.getInstalledDirectory();
+			migrateInstalled(pack);
 			installedPacks.add(pack);
 		}
 
@@ -66,4 +72,29 @@ public class MigrateUtils {
 		System.out.println(Settings.instance);
 	}
 
+	private static void migrateInstalled(InstalledPack pack) {
+		File oldInstalled = new File(pack.getBinDir(), "installed");
+		if (oldInstalled.exists()) {
+			Version version = loadInstalled(oldInstalled);
+			if (version != null) {
+				version.save(pack.getBinDir());
+			}
+			oldInstalled.delete();
+		}
+	}
+
+	private static Version loadInstalled(File installed) {
+		try {
+			YAMLProcessor yaml = new YAMLProcessor(installed, false, YAMLFormat.EXTENDED);
+			yaml.load();
+			String build = (String) yaml.getProperty("build");
+			if (build == null || build.isEmpty()) {
+				return null;
+			}
+			return new Version(build, true);
+		} catch (Exception e) {
+			Utils.getLogger().log(Level.WARNING, "Error migrating installed build file! " + installed.getAbsolutePath());
+			return null;
+		}
+	}
 }
