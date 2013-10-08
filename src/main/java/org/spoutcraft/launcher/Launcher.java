@@ -73,7 +73,7 @@ public class Launcher implements PackRefreshListener {
 		installedPacks.add(new AddPack());
 
 		launcherFrame.updateFaces();
-//		launcherFrame.getNews().loadArticles();
+		launcherFrame.getNews().loadArticles();
 
 		JOptionPane.showMessageDialog(launcherFrame, "Warning! This is an early beta of a complete back-end rewrite.\n" +
 				"Your mod installs may be corrupted or worse.\n" +
