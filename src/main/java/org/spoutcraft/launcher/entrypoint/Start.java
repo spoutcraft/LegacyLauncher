@@ -19,11 +19,13 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.util.Directories;
 import net.technicpack.launchercore.util.Download;
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.settings.LauncherDirectories;
 import org.spoutcraft.launcher.skin.ProgressSplashScreen;
 import org.spoutcraft.launcher.updater.LauncherInfo;
 
@@ -48,6 +50,8 @@ public class Start {
 			SpoutcraftLauncher.main(args);
 			return;
 		}
+
+		Directories.instance = new LauncherDirectories();
 
 		// Test for exe relaunch
 		SpoutcraftLauncher.setupLogger().info("Args: " + Arrays.toString(args));

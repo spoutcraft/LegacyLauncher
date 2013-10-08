@@ -25,10 +25,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import net.technicpack.launchercore.util.Directories;
 import net.technicpack.launchercore.util.OperatingSystem;
 import org.apache.commons.io.IOUtils;
 
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.settings.LauncherDirectories;
 
 public class Mover {
 	public static void main(String[] args) {
@@ -46,6 +48,7 @@ public class Mover {
 	}
 
 	private static void execute(String[] args, boolean exe) throws Exception{
+		Directories.instance = new LauncherDirectories();
 		File temp;
 		if (exe) {
 			temp = new File(Utils.getSettingsDirectory(), "temp.exe");
