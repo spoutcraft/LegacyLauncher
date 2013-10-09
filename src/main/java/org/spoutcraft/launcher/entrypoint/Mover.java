@@ -18,19 +18,18 @@
 
 package org.spoutcraft.launcher.entrypoint;
 
+import net.technicpack.launchercore.util.Directories;
+import net.technicpack.launchercore.util.OperatingSystem;
+import net.technicpack.launchercore.util.Utils;
+import org.apache.commons.io.IOUtils;
+import org.spoutcraft.launcher.settings.LauncherDirectories;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import net.technicpack.launchercore.util.Directories;
-import net.technicpack.launchercore.util.OperatingSystem;
-import org.apache.commons.io.IOUtils;
-
-import net.technicpack.launchercore.util.Utils;
-import org.spoutcraft.launcher.settings.LauncherDirectories;
 
 public class Mover {
 	public static void main(String[] args) {
@@ -39,6 +38,7 @@ public class Mover {
 
 	public static void main(String[] args, boolean exe) {
 		try {
+			Directories.instance = new LauncherDirectories();
 			SpoutcraftLauncher.setupLogger();
 			execute(args, exe);
 		} catch (Exception e) {
@@ -47,8 +47,7 @@ public class Mover {
 		System.exit(0);
 	}
 
-	private static void execute(String[] args, boolean exe) throws Exception{
-		Directories.instance = new LauncherDirectories();
+	private static void execute(String[] args, boolean exe) throws Exception {
 		File temp;
 		if (exe) {
 			temp = new File(Utils.getSettingsDirectory(), "temp.exe");

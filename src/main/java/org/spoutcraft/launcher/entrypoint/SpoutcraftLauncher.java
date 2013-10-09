@@ -46,6 +46,7 @@ import java.util.logging.Logger;
 public class SpoutcraftLauncher {
 	public static StartupParameters params;
 	protected static Console console;
+	private static RotatingFileHandler handler = null;
 	private static Logger logger = null;
 
 	public static void main(String[] args) {
@@ -70,6 +71,7 @@ public class SpoutcraftLauncher {
 
 		console = new Console(params.isConsole());
 		SpoutcraftLauncher.logger = setupLogger();
+		console.setRotatingFileHandler(SpoutcraftLauncher.handler);
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
 		logger.info("------------------------------------------");
@@ -132,7 +134,7 @@ public class SpoutcraftLauncher {
 		}
 		logger.addHandler(fileHandler);
 
-		console.setRotatingFileHandler(fileHandler);
+		SpoutcraftLauncher.handler = fileHandler;
 
 		if (params != null && params.isDebugMode()) {
 			logger.setUseParentHandlers(false);
