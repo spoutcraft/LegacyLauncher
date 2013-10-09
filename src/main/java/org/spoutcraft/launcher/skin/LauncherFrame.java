@@ -450,7 +450,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		assets.mkdirs();
 		File file = new File(assets, user + ".png");
 		try {
-			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/helm/" + user + "/100", file.getAbsolutePath());
+			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/helm/" + user + "/100", file.getName(), file.getAbsolutePath());
 			if (download.getResult().equals(Download.Result.SUCCESS)) {
 				return ImageIO.read(download.getOutFile());
 			}

@@ -102,7 +102,7 @@ public class Start {
 			}
 
 			ProgressSplashScreen splash = new ProgressSplashScreen();
-			Download download = new Download(LauncherInfo.getDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getPath());
+			Download download = new Download(LauncherInfo.getDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getName(), temp.getPath());
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
 
