@@ -51,7 +51,6 @@ public class Launcher implements PackRefreshListener {
 			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
 
-		Utils.getLogger().addHandler(new ConsoleHandler());
 		instance = this;
 
 		users = Users.load();

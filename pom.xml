@@ -246,10 +246,10 @@
 									</jre>
 									<icon>${basedir}/src/main/resources/exe/icon.ico</icon>
 									<versionInfo>
-										<fileVersion>2.0.0.${buildNumber}</fileVersion>
-										<txtFileVersion>2.0.0.${buildNumber}</txtFileVersion>
-										<productVersion>2.0.0.${buildNumber}</productVersion>
-										<txtProductVersion>2.0.0.${buildNumber}</txtProductVersion>
+										<fileVersion>3.0.0.${buildNumber}</fileVersion>
+										<txtFileVersion>3.0.0.${buildNumber}</txtFileVersion>
+										<productVersion>3.0.0.${buildNumber}</productVersion>
+										<txtProductVersion>3.0.0.${buildNumber}</txtProductVersion>
 										<fileDescription>${project.name}</fileDescription>
 										<productName>${project.name}</productName>
 										<copyright>${project.organization.name}, ${project.organization.url}</copyright>

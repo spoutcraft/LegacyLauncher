@@ -45,7 +45,6 @@ import java.util.logging.Logger;
 
 public class SpoutcraftLauncher {
 	public static StartupParameters params;
-	protected static RotatingFileHandler handler = null;
 	protected static Console console;
 	private static Logger logger = null;
 
@@ -69,6 +68,7 @@ public class SpoutcraftLauncher {
 		directories.setSplashScreen(splash);
 		setLookAndFeel();
 
+		console = new Console(params.isConsole());
 		SpoutcraftLauncher.logger = setupLogger();
 
 		int launcherBuild = parseInt(getLauncherBuild(), -1);
@@ -77,8 +77,6 @@ public class SpoutcraftLauncher {
 		logger.info("Launcher Build: " + launcherBuild);
 
 		params.logParameters(logger);
-
-		console = new Console(params.isConsole());
 
 		Runtime.getRuntime().addShutdownHook(new ShutdownThread(console));
 
@@ -96,6 +94,9 @@ public class SpoutcraftLauncher {
 		String build = "0";
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
+			if (build.equals("${buildNumber}")) {
+				return "0";
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -116,7 +117,7 @@ public class SpoutcraftLauncher {
 	}
 
 	protected static Logger setupLogger() {
-		final Logger logger = Logger.getLogger("net.technicpack.launcher.Main");
+		final Logger logger = Utils.getLogger();
 		File logDirectory = new File(Utils.getLauncherDirectory(), "logs");
 		if (!logDirectory.exists()) {
 			logDirectory.mkdir();
@@ -131,9 +132,9 @@ public class SpoutcraftLauncher {
 		}
 		logger.addHandler(fileHandler);
 
-		SpoutcraftLauncher.handler = fileHandler;
+		console.setRotatingFileHandler(fileHandler);
 
-		if (params != null && !params.isDebugMode()) {
+		if (params != null && params.isDebugMode()) {
 			logger.setUseParentHandlers(false);
 
 			System.setOut(new PrintStream(new LoggerOutputStream(console, Level.INFO, logger), true));

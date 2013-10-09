@@ -48,6 +48,10 @@ public class Console {
 		return frame;
 	}
 
+	public void setRotatingFileHandler(RotatingFileHandler handler ) {
+		this.handler = handler;
+	}
+
 	public RotatingFileHandler getHandler() {
 		return handler;
 	}
