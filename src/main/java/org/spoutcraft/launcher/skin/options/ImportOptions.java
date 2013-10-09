@@ -248,15 +248,24 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 	public void urlUpdated(Document doc) {
 		try {
-			final String url = doc.getText(0, doc.getLength()).trim();
-			if (url.isEmpty()) {
+			String givenUrl = doc.getText(0, doc.getLength()).trim();
+
+			if (givenUrl.isEmpty()) {
 				msgLabel.setText("Enter your Technic Platform delivery URL below to add a new pack:");
 				enableComponent(save, false);
 				enableComponent(folder, false);
 				enableComponent(install, false);
 				info = null;
 				this.url = "";
-			} else if (matchUrl(url)) {
+				return;
+			}
+			String stable = "http://www.technicpack.net/api/modpack/";
+			if (givenUrl.startsWith(stable)) {
+				String slug = givenUrl.replace(stable, "");
+				givenUrl = PlatformConstants.MODPACK + slug;
+			}
+			final String url = givenUrl;
+			if (matchUrl(url)) {
 				msgLabel.setText("Attempting to fetch Modpack info...");
 				// Turn everything off while the data is being fetched
 				enableComponent(urlTextBox, false);
@@ -343,9 +352,6 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	public boolean matchUrl(String url) {
 		boolean result = false;
 		result = (url.matches(PlatformConstants.MODPACK + "([a-zA-Z0-9-]+)") || result);
-		result = (url.matches("http://beta.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
-		result = (url.matches("http://www.technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
-		result = (url.matches("http://technicpack.net/api/modpack/([a-zA-Z0-9-]+)") || result);
 		return result;
 	}
 
