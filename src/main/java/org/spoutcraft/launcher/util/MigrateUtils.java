@@ -46,7 +46,6 @@ public class MigrateUtils {
 		YAMLProcessor settings = new YAMLProcessor(settingsFile, false, YAMLFormat.EXTENDED);
 		OldSettings.setYAML(settings);
 
-		Settings.setBuild(OldSettings.getLauncherBuild());
 		Settings.setMemory(OldSettings.getMemory());
 		Settings.setBuildStream(OldSettings.getBuildStream());
 		Settings.setDirectory(OldSettings.getLauncherDir());

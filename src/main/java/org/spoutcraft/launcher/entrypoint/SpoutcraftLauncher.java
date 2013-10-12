@@ -96,9 +96,6 @@ public class SpoutcraftLauncher {
 		String build = "0";
 		try {
 			build = IOUtils.toString(SpoutcraftLauncher.class.getResource("/org/spoutcraft/launcher/resources/version").openStream(), "UTF-8");
-			if (build.equals("${buildNumber}")) {
-				return "0";
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

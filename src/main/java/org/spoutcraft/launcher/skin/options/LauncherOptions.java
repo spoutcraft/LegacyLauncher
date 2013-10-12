@@ -127,7 +127,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		title.setForeground(Color.WHITE);
 		title.setHorizontalAlignment(SwingConstants.CENTER);
 
-		build = new JLabel(LAUNCHER_PREPEND + Settings.getBuild());
+		build = new JLabel(LAUNCHER_PREPEND + SpoutcraftLauncher.getLauncherBuild());
 		build.setBounds(15, title.getY() + title.getHeight() + 10, FRAME_WIDTH - 20, 20);
 		build.setFont(minecraft);
 		build.setForeground(Color.WHITE);
@@ -371,7 +371,12 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	private int getLatestLauncherBuild(String buildStream) {
-		int build = Settings.getBuild();
+		int build = 0;
+		try {
+			build = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
+		} catch (NumberFormatException ignore) {
+		}
+
 		try {
 			build = LauncherInfo.getLatestBuild(buildStream);
 			return build;

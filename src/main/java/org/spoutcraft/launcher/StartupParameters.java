@@ -61,7 +61,7 @@ public final class StartupParameters {
 	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
 	private int height = -1;
 	@Parameter(names = {"-solder"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
-	private String solder = "http://solder.technicpack.net/api/modpack/hexxexp/";
+	private String solder = null;
 
 	public StartupParameters(String[] args) {
 		this.args = args;

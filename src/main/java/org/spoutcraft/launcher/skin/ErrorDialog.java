@@ -22,6 +22,7 @@ import org.jdesktop.layout.GroupLayout;
 import org.jdesktop.layout.LayoutStyle;
 import org.spoutcraft.launcher.Launcher;
 import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.util.DesktopUtils;
 import org.spoutcraft.launcher.util.PasteBinAPI;
 
@@ -210,7 +211,7 @@ public class ErrorDialog extends JDialog implements ActionListener {
 	private String generateExceptionReport() {
 		StringBuilder builder = new StringBuilder("Technic Launcher Error Report:\n");
 		builder.append("( Please submit this report to https://github.com/TechnicPack/TechnicLauncher/issues )\n");
-		builder.append("    Launcher Build: ").append(Settings.getBuild()).append("\n").append("\n");
+		builder.append("    Launcher Build: ").append(SpoutcraftLauncher.getLauncherBuild()).append("\n").append("\n");
 		builder.append("    Selected Pack: ").append(selected).append("\n");
 		builder.append("Stack Trace:").append("\n");
 		builder.append("    Exception: ").append(cause.getClass().getSimpleName()).append("\n");
