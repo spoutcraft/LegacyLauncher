@@ -60,10 +60,8 @@ public final class StartupParameters {
 	private int width = -1;
 	@Parameter(names = {"-height"}, description = "Sets the height of the minecraft window to be fixed to this.")
 	private int height = -1;
-	@Parameter(names = {"-solderpack"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
-	private String solderPack = null;
-	@Parameter(names = {"-solderrest"}, description = "URL point towards the rest api for a solder pack you want to force add to the launcher.")
-	private String solderRest = null;
+	@Parameter(names = {"-solder"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
+	private String solder = "http://solder.technicpack.net/api/modpack/hexxexp/";
 
 	public StartupParameters(String[] args) {
 		this.args = args;
@@ -111,11 +109,8 @@ public final class StartupParameters {
 		if (height != -1) {
 			log.info("Minecraft frame height: " + height);
 		}
-		if (solderPack != null) {
-			log.info("Forced solder pack: " + solderPack);
-		}
-		if (solderRest != null) {
-			log.info("Forced solder pack rest: " + solderRest);
+		if (solder != null) {
+			log.info("Forced solder pack: " + solder);
 		}
 		log.info("--------- End of Startup Parameters ---------");
 	}
@@ -166,10 +161,6 @@ public final class StartupParameters {
 	}
 
 	public String getSolderPack() {
-		return solderPack;
-	}
-
-	public String getSolderRest() {
-		return solderRest;
+		return solder;
 	}
 }

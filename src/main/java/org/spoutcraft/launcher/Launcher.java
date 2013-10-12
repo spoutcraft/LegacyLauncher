@@ -33,6 +33,7 @@ import net.technicpack.launchercore.restful.solder.Solder;
 import net.technicpack.launchercore.restful.solder.SolderConstants;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 
 import javax.swing.JOptionPane;
@@ -69,6 +70,7 @@ public class Launcher implements PackRefreshListener {
 
 		loadDefaultPacks();
 		loadInstalledPacks();
+		loadForcedPack();
 		installedPacks.add(new AddPack());
 
 		launcherFrame.updateFaces();
@@ -122,6 +124,42 @@ public class Launcher implements PackRefreshListener {
 
 	public static Launcher getInstance() {
 		return instance;
+	}
+
+	private void loadForcedPack() {
+		if (SpoutcraftLauncher.params != null && SpoutcraftLauncher.params.getSolderPack() != null) {
+			final String solder = SpoutcraftLauncher.params.getSolderPack();
+			Thread thread = new Thread("Forced Solder Thread - " + solder) {
+
+				@Override
+				public void run() {
+					try {
+						SolderPackInfo info = SolderPackInfo.getSolderPackInfo(solder);
+						if (info == null) {
+							throw new RestfulAPIException();
+						}
+
+						info.getLogo();
+						info.getIcon();
+						info.getBackground();
+
+						InstalledPacks packs = Launcher.getInstalledPacks();
+						if (packs.getInstalledPacks().containsKey(info.getName())) {
+							InstalledPack pack = installedPacks.get(info.getName());
+							pack.setInfo(info);
+						} else {
+							InstalledPack pack = new InstalledPack(info.getName(), true);
+							pack.setRefreshListener(instance);
+							pack.setInfo(info);
+							packs.add(pack);
+						}
+					} catch (RestfulAPIException e) {
+						Utils.getLogger().log(Level.WARNING, "Unable to load forced solder pack " + solder, e);
+					}
+				}
+			};
+			thread.start();
+		}
 	}
 
 	private void loadInstalledPacks() {
