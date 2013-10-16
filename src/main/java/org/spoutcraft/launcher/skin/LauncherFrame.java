@@ -138,15 +138,13 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 110, 24);
 		name.setFont(minecraft);
 		name.addKeyListener(this);
-		if (Launcher.getUsers().getLastUser() != null) {
-			name.setText(Launcher.getUsers().getLastUser());
-		}
 
 		// Setup password box
 		pass = new LitePasswordBox(this, "Password...");
 		pass.setBounds(loginArea.getX() + 15, loginArea.getY() + name.getHeight() + 20, 110, 24);
 		pass.setFont(minecraft);
 		pass.addKeyListener(this);
+
 
 		// Setup login button
 		login = new LiteButton("Launch");
@@ -169,6 +167,12 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		remember.setHorizontalTextPosition(SwingConstants.RIGHT);
 		remember.setIconTextGap(10);
 		remember.addKeyListener(this);
+
+		if (Launcher.getUsers().getLastUser() != null) {
+			name.setText(Launcher.getUsers().getLastUser());
+			pass.setText("PASSWORD");
+			remember.setSelected(true);
+		}
 
 		// Technic logo
 		JLabel logo = new JLabel();
