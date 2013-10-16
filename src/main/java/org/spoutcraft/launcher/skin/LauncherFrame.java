@@ -29,7 +29,6 @@ import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 import net.technicpack.launchercore.util.Utils;
-import org.spoutcraft.launcher.InstallThread;
 import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
@@ -438,10 +437,10 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void updateFaces() {
 		for (String user : userButtons.keySet()) {
-                    String userDisplayName = Launcher.getUsers().getUser(user).getDisplayName();
-                    BufferedImage image = getUserImage(userDisplayName);
-                    if (image != null) {
-			userButtons.get(user).updateIcon(image);
+			String userDisplayName = Launcher.getUsers().getUser(user).getDisplayName();
+			BufferedImage image = getUserImage(userDisplayName);
+			if (image != null) {
+				userButtons.get(user).updateIcon(image);
 			}
 		}
 	}
