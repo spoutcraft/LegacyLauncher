@@ -73,7 +73,11 @@ public class LauncherDirectories extends Directories {
 			throw new RuntimeException("The working directory could not be created: " + workDir);
 		}
 
-		MigrateUtils.migrateSettings();
+		try {
+			MigrateUtils.migrateSettings();
+		} catch (Exception e) {
+			//Ignore
+		}
 
 		if (SpoutcraftLauncher.params != null && SpoutcraftLauncher.params.isPortable()) {
 			return;
