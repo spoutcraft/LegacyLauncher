@@ -54,6 +54,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -124,6 +125,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		this.addMouseWheelListener(this);
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
+		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
 	private void initComponents() {
