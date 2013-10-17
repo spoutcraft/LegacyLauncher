@@ -77,6 +77,7 @@ public class LauncherDirectories extends Directories {
 			MigrateUtils.migrateSettings();
 		} catch (Exception e) {
 			//Ignore
+			e.printStackTrace();
 		}
 
 		if (SpoutcraftLauncher.params != null && SpoutcraftLauncher.params.isPortable()) {
