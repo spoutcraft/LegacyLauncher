@@ -507,7 +507,15 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				return;
 			}
 			User user = Launcher.getUsers().getUser(this.name.getText());
-			if (user == null || !refresh(user)) {
+			if (user != null) {
+				boolean valid = AuthenticationService.validate(user);
+
+				if (!valid && !refresh(user)) {
+					JOptionPane.showMessageDialog(this, "Invalid token, please login again", "Invalid Token", JOptionPane.WARNING_MESSAGE);
+					Launcher.getUsers().removeUser(this.name.getText());
+					return;
+				}
+			} else {
 				if (this.pass.getPassword().length == 0) {
 					return;
 				}
@@ -515,8 +523,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				if (user == null) {
 					return;
 				}
-
 			}
+
 			if (remember.isSelected()) {
 				Launcher.getUsers().addUser(user);
 				Launcher.getUsers().setLastUser(user.getUsername());
@@ -534,7 +542,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public boolean refresh(User user) {
 		RefreshResponse response = AuthenticationService.requestRefresh(user);
-		return response.getError() != null;
+		return response.getError() == null;
 	}
 
 	public User login(Users users, String username, String password) {
