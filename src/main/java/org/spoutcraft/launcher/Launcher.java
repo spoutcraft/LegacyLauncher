@@ -205,14 +205,9 @@ public class Launcher implements PackRefreshListener {
 				} catch (RestfulAPIException e) {
 					Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", e);
 				}
-
-				removeDisabledPacks();
 			}
 		};
 		thread.start();
-	}
-
-	private void removeDisabledPacks() {
 	}
 
 	public static InstalledPacks getInstalledPacks() {
