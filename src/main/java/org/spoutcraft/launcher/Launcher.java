@@ -213,8 +213,6 @@ public class Launcher implements PackRefreshListener {
 	}
 
 	private void removeDisabledPacks() {
-		getInstalledPacks().remove("hackslashmine");
-		getInstalledPacks().remove("yogbox");
 	}
 
 	public static InstalledPacks getInstalledPacks() {
