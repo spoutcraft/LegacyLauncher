@@ -57,11 +57,15 @@ public class MigrateUtils {
 			boolean custom = OldSettings.isPackCustom(modpack);
 			String build = OldSettings.getModpackBuild(modpack);
 			String directory = OldSettings.getPackDirectory(modpack);
-			InstalledPack pack = new InstalledPack(modpack, custom, build, directory);
-			pack.setRefreshListener(Launcher.getInstance());
-			pack.getInstalledDirectory();
-			migrateInstalled(pack);
-			installedPacks.add(pack);
+
+            if (directory != null)
+            {
+                InstalledPack pack = new InstalledPack(modpack, custom, build, directory);
+                pack.setRefreshListener(Launcher.getInstance());
+                pack.getInstalledDirectory();
+                migrateInstalled(pack);
+                installedPacks.add(pack);
+            }
 		}
 
 		File lastLogin = new File(Utils.getSettingsDirectory(), "lastlogin");
