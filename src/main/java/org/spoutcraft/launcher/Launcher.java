@@ -252,6 +252,7 @@ public class Launcher implements PackRefreshListener {
 				Utils.sendTracking("installLauncher", "install", SpoutcraftLauncher.getLauncherBuild());
 			} catch (IOException e) {
 				e.printStackTrace();
+				Utils.getLogger().log(Level.INFO, "Failed to create install tracking file");
 			}
 			
 		}
