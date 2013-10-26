@@ -46,7 +46,15 @@ public class PackButton extends ImageButton {
 
 	public void setPack(InstalledPack pack) {
 		setIcon(new ImageIcon(pack.getLogo().getScaledInstance(getWidth(), getHeight(), Image.SCALE_SMOOTH)));
-		label.setVisible(pack.getInfo() == null && !(pack instanceof AddPack));
+
+		if (pack.isLocalOnly() || pack.getInfo() != null)
+		{
+			label.setText(pack.getDisplayName());
+			label.setVisible(!(pack instanceof AddPack) && !pack.hasLogo());
+		} else
+		{
+			label.setVisible((pack.getInfo() == null || !pack.hasLogo()) && !(pack instanceof AddPack));
+		}
 	}
 
 	@Override
