@@ -135,6 +135,8 @@ public class Launcher implements PackRefreshListener {
 							launcherFrame.getSelector().redraw(false);
 						} catch (RestfulAPIException e) {
 							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
+							pack.setLocalOnly();
+							launcherFrame.getSelector().redraw(pack, false);
 						}
 					}
 				};
@@ -208,6 +210,12 @@ public class Launcher implements PackRefreshListener {
 					launcherFrame.getSelector().redraw(false);
 				} catch (RestfulAPIException e) {
 					Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", e);
+
+					for (InstalledPack pack : packs.getPacks())
+					{
+						if (!pack.isPlatform() && pack.getInfo() == null)
+							pack.setLocalOnly();
+					}
 
                     launcherFrame.getSelector().redraw(false);
 				}
