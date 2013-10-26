@@ -18,6 +18,10 @@
 
 package org.spoutcraft.launcher;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+
 import net.technicpack.launchercore.exception.RestfulAPIException;
 import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.InstalledPack;
@@ -34,11 +38,9 @@ import net.technicpack.launchercore.restful.solder.Solder;
 import net.technicpack.launchercore.restful.solder.SolderConstants;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
+
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
-
-import javax.swing.JOptionPane;
-import java.util.logging.Level;
 
 public class Launcher implements PackRefreshListener {
 	private static Launcher instance;
@@ -54,8 +56,10 @@ public class Launcher implements PackRefreshListener {
 		}
 
 		instance = this;
-
+		
 		users = Users.load();
+		
+		trackLauncher();
 
 		if (users == null) {
 			users = new Users();
@@ -240,5 +244,21 @@ public class Launcher implements PackRefreshListener {
 	@Override
 	public void refreshPack(InstalledPack pack) {
 		launcherFrame.getSelector().redraw(true);
+	}
+	
+	public static void trackLauncher() {
+		File installed = new File(Utils.getSettingsDirectory(), "installed");
+		if (!installed.exists()) {
+			try {
+				installed.createNewFile();
+				Utils.sendTracking("installLauncher", "install", SpoutcraftLauncher.getLauncherBuild());
+			} catch (IOException e) {
+				e.printStackTrace();
+				Utils.getLogger().log(Level.INFO, "Failed to create install tracking file");
+			}
+			
+		}
+		
+		Utils.sendTracking("runLauncher", "run", SpoutcraftLauncher.getLauncherBuild());
 	}
 }
