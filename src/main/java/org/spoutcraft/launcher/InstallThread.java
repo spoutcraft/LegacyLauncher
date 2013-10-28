@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher;
 
+import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
 import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
@@ -26,6 +27,7 @@ import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
 import net.technicpack.launchercore.util.Settings;
 
+import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -47,11 +49,18 @@ public class InstallThread extends Thread {
 		try {
 
 			Launcher.getFrame().getProgressBar().setVisible(true);
-			CompleteVersion version = modpackInstaller.installPack(Launcher.getFrame());
+			CompleteVersion version = null;
+			if (!pack.isLocalOnly()) {
+				version = modpackInstaller.installPack(Launcher.getFrame());
+			} else {
+				version = modpackInstaller.prepareOfflinePack();
+			}
 
 			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
 			minecraftLauncher.launch(user);
+		} catch (PackNotAvailableOfflineException e) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
