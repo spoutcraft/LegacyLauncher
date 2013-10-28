@@ -107,20 +107,23 @@ public class Launcher implements PackRefreshListener {
 		news.start();
 		assets.start();
 
-		try {
-			faces.join();
-			news.join();
-			assets.join();
+		Thread waitForPacksAndReload = new Thread("Wait for Packs & Reload") {
+			@Override
+			public void run() {
+				try {
+					for (Thread task : startupTasks) {
+						task.join();
+					}
+				} catch (InterruptedException ex)
+				{
+					ex.printStackTrace();
+				}
 
-			for (Thread task : startupTasks) {
-				task.join();
+				launcherFrame.getSelector().redraw(false);
 			}
-		} catch (InterruptedException ex)
-		{
-			ex.printStackTrace();
-		}
+		};
 
-		launcherFrame.getSelector().redraw(false);
+		waitForPacksAndReload.start();
 	}
 
 	private void updateAssets() {
