@@ -61,26 +61,31 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			PackButton button = new PackButton();
 			buttons.add(button);
 			JLabel label = button.getJLabel();
+			JLabel icon = button.getDisconnectedIcon();
 			button.setActionCommand(PACK_SELECT_ACTION);
 			button.addActionListener(this);
 			if (i == 3) {
 				button.setBounds(bigX, bigY, bigWidth, bigHeight);
 				label.setBounds(bigX, bigY + bigHeight - 24, bigWidth, 24);
+				icon.setBounds(bigX + bigWidth-80, bigY, 80, 17);
 				label.setFont(label.getFont().deriveFont(14F));
 				button.setIndex(0);
 			} else if (i < 3) {
 				int smallY = bigY - (spacing * 2) - ((smallHeight + spacing) * (i + 1));
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
 				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
+				icon.setBounds(smallX + smallWidth-80, smallY, 80, 17);
 				button.setIndex((i + 1) * -1);
 			} else if (i > 3) {
 				int smallY = bigY + bigHeight + ((smallHeight + spacing) * (i - 4)) + (spacing * 3);
 				button.setBounds(smallX, smallY, smallWidth, smallHeight);
 				label.setBounds(smallX, smallY + smallHeight - 20, smallWidth, 20);
+				icon.setBounds(smallX + smallWidth-80, smallY, 80, 17);
 				button.setIndex(i - 3);
 			}
 
-			this.add(button.getJLabel());
+			this.add(label);
+			this.add(icon);
 			this.add(button);
 		}
 	}

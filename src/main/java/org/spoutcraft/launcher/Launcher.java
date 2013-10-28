@@ -136,7 +136,8 @@ public class Launcher implements PackRefreshListener {
 						} catch (RestfulAPIException e) {
 							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
 							pack.setLocalOnly();
-							launcherFrame.getSelector().redraw(pack, false);
+							pack.setRefreshListener(instance);
+							launcherFrame.getSelector().redraw(false);
 						}
 					}
 				};
