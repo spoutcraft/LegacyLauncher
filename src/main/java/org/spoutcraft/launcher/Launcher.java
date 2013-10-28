@@ -20,6 +20,7 @@ package org.spoutcraft.launcher;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.logging.Level;
 
 import net.technicpack.launchercore.exception.RestfulAPIException;
@@ -49,6 +50,8 @@ public class Launcher implements PackRefreshListener {
 	private InstalledPacks installedPacks;
 	private InstallThread installThread;
 	private ResourceInstaller assetInstaller;
+
+	private LinkedList<Thread> startupTasks = new LinkedList<Thread>();
 
 	public Launcher() {
 		if (Launcher.instance != null) {
@@ -103,6 +106,21 @@ public class Launcher implements PackRefreshListener {
 		faces.start();
 		news.start();
 		assets.start();
+
+		try {
+			faces.join();
+			news.join();
+			assets.join();
+
+			for (Thread task : startupTasks) {
+				task.join();
+			}
+		} catch (InterruptedException ex)
+		{
+			ex.printStackTrace();
+		}
+
+		launcherFrame.getSelector().redraw(false);
 	}
 
 	private void updateAssets() {
@@ -132,15 +150,14 @@ public class Launcher implements PackRefreshListener {
 							info.getBackground();
 							pack.setInfo(info);
 							pack.setRefreshListener(instance);
-							launcherFrame.getSelector().redraw(false);
 						} catch (RestfulAPIException e) {
 							Utils.getLogger().log(Level.WARNING, "Unable to load platform pack " + pack.getName(), e);
 							pack.setLocalOnly();
 							pack.setRefreshListener(instance);
-							launcherFrame.getSelector().redraw(false);
 						}
 					}
 				};
+				startupTasks.add(thread);
 				thread.start();
 			}
 		}
@@ -178,6 +195,7 @@ public class Launcher implements PackRefreshListener {
 					}
 				}
 			};
+			startupTasks.add(thread);
 			thread.start();
 		}
 	}
@@ -208,20 +226,18 @@ public class Launcher implements PackRefreshListener {
 						packs.reorder(index, name);
 						index++;
 					}
-					launcherFrame.getSelector().redraw(false);
 				} catch (RestfulAPIException e) {
 					Utils.getLogger().log(Level.WARNING, "Unable to load technic modpacks", e);
 
 					for (InstalledPack pack : packs.getPacks())
 					{
-						if (!pack.isPlatform() && pack.getInfo() == null)
+						if (!pack.isPlatform() && pack.getInfo() == null && pack.getName() != null)
 							pack.setLocalOnly();
 					}
-
-                    launcherFrame.getSelector().redraw(false);
 				}
 			}
 		};
+		startupTasks.add(thread);
 		thread.start();
 	}
 
