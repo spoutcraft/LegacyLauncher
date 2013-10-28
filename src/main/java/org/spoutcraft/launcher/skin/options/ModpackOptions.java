@@ -114,7 +114,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 
 		JLabel optionsTitle = new JLabel();
 		optionsTitle.setBounds(10, 10, FRAME_WIDTH, 25);
-		optionsTitle.setText(installedPack.getInfo().getDisplayName() + " Options");
+		optionsTitle.setText(installedPack.getDisplayName() + " Options");
 		optionsTitle.setForeground(Color.white);
 		optionsTitle.setFont(minecraft.deriveFont(14F));
 
@@ -170,7 +170,20 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		versionManual.addActionListener(this);
 		group.add(versionManual);
 
-		if (build.equals(InstalledPack.LATEST)) {
+		if (installedPack.isLocalOnly()) {
+			buildSelector.setEnabled(false);
+
+			if (build.equals(InstalledPack.LATEST))
+				versionLatest.setSelected(true);
+			else if (build.equals(InstalledPack.RECOMMENDED))
+				versionRec.setSelected(true);
+			else
+				versionManual.setSelected(true);
+
+			versionLatest.setEnabled(false);
+			versionRec.setEnabled(false);
+			versionManual.setEnabled(false);
+		} else if (build.equals(InstalledPack.LATEST)) {
 			buildSelector.setEnabled(false);
 			buildSelector.setSelectedItem(new BuildLabel(installedPack.getInfo().getLatest()));
 			versionLatest.setSelected(true);
@@ -224,6 +237,9 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 		cleanBin.setActionCommand(CLEAN_BIN_ACTION);
 		cleanBin.addActionListener(this);
 
+		if (installedPack.isLocalOnly())
+			cleanBin.setEnabled(false);
+
 		contentPane.add(optionsTitle);
 		contentPane.add(optionsQuit);
 		contentPane.add(buildLabel);
@@ -242,15 +258,23 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	}
 
 	private void populateBuilds(JComboBox buildSelector) {
-		for (String build : installedPack.getInfo().getBuilds()) {
-			System.out.println(installedPack.getInfo());
-			String display = build;
-			if (build.equals(installedPack.getInfo().getLatest())) {
-				display += " - Latest";
-			} else if (build.equals(installedPack.getInfo().getRecommended())) {
-				display += " - Recommended";
+
+		if (installedPack.getInfo() != null)
+		{
+			for (String build : installedPack.getInfo().getBuilds()) {
+				System.out.println(installedPack.getInfo());
+				String display = build;
+				if (build.equals(installedPack.getInfo().getLatest())) {
+					display += " - Latest";
+				} else if (build.equals(installedPack.getInfo().getRecommended())) {
+					display += " - Recommended";
+				}
+				BuildLabel label = new BuildLabel(build, display);
+				buildSelector.addItem(label);
 			}
-			BuildLabel label = new BuildLabel(build, display);
+		} else
+		{
+			BuildLabel label = new BuildLabel(installedPack.getBuild(), installedPack.getBuild());
 			buildSelector.addItem(label);
 		}
 	}
