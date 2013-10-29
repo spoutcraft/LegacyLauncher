@@ -88,6 +88,7 @@ public class UserCellEditor implements ComboBoxEditor {
 
 	public void setHeadReady() {
 		areHeadsReady = true;
+		headMap.clear();
 	}
 
 	@Override

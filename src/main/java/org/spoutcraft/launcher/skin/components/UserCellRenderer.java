@@ -59,6 +59,7 @@ public class UserCellRenderer extends JLabel implements ListCellRenderer {
 
 	public void setHeadReady() {
 		areHeadsReady = true;
+		headMap.clear();
 	}
 
 	@Override

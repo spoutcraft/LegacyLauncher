@@ -464,12 +464,22 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		}
 
 		//Create an online user with the received data
-		User clearedUser = new User(username, response);
+		final User clearedUser = new User(username, response);
 
 		if (rememberAccount.isSelected()) {
 			//Add user to our list of cached users if checkbox is true
 			Launcher.getUsers().addUser(clearedUser);
 		}
+
+		Thread downloadNewHeadAndNotifyLauncher = new Thread("Download new head and notify frames") {
+			@Override
+			public void run() {
+				clearedUser.downloadFaceImage();
+				Launcher.getFrame().faceDownloadsComplete();
+				Launcher.getLoginFrame().faceDownloadsComplete();
+			}
+		};
+		downloadNewHeadAndNotifyLauncher.start();
 
 		startLauncher(clearedUser);
 	}
