@@ -167,6 +167,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		rememberAccount.setIconTextGap(12);
 		rememberAccount.addActionListener(this);
 		rememberAccount.setActionCommand(TOGGLE_REMEMBER);
+		rememberAccount.addKeyListener(this);
 
 		//Login button
 		login = new BlueButton("LOGIN");
@@ -518,7 +519,9 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		//To change body of implemented methods use File | Settings | File Templates.
+		if (e.getSource() == rememberAccount && e.getKeyCode() == KeyEvent.VK_ENTER) {
+			attemptLogin();
+		}
 	}
 
 	@Override
