@@ -143,7 +143,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			ex.printStackTrace();
 		}
 
-		loggedInMsg = new JLabel("Logged in as ");
+		loggedInMsg = new JLabel("");
 		loggedInMsg.setFont(minecraft);
 		loggedInMsg.setHorizontalAlignment(SwingConstants.RIGHT);
 		loggedInMsg.setHorizontalTextPosition(SwingConstants.RIGHT);
@@ -499,7 +499,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		else
 			launch.setText("PLAY");
 
-		loggedInMsg.setText(String.format("Logged in as %s", currentUser.getDisplayName()));
+		loggedInMsg.setText(currentUser.getDisplayName());
 
 		if (hasLoadedHeads) {
 			reloadUserFace();
