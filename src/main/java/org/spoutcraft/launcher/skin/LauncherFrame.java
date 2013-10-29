@@ -18,35 +18,24 @@
 
 package org.spoutcraft.launcher.skin;
 
-import net.technicpack.launchercore.auth.AuthResponse;
-import net.technicpack.launchercore.auth.AuthenticationService;
-import net.technicpack.launchercore.auth.RefreshResponse;
 import net.technicpack.launchercore.install.User;
-import net.technicpack.launchercore.install.Users;
-import net.technicpack.launchercore.util.Download;
 import net.technicpack.launchercore.util.DownloadListener;
-import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
-import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.Launcher;
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
-import org.spoutcraft.launcher.skin.components.DynamicButton;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
-import org.spoutcraft.launcher.skin.components.LitePasswordBox;
 import org.spoutcraft.launcher.skin.components.LiteProgressBar;
-import org.spoutcraft.launcher.skin.components.LiteTextBox;
 import org.spoutcraft.launcher.skin.components.RoundedBox;
 import org.spoutcraft.launcher.skin.options.LauncherOptions;
 import org.spoutcraft.launcher.skin.options.ModpackOptions;
 
 import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -56,10 +45,9 @@ import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Container;
+import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.FocusTraversalPolicy;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -69,13 +57,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
 
 import static net.technicpack.launchercore.util.ResourceUtils.getResourceAsStream;
 
@@ -90,17 +73,10 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private static final String EXIT_ACTION = "exit";
 	private static final String PACK_LEFT_ACTION = "packleft";
 	private static final String PACK_RIGHT_ACTION = "packright";
-	private static final String LOGIN_ACTION = "login";
-	private static final String IMAGE_LOGIN_ACTION = "image_login";
-	private static final String REMOVE_USER = "remove";
+	private static final String LAUNCH_ACTION = "launch";
+	private static final String LOGOUT = "logout";
 	private static final int SPACING = 7;
 	public static URL icon = LauncherFrame.class.getResource("/org/spoutcraft/launcher/resources/icon.png");
-	private final Map<JButton, DynamicButton> removeButtons = new HashMap<JButton, DynamicButton>();
-	private final Map<String, DynamicButton> userButtons = new HashMap<String, DynamicButton>();
-	private LiteTextBox name;
-	private LitePasswordBox pass;
-	private LiteButton login;
-	private JCheckBox remember;
 	private LiteProgressBar progressBar;
 	private LauncherOptions launcherOptions = null;
 	private ModpackOptions packOptions = null;
@@ -110,9 +86,15 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private ImageButton packRemoveBtn;
 	private ImageHyperlinkButton platform;
 	private JLabel customName;
+	private LiteButton launch;
+	private JLabel userHead;
+	private JLabel loggedInMsg;
+	private LiteButton logout;
 	private RoundedBox barBox;
 	private NewsComponent news;
 	private long previous = 0L;
+	private User currentUser = null;
+	private boolean hasLoadedHeads = false;
 
 	public LauncherFrame() {
 		initComponents();
@@ -128,53 +110,56 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
+	public void faceDownloadsComplete() {
+		hasLoadedHeads = true;
+
+		if (currentUser != null) {
+			reloadUserFace();
+		}
+	}
+
 	private void initComponents() {
 		Font minecraft = getMinecraftFont(12);
 
-		// Login background box
-		RoundedBox loginArea = new RoundedBox(TRANSPARENT);
-		loginArea.setBounds(605, 377, 265, 83);
+		// Launch button area
+		RoundedBox launchArea = new RoundedBox(TRANSPARENT);
+		launchArea.setBounds(605, 375, 265, 50);
 
-		// Setup username box
-		name = new LiteTextBox(this, "Username...");
-		name.setBounds(loginArea.getX() + 15, loginArea.getY() + 15, 110, 24);
-		name.setFont(minecraft);
-		name.addKeyListener(this);
+		launch = new LiteButton("PLAY");
+		launch.setFont(getMinecraftFont(20));
+		launch.setBounds(launchArea.getX()+5, launchArea.getY()+5, launchArea.getWidth()-10, launchArea.getHeight()-10);
+		launch.setActionCommand(LAUNCH_ACTION);
+		launch.addActionListener(this);
 
-		// Setup password box
-		pass = new LitePasswordBox(this, "Password...");
-		pass.setBounds(loginArea.getX() + 15, loginArea.getY() + name.getHeight() + 20, 110, 24);
-		pass.setFont(minecraft);
-		pass.addKeyListener(this);
+		// User info area
+		RoundedBox userArea = new RoundedBox(TRANSPARENT);
+		userArea.setBounds(605, 430, 265, 75);
 
-
-		// Setup login button
-		login = new LiteButton("Launch");
-		login.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + 15, 110, 24);
-		login.setFont(minecraft);
-		login.setActionCommand(LOGIN_ACTION);
-		login.addActionListener(this);
-		login.addKeyListener(this);
-
-		// Setup remember checkbox
-		remember = new JCheckBox("Remember");
-		remember.setBounds(loginArea.getX() + name.getWidth() + 30, loginArea.getY() + name.getHeight() + 20, 110, 24);
-		remember.setFont(minecraft);
-		remember.setOpaque(false);
-		remember.setBorderPainted(false);
-		remember.setFocusPainted(false);
-		remember.setContentAreaFilled(false);
-		remember.setBorder(null);
-		remember.setForeground(Color.WHITE);
-		remember.setHorizontalTextPosition(SwingConstants.RIGHT);
-		remember.setIconTextGap(10);
-		remember.addKeyListener(this);
-
-		if (Launcher.getUsers().getLastUser() != null) {
-			name.setText(Launcher.getUsers().getLastUser());
-			pass.setText("PASSWORD");
-			remember.setSelected(true);
+		userHead = new JLabel();
+		userHead.setBounds(userArea.getX() + userArea.getWidth() - 69, userArea.getY() + 13, 48, 48);
+		try {
+			userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png")), 48, 48)));
+		} catch (IOException ex) {
+			ex.printStackTrace();
 		}
+
+		loggedInMsg = new JLabel("Logged in as ");
+		loggedInMsg.setFont(minecraft);
+		loggedInMsg.setHorizontalAlignment(SwingConstants.RIGHT);
+		loggedInMsg.setHorizontalTextPosition(SwingConstants.RIGHT);
+		loggedInMsg.setBounds(userArea.getX() + 5, userArea.getY() + 8, userArea.getWidth() - 79, 30);
+		loggedInMsg.setForeground(Color.white);
+
+		logout = new LiteButton("Log Out", new Color(0,0,0,0), new Color(0,0,0,0), new Color(0,0,0,0), Color.white, Color.white, Color.white);
+		logout.setFont(minecraft);
+		logout.setOpaque(false);
+		logout.setHorizontalAlignment(SwingConstants.RIGHT);
+		logout.setHorizontalTextPosition(SwingConstants.RIGHT);
+		logout.setForeground(Color.white);
+		logout.setBounds(userArea.getX() + 130, userArea.getY() + 32, 60, 30);
+		logout.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		logout.setActionCommand(LOGOUT);
+		logout.addActionListener(this);
 
 		// Technic logo
 		JLabel logo = new JLabel();
@@ -323,43 +308,12 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
 
-		// User Faces
-		Collection<String> savedUsers = Launcher.getUsers().getUsers();
-		int users = Math.min(5, savedUsers.size());
-		int index = 0;
-
-		for (String userName : savedUsers) {
-			if (index >= users) {
-				break;
-			}
-
-			BufferedImage image = ResourceUtils.getImage("face.png", 45, 45);
-			File assets = new File(Utils.getAssetsDirectory(), "avatars");
-			File face = new File(assets, userName + ".png");
-			if (face.exists()) {
-				try {
-					image = ImageIO.read(face);
-					System.out.println("Loaded face");
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-
-			DynamicButton userButton = new DynamicButton(this, image, 1, Launcher.getUsers().getUser(userName));
-			userButton.setFont(minecraft.deriveFont(12F));
-
-			userButton.setBounds(FRAME_WIDTH - ((index + 1) * 70), FRAME_HEIGHT - 57, 45, 45);
-			contentPane.add(userButton);
-			userButton.setActionCommand(IMAGE_LOGIN_ACTION);
-			userButton.addActionListener(this);
-			setIcon(userButton.getRemoveIcon(), "remove.png", 16);
-			userButton.getRemoveIcon().addActionListener(this);
-			userButton.getRemoveIcon().setActionCommand(REMOVE_USER);
-			removeButtons.put(userButton.getRemoveIcon(), userButton);
-			userButtons.put(userName, userButton);
-			index++;
-		}
-
+		contentPane.add(launch);
+		contentPane.add(launchArea);
+		contentPane.add(userHead);
+		contentPane.add(loggedInMsg);
+		contentPane.add(logout);
+		contentPane.add(userArea);
 		contentPane.add(progressBar);
 		contentPane.add(barBox);
 		contentPane.add(packUp);
@@ -370,10 +324,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.add(platform);
 		contentPane.add(packSelector);
 		contentPane.add(selectorBackground);
-		contentPane.add(name);
-		contentPane.add(pass);
-		contentPane.add(remember);
-		contentPane.add(login);
 		contentPane.add(steam);
 		contentPane.add(twitter);
 		contentPane.add(facebook);
@@ -384,12 +334,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.add(linkArea);
 		contentPane.add(logo);
 		contentPane.add(news);
-		contentPane.add(loginArea);
 		contentPane.add(options);
 		contentPane.add(exit);
-
-
-		setFocusTraversalPolicy(new LoginFocusTraversalPolicy());
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
@@ -418,16 +364,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
 
-	public void setUser(String name) {
-		if (name != null) {
-			DynamicButton user = userButtons.get(name);
-			if (user != null) {
-				user.doClick();
-			}
-		}
-	}
+}
 
 	public NewsComponent getNews() {
 		return news;
@@ -439,35 +377,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public RoundedBox getBarBox() {
 		return barBox;
-	}
-
-	public void updateFaces() {
-		for (String user : userButtons.keySet()) {
-			String userDisplayName = Launcher.getUsers().getUser(user).getDisplayName();
-			BufferedImage image = getUserImage(userDisplayName);
-			if (image != null) {
-				userButtons.get(user).updateIcon(image);
-			}
-		}
-	}
-
-	private BufferedImage getUserImage(String user) {
-		File assets = new File(Utils.getAssetsDirectory(), "avatars");
-		assets.mkdirs();
-		File file = new File(assets, user + ".png");
-		try {
-			Download download = DownloadUtils.downloadFile("http://skins.technicpack.net/helm/" + user + "/100", file.getName(), file.getAbsolutePath());
-			if (download.getResult().equals(Download.Result.SUCCESS)) {
-				return ImageIO.read(download.getOutFile());
-			}
-		} catch (IOException e) {
-			if (SpoutcraftLauncher.params.isDebugMode()) {
-				Utils.getLogger().log(Level.INFO, "Error downloading user face image: " + user, e);
-			} else {
-				Utils.getLogger().log(Level.INFO, "Error downloading user face image: " + user);
-			}
-		}
-		return null;
 	}
 
 	@Override
@@ -502,58 +411,18 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			getSelector().selectPreviousPack();
 		} else if (action.equals(PACK_RIGHT_ACTION)) {
 			getSelector().selectNextPack();
-		} else if (action.equals(LOGIN_ACTION)) {
+		} else if (action.equals(LAUNCH_ACTION)) {
 			if (Launcher.isLaunching()) {
 				return;
 			}
-			User user = Launcher.getUsers().getUser(this.name.getText());
-			if (user != null) {
-				boolean valid = AuthenticationService.validate(user);
-
-				if (!valid && !refresh(user)) {
-					JOptionPane.showMessageDialog(this, "Invalid token, please login again", "Invalid Token", JOptionPane.WARNING_MESSAGE);
-					Launcher.getUsers().removeUser(this.name.getText());
-					return;
-				}
-			} else {
-				if (this.pass.getPassword().length == 0) {
-					return;
-				}
-				user = login(Launcher.getUsers(), this.name.getText(), new String(this.pass.getPassword()));
-				if (user == null) {
-					return;
-				}
+			Launcher.launch(currentUser, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
+		} else if (action.equals(LOGOUT)) {
+			if (Launcher.isLaunching()) {
+				return;
 			}
 
-			if (remember.isSelected()) {
-				Launcher.getUsers().addUser(user);
-				Launcher.getUsers().setLastUser(user.getUsername());
-			}
-
-			Launcher.launch(user, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
-		} else if (action.equals(IMAGE_LOGIN_ACTION)) {
-			DynamicButton userButton = (DynamicButton) c;
-			this.name.setText(userButton.getUser().getUsername());
-		} else if (action.equals(REMOVE_USER)) {
-			DynamicButton userButton = removeButtons.get((JButton) c);
-			Launcher.getUsers().removeUser(userButton.getUser().getUsername());
+			Launcher.getLoginFrame().visitFrame();
 		}
-	}
-
-	public boolean refresh(User user) {
-		RefreshResponse response = AuthenticationService.requestRefresh(user);
-		return response.getError() == null;
-	}
-
-	public User login(Users users, String username, String password) {
-		AuthResponse response = AuthenticationService.requestLogin(username, password, users.getClientToken());
-
-		if (response.getError() != null) {
-			JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
-			return null;
-		}
-
-		return new User(username, response);
 	}
 
 	public ModpackSelector getSelector() {
@@ -590,11 +459,14 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void lockLoginButton(boolean unlock) {
 		if (unlock) {
-			login.setText("Login");
+			if (currentUser != null && currentUser.isOffline())
+				launch.setText("PLAY OFFLINE");
+			else
+				launch.setText("PLAY");
 		} else {
-			login.setText("Launching...");
+			launch.setText("LAUNCHING...");
 		}
-		login.setEnabled(unlock);
+		launch.setEnabled(unlock);
 		packRemoveBtn.setEnabled(unlock);
 		packOptionsBtn.setEnabled(unlock);
 	}
@@ -616,20 +488,49 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		component.setEnabled(enable);
 	}
 
+	public void setCurrentUser(User user) {
+		currentUser = user;
+
+		if (currentUser == null)
+			return;
+
+		if (currentUser.isOffline())
+			launch.setText("PLAY OFFLINE");
+		else
+			launch.setText("PLAY");
+
+		loggedInMsg.setText(String.format("Logged in as %s", currentUser.getDisplayName()));
+
+		if (hasLoadedHeads) {
+			reloadUserFace();
+		}
+	}
+
+	private void reloadUserFace() {
+		if (currentUser == null)
+			return;
+
+		BufferedImage face = currentUser.getFaceImage();
+
+		if (face == null) {
+			try {
+				face = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			}
+		}
+
+		if (face != null) {
+			userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(face, 48, 48)));
+		}
+	}
+
 	@Override
 	public void keyTyped(KeyEvent e) {
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-			// Allows the user to press enter and log in from the login box focus, username box focus, or password box focus
-			if (e.getComponent() == login || e.getComponent() == name || e.getComponent() == pass) {
-				action(LOGIN_ACTION, (JComponent) e.getComponent());
-			} else if (e.getComponent() == remember) {
-				remember.setSelected(!remember.isSelected());
-			}
-		}
 	}
 
 	@Override
@@ -645,53 +546,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				getSelector().selectPreviousPack();
 			}
 			this.previous = e.getWhen();
-		}
-
-	}
-
-	// Emulates tab focus policy of name -> pass -> remember -> login
-	private class LoginFocusTraversalPolicy extends FocusTraversalPolicy {
-		@Override
-		public Component getComponentAfter(Container con, Component c) {
-			if (c == name) {
-				return pass;
-			} else if (c == pass) {
-				return remember;
-			} else if (c == remember) {
-				return login;
-			} else if (c == login) {
-				return name;
-			}
-			return getFirstComponent(con);
-		}
-
-		@Override
-		public Component getComponentBefore(Container con, Component c) {
-			if (c == name) {
-				return login;
-			} else if (c == pass) {
-				return name;
-			} else if (c == remember) {
-				return pass;
-			} else if (c == login) {
-				return remember;
-			}
-			return getFirstComponent(con);
-		}
-
-		@Override
-		public Component getFirstComponent(Container c) {
-			return name;
-		}
-
-		@Override
-		public Component getLastComponent(Container c) {
-			return login;
-		}
-
-		@Override
-		public Component getDefaultComponent(Container c) {
-			return name;
 		}
 
 	}

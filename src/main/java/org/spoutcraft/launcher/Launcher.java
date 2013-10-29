@@ -18,8 +18,10 @@
 
 package org.spoutcraft.launcher;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
@@ -38,14 +40,21 @@ import net.technicpack.launchercore.restful.solder.FullModpacks;
 import net.technicpack.launchercore.restful.solder.Solder;
 import net.technicpack.launchercore.restful.solder.SolderConstants;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
+import net.technicpack.launchercore.util.Download;
+import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.Utils;
 
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
+import org.spoutcraft.launcher.skin.LoginFrame;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
 
 public class Launcher implements PackRefreshListener {
 	private static Launcher instance;
 	private final LauncherFrame launcherFrame;
+	private final LoginFrame loginFrame;
 	private Users users;
 	private InstalledPacks installedPacks;
 	private InstallThread installThread;
@@ -75,6 +84,7 @@ public class Launcher implements PackRefreshListener {
 		}
 
 		this.launcherFrame = new LauncherFrame();
+		this.loginFrame = new LoginFrame();
 		this.assetInstaller = new ResourceInstaller();
 
 		loadDefaultPacks();
@@ -89,13 +99,6 @@ public class Launcher implements PackRefreshListener {
 			}
 		};
 
-		Thread faces = new Thread("Faces Thread") {
-			@Override
-			public void run() {
-				launcherFrame.updateFaces();
-			}
-		};
-
 		Thread news = new Thread("News Thread") {
 			@Override
 			public void run() {
@@ -103,7 +106,6 @@ public class Launcher implements PackRefreshListener {
 			}
 		};
 
-		faces.start();
 		news.start();
 		assets.start();
 
@@ -124,6 +126,8 @@ public class Launcher implements PackRefreshListener {
 		};
 
 		waitForPacksAndReload.start();
+
+		attemptFaceDownloadsAndNotifyFrames();
 	}
 
 	private void updateAssets() {
@@ -265,6 +269,10 @@ public class Launcher implements PackRefreshListener {
 		return instance.launcherFrame;
 	}
 
+	public static LoginFrame getLoginFrame() {
+		return instance.loginFrame;
+	}
+
 	public static Users getUsers() {
 		return instance.users;
 	}
@@ -288,5 +296,39 @@ public class Launcher implements PackRefreshListener {
 		}
 		
 		Utils.sendTracking("runLauncher", "run", SpoutcraftLauncher.getLauncherBuild());
+	}
+
+	public void attemptFaceDownloadsAndNotifyFrames() {
+		final HashSet<Thread> faceThreads = new HashSet<Thread>();
+
+		for (String username : Launcher.getUsers().getUsers()) {
+			final User user = Launcher.getUsers().getUser(username);
+			Thread faceThread = new Thread("Face Download: "+user.getDisplayName()) {
+				@Override
+				public void run() {
+					user.downloadFaceImage();
+				}
+			};
+			faceThreads.add(faceThread);
+			faceThread.start();
+		}
+
+		Thread waitAndNotifyThread = new Thread("Face completion wait and notify") {
+			@Override
+			public void run() {
+				try {
+					for (Thread thread : faceThreads) {
+						thread.join();
+					}
+				} catch (InterruptedException ex) {
+					ex.printStackTrace();
+				}
+
+				launcherFrame.faceDownloadsComplete();
+				loginFrame.faceDownloadsComplete();
+			}
+		};
+
+		waitAndNotifyThread.start();
 	}
 }

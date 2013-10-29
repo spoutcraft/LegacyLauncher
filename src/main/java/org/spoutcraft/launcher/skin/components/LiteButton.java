@@ -29,9 +29,32 @@ import javax.swing.JButton;
 public class LiteButton extends JButton implements MouseListener{
 	private static final long serialVersionUID = 1L;
 	private boolean clicked = false;
+	private boolean hovering = false;
+
+	private Color unclickedBackColor;
+	private Color clickedBackColor;
+	private Color hoverBackColor;
+	private Color unclickedForeColor;
+	private Color clickedForeColor;
+	private Color hoverForeColor;
+
 	public LiteButton(String label) {
+		this(label, new Color(220, 220, 220), Color.black, new Color(220, 220, 220),
+				Color.black, new Color(220, 220, 220), Color.black);
+	}
+
+	public LiteButton(String label,
+					  Color unclickedBackColor, Color clickedBackColor, Color hoverBackColor,
+					  Color unclickedForeColor, Color clickedForeColor, Color hoverForeColor) {
+		this.unclickedBackColor = unclickedBackColor;
+		this.clickedBackColor = clickedBackColor;
+		this.hoverBackColor = hoverBackColor;
+		this.unclickedForeColor = unclickedForeColor;
+		this.clickedForeColor = clickedForeColor;
+		this.hoverForeColor = hoverForeColor;
+
 		this.setText(label);
-		this.setBackground(new Color(220, 220, 220));
+		this.setBackground(this.unclickedBackColor);
 		this.setBorder(new LiteBorder(5, getBackground()));
 		this.addMouseListener(this);
 	}
@@ -41,13 +64,14 @@ public class LiteButton extends JButton implements MouseListener{
 		Graphics2D g2d = (Graphics2D)g;
 		Color old = g2d.getColor();
 		//Draw box
-		g2d.setColor(clicked ? Color.BLACK : getBackground());
+		g2d.setColor(clicked ? this.clickedBackColor : (hovering ? this.hoverBackColor : this.unclickedBackColor));
 		g2d.fillRect(0, 0, getWidth(), getHeight());
 		//Draw label
-		g2d.setColor(clicked ? getBackground() : Color.BLACK);
+		g2d.setColor(clicked ? this.clickedForeColor : (hovering ? this.hoverForeColor : this.unclickedForeColor));
 		g2d.setFont(getFont());
 		int width = g2d.getFontMetrics().stringWidth(getText());
-		g2d.drawString(getText(), (getWidth() - width) / 2, getFont().getSize() + 4);
+		int textHeight =  getFont().getSize();
+		g2d.drawString(getText(), (getWidth() - width) / 2, textHeight + ((getHeight() - textHeight) / 2));
 		
 		g2d.setColor(old);
 	}
@@ -68,9 +92,11 @@ public class LiteButton extends JButton implements MouseListener{
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		hovering = true;
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
+		hovering = false;
 	}
 }

@@ -31,10 +31,11 @@ import org.spoutcraft.launcher.log.LoggerOutputStream;
 import org.spoutcraft.launcher.log.RotatingFileHandler;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
 import org.spoutcraft.launcher.skin.LauncherFrame;
+import org.spoutcraft.launcher.skin.LoginFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
 import org.spoutcraft.launcher.util.ShutdownThread;
 
-import javax.swing.UIManager;
+import javax.swing.*;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.PrintStream;
@@ -84,10 +85,11 @@ public class SpoutcraftLauncher {
 
 		// Set up the launcher and load login frame
 		Launcher launcher = new Launcher();
-		LauncherFrame frame = Launcher.getFrame();
+
+		LoginFrame frame = Launcher.getLoginFrame();
 
 		splash.dispose();
-		frame.setVisible(true);
+		frame.attemptStartup();
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
 	}
