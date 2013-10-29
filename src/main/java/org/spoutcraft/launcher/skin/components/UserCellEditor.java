@@ -29,9 +29,12 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
 import java.io.IOException;
@@ -39,7 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class UserCellEditor implements ComboBoxEditor {
+public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 	private Font textFont;
 	private Icon backupHeadIcon;
 
@@ -49,7 +52,6 @@ public class UserCellEditor implements ComboBoxEditor {
 	private JPanel parentPanel;
 	private JLabel userLabel;
 	private JTextField textField;
-	private boolean isCurrentItemUser;
 
 	private Object currentObject;
 	private boolean areHeadsReady = false;
@@ -76,6 +78,7 @@ public class UserCellEditor implements ComboBoxEditor {
 		textField.setBackground(Color.white);
 		textField.setBounds(0, 0, 267, 30);
 		textField.setBorder(null);
+		textField.getDocument().addDocumentListener(this);
 		parentPanel.add(textField);
 
 		try {
@@ -101,8 +104,6 @@ public class UserCellEditor implements ComboBoxEditor {
 		currentObject = anObject;
 
 		if (anObject instanceof User) {
-			isCurrentItemUser = true;
-
 			User user = (User)anObject;
 			userLabel.setText(user.getDisplayName());
 			userLabel.setIconTextGap(8);
@@ -126,14 +127,15 @@ public class UserCellEditor implements ComboBoxEditor {
 			userLabel.setVisible(true);
 			textField.setVisible(false);
 		} else {
-			isCurrentItemUser = false;
 			String newText = "";
 
 			if (anObject != null) {
 				newText = anObject.toString();
 			}
 
-			textField.setText(newText);
+			if (!textField.getText().equals(newText))
+				textField.setText(newText);
+
 			textField.setVisible(true);
 			userLabel.setVisible(false);
 			textField.requestFocus();
@@ -166,5 +168,29 @@ public class UserCellEditor implements ComboBoxEditor {
 
 	public void removeKeyListener(KeyListener k) {
 		userLabel.removeKeyListener(k);
+	}
+
+	@Override
+	public void insertUpdate(DocumentEvent e) {
+		currentObject = textField.getText();
+		for(ActionListener listener : actionListeners) {
+			listener.actionPerformed(new ActionEvent(this, 0, "edited"));
+		}
+	}
+
+	@Override
+	public void removeUpdate(DocumentEvent e) {
+		currentObject = textField.getText();
+		for(ActionListener listener : actionListeners) {
+			listener.actionPerformed(new ActionEvent(this, 0, "edited"));
+		}
+	}
+
+	@Override
+	public void changedUpdate(DocumentEvent e) {
+		currentObject = textField.getText();
+		for(ActionListener listener : actionListeners) {
+			listener.actionPerformed(new ActionEvent(this, 0, "edited"));
+		}
 	}
 }

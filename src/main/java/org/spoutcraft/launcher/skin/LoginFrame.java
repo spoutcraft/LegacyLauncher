@@ -346,7 +346,15 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			if (selected instanceof User) {
 				verifyExistingLogin((User) selected);
 			} else {
-				attemptNewLogin(selected.toString());
+				String username = selected.toString();
+				User user = Launcher.getUsers().getUser(username);
+
+				if (user == null)
+					attemptNewLogin(selected.toString());
+				else {
+					setCurrentUser(user);
+					verifyExistingLogin(user);
+				}
 			}
 		} else {
 			attemptNewLogin(name.getText());
@@ -539,8 +547,6 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 					clearCurrentUser();
 				} else if (nameSelect.getSelectedItem() instanceof User) {
 					setCurrentUser((User)nameSelect.getSelectedItem());
-				} else {
-					setCurrentUser(nameSelect.getSelectedItem().toString());
 				}
 			} else if (command.equals(TOGGLE_REMEMBER)) {
 				if (!rememberAccount.isSelected() && nameSelect.isVisible() && nameSelect.getSelectedItem() instanceof User) {
