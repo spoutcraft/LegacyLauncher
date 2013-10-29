@@ -71,7 +71,11 @@ public class LiteButton extends JButton implements MouseListener{
 		g2d.setFont(getFont());
 		int width = g2d.getFontMetrics().stringWidth(getText());
 		int textHeight =  getFont().getSize();
-		g2d.drawString(getText(), (getWidth() - width) / 2, textHeight + ((getHeight() - textHeight) / 2));
+		int otherTextHeight = getFontMetrics(getFont()).getHeight();
+
+		textHeight = textHeight - (otherTextHeight-textHeight);
+		int height = textHeight + (getHeight() - textHeight)/2;
+		g2d.drawString(getText(), (getWidth() - width) / 2, height);
 		
 		g2d.setColor(old);
 	}
