@@ -147,7 +147,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		loggedInMsg.setFont(minecraft);
 		loggedInMsg.setHorizontalAlignment(SwingConstants.RIGHT);
 		loggedInMsg.setHorizontalTextPosition(SwingConstants.RIGHT);
-		loggedInMsg.setBounds(userArea.getX() + 5, userArea.getY() + 8, userArea.getWidth() - 79, 30);
+		loggedInMsg.setBounds(userArea.getX() + 5, userArea.getY() + 8, 185, 30);
 		loggedInMsg.setForeground(Color.white);
 
 		logout = new LiteButton("Log Out", new Color(0,0,0,0), new Color(0,0,0,0), new Color(0,0,0,0), Color.white, Color.white, Color.white);
