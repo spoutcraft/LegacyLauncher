@@ -146,9 +146,6 @@ public class Launcher implements PackRefreshListener {
 							PackInfo info = platformPackInfo;
 							if (platformPackInfo.hasSolder()) {
 								SolderPackInfo solderPackInfo = SolderPackInfo.getSolderPackInfo(platformPackInfo.getSolder(), name);
-								Solder solder = RestObject.getRestObject(Solder.class, platformPackInfo.getSolder());
-								solder.setUrl(platformPackInfo.getSolder());
-								solderPackInfo.setSolder(solder);
 								info = solderPackInfo;
 							}
 
