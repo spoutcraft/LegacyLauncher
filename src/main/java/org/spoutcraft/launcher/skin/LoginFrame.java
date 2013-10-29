@@ -413,6 +413,10 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 					"The auth servers at Minecraft.net are inaccessible.  Would you like to play offline?",
 					"Offline Play", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
 
+				//This is the last time we'll have access to the user's real username, so we should set the last-used
+				//username now
+				Launcher.getUsers().setLastUser(user.getUsername());
+
 				//Create offline user
 				loginUser = new User(user.getDisplayName());
 			} else {
@@ -491,7 +495,11 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	 *             used to arrive here.
 	 */
 	private void startLauncher(User user) {
-		Launcher.getUsers().setLastUser(user.getUsername());
+
+		if (!user.isOffline()) {
+			Launcher.getUsers().setLastUser(user.getUsername());
+		}
+
 		Launcher.getUsers().save();
 
 		this.refreshUsers();
