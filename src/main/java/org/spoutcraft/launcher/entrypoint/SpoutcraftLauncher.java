@@ -58,9 +58,6 @@ public class SpoutcraftLauncher {
 		// Prefer IPv4
 		System.setProperty("java.net.preferIPv4Stack", "true");
 
-		// Tell forge 1.5 to download from our mirror instead
-		System.setProperty("fml.core.libraries.mirror", "http://mirror.technicpack.net/Technic/lib/fml/%s");
-
 		params = setupParameters(args);
 
 		cleanup();
