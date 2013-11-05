@@ -161,7 +161,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		rememberAccount.setFont(smallFont);
 		rememberAccount.setForeground(Color.white);
 		rememberAccount.setOpaque(false);
-		rememberAccount.setBounds(120, 245, 205, 30);
+		rememberAccount.setBounds(25, 245, 300, 30);
 		rememberAccount.setHorizontalTextPosition(SwingConstants.LEFT);
 		rememberAccount.setHorizontalAlignment(SwingConstants.RIGHT);
 		rememberAccount.setIconTextGap(12);
