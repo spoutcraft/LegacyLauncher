@@ -139,7 +139,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		nameSelect.addActionListener(this);
 		nameSelect.setActionCommand(CHANGE_USER);
 
-		if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
+		if (!System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
 			nameSelect.setUI(new MetalComboBoxUI());
 		}
 

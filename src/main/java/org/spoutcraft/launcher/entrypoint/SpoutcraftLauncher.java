@@ -36,6 +36,8 @@ import org.spoutcraft.launcher.skin.SplashScreen;
 import org.spoutcraft.launcher.util.ShutdownThread;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.metal.OceanTheme;
 import java.awt.Toolkit;
 import java.io.File;
 import java.io.PrintStream;
@@ -65,6 +67,8 @@ public class SpoutcraftLauncher {
 		SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
 		splash.setVisible(true);
 		directories.setSplashScreen(splash);
+
+		MetalLookAndFeel.setCurrentTheme(new OceanTheme());
 		setLookAndFeel();
 
 		console = new Console(params.isConsole());
