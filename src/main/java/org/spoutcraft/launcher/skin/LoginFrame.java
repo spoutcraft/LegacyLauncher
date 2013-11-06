@@ -128,7 +128,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		// Setup username box
 		nameSelect = new JComboBox();
 
-		if (!System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
+		if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
 			nameSelect.setUI(new MetalComboBoxUI());
 		}
 
