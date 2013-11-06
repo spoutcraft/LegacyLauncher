@@ -127,6 +127,11 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
 		// Setup username box
 		nameSelect = new JComboBox();
+
+		if (!System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
+			nameSelect.setUI(new MetalComboBoxUI());
+		}
+
 		nameSelect.setBounds(25, 140, 297, 32);
 		nameSelect.setFont(largeFont);
 		nameSelect.setEditable(true);
@@ -138,10 +143,6 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		userEditor.addKeyListener(this);
 		nameSelect.addActionListener(this);
 		nameSelect.setActionCommand(CHANGE_USER);
-
-		if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
-			nameSelect.setUI(new MetalComboBoxUI());
-		}
 
 		name = new JTextField();
 		name.setBounds(25, 140, 297, 30);
