@@ -10,9 +10,11 @@ import org.spoutcraft.launcher.Launcher;
 import org.spoutcraft.launcher.skin.components.*;
 
 import javax.swing.*;
+import javax.swing.plaf.metal.MetalComboBoxUI;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Collection;
+import java.util.Locale;
 
 import static net.technicpack.launchercore.util.ResourceUtils.getResourceAsStream;
 
@@ -136,6 +138,10 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		userEditor.addKeyListener(this);
 		nameSelect.addActionListener(this);
 		nameSelect.setActionCommand(CHANGE_USER);
+
+		if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("mac")) {
+			nameSelect.setUI(new MetalComboBoxUI());
+		}
 
 		name = new JTextField();
 		name.setBounds(25, 140, 297, 30);

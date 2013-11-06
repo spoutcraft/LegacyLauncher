@@ -26,11 +26,14 @@ import javax.imageio.ImageIO;
 import javax.swing.ComboBoxEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
@@ -52,6 +55,7 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 	private JPanel parentPanel;
 	private JLabel userLabel;
 	private JTextField textField;
+	private CardLayout layout;
 
 	private Object currentObject;
 	private boolean areHeadsReady = false;
@@ -59,27 +63,30 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 
 	Collection<ActionListener> actionListeners = new HashSet<ActionListener>();
 
+	private static final String USER = "user";
+	private static final String STRING = "string";
+
 	public UserCellEditor(Font font) {
 		this.textFont = font;
 
+		layout = new CardLayout();
+
 		parentPanel = new JPanel();
-		parentPanel.setLayout(null);
+		parentPanel.setLayout(layout);
 
 		userLabel = new JLabel();
 		userLabel.setOpaque(true);
 		userLabel.setFont(textFont);
 		userLabel.setBackground(Color.white);
-		userLabel.setBounds(0, 0, 267, 30);
-		parentPanel.add(userLabel);
+		parentPanel.add(userLabel, USER);
 
 		textField = new JTextField();
 		textField.setOpaque(true);
 		textField.setFont(textFont);
 		textField.setBackground(Color.white);
-		textField.setBounds(0, 0, 267, 30);
 		textField.setBorder(null);
 		textField.getDocument().addDocumentListener(this);
-		parentPanel.add(textField);
+		parentPanel.add(textField, STRING);
 
 		try {
 			backupHeadIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png")), ICON_WIDTH, ICON_HEIGHT));
@@ -124,8 +131,7 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 				userLabel.setIcon(backupHeadIcon);
 			}
 
-			userLabel.setVisible(true);
-			textField.setVisible(false);
+			layout.show(parentPanel, USER);
 		} else {
 			String newText = "";
 
@@ -136,8 +142,7 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 			if (!textField.getText().equals(newText))
 				textField.setText(newText);
 
-			textField.setVisible(true);
-			userLabel.setVisible(false);
+			layout.show(parentPanel, STRING);
 			textField.requestFocus();
 		}
 	}
