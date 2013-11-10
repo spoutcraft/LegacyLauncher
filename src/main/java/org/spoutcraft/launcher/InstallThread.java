@@ -23,9 +23,11 @@ import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
 import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.launch.LaunchOptions;
 import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
 import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 import javax.swing.*;
 import java.io.File;
@@ -58,7 +60,10 @@ public class InstallThread extends Thread {
 
 			int memory = Memory.getMemoryFromId(Settings.getMemory()).getMemoryMB();
 			MinecraftLauncher minecraftLauncher = new MinecraftLauncher(memory, pack, version);
-			minecraftLauncher.launch(user);
+
+			StartupParameters params = SpoutcraftLauncher.params;
+			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
+			minecraftLauncher.launch(user, options);
 		} catch (PackNotAvailableOfflineException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (IOException e) {

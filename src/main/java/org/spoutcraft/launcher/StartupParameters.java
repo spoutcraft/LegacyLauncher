@@ -20,6 +20,7 @@ package org.spoutcraft.launcher;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
+import net.technicpack.launchercore.launch.LaunchOptions;
 import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -62,6 +63,8 @@ public final class StartupParameters {
 	private int height = -1;
 	@Parameter(names = {"-solder"}, description = "URL pointing towards the solder pack you want to force add to the launcher.")
 	private String solder = null;
+	@Parameter(names = {"-fullscreen"}, description = "Whether to launch minecraft in fullscreen mode.")
+	private boolean fullscreen = false;
 
 	public StartupParameters(String[] args) {
 		this.args = args;
@@ -162,5 +165,9 @@ public final class StartupParameters {
 
 	public String getSolderPack() {
 		return solder;
+	}
+
+	public boolean getFullscreen() {
+		return fullscreen;
 	}
 }
