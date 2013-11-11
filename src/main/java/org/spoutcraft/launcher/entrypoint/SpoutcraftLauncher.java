@@ -30,6 +30,7 @@ import org.spoutcraft.launcher.log.DateOutputFormatter;
 import org.spoutcraft.launcher.log.LoggerOutputStream;
 import org.spoutcraft.launcher.log.RotatingFileHandler;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
+import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.LoginFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
@@ -147,6 +148,8 @@ public class SpoutcraftLauncher {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
 				logger.log(Level.SEVERE, "Unhandled Exception in " + t, e);
+				ErrorDialog errorScreen = new ErrorDialog(Launcher.getFrame(), e);
+				errorScreen.setVisible(true);
 			}
 		});
 

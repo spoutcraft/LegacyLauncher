@@ -18,6 +18,8 @@
 
 package org.spoutcraft.launcher;
 
+import net.technicpack.launchercore.exception.CacheDeleteException;
+import net.technicpack.launchercore.exception.DownloadException;
 import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
 import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
@@ -32,6 +34,7 @@ import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.zip.ZipException;
 
 public class InstallThread extends Thread {
 	private final User user;
@@ -66,6 +69,12 @@ public class InstallThread extends Thread {
 			minecraftLauncher.launch(user, options);
 		} catch (PackNotAvailableOfflineException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
+		} catch (DownloadException e) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
+		} catch (ZipException e) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error unzipping a file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
+		} catch (CacheDeleteException e) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error installing the following pack: "+pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease check your system settings.", "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
