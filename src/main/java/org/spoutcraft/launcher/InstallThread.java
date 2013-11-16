@@ -66,7 +66,8 @@ public class InstallThread extends Thread {
 
 			StartupParameters params = SpoutcraftLauncher.params;
 			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
-			minecraftLauncher.launch(user, options);
+			LauncherUnhider unhider = new LauncherUnhider();
+			minecraftLauncher.launch(user, options, unhider);
 		} catch (PackNotAvailableOfflineException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (DownloadException e) {
@@ -79,6 +80,15 @@ public class InstallThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
+			int launchAction = Settings.getLaunchAction();
+			switch (launchAction) {
+				case 1: Launcher.getFrame().setVisible(false);
+					break;
+				case 2: System.exit(0);
+					break;
+				case 3: break; //do nothing
+			}
+
 			finished = true;
 		}
 	}

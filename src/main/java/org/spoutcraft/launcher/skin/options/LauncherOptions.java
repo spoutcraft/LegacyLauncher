@@ -73,6 +73,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	private JLabel build;
 	private LiteButton logs;
 	private JComboBox memory;
+	private JComboBox onLaunch;
 	private JRadioButton beta;
 	private JRadioButton stable;
 	private JFileChooser fileChooser;
@@ -174,11 +175,20 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		memory.setBounds(memoryLabel.getX() + memoryLabel.getWidth() + 10, memoryLabel.getY(), 100, 20);
 		populateMemory(memory);
 
+		JLabel onLaunchLabel = new JLabel("On Pack Launch: ");
+		onLaunchLabel.setFont(minecraft);
+		onLaunchLabel.setBounds(10, memoryLabel.getY() + memoryLabel.getHeight() + 10, 125, 20);
+		onLaunchLabel.setForeground(Color.WHITE);
+		onLaunchLabel.setHorizontalAlignment(SwingConstants.CENTER);
+
+		onLaunch = new JComboBox();
+		onLaunch.setBounds(onLaunchLabel.getX() + onLaunchLabel.getWidth() + 10, onLaunchLabel.getY(), 145, 20);
+		populateOnLaunch(onLaunch);
 
 		installedDirectory = Settings.getDirectory();
 
 		packLocation = new LiteTextBox(this, "");
-		packLocation.setBounds(10, memoryLabel.getY() + memoryLabel.getHeight() + 10, FRAME_WIDTH - 20, 25);
+		packLocation.setBounds(10, onLaunchLabel.getY() + onLaunchLabel.getHeight() + 10, FRAME_WIDTH - 20, 25);
 		packLocation.setFont(minecraft.deriveFont(10F));
 		packLocation.setText(installedDirectory);
 		packLocation.setEnabled(false);
@@ -226,6 +236,8 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		contentPane.add(title);
 		contentPane.add(memory);
 		contentPane.add(memoryLabel);
+		contentPane.add(onLaunch);
+		contentPane.add(onLaunchLabel);
 		contentPane.add(save);
 		contentPane.add(background);
 
@@ -315,6 +327,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
 			Settings.setMemory(mem);
 			Settings.setBuildStream(buildStream);
+			Settings.setLaunchAction(onLaunch.getSelectedIndex() + 1);
 			if (directoryChanged) {
 				Settings.setMigrate(true);
 				Settings.setMigrateDir(installedDirectory);
@@ -387,5 +400,17 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 		return build;
 	}
 
+	private void populateOnLaunch(JComboBox onLaunch) {
+		onLaunch.addItem("Hide Launcher");
+		onLaunch.addItem("Close Launcher and Console");
+		onLaunch.addItem("Stay Open");
+		int selectedAction = Settings.getLaunchAction();
+		if (selectedAction == 0) {
+			onLaunch.setSelectedIndex(0);
+			Settings.setLaunchAction(1);
+		} else {
+			onLaunch.setSelectedIndex(Settings.getLaunchAction()- 1);
+		}
+	}
 
 }
