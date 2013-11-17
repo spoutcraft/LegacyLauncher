@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
+import net.technicpack.launchercore.util.LaunchAction;
 
 public class InstallThread extends Thread {
 	private final User user;
@@ -80,13 +81,13 @@ public class InstallThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
-			int launchAction = Settings.getLaunchAction();
+			LaunchAction launchAction = Settings.getLaunchAction();
 			switch (launchAction) {
-				case 1: Launcher.getFrame().setVisible(false);
+				case HIDE: Launcher.getFrame().setVisible(false);
 					break;
-				case 2: System.exit(0);
+				case CLOSE: System.exit(0);
 					break;
-				case 3: break; //do nothing
+				case NOTHING: break; //do nothing
 			}
 
 			finished = true;

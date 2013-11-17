@@ -55,6 +55,7 @@ import java.awt.event.MouseMotionListener;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import net.technicpack.launchercore.util.LaunchAction;
 
 public class LauncherOptions extends JDialog implements ActionListener, MouseListener, MouseMotionListener {
 	private static final long serialVersionUID = 1L;
@@ -327,7 +328,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 			int mem = Memory.memoryOptions[memory.getSelectedIndex()].getSettingsId();
 			Settings.setMemory(mem);
 			Settings.setBuildStream(buildStream);
-			Settings.setLaunchAction(onLaunch.getSelectedIndex() + 1);
+			Settings.setLaunchAction((LaunchAction)onLaunch.getSelectedItem());
 			if (directoryChanged) {
 				Settings.setMigrate(true);
 				Settings.setMigrateDir(installedDirectory);
@@ -401,15 +402,15 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	}
 
 	private void populateOnLaunch(JComboBox onLaunch) {
-		onLaunch.addItem("Hide Launcher");
-		onLaunch.addItem("Close Launcher and Console");
-		onLaunch.addItem("Stay Open");
-		int selectedAction = Settings.getLaunchAction();
-		if (selectedAction == 0) {
-			onLaunch.setSelectedIndex(0);
-			Settings.setLaunchAction(1);
+		onLaunch.addItem(LaunchAction.HIDE);
+		onLaunch.addItem(LaunchAction.CLOSE);
+		onLaunch.addItem(LaunchAction.NOTHING);
+		LaunchAction selectedAction = Settings.getLaunchAction();
+		if (selectedAction == null) {
+			onLaunch.setSelectedItem(LaunchAction.HIDE);
+			Settings.setLaunchAction(LaunchAction.HIDE);
 		} else {
-			onLaunch.setSelectedIndex(Settings.getLaunchAction()- 1);
+			onLaunch.setSelectedItem(Settings.getLaunchAction());
 		}
 	}
 
