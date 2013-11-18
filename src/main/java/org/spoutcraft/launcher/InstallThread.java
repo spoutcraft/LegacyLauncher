@@ -35,6 +35,7 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
+import net.technicpack.launchercore.util.LaunchAction;
 
 public class InstallThread extends Thread {
 	private final User user;
@@ -66,7 +67,8 @@ public class InstallThread extends Thread {
 
 			StartupParameters params = SpoutcraftLauncher.params;
 			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
-			minecraftLauncher.launch(user, options);
+			LauncherUnhider unhider = new LauncherUnhider();
+			minecraftLauncher.launch(user, options, unhider);
 		} catch (PackNotAvailableOfflineException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (DownloadException e) {
@@ -79,6 +81,15 @@ public class InstallThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
+			LaunchAction launchAction = Settings.getLaunchAction();
+			switch (launchAction) {
+				case HIDE: Launcher.getFrame().setVisible(false);
+					break;
+				case CLOSE: System.exit(0);
+					break;
+				case NOTHING: break; //do nothing
+			}
+
 			finished = true;
 		}
 	}
