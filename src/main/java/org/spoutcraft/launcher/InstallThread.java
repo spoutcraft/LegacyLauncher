@@ -83,8 +83,14 @@ public class InstallThread extends Thread {
 			Launcher.getFrame().getProgressBar().setVisible(false);
 			LaunchAction launchAction = Settings.getLaunchAction();
 			switch (launchAction) {
-				case HIDE: Launcher.getFrame().setVisible(false);
+				case HIDE: {
+					Launcher.getFrame().setVisible(false);
+
+					if (Settings.getShowConsole()) {
+						SpoutcraftLauncher.hideConsole();
+					}
 					break;
+				}
 				case CLOSE: System.exit(0);
 					break;
 				case NOTHING: break; //do nothing

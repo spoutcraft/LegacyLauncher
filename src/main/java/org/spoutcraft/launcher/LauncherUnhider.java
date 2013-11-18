@@ -23,10 +23,17 @@ import net.technicpack.launchercore.launch.MinecraftExitListener;
 import net.technicpack.launchercore.launch.MinecraftProcess;
 import net.technicpack.launchercore.util.LaunchAction;
 import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 public class LauncherUnhider implements MinecraftExitListener {
 	@Override
 	public void onMinecraftExit(MinecraftProcess process) {
-		if (Settings.getLaunchAction() == LaunchAction.HIDE) Launcher.getFrame().setVisible(true);
+		if (Settings.getLaunchAction() == LaunchAction.HIDE) {
+			Launcher.getFrame().setVisible(true);
+
+			if (Settings.getShowConsole()) {
+				SpoutcraftLauncher.showConsole();
+			}
+		}
 	}
 }
