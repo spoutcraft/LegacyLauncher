@@ -191,13 +191,5 @@ public class SpoutcraftLauncher {
 	public static void destroyConsole() {
 		console.destroyConsole();
 	}
-
-	public static void hideConsole() {
-		console.getFrame().setVisible(false);
-	}
-
-	public static void showConsole() {
-		console.getFrame().setVisible(true);
-	}
 }
 

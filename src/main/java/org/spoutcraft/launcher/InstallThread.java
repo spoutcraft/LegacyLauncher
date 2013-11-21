@@ -85,10 +85,6 @@ public class InstallThread extends Thread {
 
 			if (launchAction == null || launchAction == LaunchAction.HIDE) {
 					Launcher.getFrame().setVisible(false);
-
-					if (Settings.getShowConsole()) {
-						SpoutcraftLauncher.hideConsole();
-					}
 			} else if (launchAction == LaunchAction.CLOSE) {
 				System.exit(0);
 			}
