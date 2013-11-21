@@ -69,6 +69,14 @@ public class InstallThread extends Thread {
 			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
 			LauncherUnhider unhider = new LauncherUnhider();
 			minecraftLauncher.launch(user, options, unhider);
+
+			LaunchAction launchAction = Settings.getLaunchAction();
+
+			if (launchAction == null || launchAction == LaunchAction.HIDE) {
+				Launcher.getFrame().setVisible(false);
+			} else if (launchAction == LaunchAction.CLOSE) {
+				System.exit(0);
+			}
 		} catch (PackNotAvailableOfflineException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (DownloadException e) {
@@ -81,13 +89,6 @@ public class InstallThread extends Thread {
 			e.printStackTrace();
 		} finally {
 			Launcher.getFrame().getProgressBar().setVisible(false);
-			LaunchAction launchAction = Settings.getLaunchAction();
-
-			if (launchAction == null || launchAction == LaunchAction.HIDE) {
-					Launcher.getFrame().setVisible(false);
-			} else if (launchAction == LaunchAction.CLOSE) {
-				System.exit(0);
-			}
 
 			finished = true;
 		}
