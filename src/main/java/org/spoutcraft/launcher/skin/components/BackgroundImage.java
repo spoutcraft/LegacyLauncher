@@ -26,6 +26,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
+import java.awt.event.InputEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -65,8 +66,10 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		mouseX = e.getX();
-		mouseY = e.getY();
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			mouseX = e.getX();
+			mouseY = e.getY();
+		}
 	}
 
 	@Override
@@ -89,7 +92,9 @@ public class BackgroundImage extends JLabel implements MouseListener, MouseMotio
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		frame.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+		if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+			frame.setLocation(e.getXOnScreen() - mouseX, e.getYOnScreen() - mouseY);
+		}
 	}
 
 	@Override

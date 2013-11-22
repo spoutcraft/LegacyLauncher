@@ -570,8 +570,11 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		dragGripX = e.getX();
-		dragGripY = e.getY();
+
+		if (e.getButton() == MouseEvent.BUTTON1) {
+			dragGripX = e.getX();
+			dragGripY = e.getY();
+		}
 	}
 
 	@Override
@@ -591,7 +594,9 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		this.setLocation(e.getXOnScreen() - dragGripX, e.getYOnScreen() - dragGripY);
+		if ((e.getModifiersEx() & InputEvent.BUTTON1_DOWN_MASK) != 0) {
+			this.setLocation(e.getXOnScreen() - dragGripX, e.getYOnScreen() - dragGripY);
+		}
 	}
 
 	@Override
