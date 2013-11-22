@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.launchercore.util.ImageUtils;
@@ -415,7 +416,12 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			if (Launcher.isLaunching()) {
 				return;
 			}
-			Launcher.launch(currentUser, packSelector.getSelectedPack(), packSelector.getSelectedPack().getBuild());
+
+			InstalledPack pack = packSelector.getSelectedPack();
+
+			if (!pack.getName().equals("addpack")) {
+				Launcher.launch(currentUser, pack, pack.getBuild());
+			}
 		} else if (action.equals(LOGOUT)) {
 			if (Launcher.isLaunching()) {
 				return;
