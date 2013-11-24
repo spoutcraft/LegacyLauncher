@@ -30,6 +30,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.awt.Container;
@@ -191,6 +192,10 @@ public class ErrorDialog extends JDialog implements ActionListener {
 			String response = "";
 			try {
 				response = pastebin.makePaste(generateExceptionReport(), "ser_" + System.currentTimeMillis(), "text");
+
+				if (response == null ) {
+					JOptionPane.showMessageDialog(this, "Check your internet and system settings.","PasteBin Inaccessible", JOptionPane.ERROR_MESSAGE);
+				}
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}

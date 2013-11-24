@@ -37,8 +37,10 @@ public class PasteBinAPI {
 	}
 
 	public String checkResponse(String response) {
-		if (response.substring(0, 15) == "Bad API request")
-				return response.substring(17);
+		if (response != null && response.length() > 17 && response.substring(0, 15) == "Bad API request") {
+			return response.substring(17);
+		}
+
 		return "";
 	}
 
@@ -50,9 +52,11 @@ public class PasteBinAPI {
 						+ "&api_paste_expire_date=N&api_paste_format=" + format
 						+ "&api_dev_key=" + this.devkey + "&api_paste_code=" + content;
 		String response = this.page(pasteURL, data);
+
 		String check = this.checkResponse(response);
-		if (!check.equals(""))
+		if (!check.isEmpty())
 				return check;
+
 		return response;
 	}
 
