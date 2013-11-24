@@ -150,8 +150,16 @@ public class SpoutcraftLauncher {
 			public void uncaughtException(Thread t, Throwable e) {
 				logger.log(Level.SEVERE, "Unhandled Exception in " + t, e);
 
-				if (errorDialog != null) {
-					errorDialog = new ErrorDialog(Launcher.getFrame(), e);
+				if (errorDialog == null) {
+					LauncherFrame frame = null;
+
+					try {
+						frame = Launcher.getFrame();
+					} catch (Exception ex) {
+						//This can happen if we have a very early crash- before Launcher initializes
+					}
+
+					errorDialog = new ErrorDialog(frame, e);
 					errorDialog.setVisible(true);
 				}
 			}
