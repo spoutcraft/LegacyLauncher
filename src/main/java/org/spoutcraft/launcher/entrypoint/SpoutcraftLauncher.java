@@ -52,6 +52,7 @@ public class SpoutcraftLauncher {
 	protected static Console console;
 	private static RotatingFileHandler handler = null;
 	private static Logger logger = null;
+	private static ErrorDialog errorDialog = null;
 
 	public static void main(String[] args) {
 		long start = System.currentTimeMillis();
@@ -148,8 +149,11 @@ public class SpoutcraftLauncher {
 			@Override
 			public void uncaughtException(Thread t, Throwable e) {
 				logger.log(Level.SEVERE, "Unhandled Exception in " + t, e);
-				ErrorDialog errorScreen = new ErrorDialog(Launcher.getFrame(), e);
-				errorScreen.setVisible(true);
+
+				if (errorDialog != null) {
+					errorDialog = new ErrorDialog(Launcher.getFrame(), e);
+					errorDialog.setVisible(true);
+				}
 			}
 		});
 
