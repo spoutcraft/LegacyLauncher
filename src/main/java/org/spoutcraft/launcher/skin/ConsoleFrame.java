@@ -27,6 +27,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -232,23 +233,6 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	}
 
 	/**
-	 * Get a stack trace as a string.
-	 *
-	 * @param t exception
-	 * @return stack trace
-	 */
-	public static String getStackTrace(Throwable t) {
-		Writer result = new StringWriter();
-		try {
-			PrintWriter printWriter = new PrintWriter(result);
-			t.printStackTrace(printWriter);
-		} finally {
-			IOUtils.closeQuietly(result);
-		}
-		return result.toString();
-	}
-
-	/**
 	 * Log a message.
 	 *
 	 * @param line line
@@ -264,105 +248,25 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	 * @param attributes attribute set, or null for none
 	 */
 	public void log(String line, AttributeSet attributes) {
-		line = line.replace("\n\n", "\n");
 		if (colorEnabled) {
 			if (line.startsWith("(!!)")) {
 				attributes = highlightedAttributes;
 			}
 		}
 
-		try {
-			int offset = document.getLength();
-			document.insertString(offset, line, (attributes != null && colorEnabled) ? attributes : defaultAttributes);
-			textComponent.setCaretPosition(document.getLength());
-		} catch (BadLocationException ble) {
-		} catch (NullPointerException npe) {
-		}
-	}
-
-	/**
-	 * Consume an input stream and print it to the dialog. The consumer
-	 * will be in a separate daemon thread.
-	 *
-	 * @param from stream to read
-	 */
-	public void consume(InputStream from) {
-		consume(from, getOutputStream());
-	}
-
-	/**
-	 * Internal method to consume a stream.
-	 *
-	 * @param from         stream to consume
-	 * @param outputStream console stream to write to
-	 */
-	private void consume(InputStream from, ConsoleOutputStream outputStream) {
-		final InputStream in = from;
-		final PrintWriter out = new PrintWriter(outputStream, true);
-		Thread thread = new Thread(new Runnable() {
-			@Override
+		final String writeText = line.replace("\n\n", "\n");
+		final AttributeSet writeAttributes = (attributes != null && colorEnabled) ? attributes : defaultAttributes;
+		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				byte[] buffer = new byte[1024];
 				try {
-					int len;
-					while ((len = in.read(buffer)) != -1) {
-						String s = new String(buffer, 0, len);
-						System.out.print(s);
-						out.append(s);
-						out.flush();
-					}
-				} catch (IOException e) {
-				} finally {
-					IOUtils.closeQuietly(in);
-					IOUtils.closeQuietly(out);
+					int offset = document.getLength();
+					document.insertString(offset, writeText, writeAttributes);
+					textComponent.setCaretPosition(document.getLength());
+				} catch (BadLocationException ble) {
+				} catch (NullPointerException npe) {
 				}
 			}
 		});
-		thread.setDaemon(true);
-		thread.start();
-	}
-
-	/**
-	 * Get an output stream that can be written to.
-	 *
-	 * @return output stream
-	 */
-	public ConsoleOutputStream getOutputStream() {
-		return getOutputStream((AttributeSet) null);
-	}
-
-	/**
-	 * Consume an input stream and print it to the dialog. The consumer
-	 * will be in a separate daemon thread.
-	 *
-	 * @param from  stream to read
-	 * @param color color to use
-	 */
-	public void consume(InputStream from, Color color) {
-		consume(from, getOutputStream(color));
-	}
-
-	/**
-	 * Consume an input stream and print it to the dialog. The consumer
-	 * will be in a separate daemon thread.
-	 *
-	 * @param from       stream to read
-	 * @param attributes attributes
-	 */
-	public void consume(InputStream from, AttributeSet attributes) {
-		consume(from, getOutputStream(attributes));
-	}
-
-	/**
-	 * Registera global logger listener.
-	 */
-	public void registerLoggerHandler() {
-		for (Handler handler : rootLogger.getHandlers()) {
-			rootLogger.removeHandler(handler);
-		}
-
-		loggerHandler = new ConsoleLoggerHandler();
-		rootLogger.addHandler(loggerHandler);
 	}
 
 	@Override
@@ -412,37 +316,6 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 			if (data.length() == 0) return;
 			log(data, attributes);
 			reset();
-		}
-	}
-
-	/**
-	 * Used to send logger messages to the console.
-	 */
-	private class ConsoleLoggerHandler extends Handler {
-		@Override
-		public void publish(LogRecord record) {
-			Level level = record.getLevel();
-			Throwable t = record.getThrown();
-			AttributeSet attributes = defaultAttributes;
-
-			if (level.intValue() >= Level.WARNING.intValue()) {
-				attributes = errorAttributes;
-			} else if (level.intValue() < Level.INFO.intValue()) {
-				attributes = debugAttributes;
-			}
-
-			log(record.getMessage() + "\n", attributes);
-			if (t != null) {
-				log(getStackTrace(t) + "\n", attributes);
-			}
-		}
-
-		@Override
-		public void flush() {
-		}
-
-		@Override
-		public void close() throws SecurityException {
 		}
 	}
 
