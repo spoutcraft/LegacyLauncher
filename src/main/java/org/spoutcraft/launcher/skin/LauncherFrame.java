@@ -419,7 +419,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 			InstalledPack pack = packSelector.getSelectedPack();
 
-			if (!pack.getName().equals("addpack")) {
+			if (!pack.getName().equals("addpack") && (pack.isLocalOnly() || pack.getInfo() != null)) {
 				Launcher.launch(currentUser, pack, pack.getBuild());
 			}
 		} else if (action.equals(LOGOUT)) {
