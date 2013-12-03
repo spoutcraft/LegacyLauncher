@@ -397,27 +397,18 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		boolean rejected = false;
 
 		try {
-			if (!AuthenticationService.validate(loginUser)) {
+			RefreshResponse response = AuthenticationService.requestRefresh(loginUser);
+			if (response.getError() != null) {
 
 				if (notifyUserOfFailure)
-					JOptionPane.showMessageDialog(this, "Your login session has expired or become corrupt.", "Please Login Again", JOptionPane.WARNING_MESSAGE);
+					JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
 
 				rejected = true;
 				loginUser = null;
 			} else {
-				RefreshResponse response = AuthenticationService.requestRefresh(loginUser);
-				if (response.getError() != null) {
-
-					if (notifyUserOfFailure)
-						JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
-
-					rejected = true;
-					loginUser = null;
-				} else {
-					//Refresh user from response
-					loginUser = new User(user.getUsername(), response);
-					Launcher.getUsers().addUser(loginUser);
-				}
+				//Refresh user from response
+				loginUser = new User(user.getUsername(), response);
+				Launcher.getUsers().addUser(loginUser);
 			}
 		} catch (AuthenticationNetworkFailureException ex) {
 			ex.printStackTrace();
