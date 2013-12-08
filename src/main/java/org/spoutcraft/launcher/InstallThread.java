@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher;
 
+import net.technicpack.launchercore.exception.BuildInaccessibleException;
 import net.technicpack.launchercore.exception.CacheDeleteException;
 import net.technicpack.launchercore.exception.DownloadException;
 import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
@@ -85,6 +86,8 @@ public class InstallThread extends Thread {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error unzipping a file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (CacheDeleteException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error installing the following pack: "+pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease check your system settings.", "Error", JOptionPane.WARNING_MESSAGE);
+		} catch (BuildInaccessibleException e) {
+			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
