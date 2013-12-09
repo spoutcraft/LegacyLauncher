@@ -87,6 +87,7 @@ public class InstallThread extends Thread {
 		} catch (CacheDeleteException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error installing the following pack: "+pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease check your system settings.", "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (BuildInaccessibleException e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (IOException e) {
 			e.printStackTrace();
