@@ -49,6 +49,7 @@ public class RotatingFileHandler extends StreamHandler {
 		if (!filename.equals(calculateFilename())) {
 			filename = calculateFilename();
 			try {
+				this.close();
 				setOutputStream(new FileOutputStream(filename, true));
 			} catch (FileNotFoundException ex) {
 				ex.printStackTrace();
