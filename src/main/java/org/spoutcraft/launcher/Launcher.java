@@ -18,7 +18,6 @@
 
 package org.spoutcraft.launcher;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -30,7 +29,6 @@ import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.InstalledPacks;
 import net.technicpack.launchercore.install.PackRefreshListener;
-import net.technicpack.launchercore.install.ResourceInstaller;
 import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.install.Users;
 import net.technicpack.launchercore.restful.PackInfo;
@@ -40,16 +38,11 @@ import net.technicpack.launchercore.restful.solder.FullModpacks;
 import net.technicpack.launchercore.restful.solder.Solder;
 import net.technicpack.launchercore.restful.solder.SolderConstants;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
-import net.technicpack.launchercore.util.Download;
-import net.technicpack.launchercore.util.DownloadUtils;
 import net.technicpack.launchercore.util.Utils;
 
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.LoginFrame;
-
-import javax.imageio.ImageIO;
-import javax.swing.*;
 
 public class Launcher implements PackRefreshListener {
 	private static Launcher instance;
@@ -58,7 +51,6 @@ public class Launcher implements PackRefreshListener {
 	private Users users;
 	private InstalledPacks installedPacks;
 	private InstallThread installThread;
-	private ResourceInstaller assetInstaller;
 
 	private LinkedList<Thread> startupTasks = new LinkedList<Thread>();
 
@@ -85,19 +77,11 @@ public class Launcher implements PackRefreshListener {
 
 		this.launcherFrame = new LauncherFrame();
 		this.loginFrame = new LoginFrame();
-		this.assetInstaller = new ResourceInstaller();
 
 		loadDefaultPacks();
 		loadInstalledPacks();
 		loadForcedPack();
 		installedPacks.add(new AddPack());
-
-		Thread assets = new Thread("Assets Thread") {
-			@Override
-			public void run() {
-				instance.updateAssets();
-			}
-		};
 
 		Thread news = new Thread("News Thread") {
 			@Override
@@ -107,7 +91,6 @@ public class Launcher implements PackRefreshListener {
 		};
 
 		news.start();
-		assets.start();
 
 		Thread waitForPacksAndReload = new Thread("Wait for Packs & Reload") {
 			@Override
@@ -128,10 +111,6 @@ public class Launcher implements PackRefreshListener {
 		waitForPacksAndReload.start();
 
 		attemptFaceDownloadsAndNotifyFrames();
-	}
-
-	private void updateAssets() {
-		assetInstaller.updateResources();
 	}
 
 	private void loadInstalledPacks() {
