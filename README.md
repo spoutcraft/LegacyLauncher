@@ -4,7 +4,7 @@ Technic Launcher
 ## What is The Technic Launcher?
 The Technic Launcher is a Minecraft launcher designed to install and manage modpacks from the [Technic Platform][Homepage].
 Features automatic updating, custom platform pack installation, and easy simple UI design.
-The launcher in it's current form is maintained by [CanVox](https://github.com/CannibalVox)
+The launcher in its current form is maintained by [CanVox](https://github.com/CannibalVox)
 
 [![Technic][Logo]][Homepage]  
 [Homepage] | [Forums] | [Twitter] | [Facebook] | [Steam]
@@ -21,7 +21,7 @@ Download the latest builds from our [build server][Builds]. [![Build Status](htt
 ## Compiling the Source
 Technic Launcher uses Maven to handle its dependencies.
 
-* Install [Maven 2 or 3](http://maven.apache.org/download.html)
+* Install [Maven 3](http://maven.apache.org/download.html)
 * Checkout this repo and run: `mvn clean package`
 * To compile an `exe` on a non-Windows platform, add: `-P package-win` to the previous goals.
 
