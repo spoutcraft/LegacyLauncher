@@ -2,7 +2,6 @@ package org.spoutcraft.launcher.skin;
 
 import net.technicpack.launchercore.auth.AuthResponse;
 import net.technicpack.launchercore.auth.AuthenticationService;
-import net.technicpack.launchercore.auth.RefreshResponse;
 import net.technicpack.launchercore.exception.AuthenticationNetworkFailureException;
 import net.technicpack.launchercore.install.User;
 import net.technicpack.launchercore.util.ResourceUtils;
@@ -397,7 +396,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		boolean rejected = false;
 
 		try {
-			RefreshResponse response = AuthenticationService.requestRefresh(loginUser);
+			AuthResponse response = AuthenticationService.requestRefresh(loginUser);
 			if (response.getError() != null) {
 
 				if (notifyUserOfFailure)
