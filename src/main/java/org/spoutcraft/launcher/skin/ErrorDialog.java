@@ -226,7 +226,7 @@ public class ErrorDialog extends JDialog implements ActionListener {
 		builder.append("    Operating System: ").append(System.getProperty("os.name")).append("\n");
 		builder.append("    Operating System Version: ").append(System.getProperty("os.version")).append("\n");
 		builder.append("    Operating System Architecture: ").append(System.getProperty("os.arch")).append("\n");
-		builder.append("    Java version: ").append(System.getProperty("java.version")).append(" ").append(System.getProperty("sun.arch.data.launcher", "32")).append(" bit").append("\n");
+		builder.append("    Java version: ").append(System.getProperty("java.version")).append(" ").append(System.getProperty("sun.arch.data.model", "32")).append(" bit").append("\n");
 		builder.append("    Total Memory: ").append(Runtime.getRuntime().totalMemory() / 1024L / 1024L).append(" MB\n");
 		builder.append("    Max Memory: ").append(Runtime.getRuntime().maxMemory() / 1024L / 1024L).append(" MB\n");
 		builder.append("    Memory Free: ").append(Runtime.getRuntime().freeMemory() / 1024L / 1024L).append(" MB\n");
