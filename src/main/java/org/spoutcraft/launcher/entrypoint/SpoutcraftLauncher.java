@@ -23,7 +23,7 @@ import net.technicpack.launchercore.util.Directories;
 import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.IOUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.StartupParameters;
 import org.spoutcraft.launcher.log.Console;
 import org.spoutcraft.launcher.log.DateOutputFormatter;
@@ -89,10 +89,8 @@ public class SpoutcraftLauncher {
 		// Set up the launcher and load login frame
 		Launcher launcher = new Launcher();
 
-		LoginFrame frame = Launcher.getLoginFrame();
-
 		splash.dispose();
-		frame.attemptStartup();
+		launcher.startup();
 
 		logger.info("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
 	}

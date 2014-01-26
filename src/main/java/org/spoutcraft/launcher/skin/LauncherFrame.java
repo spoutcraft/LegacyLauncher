@@ -18,12 +18,17 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.IAuthListener;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.install.user.skins.ISkinListener;
+import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.components.BackgroundImage;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.ImageHyperlinkButton;
@@ -34,7 +39,6 @@ import org.spoutcraft.launcher.skin.options.LauncherOptions;
 import org.spoutcraft.launcher.skin.options.ModpackOptions;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -57,13 +61,12 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
 import static net.technicpack.launchercore.util.ResourceUtils.getResourceAsStream;
 
-public class LauncherFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener, DownloadListener {
+public class LauncherFrame extends JFrame implements ActionListener, KeyListener, MouseWheelListener, DownloadListener, ISkinListener, IAuthListener {
 	public static final Color TRANSPARENT = new Color(45, 45, 45, 160);
 	private static final long serialVersionUID = 1L;
 	private static final int FRAME_WIDTH = 880;
@@ -95,10 +98,19 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private NewsComponent news;
 	private long previous = 0L;
 	private User currentUser = null;
-	private boolean hasLoadedHeads = false;
 
-	public LauncherFrame() {
-		initComponents();
+	private SkinRepository mSkinRepo;
+	private UserModel mUserModel;
+	private AvailablePackList mPackList;
+
+	public LauncherFrame(SkinRepository skinRepo, UserModel userModel, AvailablePackList packList) {
+		this.mSkinRepo = skinRepo;
+		this.mUserModel = userModel;
+		this.mPackList = packList;
+
+		this.mUserModel.addAuthListener(this);
+
+		initComponents(packList);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		setBounds((dim.width - FRAME_WIDTH) / 2, (dim.height - FRAME_HEIGHT) / 2, FRAME_WIDTH, FRAME_HEIGHT);
 		setResizable(false);
@@ -111,15 +123,13 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
-	public void faceDownloadsComplete() {
-		hasLoadedHeads = true;
-
-		if (currentUser != null) {
-			reloadUserFace();
-		}
+	public void skinReady(User user) { }
+	public void faceReady(User user) {
+		if (this.currentUser != null && this.currentUser.getUsername().equals(user.getUsername()))
+			userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(this.mSkinRepo.getFaceImage(user), 48, 48)));
 	}
 
-	private void initComponents() {
+	private void initComponents(AvailablePackList packList) {
 		Font minecraft = getMinecraftFont(12);
 
 		// Launch button area
@@ -138,11 +148,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 		userHead = new JLabel();
 		userHead.setBounds(userArea.getX() + userArea.getWidth() - 69, userArea.getY() + 13, 48, 48);
-		try {
-			userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png")), 48, 48)));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+		userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(this.mSkinRepo.getDefaultFace(), 48, 48)));
 
 		loggedInMsg = new JLabel("");
 		loggedInMsg.setFont(minecraft);
@@ -299,7 +305,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.setLayout(null);
 
 		// Pack Selector
-		packSelector = new ModpackSelector(this);
+		packSelector = new ModpackSelector(this, packList, mUserModel);
 		packSelector.setBounds(15, 0, 200, 520);
 
 		// Custom Pack Name Label
@@ -402,7 +408,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
 			if (packOptions == null || !packOptions.isVisible()) {
 				System.out.println("Opening options for " + getSelector().getSelectedPack());
-				packOptions = new ModpackOptions(getSelector().getSelectedPack());
+				packOptions = new ModpackOptions(getSelector().getSelectedPack(), mPackList);
 				packOptions.setModal(true);
 				packOptions.setVisible(true);
 			}
@@ -420,14 +426,14 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			InstalledPack pack = packSelector.getSelectedPack();
 
 			if (!pack.getName().equals("addpack") && (pack.isLocalOnly() || pack.getInfo() != null)) {
-				Launcher.launch(currentUser, pack, pack.getBuild());
+				Launcher.launch(currentUser, pack, pack.getBuild(), mUserModel);
 			}
 		} else if (action.equals(LOGOUT)) {
 			if (Launcher.isLaunching()) {
 				return;
 			}
 
-			Launcher.getLoginFrame().visitFrame();
+			mUserModel.setCurrentUser(null);
 		}
 	}
 
@@ -494,41 +500,26 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		component.setEnabled(enable);
 	}
 
-	public void setCurrentUser(User user) {
-		currentUser = user;
+	public void userChanged(User user) {
+		this.currentUser = user;
 
-		if (currentUser == null)
+		if (user == null)
+		{
+			this.setVisible(false);
 			return;
+		}
 
 		if (currentUser.isOffline())
 			launch.setText("PLAY OFFLINE");
-		else
+		else {
 			launch.setText("PLAY");
+			mUserModel.setLastUser(currentUser);
+		}
 
 		loggedInMsg.setText(currentUser.getDisplayName());
 
-		if (hasLoadedHeads) {
-			reloadUserFace();
-		}
-	}
-
-	private void reloadUserFace() {
-		if (currentUser == null)
-			return;
-
-		BufferedImage face = currentUser.getFaceImage();
-
-		if (face == null) {
-			try {
-				face = ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
-			} catch (IOException ex) {
-				ex.printStackTrace();
-			}
-		}
-
-		if (face != null) {
-			userHead.setIcon(new ImageIcon(ImageUtils.scaleImage(face, 48, 48)));
-		}
+		this.faceReady(currentUser);
+		this.setVisible(true);
 	}
 
 	@Override

@@ -26,7 +26,7 @@ import java.net.URI;
 
 import javax.swing.JTextPane;
 
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.util.DesktopUtils;
 
 public class HyperlinkJTextPane extends JTextPane implements MouseListener {

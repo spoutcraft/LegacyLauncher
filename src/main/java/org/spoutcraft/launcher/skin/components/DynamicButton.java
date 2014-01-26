@@ -34,7 +34,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.User;
 import org.jdesktop.swingworker.SwingWorker;
 import net.technicpack.launchercore.util.ImageUtils;
 

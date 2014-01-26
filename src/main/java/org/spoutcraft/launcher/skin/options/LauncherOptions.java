@@ -248,7 +248,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
 	@SuppressWarnings("restriction")
 	private void populateMemory(JComboBox memory) {
 		long maxMemory = 1024;
-		String architecture = System.getProperty("sun.arch.data.model", "32");
+		String architecture = System.getProperty("sun.arch.data.launcher", "32");
 		boolean bit64 = architecture.equals("64");
 
 		try {

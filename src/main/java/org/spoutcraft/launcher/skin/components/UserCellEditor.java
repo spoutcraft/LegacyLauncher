@@ -18,7 +18,9 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.skins.ISkinListener;
+import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 
@@ -26,13 +28,11 @@ import javax.imageio.ImageIO;
 import javax.swing.ComboBoxEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -45,9 +45,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 
-public class UserCellEditor implements ComboBoxEditor, DocumentListener {
+public class UserCellEditor implements ComboBoxEditor, DocumentListener, ISkinListener {
 	private Font textFont;
-	private Icon backupHeadIcon;
 
 	private static final int ICON_WIDTH=32;
 	private static final int ICON_HEIGHT=32;
@@ -58,16 +57,18 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 	private CardLayout layout;
 
 	private Object currentObject;
-	private boolean areHeadsReady = false;
 	private HashMap<String, Icon> headMap = new HashMap<String, Icon>();
 
 	Collection<ActionListener> actionListeners = new HashSet<ActionListener>();
+	private SkinRepository mSkinRepo;
 
 	private static final String USER = "user";
 	private static final String STRING = "string";
 
-	public UserCellEditor(Font font) {
+	public UserCellEditor(Font font, SkinRepository skinRepo) {
 		this.textFont = font;
+		this.mSkinRepo = skinRepo;
+		this.mSkinRepo.addListener(this);
 
 		layout = new CardLayout();
 
@@ -87,18 +88,6 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 		textField.setBorder(null);
 		textField.getDocument().addDocumentListener(this);
 		parentPanel.add(textField, STRING);
-
-		try {
-			backupHeadIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png")), ICON_WIDTH, ICON_HEIGHT));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-			backupHeadIcon = null;
-		}
-	}
-
-	public void setHeadReady() {
-		areHeadsReady = true;
-		headMap.clear();
 	}
 
 	@Override
@@ -115,21 +104,12 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 			userLabel.setText(user.getDisplayName());
 			userLabel.setIconTextGap(8);
 
-			if (areHeadsReady) {
-				if (!headMap.containsKey(user.getUsername())) {
-					headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(user.getFaceImage(), ICON_WIDTH, ICON_HEIGHT)));
-				}
-
-				Icon head = headMap.get(user.getUsername());
-
-				if (head != null) {
-					userLabel.setIcon(head);
-				} else if (backupHeadIcon != null) {
-					userLabel.setIcon(backupHeadIcon);
-				}
-			} else if (backupHeadIcon != null) {
-				userLabel.setIcon(backupHeadIcon);
+			if (!headMap.containsKey(user.getUsername())) {
+				headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
 			}
+
+			Icon head = headMap.get(user.getUsername());
+			userLabel.setIcon(head);
 
 			layout.show(parentPanel, USER);
 		} else {
@@ -197,5 +177,14 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener {
 		for(ActionListener listener : actionListeners) {
 			listener.actionPerformed(new ActionEvent(this, 0, "edited"));
 		}
+	}
+
+	@Override
+	public void skinReady(User user) {
+	}
+
+	@Override
+	public void faceReady(User user) {
+
 	}
 }

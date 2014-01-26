@@ -18,7 +18,9 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.skins.ISkinListener;
+import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 
@@ -33,33 +35,28 @@ import java.awt.Font;
 import java.io.IOException;
 import java.util.HashMap;
 
-public class UserCellRenderer extends JLabel implements ListCellRenderer {
+public class UserCellRenderer extends JLabel implements ListCellRenderer, ISkinListener {
 	private Font textFont;
-	private Icon backupHeadIcon;
 	private Icon addUserIcon;
+
+	private SkinRepository mSkinRepo;
 
 	private static final int ICON_WIDTH = 32;
 	private static final int ICON_HEIGHT = 32;
 
-	private boolean areHeadsReady = false;
 	private HashMap<String, Icon> headMap = new HashMap<String, Icon>();
 
-	public UserCellRenderer(Font font) {
+	public UserCellRenderer(Font font, SkinRepository skinRepo) {
+		this.mSkinRepo = skinRepo;
+		this.mSkinRepo.addListener(this);
 		this.textFont = font;
 		setOpaque(true);
 
 		try {
-			backupHeadIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png")), ICON_WIDTH, ICON_HEIGHT));
 			addUserIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/add_user.png")), ICON_WIDTH, ICON_HEIGHT));
 		} catch (IOException ex) {
 			ex.printStackTrace();
-			backupHeadIcon = null;
 		}
-	}
-
-	public void setHeadReady() {
-		areHeadsReady = true;
-		headMap.clear();
 	}
 
 	@Override
@@ -79,20 +76,14 @@ public class UserCellRenderer extends JLabel implements ListCellRenderer {
 			this.setText(user.getDisplayName());
 			this.setIconTextGap(8);
 
-			if (areHeadsReady) {
-				if (!headMap.containsKey(user.getUsername())) {
-					headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(user.getFaceImage(), ICON_WIDTH, ICON_HEIGHT)));
-				}
+			if (!headMap.containsKey(user.getUsername())) {
+				headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
+			}
 
-				Icon head = headMap.get(user.getUsername());
+			Icon head = headMap.get(user.getUsername());
 
-				if (head != null) {
-					this.setIcon(head);
-				} else if (backupHeadIcon != null) {
-					this.setIcon(backupHeadIcon);
-				}
-			} else if (backupHeadIcon != null) {
-				this.setIcon(backupHeadIcon);
+			if (head != null) {
+				this.setIcon(head);
 			}
 		} else if (value == null) {
 			this.setText("Add New User");
@@ -107,5 +98,19 @@ public class UserCellRenderer extends JLabel implements ListCellRenderer {
 		}
 
 		return this;
+	}
+
+	@Override
+	public void skinReady(User user) {
+	}
+
+	@Override
+	public void faceReady(User user) {
+		if (headMap.containsKey(user.getUsername()))
+			headMap.remove(user.getUsername());
+
+		headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
+
+		this.invalidate();
 	}
 }

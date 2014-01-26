@@ -19,15 +19,17 @@
 package org.spoutcraft.launcher.skin;
 
 import net.technicpack.launchercore.install.AddPack;
+import net.technicpack.launchercore.install.AvailablePackList;
+import net.technicpack.launchercore.install.IPackListener;
 import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.FileUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.components.PackButton;
 import org.spoutcraft.launcher.skin.options.ImportOptions;
 
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import java.awt.event.ActionEvent;
@@ -37,7 +39,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModpackSelector extends JComponent implements ActionListener {
+public class ModpackSelector extends JComponent implements ActionListener, IPackListener {
 	private static final long serialVersionUID = 1L;
 	private static final String PACK_SELECT_ACTION = "packselect";
 	private final LauncherFrame frame;
@@ -54,8 +56,15 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	private final int smallX = 100 - (smallWidth / 2);
 	private ImportOptions importOptions = null;
 
-	public ModpackSelector(LauncherFrame frame) {
+	private AvailablePackList mPackList;
+	private UserModel mUserModel;
+
+	public ModpackSelector(LauncherFrame frame, AvailablePackList packList, UserModel userModel) {
 		this.frame = frame;
+		this.mPackList = packList;
+		this.mUserModel = userModel;
+
+		this.mPackList.addPackListener(this);
 
 		for (int i = 0; i < 7; i++) {
 			PackButton button = new PackButton();
@@ -91,21 +100,22 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void addPack(InstalledPack pack) {
-		Launcher.getInstalledPacks().addNew(pack);
+		mPackList.put(pack);
 		selectPack(pack);
 	}
 
 	public void selectPack(InstalledPack pack) {
 		System.out.println(pack);
-		selectPack(pack.getName());
-	}
-
-	public void selectPack(String name) {
-		InstalledPack selected = Launcher.getInstalledPacks().select(name);
-		if (selected == null) {
+		if (pack == null) {
 			return;
 		}
-		redraw(selected, false);
+
+		mPackList.setPack(pack);
+		redraw(pack, false);
+	}
+
+	public void updatePack(InstalledPack pack) {
+		this.redraw(true);
 	}
 
 	public void redraw(InstalledPack selected, boolean force) {
@@ -141,13 +151,13 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 		// Add the first 3 buttons to the left
 		for (int i = 0; i < 3; i++) {
-			InstalledPack pack = Launcher.getInstalledPacks().getPrevious(i + 1);
+			InstalledPack pack = mPackList.getOffsetPack(-(i + 1));
 			buttons.get(i).setPack(pack);
 		}
 
 		// Add the last 3 buttons to the right
 		for (int i = 4; i < 7; i++) {
-			InstalledPack pack = Launcher.getInstalledPacks().getNext(i - 3);
+			InstalledPack pack = mPackList.getOffsetPack(i - 3);
 			buttons.get(i).setPack(pack);
 		}
 
@@ -168,8 +178,8 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void removePack() {
-		String packName = getSelectedPack().getName();
-		InstalledPack pack = Launcher.getInstalledPacks().get(packName);
+		InstalledPack pack = mPackList.getOffsetPack(0);
+		String packName = pack.getName();
 
 		File file = pack.getInstalledDirectory();
 		if (file.exists()) {
@@ -189,12 +199,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 			}
 		}
 
-		Launcher.getInstalledPacks().remove(packName);
-		selectPack(Launcher.getInstalledPacks().getPrevious(1));
+		mPackList.remove(pack);
+		selectPack(mPackList.getOffsetPack(-1));
 	}
 
 	public InstalledPack getSelectedPack() {
-		return Launcher.getInstalledPacks().getSelected();
+		return mPackList.getOffsetPack(0);
 	}
 
 	public void redraw(boolean force) {
@@ -202,11 +212,11 @@ public class ModpackSelector extends JComponent implements ActionListener {
 	}
 
 	public void selectNextPack() {
-		selectPack(Launcher.getInstalledPacks().getNext(1));
+		selectPack(mPackList.getOffsetPack(1));
 	}
 
 	public void selectPreviousPack() {
-		selectPack(Launcher.getInstalledPacks().getPrevious(1));
+		selectPack(mPackList.getOffsetPack(-1));
 	}
 
 	@Override
@@ -222,12 +232,12 @@ public class ModpackSelector extends JComponent implements ActionListener {
 
 			if (button.getIndex() == 0 && getSelectedPack() instanceof AddPack) {
 				if (importOptions == null || !importOptions.isVisible()) {
-					importOptions = new ImportOptions();
+					importOptions = new ImportOptions(mPackList, mUserModel);
 					importOptions.setModal(true);
 					importOptions.setVisible(true);
 				}
 			} else {
-				selectPack(Launcher.getInstalledPacks().get(Launcher.getInstalledPacks().getIndex() + button.getIndex()));
+				selectPack(mPackList.getOffsetPack(button.getIndex()));
 			}
 		}
 	}

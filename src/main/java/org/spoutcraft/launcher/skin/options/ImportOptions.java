@@ -49,14 +49,16 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 
+import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.restful.PackInfo;
 import net.technicpack.launchercore.restful.PlatformConstants;
 import net.technicpack.launchercore.restful.RestObject;
 import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
@@ -89,7 +91,13 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	private File installDir;
 	private LiteTextBox urlTextBox;
 
-	public ImportOptions() {
+	private AvailablePackList mPackList;
+	private UserModel mUserModel;
+
+	public ImportOptions(AvailablePackList packList, UserModel userModel) {
+		this.mPackList = packList;
+		this.mUserModel = userModel;
+
 		setTitle("Add a Pack");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
 		addMouseListener(this);
@@ -219,9 +227,9 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null) {
 				InstalledPack pack = new InstalledPack(info.getName(), true);
-				pack.setRefreshListener(Launcher.getInstance());
+				pack.setRefreshListener(mPackList);
 				pack.setInfo(info);
-				Launcher.getFrame().getSelector().addPack(pack);
+				mPackList.add(pack);
 				dispose();
 			}
 		} else if (action.equals(PASTE_URL)) {
@@ -285,7 +293,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 								return;
 							} else {
 								if (result.hasSolder()) {
-									info = SolderPackInfo.getSolderPackInfo(result.getSolder(), result.getName());
+									info = SolderPackInfo.getSolderPackInfo(result.getSolder(), result.getName(), mUserModel.getCurrentUser());
 								} else {
 									info = result;
 								}

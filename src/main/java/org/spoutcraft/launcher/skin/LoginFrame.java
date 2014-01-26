@@ -3,9 +3,13 @@ package org.spoutcraft.launcher.skin;
 import net.technicpack.launchercore.auth.AuthResponse;
 import net.technicpack.launchercore.auth.AuthenticationService;
 import net.technicpack.launchercore.exception.AuthenticationNetworkFailureException;
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.IAuthListener;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Users;
 import org.spoutcraft.launcher.skin.components.*;
 
 import javax.swing.*;
@@ -17,7 +21,7 @@ import java.util.Locale;
 
 import static net.technicpack.launchercore.util.ResourceUtils.getResourceAsStream;
 
-public class LoginFrame extends JFrame implements KeyListener, ActionListener, MouseListener, MouseMotionListener {
+public class LoginFrame extends JFrame implements KeyListener, ActionListener, MouseListener, MouseMotionListener, IAuthListener {
 	public static final Color CHARCOAL = new Color(45, 45, 45);
 
 	private JLabel nameLabel;
@@ -43,6 +47,9 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	private int dragGripX;
 	private int dragGripY;
 
+	private SkinRepository mSkinRepo;
+	private UserModel mUserModel;
+
 	private static final int FRAME_WIDTH = 347;
 	private static final int FRAME_HEIGHT = 411;
 
@@ -51,7 +58,12 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	private static final String CHANGE_USER = "change_user";
 	private static final String TOGGLE_REMEMBER = "remember";
 
-	public LoginFrame() {
+	public LoginFrame(SkinRepository skinRepo, UserModel userModel) {
+		mSkinRepo = skinRepo;
+		mUserModel = userModel;
+
+		mUserModel.addAuthListener(this);
+
 		//UI Setup
 		initComponents();
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -66,35 +78,6 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
 		//Refresh users from Launcher.getUsers() on initial run
 		refreshUsers();
-	}
-
-	/**
-	 * Called by Launcher- a public method that will attempt to silently log in with the last user & start up the
-	 * Launcher.  If that fails, it will make the login frame visible so the user can tinker with their login stuff
-	 * themselves.  If the login server is unavailable, but offline play is possible, offline play will automatically
-	 * be chosen.
-	 */
-	public void attemptStartup() {
-		if (Launcher.getUsers().getLastUser() == null || Launcher.getUsers().getUser(Launcher.getUsers().getLastUser()) == null) {
-			this.setVisible(true);
-			return;
-		}
-
-		if (!this.verifyExistingLogin(Launcher.getUsers().getUser(Launcher.getUsers().getLastUser()), false))
-			this.setVisible(true);
-	}
-
-	public void visitFrame() {
-		refreshUsers();
-		Launcher.getFrame().setCurrentUser(null);
-		Launcher.getFrame().setVisible(false);
-		this.setVisible(true);
-	}
-
-	public void faceDownloadsComplete() {
-		userRenderer.setHeadReady();
-		userEditor.setHeadReady();
-		nameSelect.invalidate();
 	}
 
 	/**
@@ -135,9 +118,9 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		nameSelect.setFont(largeFont);
 		nameSelect.setEditable(true);
 		nameSelect.setVisible(false);
-		userRenderer= new UserCellRenderer(largeFont);
+		userRenderer= new UserCellRenderer(largeFont, mSkinRepo);
 		nameSelect.setRenderer(userRenderer);
-		userEditor = new UserCellEditor(largeFont);
+		userEditor = new UserCellEditor(largeFont, mSkinRepo);
 		nameSelect.setEditor(userEditor);
 		userEditor.addKeyListener(this);
 		nameSelect.addActionListener(this);
@@ -235,7 +218,8 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	 * select the last-logged-in user (or first in the list) if available.
 	 */
 	private void refreshUsers() {
-		Collection<String> userAccounts = Launcher.getUsers().getUsers();
+		Collection<User> userAccounts = mUserModel.getUsers();
+		User lastUser = mUserModel.getLastUser();
 
 		if (userAccounts.size() == 0) {
 			name.setVisible(true);
@@ -246,19 +230,16 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			nameSelect.setVisible(true);
 			nameSelect.removeAllItems();
 
-			for (String account : userAccounts) {
-				User user = Launcher.getUsers().getUser(account);
-				nameSelect.addItem(user);
+			for (User account : userAccounts) {
+				nameSelect.addItem(account);
 			}
 
 			nameSelect.addItem(null);
 
-			String lastUser = Launcher.getUsers().getLastUser();
-
 			if (lastUser == null)
 				lastUser = userAccounts.iterator().next();
 
-			setCurrentUser(Launcher.getUsers().getUser(lastUser));
+			setCurrentUser(lastUser);
 		}
 	}
 
@@ -281,8 +262,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	 * @param user The user to remove
 	 */
 	private void forgetUser(User user) {
-		Launcher.getUsers().removeUser(user.getUsername());
-		Launcher.getUsers().save();
+		mUserModel.removeUser(user);
 		refreshUsers();
 	}
 
@@ -353,10 +333,11 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 				verifyExistingLogin((User) selected);
 			} else {
 				String username = selected.toString();
-				User user = Launcher.getUsers().getUser(username);
+
+				User user = mUserModel.getUser(username);
 
 				if (user == null)
-					attemptNewLogin(selected.toString());
+					attemptNewLogin(username);
 				else {
 					setCurrentUser(user);
 					verifyExistingLogin(user);
@@ -376,38 +357,15 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	 * @return True if the launcher frame was successfully activated, false otherwise
 	 */
 	private boolean verifyExistingLogin(User user) {
-		//Default to loud message boxes in case of failure
-		return verifyExistingLogin(user, true);
-	}
-
-	/**
-	 * Attempt to verify & refresh the session of an already-logged in user.  If the Auth service is unavailable,
-	 * prompt the user for Offline Play.  If the verify/refresh is successful, or Offline Play is accepted, then
-	 * activate the launcher frame.
-	 *
-	 * @param user                The already-logged in user to verify & refresh the session for.
-	 * @param notifyUserOfFailure If true, show the user prompts & failure messages.  If false, fail quietly and
-	 *                            automatically accept Offline Play. This option is used when attempting to log in
-	 *                            automatically on launcher startup.
-	 * @return True if the launcher frame was successfully activated, false otherwise
-	 */
-	private boolean verifyExistingLogin(User user, boolean notifyUserOfFailure) {
 		User loginUser = user;
 		boolean rejected = false;
 
 		try {
-			AuthResponse response = AuthenticationService.requestRefresh(loginUser);
-			if (response.getError() != null) {
-
-				if (notifyUserOfFailure)
-					JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
-
-				rejected = true;
+			UserModel.AuthError error = mUserModel.AttemptUserRefresh(user);
+			if (error != null) {
+				JOptionPane.showMessageDialog(this, error.getErrorDescription(), error.getError(), JOptionPane.ERROR_MESSAGE);
 				loginUser = null;
-			} else {
-				//Refresh user from response
-				loginUser = new User(user.getUsername(), response);
-				Launcher.getUsers().addUser(loginUser);
+				rejected = true;
 			}
 		} catch (AuthenticationNetworkFailureException ex) {
 			ex.printStackTrace();
@@ -415,13 +373,13 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			//Couldn't reach auth server- if we're running silently (we just started up and have a user session ready to roll)
 			//Go ahead and just play offline automatically, like the minecraft client does.  If we're running loud (user
 			//is actually at the login UI clicking the login button), give them a choice.
-			if (!notifyUserOfFailure || JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
+			if (JOptionPane.YES_OPTION == JOptionPane.showConfirmDialog(this,
 					"The auth servers at Minecraft.net are inaccessible.  Would you like to play offline?",
 					"Offline Play", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE)) {
 
 				//This is the last time we'll have access to the user's real username, so we should set the last-used
 				//username now
-				Launcher.getUsers().setLastUser(user.getUsername());
+				mUserModel.setLastUser(user);
 
 				//Create offline user
 				loginUser = new User(user.getDisplayName());
@@ -435,8 +393,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			//If we actually failed to validate, we should remove the user from the list of saved users
 			//and refresh the user list
 			if (rejected) {
-				Launcher.getUsers().removeUser(user.getUsername());
-				Launcher.getUsers().save();
+				mUserModel.removeUser(user);
 				refreshUsers();
 				setCurrentUser(user.getUsername());
 			}
@@ -444,7 +401,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			return false;
 		} else {
 			//We have a cleared user, start the launcher up
-			startLauncher(loginUser);
+			mUserModel.setCurrentUser(loginUser);
 			return true;
 		}
 	}
@@ -460,7 +417,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		AuthResponse response = null;
 		try {
 			//Attempt the log the user in with the data from this form
-			response = AuthenticationService.requestLogin(username, new String(this.pass.getPassword()), Launcher.getUsers().getClientToken());
+			response = AuthenticationService.requestLogin(username, new String(this.pass.getPassword()), mUserModel.getClientToken());
 
 			if (response.getError() != null) {
 				JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
@@ -474,44 +431,14 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 		}
 
 		//Create an online user with the received data
-		final User clearedUser = new User(username, response);
+		User clearedUser = new User(username, response);
 
 		if (rememberAccount.isSelected()) {
 			//Add user to our list of cached users if checkbox is true
-			Launcher.getUsers().addUser(clearedUser);
+			mUserModel.addUser(clearedUser);
 		}
 
-		Thread downloadNewHeadAndNotifyLauncher = new Thread("Download new head and notify frames") {
-			@Override
-			public void run() {
-				clearedUser.downloadFaceImage();
-				Launcher.getFrame().faceDownloadsComplete();
-				Launcher.getLoginFrame().faceDownloadsComplete();
-			}
-		};
-		downloadNewHeadAndNotifyLauncher.start();
-
-		startLauncher(clearedUser);
-	}
-
-	/**
-	 * Activate the launcher frame & close the login frame.
-	 *
-	 * @param user The user object to run Minecraft under.  This user may be online or offline depending on the path
-	 *             used to arrive here.
-	 */
-	private void startLauncher(User user) {
-
-		if (!user.isOffline()) {
-			Launcher.getUsers().setLastUser(user.getUsername());
-		}
-
-		Launcher.getUsers().save();
-
-		this.refreshUsers();
-		Launcher.getFrame().setCurrentUser(user);
-		this.setVisible(false);
-		Launcher.getFrame().setVisible(true);
+		mUserModel.setCurrentUser(clearedUser);
 	}
 
 	@Override
@@ -592,5 +519,13 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 	@Override
 	public void mouseMoved(MouseEvent e) {
 		// None
+	}
+
+	@Override
+	public void userChanged(User user) {
+		if (user == null)
+			this.setVisible(true);
+		else
+			this.setVisible(false);
 	}
 }

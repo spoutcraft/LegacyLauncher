@@ -23,6 +23,7 @@ import net.technicpack.launchercore.launch.MinecraftExitListener;
 import net.technicpack.launchercore.launch.MinecraftProcess;
 import net.technicpack.launchercore.util.LaunchAction;
 import net.technicpack.launchercore.util.Settings;
+import org.spoutcraft.launcher.launcher.Launcher;
 
 public class LauncherUnhider implements MinecraftExitListener {
 	@Override

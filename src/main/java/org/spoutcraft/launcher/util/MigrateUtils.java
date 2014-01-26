@@ -18,11 +18,12 @@
 
 package org.spoutcraft.launcher.util;
 
+import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
-import net.technicpack.launchercore.install.InstalledPacks;
+import org.spoutcraft.launcher.launcher.InstalledPacks;
 import net.technicpack.launchercore.util.Utils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.settings.OldSettings;
 import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.util.yml.YAMLFormat;
@@ -51,7 +52,7 @@ public class MigrateUtils {
 		Settings.setDirectory(OldSettings.getLauncherDir());
 		Settings.setShowConsole(OldSettings.getShowLauncherConsole());
 
-		InstalledPacks installedPacks = new InstalledPacks();
+		AvailablePackList packList = new AvailablePackList(new InstalledPacks());
 
 		for (String modpack : OldSettings.getInstalledPacks()) {
 			boolean custom = OldSettings.isPackCustom(modpack);
@@ -61,10 +62,10 @@ public class MigrateUtils {
             if (directory != null)
             {
                 InstalledPack pack = new InstalledPack(modpack, custom, build, directory);
-                pack.setRefreshListener(Launcher.getInstance());
+                pack.setRefreshListener(packList);
                 pack.getInstalledDirectory();
                 migrateInstalled(pack);
-                installedPacks.add(pack);
+                packList.add(pack);
             }
 		}
 

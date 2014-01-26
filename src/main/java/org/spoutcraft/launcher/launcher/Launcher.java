@@ -1,0 +1,138 @@
+/*
+ * This file is part of Technic Launcher.
+ * Copyright (C) 2013 Syndicate, LLC
+ *
+ * Technic Launcher is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Technic Launcher is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Technic Launcher.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.spoutcraft.launcher.launcher;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.LinkedList;
+import java.util.logging.Level;
+
+import net.technicpack.launchercore.exception.AuthenticationNetworkFailureException;
+import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.install.AddPack;
+import net.technicpack.launchercore.install.AvailablePackList;
+import net.technicpack.launchercore.install.IPackStore;
+import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.install.PackRefreshListener;
+import net.technicpack.launchercore.install.user.IAuthListener;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.install.user.skins.MinotarSkinStore;
+import net.technicpack.launchercore.install.user.skins.SkinRepository;
+import net.technicpack.launchercore.restful.PackInfo;
+import net.technicpack.launchercore.restful.RestObject;
+import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
+import net.technicpack.launchercore.restful.solder.FullModpacks;
+import net.technicpack.launchercore.restful.solder.Solder;
+import net.technicpack.launchercore.restful.solder.SolderConstants;
+import net.technicpack.launchercore.restful.solder.SolderPackInfo;
+import net.technicpack.launchercore.util.Utils;
+
+import org.spoutcraft.launcher.InstallThread;
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+import org.spoutcraft.launcher.skin.LauncherFrame;
+import org.spoutcraft.launcher.skin.LoginFrame;
+
+public class Launcher {
+	private static Launcher instance;
+	private final LauncherFrame launcherFrame;
+	private final LoginFrame loginFrame;
+	private final UserModel userModel;
+	private InstallThread installThread;
+
+	private LinkedList<Thread> startupTasks = new LinkedList<Thread>();
+
+	public Launcher() {
+		if (Launcher.instance != null) {
+			throw new IllegalArgumentException("You can't have a duplicate launcher");
+		}
+
+		SkinRepository skinRepo = new SkinRepository(new TechnicSkinMapper(), new MinotarSkinStore("https://minotar.net/"));
+		userModel = new UserModel(Users.load());
+
+		instance = this;
+
+		trackLauncher();
+
+		IPackStore installedPacks = InstalledPacks.load();
+		AvailablePackList packList = new AvailablePackList(installedPacks);
+		userModel.addAuthListener(packList);
+
+		this.launcherFrame = new LauncherFrame(skinRepo, userModel, packList);
+		this.loginFrame = new LoginFrame(skinRepo, userModel);
+
+		Thread news = new Thread("News Thread") {
+			@Override
+			public void run() {
+				launcherFrame.getNews().loadArticles();
+			}
+		};
+
+		news.start();
+	}
+
+	public void startup() {
+		try {
+			UserModel.AuthError error = userModel.AttemptLastUserRefresh();
+
+			if (error != null) {
+				userModel.setCurrentUser(null);
+			}
+		} catch (AuthenticationNetworkFailureException ex) {
+			userModel.setCurrentUser(new User(userModel.getLastUser().getDisplayName()));
+		}
+	}
+
+	public static Launcher getInstance() {
+		return instance;
+	}
+
+	public static void launch(User user, InstalledPack pack, String build, UserModel userModel) {
+		instance.installThread = new InstallThread(user, pack, build, userModel);
+		instance.installThread.start();
+	}
+
+	public static boolean isLaunching() {
+		return instance.installThread != null && !instance.installThread.isFinished();
+	}
+
+	public static LauncherFrame getFrame() {
+		return instance.launcherFrame;
+	}
+
+	public static LoginFrame getLoginFrame() {
+		return instance.loginFrame;
+	}
+	
+	public static void trackLauncher() {
+		File installed = new File(Utils.getSettingsDirectory(), "installed");
+		if (!installed.exists()) {
+			try {
+				installed.createNewFile();
+				Utils.sendTracking("installLauncher", "install", SpoutcraftLauncher.getLauncherBuild());
+			} catch (IOException e) {
+				e.printStackTrace();
+				Utils.getLogger().log(Level.INFO, "Failed to create install tracking file");
+			}
+			
+		}
+		
+		Utils.sendTracking("runLauncher", "run", SpoutcraftLauncher.getLauncherBuild());
+	}
+}

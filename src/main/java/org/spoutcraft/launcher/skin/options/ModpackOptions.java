@@ -18,9 +18,10 @@
 
 package org.spoutcraft.launcher.skin.options;
 
+import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.Launcher;
+import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
@@ -78,7 +79,10 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 	private boolean directoryChanged = false;
 	private int mouseX = 0, mouseY = 0;
 
-	public ModpackOptions(InstalledPack installedPack) {
+	private AvailablePackList mPackList;
+
+	public ModpackOptions(InstalledPack installedPack, AvailablePackList packList) {
+		this.mPackList = packList;
 		this.installedPack = installedPack;
 		setTitle("Modpack Options");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -300,7 +304,7 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 				installedPack.setPackDirectory(installedDirectory);
 			}
 			installedPack.setBuild(build);
-			Launcher.getInstalledPacks().save();
+			mPackList.save();
 			dispose();
 		} else if (action.equals(BUILD_ACTION)) {
 			build = ((BuildLabel) buildSelector.getSelectedItem()).getBuild();

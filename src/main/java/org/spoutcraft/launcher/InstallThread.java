@@ -22,10 +22,10 @@ import net.technicpack.launchercore.exception.BuildInaccessibleException;
 import net.technicpack.launchercore.exception.CacheDeleteException;
 import net.technicpack.launchercore.exception.DownloadException;
 import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
-import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
-import net.technicpack.launchercore.install.User;
+import net.technicpack.launchercore.install.user.User;
+import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.launch.LaunchOptions;
 import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
@@ -33,22 +33,24 @@ import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 import javax.swing.*;
-import java.io.File;
 import java.io.IOException;
 import java.util.zip.ZipException;
 import net.technicpack.launchercore.util.LaunchAction;
+import org.spoutcraft.launcher.launcher.Launcher;
 
 public class InstallThread extends Thread {
 	private final User user;
 	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
+	private final UserModel userModel;
 	private boolean finished = false;
 
-	public InstallThread(User user, InstalledPack pack, String build) {
+	public InstallThread(User user, InstalledPack pack, String build, UserModel userModel) {
 		super("InstallThread");
 		this.user = user;
 		this.pack = pack;
 		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build);
+		this.userModel = userModel;
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class InstallThread extends Thread {
 			Launcher.getFrame().getProgressBar().setVisible(true);
 			CompleteVersion version = null;
 			if (!pack.isLocalOnly()) {
-				version = modpackInstaller.installPack(Launcher.getFrame());
+				version = modpackInstaller.installPack(Launcher.getFrame(), userModel.getCurrentUser());
 			} else {
 				version = modpackInstaller.prepareOfflinePack();
 			}
