@@ -275,7 +275,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		runningMan = new ImageHyperlinkButton("http://www.technicpack.net/attack-of-the-bteam");
 		runningMan.setIcon(ResourceUtils.getIcon("guyrunning.png", 299, 229));
 		runningMan.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		runningMan.setBounds(150, FRAME_HEIGHT - 229, 299, 229);
+		runningMan.setBounds(310, FRAME_HEIGHT - 229, 299, 229);
 
 		// Pack Remove Button
 		packRemoveBtn = new ImageButton(ResourceUtils.getIcon("packDelete.png", 20, 20), ResourceUtils.getIcon("packDeleteInverted.png", 20, 20));
@@ -331,7 +331,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
 
-		contentPane.add(runningMan);
 		contentPane.add(launch);
 		contentPane.add(launchArea);
 		contentPane.add(userHead);
@@ -360,6 +359,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.add(news);
 		contentPane.add(options);
 		contentPane.add(exit);
+		contentPane.add(runningMan);
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
