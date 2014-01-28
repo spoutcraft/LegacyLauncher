@@ -227,7 +227,6 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null) {
 				InstalledPack pack = new InstalledPack(info.getName(), true);
-				pack.setRefreshListener(mPackList);
 				pack.setInfo(info);
 				mPackList.add(pack);
 				dispose();

@@ -89,6 +89,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
 	private ImageHyperlinkButton platform;
+	private ImageHyperlinkButton runningMan;
 	private JLabel customName;
 	private LiteButton launch;
 	private JLabel userHead;
@@ -121,6 +122,16 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+	}
+
+	//HACK - get rid of posthaste!
+	@Override
+	public void setTitle(String packTitle) {
+		super.setTitle(packTitle);
+		if (packTitle.equals("Attack of the B-Team"))
+			runningMan.setVisible(false);
+		else
+			runningMan.setVisible(true);
 	}
 
 	public void skinReady(User user) { }
@@ -261,6 +272,11 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		platform.setIcon(ResourceUtils.getIcon("openPlatformPage.png", 20, 20));
 		platform.setBounds(50, FRAME_HEIGHT / 2 + 56, 20, 20);
 
+		runningMan = new ImageHyperlinkButton("http://www.technicpack.net/attack-of-the-bteam");
+		runningMan.setIcon(ResourceUtils.getIcon("guyRunning.png", 299, 229));
+		runningMan.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		runningMan.setBounds(150, FRAME_HEIGHT - 229, 299, 229);
+
 		// Pack Remove Button
 		packRemoveBtn = new ImageButton(ResourceUtils.getIcon("packDelete.png", 20, 20), ResourceUtils.getIcon("packDeleteInverted.png", 20, 20));
 		packRemoveBtn.setBounds(185, FRAME_HEIGHT / 2 + 56, 20, 20);
@@ -315,6 +331,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
 
+		contentPane.add(runningMan);
 		contentPane.add(launch);
 		contentPane.add(launchArea);
 		contentPane.add(userHead);
