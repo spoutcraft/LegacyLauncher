@@ -273,7 +273,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		platform.setBounds(50, FRAME_HEIGHT / 2 + 56, 20, 20);
 
 		runningMan = new ImageHyperlinkButton("http://www.technicpack.net/attack-of-the-bteam");
-		runningMan.setIcon(ResourceUtils.getIcon("guyRunning.png", 299, 229));
+		runningMan.setIcon(ResourceUtils.getIcon("guyrunning.png", 299, 229));
 		runningMan.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		runningMan.setBounds(150, FRAME_HEIGHT - 229, 299, 229);
 
