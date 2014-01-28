@@ -275,7 +275,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		runningMan = new ImageHyperlinkButton("http://www.technicpack.net/attack-of-the-bteam");
 		runningMan.setIcon(ResourceUtils.getIcon("guyrunning.png", 299, 229));
 		runningMan.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		runningMan.setBounds(310, FRAME_HEIGHT - 229, 299, 229);
+		runningMan.setBounds(210, FRAME_HEIGHT - 229, 299, 229);
 
 		// Pack Remove Button
 		packRemoveBtn = new ImageButton(ResourceUtils.getIcon("packDelete.png", 20, 20), ResourceUtils.getIcon("packDeleteInverted.png", 20, 20));
