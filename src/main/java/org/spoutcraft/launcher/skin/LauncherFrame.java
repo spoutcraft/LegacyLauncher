@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher.skin;
 
+import org.spoutcraft.launcher.donor.DonorSite;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.user.IAuthListener;
@@ -90,6 +91,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private ImageButton packRemoveBtn;
 	private ImageHyperlinkButton platform;
 	private ImageHyperlinkButton runningMan;
+	private RoundedBox bteamArea;
 	private JLabel customName;
 	private LiteButton launch;
 	private JLabel userHead;
@@ -103,11 +105,13 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private SkinRepository mSkinRepo;
 	private UserModel mUserModel;
 	private AvailablePackList mPackList;
+	private DonorSite mDonorSite;
 
-	public LauncherFrame(SkinRepository skinRepo, UserModel userModel, AvailablePackList packList) {
+	public LauncherFrame(SkinRepository skinRepo, UserModel userModel, AvailablePackList packList, DonorSite donorSite) {
 		this.mSkinRepo = skinRepo;
 		this.mUserModel = userModel;
 		this.mPackList = packList;
+		this.mDonorSite = donorSite;
 
 		this.mUserModel.addAuthListener(this);
 
@@ -142,6 +146,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	private void initComponents(AvailablePackList packList) {
 		Font minecraft = getMinecraftFont(12);
+		Font ready = getMinecraftFont(10);
 
 		// Launch button area
 		RoundedBox launchArea = new RoundedBox(TRANSPARENT);
@@ -331,6 +336,30 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
 
+		int bteamx = selectorBackground.getX()+selectorBackground.getWidth()+5;
+		int bteamheight = 30;
+
+		// User info area
+		bteamArea = new RoundedBox(TRANSPARENT);
+		bteamArea.setBounds(bteamx, (userArea.getY()+userArea.getHeight()) - bteamheight -1,userArea.getX() - bteamx - 5, bteamheight );
+
+		JLabel bteamReadyLabel1 = new JLabel("YOUR ACCOUNT IS READY FOR ATTACK OF THE B-TEAM");
+		bteamReadyLabel1.setFont(ready);
+		bteamReadyLabel1.setHorizontalAlignment(SwingConstants.CENTER);
+		bteamReadyLabel1.setHorizontalTextPosition(SwingConstants.CENTER);
+		bteamReadyLabel1.setForeground(Color.white);
+		bteamReadyLabel1.setBounds(0,0,userArea.getX() - bteamx - 10, bteamheight/2 );
+		bteamArea.add(bteamReadyLabel1);
+
+		JLabel bteamReadyLabel2 = new JLabel("EARLY ACCESS BEGINS JANUARY 31ST 3:00 PM EST");
+		bteamReadyLabel2.setFont(ready);
+		bteamReadyLabel2.setHorizontalAlignment(SwingConstants.CENTER);
+		bteamReadyLabel2.setHorizontalTextPosition(SwingConstants.CENTER);
+		bteamReadyLabel2.setForeground(Color.white);
+		bteamReadyLabel2.setBounds(0, bteamheight / 2, userArea.getX() - bteamx - 10, bteamheight / 2);
+		bteamArea.add(bteamReadyLabel2);
+
+		contentPane.add(bteamArea);
 		contentPane.add(launch);
 		contentPane.add(launchArea);
 		contentPane.add(userHead);
@@ -519,6 +548,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void userChanged(User user) {
 		this.currentUser = user;
+		this.bteamArea.setVisible(false);
 
 		if (user == null)
 		{
@@ -531,6 +561,9 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		else {
 			launch.setText("PLAY");
 			mUserModel.setLastUser(currentUser);
+
+			if (mDonorSite.doesUserQualify(1, currentUser.getProfile().getName(), 5))
+				this.bteamArea.setVisible(true);
 		}
 
 		loggedInMsg.setText(currentUser.getDisplayName());

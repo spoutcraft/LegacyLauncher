@@ -23,25 +23,15 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import org.spoutcraft.launcher.donor.DonorSite;
 import net.technicpack.launchercore.exception.AuthenticationNetworkFailureException;
-import net.technicpack.launchercore.exception.RestfulAPIException;
-import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.IPackStore;
 import net.technicpack.launchercore.install.InstalledPack;
-import net.technicpack.launchercore.install.PackRefreshListener;
-import net.technicpack.launchercore.install.user.IAuthListener;
 import net.technicpack.launchercore.install.user.User;
 import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.install.user.skins.MinotarSkinStore;
 import net.technicpack.launchercore.install.user.skins.SkinRepository;
-import net.technicpack.launchercore.restful.PackInfo;
-import net.technicpack.launchercore.restful.RestObject;
-import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
-import net.technicpack.launchercore.restful.solder.FullModpacks;
-import net.technicpack.launchercore.restful.solder.Solder;
-import net.technicpack.launchercore.restful.solder.SolderConstants;
-import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
 
 import org.spoutcraft.launcher.InstallThread;
@@ -74,7 +64,9 @@ public class Launcher {
 		AvailablePackList packList = new AvailablePackList(installedPacks);
 		userModel.addAuthListener(packList);
 
-		this.launcherFrame = new LauncherFrame(skinRepo, userModel, packList);
+		DonorSite donors = new DonorSite("http://donate.technicpack.net/");
+
+		this.launcherFrame = new LauncherFrame(skinRepo, userModel, packList, donors);
 		this.loginFrame = new LoginFrame(skinRepo, userModel);
 
 		Thread news = new Thread("News Thread") {
