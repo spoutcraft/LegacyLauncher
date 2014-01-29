@@ -92,6 +92,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private ImageHyperlinkButton platform;
 	private ImageHyperlinkButton runningMan;
 	private RoundedBox bteamArea;
+	private JLabel bteamAmount;
 	private JLabel customName;
 	private LiteButton launch;
 	private JLabel userHead;
@@ -337,18 +338,26 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setForeground(Color.white);
 
 		int bteamx = selectorBackground.getX()+selectorBackground.getWidth()+5;
-		int bteamheight = 30;
+		int bteamheight = 45;
 
 		// User info area
 		bteamArea = new RoundedBox(TRANSPARENT);
 		bteamArea.setBounds(bteamx, (userArea.getY()+userArea.getHeight()) - bteamheight -1,userArea.getX() - bteamx - 5, bteamheight );
+
+		bteamAmount = new JLabel("BAH");
+		bteamAmount.setFont(ready);
+		bteamAmount.setHorizontalAlignment(SwingConstants.CENTER);
+		bteamAmount.setHorizontalTextPosition(SwingConstants.CENTER);
+		bteamAmount.setForeground(Color.white);
+		bteamAmount.setBounds(0, 0, userArea.getX() - bteamx - 10, bteamheight/3);
+		bteamArea.add(bteamAmount);
 
 		JLabel bteamReadyLabel1 = new JLabel("YOUR ACCOUNT IS READY FOR ATTACK OF THE B-TEAM");
 		bteamReadyLabel1.setFont(ready);
 		bteamReadyLabel1.setHorizontalAlignment(SwingConstants.CENTER);
 		bteamReadyLabel1.setHorizontalTextPosition(SwingConstants.CENTER);
 		bteamReadyLabel1.setForeground(Color.white);
-		bteamReadyLabel1.setBounds(0,0,userArea.getX() - bteamx - 10, bteamheight/2 );
+		bteamReadyLabel1.setBounds(0,bteamheight / 3,userArea.getX() - bteamx - 10, bteamheight/3 );
 		bteamArea.add(bteamReadyLabel1);
 
 		JLabel bteamReadyLabel2 = new JLabel("EARLY ACCESS BEGINS JANUARY 31ST 3:00 PM EST");
@@ -356,7 +365,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		bteamReadyLabel2.setHorizontalAlignment(SwingConstants.CENTER);
 		bteamReadyLabel2.setHorizontalTextPosition(SwingConstants.CENTER);
 		bteamReadyLabel2.setForeground(Color.white);
-		bteamReadyLabel2.setBounds(0, bteamheight / 2, userArea.getX() - bteamx - 10, bteamheight / 2);
+		bteamReadyLabel2.setBounds(0, (2*bteamheight) / 3, userArea.getX() - bteamx - 10, bteamheight / 3);
 		bteamArea.add(bteamReadyLabel2);
 
 		contentPane.add(bteamArea);
@@ -562,8 +571,8 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			launch.setText("PLAY");
 			mUserModel.setLastUser(currentUser);
 
-			if (mDonorSite.doesUserQualify(1, currentUser.getProfile().getName(), 5))
-				this.bteamArea.setVisible(true);
+//			if (mDonorSite.doesUserQualify(1, currentUser.getProfile().getName(), 5))
+//				this.bteamArea.setVisible(true);
 		}
 
 		loggedInMsg.setText(currentUser.getDisplayName());
