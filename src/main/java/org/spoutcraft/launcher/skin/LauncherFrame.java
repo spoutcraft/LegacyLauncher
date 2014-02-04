@@ -90,9 +90,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private ImageButton packOptionsBtn;
 	private ImageButton packRemoveBtn;
 	private ImageHyperlinkButton platform;
-	private ImageHyperlinkButton runningMan;
-	private RoundedBox bteamArea;
-	private JLabel bteamAmount;
 	private JLabel customName;
 	private LiteButton launch;
 	private JLabel userHead;
@@ -127,16 +124,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		getContentPane().add(packBackground);
 		this.setUndecorated(true);
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	}
-
-	//HACK - get rid of posthaste!
-	@Override
-	public void setTitle(String packTitle) {
-		super.setTitle(packTitle);
-		if (packTitle.equals("Attack of the B-Team"))
-			runningMan.setVisible(false);
-		else
-			runningMan.setVisible(true);
 	}
 
 	public void skinReady(User user) { }
@@ -278,11 +265,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		platform.setIcon(ResourceUtils.getIcon("openPlatformPage.png", 20, 20));
 		platform.setBounds(50, FRAME_HEIGHT / 2 + 56, 20, 20);
 
-		runningMan = new ImageHyperlinkButton("http://www.technicpack.net/attack-of-the-bteam");
-		runningMan.setIcon(ResourceUtils.getIcon("guyrunning.png", 299, 229));
-		runningMan.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		runningMan.setBounds(210, FRAME_HEIGHT - 229, 299, 229);
-
 		// Pack Remove Button
 		packRemoveBtn = new ImageButton(ResourceUtils.getIcon("packDelete.png", 20, 20), ResourceUtils.getIcon("packDeleteInverted.png", 20, 20));
 		packRemoveBtn.setBounds(185, FRAME_HEIGHT / 2 + 56, 20, 20);
@@ -337,38 +319,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		customName.setVisible(false);
 		customName.setForeground(Color.white);
 
-		int bteamx = selectorBackground.getX()+selectorBackground.getWidth()+5;
-		int bteamheight = 45;
-
-		// User info area
-		bteamArea = new RoundedBox(TRANSPARENT);
-		bteamArea.setBounds(bteamx, (userArea.getY()+userArea.getHeight()) - bteamheight -1,userArea.getX() - bteamx - 5, bteamheight );
-
-		bteamAmount = new JLabel("BAH");
-		bteamAmount.setFont(ready);
-		bteamAmount.setHorizontalAlignment(SwingConstants.CENTER);
-		bteamAmount.setHorizontalTextPosition(SwingConstants.CENTER);
-		bteamAmount.setForeground(Color.white);
-		bteamAmount.setBounds(0, 0, userArea.getX() - bteamx - 10, bteamheight/3);
-		bteamArea.add(bteamAmount);
-
-		JLabel bteamReadyLabel1 = new JLabel("YOUR ACCOUNT IS READY FOR ATTACK OF THE B-TEAM");
-		bteamReadyLabel1.setFont(ready);
-		bteamReadyLabel1.setHorizontalAlignment(SwingConstants.CENTER);
-		bteamReadyLabel1.setHorizontalTextPosition(SwingConstants.CENTER);
-		bteamReadyLabel1.setForeground(Color.white);
-		bteamReadyLabel1.setBounds(0,bteamheight / 3,userArea.getX() - bteamx - 10, bteamheight/3 );
-		bteamArea.add(bteamReadyLabel1);
-
-		JLabel bteamReadyLabel2 = new JLabel("EARLY ACCESS BEGINS JANUARY 31ST 3:00 PM EST");
-		bteamReadyLabel2.setFont(ready);
-		bteamReadyLabel2.setHorizontalAlignment(SwingConstants.CENTER);
-		bteamReadyLabel2.setHorizontalTextPosition(SwingConstants.CENTER);
-		bteamReadyLabel2.setForeground(Color.white);
-		bteamReadyLabel2.setBounds(0, (2*bteamheight) / 3, userArea.getX() - bteamx - 10, bteamheight / 3);
-		bteamArea.add(bteamReadyLabel2);
-
-		contentPane.add(bteamArea);
 		contentPane.add(launch);
 		contentPane.add(launchArea);
 		contentPane.add(userHead);
@@ -397,7 +347,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.add(news);
 		contentPane.add(options);
 		contentPane.add(exit);
-		contentPane.add(runningMan);
 	}
 
 	private void setIcon(JButton button, String iconName, int size) {
@@ -557,7 +506,6 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 
 	public void userChanged(User user) {
 		this.currentUser = user;
-		this.bteamArea.setVisible(false);
 
 		if (user == null)
 		{
