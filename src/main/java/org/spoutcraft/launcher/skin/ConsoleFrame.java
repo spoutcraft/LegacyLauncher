@@ -18,8 +18,6 @@
 
 package org.spoutcraft.launcher.skin;
 
-import org.apache.commons.io.IOUtils;
-
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -48,14 +46,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.util.logging.Handler;
-import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 /**
@@ -123,7 +115,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		this.setIconImage(Toolkit.getDefaultToolkit().getImage(LauncherFrame.icon));
 
 		if (trackProc != null) {
-			track(trackProc);
+			track();
 		}
 
 		addMouseListener(this);
@@ -145,10 +137,8 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 
 	/**
 	 * Track a process in a separate daemon thread.
-	 *
-	 * @param process process
 	 */
-	private void track(Process process) {
+	private void track() {
 		final PrintWriter out = new PrintWriter(getOutputStream(Color.MAGENTA), true);
 		Thread thread = new Thread(new Runnable() {
 			@Override
@@ -192,8 +182,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	 */
 	private void buildUI() {
 		if (colorEnabled) {
-			JTextPane text = new JTextPane();
-			this.textComponent = text;
+            this.textComponent = new JTextPane();
 		} else {
 			JTextArea text = new JTextArea();
 			this.textComponent = text;

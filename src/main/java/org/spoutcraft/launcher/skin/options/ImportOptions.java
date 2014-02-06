@@ -58,7 +58,6 @@ import net.technicpack.launchercore.restful.RestObject;
 import net.technicpack.launchercore.restful.platform.PlatformPackInfo;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;
@@ -195,11 +194,11 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent) e.getSource());
+			action(e.getActionCommand());
 		}
 	}
 
-	private void action(String action, JComponent c) {
+	private void action(String action) {
 		if (action.equals(QUIT_ACTION)) {
 			dispose();
 		} else if (action.equals(CHANGE_FOLDER)) {

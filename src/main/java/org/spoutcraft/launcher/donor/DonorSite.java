@@ -26,10 +26,7 @@ public class DonorSite {
 		Donor donor = donors.getDonor(username);
 
 		if (donor == null) return false;
-		if (donor.getAmount() + 0.001f >= threshold)
-			return true;
-
-		return false;
+		return (donor.getAmount() + 0.001f >= threshold);
 	}
 
 	private EventDonors getEventDonors(int eventId) {
@@ -52,8 +49,7 @@ public class DonorSite {
 
 	private EventDonors downloadEventDonors(int eventId) {
 		try {
-			EventDonors donors = RestObject.getRestObject(EventDonors.class, getEventUrl(eventId));
-			return donors;
+			return RestObject.getRestObject(EventDonors.class, getEventUrl(eventId));
 		} catch (RestfulAPIException ex) {
 			//This can happen if we get a 404 or something, which probably means the event ID is garbage,
 			//or maybe there's a network outage.

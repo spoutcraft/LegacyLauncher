@@ -48,10 +48,9 @@ public enum WindowMode {
 
 	/**
 	 * Gets the proper dimensions for this window based on the window mode
-	 * @param window
 	 * @return proper dimensions
 	 */
-	public Dimension getDimension(Window window) {
+	public Dimension getDimension() {
 		Rectangle bounds;
 		switch(this) {
 			case WINDOWED:

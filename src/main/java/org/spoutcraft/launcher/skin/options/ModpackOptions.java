@@ -21,7 +21,6 @@ package org.spoutcraft.launcher.skin.options;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 import org.spoutcraft.launcher.skin.components.ImageButton;
 import org.spoutcraft.launcher.skin.components.LiteButton;

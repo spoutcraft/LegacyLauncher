@@ -22,7 +22,6 @@ import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 import org.spoutcraft.launcher.skin.LauncherFrame;
 
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;

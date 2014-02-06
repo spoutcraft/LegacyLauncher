@@ -23,7 +23,6 @@ import net.technicpack.launchercore.install.Version;
 import net.technicpack.launchercore.install.InstalledPack;
 import org.spoutcraft.launcher.launcher.InstalledPacks;
 import net.technicpack.launchercore.util.Utils;
-import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.settings.OldSettings;
 import net.technicpack.launchercore.util.Settings;
 import org.spoutcraft.launcher.util.yml.YAMLFormat;

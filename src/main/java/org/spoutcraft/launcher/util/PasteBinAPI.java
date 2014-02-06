@@ -37,7 +37,7 @@ public class PasteBinAPI {
 	}
 
 	public String checkResponse(String response) {
-		if (response != null && response.length() > 17 && response.substring(0, 15) == "Bad API request") {
+		if (response != null && response.length() > 17 && response.substring(0, 15).equals("Bad API request")) {
 			return response.substring(17);
 		}
 

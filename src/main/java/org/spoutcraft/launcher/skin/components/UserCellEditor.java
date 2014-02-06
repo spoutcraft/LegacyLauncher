@@ -22,9 +22,7 @@ import net.technicpack.launchercore.install.user.User;
 import net.technicpack.launchercore.install.user.skins.ISkinListener;
 import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.ImageUtils;
-import net.technicpack.launchercore.util.ResourceUtils;
 
-import javax.imageio.ImageIO;
 import javax.swing.ComboBoxEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -40,7 +38,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -134,7 +131,6 @@ public class UserCellEditor implements ComboBoxEditor, DocumentListener, ISkinLi
 
 	@Override
 	public void selectAll() {
-		return;
 	}
 
 	@Override

@@ -26,7 +26,6 @@ import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.FileUtils;
-import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.skin.components.PackButton;
 import org.spoutcraft.launcher.skin.options.ImportOptions;
 

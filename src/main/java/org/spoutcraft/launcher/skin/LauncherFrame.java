@@ -393,11 +393,11 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() instanceof JComponent) {
-			action(e.getActionCommand(), (JComponent) e.getSource());
+			action(e.getActionCommand());
 		}
 	}
 
-	private void action(String action, JComponent c) {
+	private void action(String action) {
 		if (action.equals(OPTIONS_ACTION)) {
 			if (launcherOptions == null || !launcherOptions.isVisible()) {
 				launcherOptions = new LauncherOptions();

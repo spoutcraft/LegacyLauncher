@@ -20,15 +20,7 @@ package org.spoutcraft.launcher;
 
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.internal.Lists;
-import net.technicpack.launchercore.launch.LaunchOptions;
-import net.technicpack.launchercore.util.OperatingSystem;
-import net.technicpack.launchercore.util.Settings;
-import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 

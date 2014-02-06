@@ -32,7 +32,6 @@ import org.spoutcraft.launcher.log.RotatingFileHandler;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
 import org.spoutcraft.launcher.skin.ErrorDialog;
 import org.spoutcraft.launcher.skin.LauncherFrame;
-import org.spoutcraft.launcher.skin.LoginFrame;
 import org.spoutcraft.launcher.skin.SplashScreen;
 import org.spoutcraft.launcher.util.ShutdownThread;
 

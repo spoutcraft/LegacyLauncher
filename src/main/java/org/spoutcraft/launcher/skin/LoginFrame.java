@@ -8,8 +8,6 @@ import net.technicpack.launchercore.install.user.User;
 import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.install.user.skins.SkinRepository;
 import net.technicpack.launchercore.util.ResourceUtils;
-import org.spoutcraft.launcher.launcher.Launcher;
-import org.spoutcraft.launcher.launcher.Users;
 import org.spoutcraft.launcher.skin.components.*;
 
 import javax.swing.*;

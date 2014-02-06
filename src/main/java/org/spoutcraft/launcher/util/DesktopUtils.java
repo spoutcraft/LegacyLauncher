@@ -18,7 +18,6 @@
 
 package org.spoutcraft.launcher.util;
 
-import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 import java.awt.Desktop;
