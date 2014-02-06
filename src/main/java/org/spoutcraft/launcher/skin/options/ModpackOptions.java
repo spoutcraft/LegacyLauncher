@@ -275,6 +275,13 @@ public class ModpackOptions extends JDialog implements ActionListener, MouseList
 				BuildLabel label = new BuildLabel(build, display);
 				buildSelector.addItem(label);
 			}
+
+            if (installedPack.getInfo().getBuilds().size() == 0) {
+                if (!installedPack.getInfo().getRecommended().equals(installedPack.getInfo().getLatest()))
+                    buildSelector.addItem(new BuildLabel(installedPack.getInfo().getRecommended(), installedPack.getInfo().getRecommended() + " - Recommended"));
+
+                buildSelector.addItem(new BuildLabel(installedPack.getInfo().getLatest(), installedPack.getInfo().getLatest()+" - Latest"));
+            }
 		} else
 		{
 			BuildLabel label = new BuildLabel(installedPack.getBuild(), installedPack.getBuild());
