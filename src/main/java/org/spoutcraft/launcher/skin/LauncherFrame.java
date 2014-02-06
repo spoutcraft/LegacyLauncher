@@ -410,7 +410,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 				getSelector().removePack();
 			}
 		} else if (action.equals(PACK_OPTIONS_ACTION)) {
-			if (packOptions == null || !packOptions.isVisible()) {
+			if (getSelector().getSelectedPack().getInfo() != null && (packOptions == null || !packOptions.isVisible())) {
 				System.out.println("Opening options for " + getSelector().getSelectedPack());
 				packOptions = new ModpackOptions(getSelector().getSelectedPack(), mPackList);
 				packOptions.setModal(true);
