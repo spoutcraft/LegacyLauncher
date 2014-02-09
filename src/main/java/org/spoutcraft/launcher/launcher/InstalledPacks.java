@@ -54,7 +54,12 @@ public class InstalledPacks implements IPackStore {
 
 		try {
 			String json = FileUtils.readFileToString(installedPacks, Charset.forName("UTF-8"));
-			return Utils.getGson().fromJson(json, InstalledPacks.class);
+			InstalledPacks parsedList = Utils.getGson().fromJson(json, InstalledPacks.class);
+
+            if (parsedList != null)
+                return parsedList;
+            else
+                return emptyList;
 		} catch (JsonSyntaxException e) {
 			Utils.getLogger().log(Level.WARNING, "Unable to load installedPacks from " + installedPacks);
 			return emptyList;
