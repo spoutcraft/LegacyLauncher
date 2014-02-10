@@ -419,6 +419,7 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 
             if (response == null) {
                 JOptionPane.showMessageDialog(this, "Invalid credentials. Invalid username or password.", "Auth Error", JOptionPane.ERROR_MESSAGE);
+                return;
             } else if (response.getError() != null) {
 				JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
 				return;
