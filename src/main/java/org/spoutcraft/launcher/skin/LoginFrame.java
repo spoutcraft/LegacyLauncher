@@ -417,7 +417,9 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			//Attempt the log the user in with the data from this form
 			response = AuthenticationService.requestLogin(username, new String(this.pass.getPassword()), mUserModel.getClientToken());
 
-			if (response.getError() != null) {
+            if (response == null) {
+                JOptionPane.showMessageDialog(this, "Unknown Response", "Mojang came back with a null response from the login, which might indicate some sort of outage.", JOptionPane.ERROR_MESSAGE);
+            } else if (response.getError() != null) {
 				JOptionPane.showMessageDialog(this, response.getErrorMessage(), response.getError(), JOptionPane.ERROR_MESSAGE);
 				return;
 			}
