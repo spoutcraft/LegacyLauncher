@@ -18,10 +18,7 @@
 
 package org.spoutcraft.launcher;
 
-import net.technicpack.launchercore.exception.BuildInaccessibleException;
-import net.technicpack.launchercore.exception.CacheDeleteException;
-import net.technicpack.launchercore.exception.DownloadException;
-import net.technicpack.launchercore.exception.PackNotAvailableOfflineException;
+import net.technicpack.launchercore.exception.*;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.ModpackInstaller;
 import net.technicpack.launchercore.install.user.User;
@@ -30,10 +27,13 @@ import net.technicpack.launchercore.launch.LaunchOptions;
 import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
 import net.technicpack.launchercore.util.Settings;
+import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.zip.ZipException;
 import net.technicpack.launchercore.util.LaunchAction;
 import org.spoutcraft.launcher.launcher.Launcher;
@@ -84,6 +84,25 @@ public class InstallThread extends Thread {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (DownloadException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
+
+            if (e.getUrl() != null) {
+                String host = e.getUrl().getHost();
+
+                if (host.equals("mirror.technicpack.net")) {
+                    try {
+                        String ip = InetAddress.getByName(host).getHostAddress();
+
+                        if (e instanceof PermissionDeniedException) {
+                            Utils.sendTracking("downloadPermissionFailed", ip, e.getUrl().toString());
+                        } else {
+                            Utils.sendTracking("downloadFailed", ip, e.getUrl().toString());
+                        }
+                    } catch (UnknownHostException ex) {
+                        //Just eat this- no reason to send analytics for a bullshit host
+                    }
+                }
+            }
+
 		} catch (ZipException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error unzipping a file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (CacheDeleteException e) {
