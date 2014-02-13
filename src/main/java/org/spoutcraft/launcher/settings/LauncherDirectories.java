@@ -72,6 +72,8 @@ public class LauncherDirectories extends Directories {
 			throw new RuntimeException("The working directory could not be created: " + workDir);
 		}
 
+        Settings.load();
+
 		if (SpoutcraftLauncher.params != null && SpoutcraftLauncher.params.isPortable()) {
 			return;
 		}
