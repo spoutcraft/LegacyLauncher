@@ -81,10 +81,25 @@ public class ErrorDialog extends JDialog implements ActionListener {
 
 	private void populateException(Throwable e) {
 		StringBuilder builder = new StringBuilder();
-		builder.append("Stack Trace:").append("\n");
-		builder.append("    Exception: ").append(e.getClass().getSimpleName()).append("\n");
-		builder.append("    Message: ").append(e.getMessage()).append("\n");
-		logTrace(builder, e);
+
+        builder.append("( Please submit this report to https://github.com/TechnicPack/TechnicLauncher/issues )\n");
+        builder.append("    Launcher Build: ").append(SpoutcraftLauncher.getLauncherBuild()).append("\n");
+        builder.append("    Selected Pack: ").append(selected).append("\n");
+        builder.append("Stack Trace:").append("\n");
+        builder.append("    Exception: ").append(e.getClass().getSimpleName()).append("\n");
+        builder.append("    Message: ").append(e.getMessage()).append("\n");
+        logTrace(builder, e);
+        builder.append("\n");
+        builder.append("System Information:\n");
+        builder.append("    Operating System: ").append(System.getProperty("os.name")).append("\n");
+        builder.append("    Operating System Version: ").append(System.getProperty("os.version")).append("\n");
+        builder.append("    Operating System Architecture: ").append(System.getProperty("os.arch")).append("\n");
+        builder.append("    Java version: ").append(System.getProperty("java.version")).append(" ").append(System.getProperty("sun.arch.data.model", "32")).append(" bit").append("\n");
+        builder.append("    Total Memory: ").append(Runtime.getRuntime().totalMemory() / 1024L / 1024L).append(" MB\n");
+        builder.append("    Max Memory: ").append(Runtime.getRuntime().maxMemory() / 1024L / 1024L).append(" MB\n");
+        builder.append("    Memory Free: ").append(Runtime.getRuntime().freeMemory() / 1024L / 1024L).append(" MB\n");
+        builder.append("    CPU Cores: ").append(Runtime.getRuntime().availableProcessors()).append("\n");
+
 		errorArea.setText(builder.toString());
 	}
 
