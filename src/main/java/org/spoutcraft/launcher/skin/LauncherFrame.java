@@ -18,6 +18,7 @@
 
 package org.spoutcraft.launcher.skin;
 
+import net.technicpack.launchercore.mirror.MirrorStore;
 import org.spoutcraft.launcher.donor.DonorSite;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
@@ -104,12 +105,14 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 	private UserModel mUserModel;
 	private AvailablePackList mPackList;
 	private DonorSite mDonorSite;
+    private MirrorStore mirrorStore;
 
-	public LauncherFrame(SkinRepository skinRepo, UserModel userModel, AvailablePackList packList, DonorSite donorSite) {
+	public LauncherFrame(SkinRepository skinRepo, UserModel userModel, AvailablePackList packList, DonorSite donorSite, MirrorStore mirrorStore) {
 		this.mSkinRepo = skinRepo;
 		this.mUserModel = userModel;
 		this.mPackList = packList;
 		this.mDonorSite = donorSite;
+        this.mirrorStore = mirrorStore;
 
 		this.mUserModel.addAuthListener(this);
 
@@ -309,7 +312,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 		contentPane.setLayout(null);
 
 		// Pack Selector
-		packSelector = new ModpackSelector(this, packList, mUserModel);
+		packSelector = new ModpackSelector(this, packList, mUserModel, mirrorStore);
 		packSelector.setBounds(15, 0, 200, 520);
 
 		// Custom Pack Name Label
@@ -430,7 +433,7 @@ public class LauncherFrame extends JFrame implements ActionListener, KeyListener
 			InstalledPack pack = packSelector.getSelectedPack();
 
 			if (!pack.getName().equals("addpack") && (pack.isLocalOnly() || pack.getInfo() != null)) {
-				Launcher.launch(currentUser, pack, pack.getBuild(), mUserModel);
+				Launcher.launch(currentUser, pack, pack.getBuild());
 			}
 		} else if (action.equals(LOGOUT)) {
 			if (Launcher.isLaunching()) {

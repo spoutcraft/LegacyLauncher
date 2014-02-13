@@ -19,12 +19,16 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import com.beust.jcommander.JCommander;
+import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.mirror.MirrorStore;
+import net.technicpack.launchercore.mirror.secure.rest.JsonWebSecureMirror;
 import net.technicpack.launchercore.util.Directories;
 import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.IOUtils;
 import org.spoutcraft.launcher.launcher.Launcher;
 import org.spoutcraft.launcher.StartupParameters;
+import org.spoutcraft.launcher.launcher.Users;
 import org.spoutcraft.launcher.log.Console;
 import org.spoutcraft.launcher.log.DateOutputFormatter;
 import org.spoutcraft.launcher.log.LoggerOutputStream;

@@ -23,6 +23,7 @@ import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.IPackListener;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.mirror.MirrorStore;
 import net.technicpack.launchercore.restful.solder.SolderPackInfo;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.FileUtils;
@@ -57,11 +58,13 @@ public class ModpackSelector extends JComponent implements ActionListener, IPack
 
 	private AvailablePackList mPackList;
 	private UserModel mUserModel;
+    private MirrorStore mirrorStore;
 
-	public ModpackSelector(LauncherFrame frame, AvailablePackList packList, UserModel userModel) {
+	public ModpackSelector(LauncherFrame frame, AvailablePackList packList, UserModel userModel, MirrorStore mirrorStore) {
 		this.frame = frame;
 		this.mPackList = packList;
 		this.mUserModel = userModel;
+        this.mirrorStore = mirrorStore;
 
 		this.mPackList.addPackListener(this);
 
@@ -231,7 +234,7 @@ public class ModpackSelector extends JComponent implements ActionListener, IPack
 
 			if (button.getIndex() == 0 && getSelectedPack() instanceof AddPack) {
 				if (importOptions == null || !importOptions.isVisible()) {
-					importOptions = new ImportOptions(mPackList, mUserModel);
+					importOptions = new ImportOptions(mPackList, mUserModel, mirrorStore);
 					importOptions.setModal(true);
 					importOptions.setVisible(true);
 				}

@@ -26,6 +26,7 @@ import net.technicpack.launchercore.install.user.UserModel;
 import net.technicpack.launchercore.launch.LaunchOptions;
 import net.technicpack.launchercore.launch.MinecraftLauncher;
 import net.technicpack.launchercore.minecraft.CompleteVersion;
+import net.technicpack.launchercore.mirror.MirrorStore;
 import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Utils;
 import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
@@ -43,24 +44,25 @@ public class InstallThread extends Thread {
 	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
 	private final UserModel userModel;
+    private final MirrorStore mirrorStore;
 	private boolean finished = false;
 
-	public InstallThread(User user, InstalledPack pack, String build, UserModel userModel) {
+	public InstallThread(User user, InstalledPack pack, String build, UserModel userModel, MirrorStore mirrorStore) {
 		super("InstallThread");
 		this.user = user;
 		this.pack = pack;
 		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build);
 		this.userModel = userModel;
+        this.mirrorStore = mirrorStore;
 	}
 
 	@Override
 	public void run() {
 		try {
-
 			Launcher.getFrame().getProgressBar().setVisible(true);
 			CompleteVersion version = null;
 			if (!pack.isLocalOnly()) {
-				version = modpackInstaller.installPack(Launcher.getFrame(), userModel.getCurrentUser());
+				version = modpackInstaller.installPack(Launcher.getFrame(), userModel.getCurrentUser(), mirrorStore);
 			} else {
 				version = modpackInstaller.prepareOfflinePack();
 			}
@@ -84,25 +86,6 @@ public class InstallThread extends Thread {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), e.getMessage(), "Cannot Start Modpack", JOptionPane.WARNING_MESSAGE);
 		} catch (DownloadException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error downloading file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
-
-            if (e.getUrl() != null) {
-                String host = e.getUrl().getHost();
-
-                if (host.equals("mirror.technicpack.net")) {
-                    try {
-                        String ip = InetAddress.getByName(host).getHostAddress();
-
-                        if (e instanceof PermissionDeniedException) {
-                            Utils.sendTracking("downloadPermissionFailed", ip, e.getUrl().toString());
-                        } else {
-                            Utils.sendTracking("downloadFailed", ip, e.getUrl().toString());
-                        }
-                    } catch (UnknownHostException ex) {
-                        //Just eat this- no reason to send analytics for a bullshit host
-                    }
-                }
-            }
-
 		} catch (ZipException e) {
 			JOptionPane.showMessageDialog(Launcher.getFrame(), "Error unzipping a file for the following pack: " + pack.getDisplayName() + " \n\n" + e.getMessage() + "\n\nPlease consult the modpack author.", "Error", JOptionPane.WARNING_MESSAGE);
 		} catch (CacheDeleteException e) {

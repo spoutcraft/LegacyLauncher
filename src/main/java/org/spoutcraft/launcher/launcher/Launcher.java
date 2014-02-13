@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.logging.Level;
 
+import net.technicpack.launchercore.mirror.MirrorStore;
+import net.technicpack.launchercore.mirror.secure.rest.JsonWebSecureMirror;
 import org.spoutcraft.launcher.donor.DonorSite;
 import net.technicpack.launchercore.exception.AuthenticationNetworkFailureException;
 import net.technicpack.launchercore.install.AvailablePackList;
@@ -44,6 +46,7 @@ public class Launcher {
 	private final LauncherFrame launcherFrame;
 	private final LoginFrame loginFrame;
 	private final UserModel userModel;
+    private final MirrorStore mirrorStore;
 	private InstallThread installThread;
 
 	private LinkedList<Thread> startupTasks = new LinkedList<Thread>();
@@ -53,20 +56,24 @@ public class Launcher {
 			throw new IllegalArgumentException("You can't have a duplicate launcher");
 		}
 
-		SkinRepository skinRepo = new SkinRepository(new TechnicSkinMapper(), new MinotarSkinStore("https://minotar.net/"));
-		userModel = new UserModel(Users.load());
+        userModel = new UserModel(Users.load());
+
+        mirrorStore = new MirrorStore(userModel);
+        mirrorStore.addSecureMirror("mirror.technicpack.net", new JsonWebSecureMirror("http://mirror.technicpack.net/"));
+
+		SkinRepository skinRepo = new SkinRepository(new TechnicSkinMapper(), new MinotarSkinStore("https://minotar.net/", mirrorStore));
 
 		instance = this;
 
 		trackLauncher();
 
-		IPackStore installedPacks = InstalledPacks.load();
-		AvailablePackList packList = new AvailablePackList(installedPacks);
+		IPackStore installedPacks = InstalledPacks.load(mirrorStore);
+		AvailablePackList packList = new AvailablePackList(installedPacks, mirrorStore);
 		userModel.addAuthListener(packList);
 
 		DonorSite donors = new DonorSite("http://donate.technicpack.net/");
 
-		this.launcherFrame = new LauncherFrame(skinRepo, userModel, packList, donors);
+		this.launcherFrame = new LauncherFrame(skinRepo, userModel, packList, donors, mirrorStore);
 		this.loginFrame = new LoginFrame(skinRepo, userModel);
 
 		Thread news = new Thread("News Thread") {
@@ -95,8 +102,8 @@ public class Launcher {
 		return instance;
 	}
 
-	public static void launch(User user, InstalledPack pack, String build, UserModel userModel) {
-		instance.installThread = new InstallThread(user, pack, build, userModel);
+	public static void launch(User user, InstalledPack pack, String build) {
+		instance.installThread = new InstallThread(user, pack, build, instance.userModel, instance.mirrorStore);
 		instance.installThread.start();
 	}
 

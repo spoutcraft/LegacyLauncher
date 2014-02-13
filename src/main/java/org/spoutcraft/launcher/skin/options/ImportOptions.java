@@ -52,6 +52,7 @@ import javax.swing.text.SimpleAttributeSet;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
 import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.mirror.MirrorStore;
 import net.technicpack.launchercore.restful.PackInfo;
 import net.technicpack.launchercore.restful.PlatformConstants;
 import net.technicpack.launchercore.restful.RestObject;
@@ -92,10 +93,12 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 
 	private AvailablePackList mPackList;
 	private UserModel mUserModel;
+    private MirrorStore mirrorStore;
 
-	public ImportOptions(AvailablePackList packList, UserModel userModel) {
+	public ImportOptions(AvailablePackList packList, UserModel userModel, MirrorStore mirrorStore) {
 		this.mPackList = packList;
 		this.mUserModel = userModel;
+        this.mirrorStore = mirrorStore;
 
 		setTitle("Add a Pack");
 		setSize(FRAME_WIDTH, FRAME_HEIGHT);
@@ -225,7 +228,7 @@ public class ImportOptions extends JDialog implements ActionListener, MouseListe
 			}
 		} else if (action.equals(IMPORT_ACTION)) {
 			if (info != null) {
-				InstalledPack pack = new InstalledPack(info.getName(), true);
+				InstalledPack pack = new InstalledPack(mirrorStore, info.getName(), true);
 				pack.setInfo(info);
 				mPackList.add(pack);
 				dispose();

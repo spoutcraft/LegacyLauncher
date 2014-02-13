@@ -23,6 +23,7 @@ import com.google.gson.JsonSyntaxException;
 import net.technicpack.launchercore.install.AddPack;
 import net.technicpack.launchercore.install.IPackStore;
 import net.technicpack.launchercore.install.InstalledPack;
+import net.technicpack.launchercore.mirror.MirrorStore;
 import net.technicpack.launchercore.util.Utils;
 import org.apache.commons.io.FileUtils;
 
@@ -41,7 +42,7 @@ public class InstalledPacks implements IPackStore {
 	private String selected = null;
 	private int selectedIndex = 0;
 
-	public static InstalledPacks load() {
+	public static InstalledPacks load(MirrorStore mirrorStore) {
 		File installedPacks = new File(Utils.getSettingsDirectory(), "installedPacks");
 
 		InstalledPacks emptyList = new InstalledPacks();
@@ -56,9 +57,17 @@ public class InstalledPacks implements IPackStore {
 			String json = FileUtils.readFileToString(installedPacks, Charset.forName("UTF-8"));
 			InstalledPacks parsedList = Utils.getGson().fromJson(json, InstalledPacks.class);
 
-            if (parsedList != null)
+            if (parsedList != null) {
+                for(String packName : parsedList.getPackNames()) {
+                    InstalledPack pack = parsedList.getInstalledPacks().get(packName);
+
+                    if (pack != null) {
+                        pack.setMirrorStore(mirrorStore);
+                    }
+                }
+
                 return parsedList;
-            else
+            } else
                 return emptyList;
 		} catch (JsonSyntaxException e) {
 			Utils.getLogger().log(Level.WARNING, "Unable to load installedPacks from " + installedPacks);

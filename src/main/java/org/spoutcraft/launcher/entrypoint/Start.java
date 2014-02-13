@@ -19,18 +19,23 @@
 package org.spoutcraft.launcher.entrypoint;
 
 import net.technicpack.launchercore.exception.RestfulAPIException;
+import net.technicpack.launchercore.install.user.UserModel;
+import net.technicpack.launchercore.mirror.MirrorStore;
+import net.technicpack.launchercore.mirror.secure.rest.JsonWebSecureMirror;
 import net.technicpack.launchercore.util.Directories;
-import net.technicpack.launchercore.util.Download;
+import net.technicpack.launchercore.mirror.download.Download;
 import net.technicpack.launchercore.util.DownloadListener;
 import net.technicpack.launchercore.util.OperatingSystem;
 import net.technicpack.launchercore.util.Settings;
 import net.technicpack.launchercore.util.Utils;
+import org.spoutcraft.launcher.launcher.Users;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
 import org.spoutcraft.launcher.skin.ProgressSplashScreen;
 import org.spoutcraft.launcher.updater.LauncherInfo;
 
 import javax.swing.UIManager;
 import java.io.File;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -102,7 +107,7 @@ public class Start {
 			}
 
 			ProgressSplashScreen splash = new ProgressSplashScreen();
-			Download download = new Download(LauncherInfo.getDownloadURL(latest, !codeSource.getName().endsWith(".exe")), temp.getName(), temp.getPath());
+			Download download = new Download(new URL(LauncherInfo.getDownloadURL(latest, !codeSource.getName().endsWith(".exe"))), temp.getName(), temp.getPath());
 			download.setListener(new LauncherDownloadListener(splash));
 			download.run();
 
