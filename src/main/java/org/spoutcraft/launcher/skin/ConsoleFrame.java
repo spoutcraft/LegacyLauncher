@@ -18,6 +18,8 @@
 
 package org.spoutcraft.launcher.skin;
 
+import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
+
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -237,6 +239,8 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 	 * @param attributes attribute set, or null for none
 	 */
 	public void log(String line, AttributeSet attributes) {
+        line = "[B#"+ SpoutcraftLauncher.getLauncherBuild()+"] "+line;
+
 		if (colorEnabled) {
 			if (line.startsWith("(!!)")) {
 				attributes = highlightedAttributes;
@@ -303,6 +307,7 @@ public class ConsoleFrame extends JFrame implements MouseListener {
 		public void flush() {
 			String data = toString();
 			if (data.length() == 0) return;
+
 			log(data, attributes);
 			reset();
 		}
