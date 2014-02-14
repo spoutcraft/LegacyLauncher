@@ -51,7 +51,7 @@ public class InstallThread extends Thread {
 		super("InstallThread");
 		this.user = user;
 		this.pack = pack;
-		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build);
+		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build, mirrorStore);
 		this.userModel = userModel;
         this.mirrorStore = mirrorStore;
 	}
@@ -62,7 +62,7 @@ public class InstallThread extends Thread {
 			Launcher.getFrame().getProgressBar().setVisible(true);
 			CompleteVersion version = null;
 			if (!pack.isLocalOnly()) {
-				version = modpackInstaller.installPack(Launcher.getFrame(), userModel.getCurrentUser(), mirrorStore);
+				version = modpackInstaller.installPack(Launcher.getFrame(), userModel.getCurrentUser());
 			} else {
 				version = modpackInstaller.prepareOfflinePack();
 			}
@@ -73,7 +73,7 @@ public class InstallThread extends Thread {
 			StartupParameters params = SpoutcraftLauncher.params;
 			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
 			LauncherUnhider unhider = new LauncherUnhider();
-			minecraftLauncher.launch(user, options, unhider);
+			minecraftLauncher.launch(user, options, unhider, mirrorStore);
 
 			LaunchAction launchAction = Settings.getLaunchAction();
 
