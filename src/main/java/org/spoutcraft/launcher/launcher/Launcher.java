@@ -59,7 +59,7 @@ public class Launcher {
         userModel = new UserModel(Users.load());
 
         mirrorStore = new MirrorStore(userModel);
-        mirrorStore.addSecureMirror("mirror.technicpack.net", new JsonWebSecureMirror("http://polar-spire-6275.herokuapp.com/", "polar-spire-6275.herokuapp.com"));
+        mirrorStore.addSecureMirror("mirror.technicpack.net", new JsonWebSecureMirror("http://mirror.technicpack.net/", "mirror.technicpack.net"));
 
 		SkinRepository skinRepo = new SkinRepository(new TechnicSkinMapper(), new MinotarSkinStore("https://minotar.net/", mirrorStore));
 
