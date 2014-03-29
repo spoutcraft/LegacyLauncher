@@ -18,7 +18,6 @@
 
 package org.spoutcraft.launcher.skin;
 
-import net.technicpack.launchercore.mirror.MirrorStore;
 import org.spoutcraft.launcher.donor.DonorSite;
 import net.technicpack.launchercore.install.AvailablePackList;
 import net.technicpack.launchercore.install.InstalledPack;
