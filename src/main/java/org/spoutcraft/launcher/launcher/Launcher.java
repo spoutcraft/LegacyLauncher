@@ -103,7 +103,7 @@ public class Launcher {
 	}
 
 	public static void launch(User user, InstalledPack pack, String build) {
-		instance.installThread = new InstallThread(user, pack, build, instance.userModel, instance.mirrorStore);
+		instance.installThread = new InstallThread(pack, build, instance.userModel, instance.mirrorStore);
 		instance.installThread.start();
 	}
 

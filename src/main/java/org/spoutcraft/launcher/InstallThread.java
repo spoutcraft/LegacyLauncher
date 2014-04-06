@@ -40,16 +40,14 @@ import net.technicpack.launchercore.util.LaunchAction;
 import org.spoutcraft.launcher.launcher.Launcher;
 
 public class InstallThread extends Thread {
-	private final User user;
 	private final InstalledPack pack;
 	private final ModpackInstaller modpackInstaller;
 	private final UserModel userModel;
     private final MirrorStore mirrorStore;
 	private boolean finished = false;
 
-	public InstallThread(User user, InstalledPack pack, String build, UserModel userModel, MirrorStore mirrorStore) {
+	public InstallThread(InstalledPack pack, String build, UserModel userModel, MirrorStore mirrorStore) {
 		super("InstallThread");
-		this.user = user;
 		this.pack = pack;
 		this.modpackInstaller = new ModpackInstaller(Launcher.getFrame(), pack, build, mirrorStore);
 		this.userModel = userModel;
@@ -73,7 +71,7 @@ public class InstallThread extends Thread {
 			StartupParameters params = SpoutcraftLauncher.params;
 			LaunchOptions options = new LaunchOptions( pack.getDisplayName(), pack.getIconPath(), params.getWidth(), params.getHeight(), params.getFullscreen());
 			LauncherUnhider unhider = new LauncherUnhider();
-			minecraftLauncher.launch(user, options, unhider, mirrorStore);
+			minecraftLauncher.launch(userModel.getCurrentUser(), options, unhider, mirrorStore);
 
 			LaunchAction launchAction = Settings.getLaunchAction();
 

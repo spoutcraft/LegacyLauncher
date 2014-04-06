@@ -397,11 +397,10 @@ public class LoginFrame extends JFrame implements KeyListener, ActionListener, M
 			}
 
 			return false;
-		} else {
-			//We have a cleared user, start the launcher up
-			mUserModel.setCurrentUser(loginUser);
-			return true;
 		}
+
+
+		return true;
 	}
 
 	/**
