@@ -18,44 +18,45 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.Graphics;
-import javax.swing.JLabel;
+import javax.swing.*;
+import java.awt.*;
 
-public class TransparentJLabel extends JLabel implements Transparent{
-	private static final long serialVersionUID = 1L;
-	TransparentComponent transparency = new TransparentComponent(this);
-	public TransparentJLabel() {
-		super();
-	}
+public class TransparentJLabel extends JLabel implements Transparent {
+    private static final long serialVersionUID = 1L;
+    TransparentComponent transparency = new TransparentComponent(this);
 
-	public TransparentJLabel(String text) {
-		super(text);
-	}
+    public TransparentJLabel() {
+        super();
+    }
 
-	@Override
-	public float getTransparency() {
-		return transparency.getTransparency();
-	}
+    public TransparentJLabel(String text) {
+        super(text);
+    }
 
-	@Override
-	public void setTransparency(float t) {
-		transparency.setTransparency(t);
-	}
+    @Override
+    public float getTransparency() {
+        return transparency.getTransparency();
+    }
 
-	@Override
-	public float getHoverTransparency() {
-		return transparency.getHoverTransparency();
-	}
+    @Override
+    public void setTransparency(float t) {
+        transparency.setTransparency(t);
+    }
 
-	@Override
-	public void setHoverTransparency(float t) {
-		transparency.setHoverTransparency(t);
-	}
+    @Override
+    public float getHoverTransparency() {
+        return transparency.getHoverTransparency();
+    }
 
-	@Override
-	public void paint(Graphics g) {
-		g = transparency.setup(g);
-		super.paint(g);
-		transparency.cleanup(g);
-	}
+    @Override
+    public void setHoverTransparency(float t) {
+        transparency.setHoverTransparency(t);
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        g = transparency.setup(g);
+        super.paint(g);
+        transparency.cleanup(g);
+    }
 }

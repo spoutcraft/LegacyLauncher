@@ -18,130 +18,129 @@
 
 package org.spoutcraft.launcher.skin.components;
 
-import java.awt.AlphaComposite;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import javax.swing.JComponent;
 
 /**
  * Adds transparency to a swing component
  */
-class TransparentComponent implements MouseListener{
-	private final JComponent parent;
-	private float transparency = 1F;
-	private float hoverTransparency = 1F;
-	private boolean hovering = false;
-	private final boolean repaint;
-	public TransparentComponent(JComponent component) {
-		this.parent = component;
-		parent.addMouseListener(this);
-		repaint = true;
-	}
+class TransparentComponent implements MouseListener {
+    private final JComponent parent;
+    private float transparency = 1F;
+    private float hoverTransparency = 1F;
+    private boolean hovering = false;
+    private final boolean repaint;
 
-	public TransparentComponent(JComponent component, boolean repaint) {
-		this.parent = component;
-		parent.addMouseListener(this);
-		this.repaint = repaint;
-	}
+    public TransparentComponent(JComponent component) {
+        this.parent = component;
+        parent.addMouseListener(this);
+        repaint = true;
+    }
 
-	/**
-	 * Gets the transparency of the label when no mouse is hovering over it
-	 *
-	 * Values are between 0 and 1
-	 *
-	 * @return transparency
-	 */
-	public float getTransparency() {
-		return transparency;
-	}
+    public TransparentComponent(JComponent component, boolean repaint) {
+        this.parent = component;
+        parent.addMouseListener(this);
+        this.repaint = repaint;
+    }
 
-	/**
-	 * Sets the transparency of the label when no mouse is hovering over it
-	 *
-	 * Values should be between 0 and 1
-	 *
-	 * @param t transparency
-	 */
-	public void setTransparency(float t) {
-		if (t > 1F || t < 0F) {
-			throw new IllegalArgumentException("Value out of range");
-		}
-		this.transparency = t;
-	}
+    /**
+     * Gets the transparency of the label when no mouse is hovering over it
+     * <p/>
+     * Values are between 0 and 1
+     *
+     * @return transparency
+     */
+    public float getTransparency() {
+        return transparency;
+    }
 
-	/**
-	 * Gets the transparency of the label when a mouse is hovering over it
-	 *
-	 * Values are between 0 and 1
-	 *
-	 * @return transparency
-	 */
-	public float getHoverTransparency() {
-		return hoverTransparency;
-	}
+    /**
+     * Sets the transparency of the label when no mouse is hovering over it
+     * <p/>
+     * Values should be between 0 and 1
+     *
+     * @param t transparency
+     */
+    public void setTransparency(float t) {
+        if (t > 1F || t < 0F) {
+            throw new IllegalArgumentException("Value out of range");
+        }
+        this.transparency = t;
+    }
 
-	/**
-	 * Sets the transparency of the label when a mouse is hovering over it
-	 *
-	 * Values should be between 0 and 1
-	 *
-	 * @param t transparency
-	 */
-	public void setHoverTransparency(float t) {
-		if (t > 1F || t < 0F) {
-			throw new IllegalArgumentException("Value out of range");
-		}
-		this.hoverTransparency = t;
-	}
+    /**
+     * Gets the transparency of the label when a mouse is hovering over it
+     * <p/>
+     * Values are between 0 and 1
+     *
+     * @return transparency
+     */
+    public float getHoverTransparency() {
+        return hoverTransparency;
+    }
 
-	public Graphics setup(Graphics g) {
-		float t;
-		if (hovering) {
-			t = getHoverTransparency();
-		} else {
-			t = getTransparency();
-		}
-		Graphics2D copy = (Graphics2D) g.create();
-		copy.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, t));
-		return copy;
-	}
+    /**
+     * Sets the transparency of the label when a mouse is hovering over it
+     * <p/>
+     * Values should be between 0 and 1
+     *
+     * @param t transparency
+     */
+    public void setHoverTransparency(float t) {
+        if (t > 1F || t < 0F) {
+            throw new IllegalArgumentException("Value out of range");
+        }
+        this.hoverTransparency = t;
+    }
 
-	public Graphics cleanup(Graphics g) {
-		g.dispose();
-		return g;
-	}
+    public Graphics setup(Graphics g) {
+        float t;
+        if (hovering) {
+            t = getHoverTransparency();
+        } else {
+            t = getTransparency();
+        }
+        Graphics2D copy = (Graphics2D) g.create();
+        copy.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, t));
+        return copy;
+    }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
+    public Graphics cleanup(Graphics g) {
+        g.dispose();
+        return g;
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		if (e.getComponent() == parent) {
-			hovering = true;
-			if (repaint) {
-				parent.repaint();
-			}
-		}
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		if (e.getComponent() == parent) {
-			hovering = false;
-			if (repaint) {
-				parent.repaint();
-			}
-		}
-	}
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        if (e.getComponent() == parent) {
+            hovering = true;
+            if (repaint) {
+                parent.repaint();
+            }
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        if (e.getComponent() == parent) {
+            hovering = false;
+            if (repaint) {
+                parent.repaint();
+            }
+        }
+    }
 }

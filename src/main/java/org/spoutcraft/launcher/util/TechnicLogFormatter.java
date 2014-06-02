@@ -22,7 +22,6 @@ import org.spoutcraft.launcher.entrypoint.SpoutcraftLauncher;
 import org.spoutcraft.launcher.log.DateOutputFormatter;
 
 import java.text.SimpleDateFormat;
-import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 public class TechnicLogFormatter extends DateOutputFormatter {
@@ -36,6 +35,6 @@ public class TechnicLogFormatter extends DateOutputFormatter {
 
     @Override
     public String format(LogRecord record) {
-        return "[B#" + launcherBuild+"] "+super.format(record);
+        return "[B#" + launcherBuild + "] " + super.format(record);
     }
 }

@@ -25,92 +25,87 @@ import net.technicpack.launchercore.util.ImageUtils;
 import net.technicpack.launchercore.util.ResourceUtils;
 
 import javax.imageio.ImageIO;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import java.awt.Component;
-import java.awt.Font;
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 
 public class UserCellRenderer extends JLabel implements ListCellRenderer, ISkinListener {
-	private Font textFont;
-	private Icon addUserIcon;
+    private Font textFont;
+    private Icon addUserIcon;
 
-	private SkinRepository mSkinRepo;
+    private SkinRepository mSkinRepo;
 
-	private static final int ICON_WIDTH = 32;
-	private static final int ICON_HEIGHT = 32;
+    private static final int ICON_WIDTH = 32;
+    private static final int ICON_HEIGHT = 32;
 
-	private HashMap<String, Icon> headMap = new HashMap<String, Icon>();
+    private HashMap<String, Icon> headMap = new HashMap<String, Icon>();
 
-	public UserCellRenderer(Font font, SkinRepository skinRepo) {
-		this.mSkinRepo = skinRepo;
-		this.mSkinRepo.addListener(this);
-		this.textFont = font;
-		setOpaque(true);
+    public UserCellRenderer(Font font, SkinRepository skinRepo) {
+        this.mSkinRepo = skinRepo;
+        this.mSkinRepo.addListener(this);
+        this.textFont = font;
+        setOpaque(true);
 
-		try {
-			addUserIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/add_user.png")), ICON_WIDTH, ICON_HEIGHT));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
-	}
+        try {
+            addUserIcon = new ImageIcon(ImageUtils.scaleImage(ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/add_user.png")), ICON_WIDTH, ICON_HEIGHT));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 
-	@Override
-	public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-		if (isSelected) {
-			setBackground(list.getSelectionBackground());
-			setForeground(list.getSelectionForeground());
-		} else {
-			setBackground(list.getBackground());
-			setForeground(list.getForeground());
-		}
+    @Override
+    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        if (isSelected) {
+            setBackground(list.getSelectionBackground());
+            setForeground(list.getSelectionForeground());
+        } else {
+            setBackground(list.getBackground());
+            setForeground(list.getForeground());
+        }
 
-		this.setFont(textFont);
+        this.setFont(textFont);
 
-		if (value instanceof User) {
-			User user = (User) value;
-			this.setText(user.getDisplayName());
-			this.setIconTextGap(8);
+        if (value instanceof User) {
+            User user = (User) value;
+            this.setText(user.getDisplayName());
+            this.setIconTextGap(8);
 
-			if (!headMap.containsKey(user.getUsername())) {
-				headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
-			}
+            if (!headMap.containsKey(user.getUsername())) {
+                headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
+            }
 
-			Icon head = headMap.get(user.getUsername());
+            Icon head = headMap.get(user.getUsername());
 
-			if (head != null) {
-				this.setIcon(head);
-			}
-		} else if (value == null) {
-			this.setText("Add New User");
-			this.setIconTextGap(8);
+            if (head != null) {
+                this.setIcon(head);
+            }
+        } else if (value == null) {
+            this.setText("Add New User");
+            this.setIconTextGap(8);
 
-			if (addUserIcon != null) {
-				this.setIcon(addUserIcon);
-			}
-		} else {
-			this.setIconTextGap(0);
-			this.setText(value.toString());
-		}
+            if (addUserIcon != null) {
+                this.setIcon(addUserIcon);
+            }
+        } else {
+            this.setIconTextGap(0);
+            this.setText(value.toString());
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	@Override
-	public void skinReady(User user) {
-	}
+    @Override
+    public void skinReady(User user) {
+    }
 
-	@Override
-	public void faceReady(User user) {
-		if (headMap.containsKey(user.getUsername()))
-			headMap.remove(user.getUsername());
+    @Override
+    public void faceReady(User user) {
+        if (headMap.containsKey(user.getUsername()))
+            headMap.remove(user.getUsername());
 
-		headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
+        headMap.put(user.getUsername(), new ImageIcon(ImageUtils.scaleImage(mSkinRepo.getFaceImage(user), ICON_WIDTH, ICON_HEIGHT)));
 
-		this.invalidate();
-	}
+        this.invalidate();
+    }
 }

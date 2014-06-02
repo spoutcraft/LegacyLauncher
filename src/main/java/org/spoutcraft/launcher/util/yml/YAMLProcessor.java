@@ -18,19 +18,6 @@
 
 package org.spoutcraft.launcher.util.yml;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.spoutcraft.launcher.util.StringUtil;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
@@ -41,6 +28,9 @@ import org.yaml.snakeyaml.nodes.Tag;
 import org.yaml.snakeyaml.reader.UnicodeReader;
 import org.yaml.snakeyaml.representer.Represent;
 import org.yaml.snakeyaml.representer.Representer;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * YAML configuration loader. To use this class, construct it with path to
@@ -71,270 +61,270 @@ import org.yaml.snakeyaml.representer.Representer;
  * methods such as <code>getStringList</code> that will return a type safe list.
  */
 public class YAMLProcessor extends YAMLNode {
-	public static final String LINE_BREAK = DumperOptions.LineBreak.getPlatformLineBreak().getString();
-	public static final char COMMENT_CHAR = '#';
-	protected final Yaml yaml;
-	protected final File file;
-	protected String header = null;
-	protected YAMLFormat format;
+    public static final String LINE_BREAK = DumperOptions.LineBreak.getPlatformLineBreak().getString();
+    public static final char COMMENT_CHAR = '#';
+    protected final Yaml yaml;
+    protected final File file;
+    protected String header = null;
+    protected YAMLFormat format;
 
-	/*
-	 * Map from property key to comment. Comment may have multiple lines that are newline-separated.
-	 * Comments support based on ZerothAngel's AnnotatedYAMLConfiguration
-	 * Comments are only supported with YAMLFormat.EXTENDED
-	 */
-	private final Map<String, String> comments = new HashMap<String, String>();
+    /*
+     * Map from property key to comment. Comment may have multiple lines that are newline-separated.
+     * Comments support based on ZerothAngel's AnnotatedYAMLConfiguration
+     * Comments are only supported with YAMLFormat.EXTENDED
+     */
+    private final Map<String, String> comments = new HashMap<String, String>();
 
-	public YAMLProcessor(File file, boolean writeDefaults, YAMLFormat format) {
-		super(new LinkedHashMap<String, Object>(), writeDefaults);
-		this.format = format;
+    public YAMLProcessor(File file, boolean writeDefaults, YAMLFormat format) {
+        super(new LinkedHashMap<String, Object>(), writeDefaults);
+        this.format = format;
 
-		DumperOptions options = new FancyDumperOptions();
-		options.setIndent(4);
-		options.setDefaultFlowStyle(format.getStyle());
-		Representer representer = new FancyRepresenter();
-		representer.setDefaultFlowStyle(format.getStyle());
+        DumperOptions options = new FancyDumperOptions();
+        options.setIndent(4);
+        options.setDefaultFlowStyle(format.getStyle());
+        Representer representer = new FancyRepresenter();
+        representer.setDefaultFlowStyle(format.getStyle());
 
-		yaml = new Yaml(new SafeConstructor(), representer, options);
+        yaml = new Yaml(new SafeConstructor(), representer, options);
 
-		this.file = file;
-	}
+        this.file = file;
+    }
 
-	public YAMLProcessor(File file, boolean writeDefaults) {
-		this(file, writeDefaults, YAMLFormat.COMPACT);
-	}
+    public YAMLProcessor(File file, boolean writeDefaults) {
+        this(file, writeDefaults, YAMLFormat.COMPACT);
+    }
 
-	/**
-	 * Loads the configuration file.
-	 *
-	 * @throws java.io.IOException
-	 */
-	public void load() throws IOException {
-		InputStream stream = null;
+    /**
+     * Loads the configuration file.
+     *
+     * @throws java.io.IOException
+     */
+    public void load() throws IOException {
+        InputStream stream = null;
 
-		try {
-			stream = getInputStream();
-			if (stream == null) throw new IOException("Stream is null!");
-			read(yaml.load(new UnicodeReader(stream)));
-		} catch (YAMLProcessorException e) {
-			root = new LinkedHashMap<String, Object>();
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-			}
-		}
-	}
+        try {
+            stream = getInputStream();
+            if (stream == null) throw new IOException("Stream is null!");
+            read(yaml.load(new UnicodeReader(stream)));
+        } catch (YAMLProcessorException e) {
+            root = new LinkedHashMap<String, Object>();
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
 
-	/**
-	 * Set the header for the file as a series of lines that are terminated
-	 * by a new line sequence.
-	 *
-	 * @param headerLines header lines to prepend
-	 */
-	public void setHeader(String... headerLines) {
-		StringBuilder header = new StringBuilder();
+    /**
+     * Set the header for the file as a series of lines that are terminated
+     * by a new line sequence.
+     *
+     * @param headerLines header lines to prepend
+     */
+    public void setHeader(String... headerLines) {
+        StringBuilder header = new StringBuilder();
 
-		for (String line : headerLines) {
-			if (header.length() > 0) {
-				header.append(LINE_BREAK);
-			}
-			header.append(line);
-		}
+        for (String line : headerLines) {
+            if (header.length() > 0) {
+                header.append(LINE_BREAK);
+            }
+            header.append(line);
+        }
 
-		setHeader(header.toString());
-	}
+        setHeader(header.toString());
+    }
 
-	/**
-	 * Set the header for the file. A header can be provided to prepend the
-	 * YAML data output on configuration save. The header is
-	 * printed raw and so must be manually commented if used. A new line will
-	 * be appended after the header, however, if a header is provided.
-	 *
-	 * @param header header to prepend
-	 */
-	public void setHeader(String header) {
-		this.header = header;
-	}
+    /**
+     * Set the header for the file. A header can be provided to prepend the
+     * YAML data output on configuration save. The header is
+     * printed raw and so must be manually commented if used. A new line will
+     * be appended after the header, however, if a header is provided.
+     *
+     * @param header header to prepend
+     */
+    public void setHeader(String header) {
+        this.header = header;
+    }
 
-	/**
-	 * Return the set header.
-	 *
-	 * @return
-	 */
-	public String getHeader() {
-		return header;
-	}
+    /**
+     * Return the set header.
+     *
+     * @return
+     */
+    public String getHeader() {
+        return header;
+    }
 
-	/**
-	 * Saves the configuration to disk. All errors are clobbered.
-	 *
-	 * @return true if it was successful
-	 */
-	public boolean save() {
-		OutputStream stream = null;
+    /**
+     * Saves the configuration to disk. All errors are clobbered.
+     *
+     * @return true if it was successful
+     */
+    public boolean save() {
+        OutputStream stream = null;
 
-		File parent = file.getParentFile();
+        File parent = file.getParentFile();
 
-		if (parent != null) {
-			parent.mkdirs();
-		}
+        if (parent != null) {
+            parent.mkdirs();
+        }
 
-		try {
-			stream = getOutputStream();
-			if (stream == null) return false;
-			OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
-			if (header != null) {
-				writer.append(header);
-				writer.append(LINE_BREAK);
-			}
-			if (comments.size() == 0 || format != YAMLFormat.EXTENDED) {
-				yaml.dump(root, writer);
-			} else {
-				// Iterate over each root-level property and dump
-				for (Iterator<Map.Entry<String, Object>> i = root.entrySet().iterator(); i.hasNext(); ) {
-					Map.Entry<String, Object> entry = i.next();
+        try {
+            stream = getOutputStream();
+            if (stream == null) return false;
+            OutputStreamWriter writer = new OutputStreamWriter(stream, "UTF-8");
+            if (header != null) {
+                writer.append(header);
+                writer.append(LINE_BREAK);
+            }
+            if (comments.size() == 0 || format != YAMLFormat.EXTENDED) {
+                yaml.dump(root, writer);
+            } else {
+                // Iterate over each root-level property and dump
+                for (Iterator<Map.Entry<String, Object>> i = root.entrySet().iterator(); i.hasNext(); ) {
+                    Map.Entry<String, Object> entry = i.next();
 
-					// Output comment, if present
-					String comment = comments.get(entry.getKey());
-					if (comment != null) {
-						writer.append(LINE_BREAK);
-						writer.append(comment);
-						writer.append(LINE_BREAK);
-					}
+                    // Output comment, if present
+                    String comment = comments.get(entry.getKey());
+                    if (comment != null) {
+                        writer.append(LINE_BREAK);
+                        writer.append(comment);
+                        writer.append(LINE_BREAK);
+                    }
 
-					// Dump property
-					yaml.dump(Collections.singletonMap(entry.getKey(), entry.getValue()), writer);
-				}
-			}
-			return true;
-		} catch (IOException e) {
-		} finally {
-			try {
-				if (stream != null) {
-					stream.close();
-				}
-			} catch (IOException e) {
-			}
-		}
+                    // Dump property
+                    yaml.dump(Collections.singletonMap(entry.getKey(), entry.getValue()), writer);
+                }
+            }
+            return true;
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (stream != null) {
+                    stream.close();
+                }
+            } catch (IOException e) {
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@SuppressWarnings("unchecked")
-	private void read(Object input) throws YAMLProcessorException {
-		try {
-			if (null == input) {
-				root = new LinkedHashMap<String, Object>();
-			} else {
-				root = new LinkedHashMap<String, Object>((Map<String, Object>) input);
-			}
-		} catch (ClassCastException e) {
-			throw new YAMLProcessorException("Root document must be an key-value structure");
-		}
-	}
+    @SuppressWarnings("unchecked")
+    private void read(Object input) throws YAMLProcessorException {
+        try {
+            if (null == input) {
+                root = new LinkedHashMap<String, Object>();
+            } else {
+                root = new LinkedHashMap<String, Object>((Map<String, Object>) input);
+            }
+        } catch (ClassCastException e) {
+            throw new YAMLProcessorException("Root document must be an key-value structure");
+        }
+    }
 
-	public InputStream getInputStream() throws IOException {
-		return new FileInputStream(file);
-	}
+    public InputStream getInputStream() throws IOException {
+        return new FileInputStream(file);
+    }
 
-	public OutputStream getOutputStream() throws IOException {
-		return new FileOutputStream(file);
-	}
+    public OutputStream getOutputStream() throws IOException {
+        return new FileOutputStream(file);
+    }
 
-	/**
-	 * Returns a root-level comment.
-	 *
-	 * @param key the property key
-	 * @return the comment or <code>null</code>
-	 */
-	public String getComment(String key) {
-		return comments.get(key);
-	}
+    /**
+     * Returns a root-level comment.
+     *
+     * @param key the property key
+     * @return the comment or <code>null</code>
+     */
+    public String getComment(String key) {
+        return comments.get(key);
+    }
 
-	public void setComment(String key, String comment) {
-		if (comment != null) {
-			setComment(key, comment.split("\\r?\\n"));
-		} else {
-			comments.remove(key);
-		}
-	}
+    public void setComment(String key, String comment) {
+        if (comment != null) {
+            setComment(key, comment.split("\\r?\\n"));
+        } else {
+            comments.remove(key);
+        }
+    }
 
-	/**
-	 * Set a root-level comment.
-	 *
-	 * @param comment the comment. May be <code>null</code>, in which case the comment
-	 *                is removed.
-	 */
-	public void setComment(String key, String... comment) {
-		if (comment != null && comment.length > 0) {
-			for (int i = 0; i < comment.length; ++i) {
-				if (!comment[i].matches("^" + COMMENT_CHAR + " ?")) {
-					comment[i] = COMMENT_CHAR + " " + comment[i];
-				}
-			}
-			String s = StringUtil.joinString(comment, LINE_BREAK);
-			comments.put(key, s);
-		} else {
-			comments.remove(key);
-		}
-	}
+    /**
+     * Set a root-level comment.
+     *
+     * @param comment the comment. May be <code>null</code>, in which case the comment
+     *                is removed.
+     */
+    public void setComment(String key, String... comment) {
+        if (comment != null && comment.length > 0) {
+            for (int i = 0; i < comment.length; ++i) {
+                if (!comment[i].matches("^" + COMMENT_CHAR + " ?")) {
+                    comment[i] = COMMENT_CHAR + " " + comment[i];
+                }
+            }
+            String s = StringUtil.joinString(comment, LINE_BREAK);
+            comments.put(key, s);
+        } else {
+            comments.remove(key);
+        }
+    }
 
-	/**
-	 * Returns root-level comments.
-	 *
-	 * @return map of root-level comments
-	 */
-	public Map<String, String> getComments() {
-		return Collections.unmodifiableMap(comments);
-	}
+    /**
+     * Returns root-level comments.
+     *
+     * @return map of root-level comments
+     */
+    public Map<String, String> getComments() {
+        return Collections.unmodifiableMap(comments);
+    }
 
-	/**
-	 * Set root-level comments from a map.
-	 *
-	 * @param comments comment map
-	 */
-	public void setComments(Map<String, String> comments) {
-		this.comments.clear();
-		if (comments != null) {
-			this.comments.putAll(comments);
-		}
-	}
+    /**
+     * Set root-level comments from a map.
+     *
+     * @param comments comment map
+     */
+    public void setComments(Map<String, String> comments) {
+        this.comments.clear();
+        if (comments != null) {
+            this.comments.putAll(comments);
+        }
+    }
 
-	/**
-	 * This method returns an empty ConfigurationNode for using as a
-	 * default in methods that select a node from a node list.
-	 *
-	 * @return
-	 */
-	public static YAMLNode getEmptyNode(boolean writeDefaults) {
-		return new YAMLNode(new LinkedHashMap<String, Object>(), writeDefaults);
-	}
+    /**
+     * This method returns an empty ConfigurationNode for using as a
+     * default in methods that select a node from a node list.
+     *
+     * @return
+     */
+    public static YAMLNode getEmptyNode(boolean writeDefaults) {
+        return new YAMLNode(new LinkedHashMap<String, Object>(), writeDefaults);
+    }
 
-	// This will be included in snakeyaml 1.10, but until then we have to do it manually.
-	private class FancyDumperOptions extends DumperOptions {
-		@SuppressWarnings("deprecation")
-		@Override
-		public DumperOptions.ScalarStyle calculateScalarStyle(ScalarAnalysis analysis, DumperOptions.ScalarStyle style) {
-			if (format == YAMLFormat.EXTENDED
-					&& (analysis.scalar.contains("\n") || analysis.scalar.contains("\r"))) {
-				return ScalarStyle.LITERAL;
-			} else {
-				return super.calculateScalarStyle(analysis, style);
-			}
-		}
-	}
+    // This will be included in snakeyaml 1.10, but until then we have to do it manually.
+    private class FancyDumperOptions extends DumperOptions {
+        @SuppressWarnings("deprecation")
+        @Override
+        public DumperOptions.ScalarStyle calculateScalarStyle(ScalarAnalysis analysis, DumperOptions.ScalarStyle style) {
+            if (format == YAMLFormat.EXTENDED
+                    && (analysis.scalar.contains("\n") || analysis.scalar.contains("\r"))) {
+                return ScalarStyle.LITERAL;
+            } else {
+                return super.calculateScalarStyle(analysis, style);
+            }
+        }
+    }
 
-	private static class FancyRepresenter extends Representer {
-		public FancyRepresenter() {
-			this.nullRepresenter = new Represent() {
-				@Override
-				public Node representData(Object o) {
-					return representScalar(Tag.NULL, "");
-				}
-			};
-		}
-	}
+    private static class FancyRepresenter extends Representer {
+        public FancyRepresenter() {
+            this.nullRepresenter = new Represent() {
+                @Override
+                public Node representData(Object o) {
+                    return representScalar(Tag.NULL, "");
+                }
+            };
+        }
+    }
 }

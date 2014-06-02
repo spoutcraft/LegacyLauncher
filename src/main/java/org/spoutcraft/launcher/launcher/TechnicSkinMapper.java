@@ -11,29 +11,29 @@ import java.io.File;
 import java.io.IOException;
 
 public class TechnicSkinMapper implements ISkinMapper {
-	@Override
-	public String getSkinFilename(User user) {
-		return Utils.getAssetsDirectory() + File.separator + "skins" + File.separator + user.getDisplayName() + ".png";
-	}
+    @Override
+    public String getSkinFilename(User user) {
+        return Utils.getAssetsDirectory() + File.separator + "skins" + File.separator + user.getDisplayName() + ".png";
+    }
 
-	@Override
-	public String getFaceFilename(User user) {
-		return Utils.getAssetsDirectory() + File.separator + "avatars" + File.separator + user.getDisplayName() + ".png";
-	}
+    @Override
+    public String getFaceFilename(User user) {
+        return Utils.getAssetsDirectory() + File.separator + "avatars" + File.separator + user.getDisplayName() + ".png";
+    }
 
-	@Override
-	public BufferedImage getDefaultSkinImage() {
-		return null;
-	}
+    @Override
+    public BufferedImage getDefaultSkinImage() {
+        return null;
+    }
 
-	@Override
-	public BufferedImage getDefaultFaceImage() {
-		try {
-			return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
-		} catch (IOException ex) {
-			ex.printStackTrace();
-		}
+    @Override
+    public BufferedImage getDefaultFaceImage() {
+        try {
+            return ImageIO.read(ResourceUtils.getResourceAsStream("/org/spoutcraft/launcher/resources/face.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

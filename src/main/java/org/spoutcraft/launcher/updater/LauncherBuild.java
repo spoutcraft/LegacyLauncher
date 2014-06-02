@@ -21,10 +21,10 @@ package org.spoutcraft.launcher.updater;
 import net.technicpack.launchercore.restful.RestObject;
 
 public class LauncherBuild extends RestObject {
-	private int LatestBuild;
+    private int LatestBuild;
 
-	public int getLatestBuild() {
-		return LatestBuild;
-	}
+    public int getLatestBuild() {
+        return LatestBuild;
+    }
 }
 

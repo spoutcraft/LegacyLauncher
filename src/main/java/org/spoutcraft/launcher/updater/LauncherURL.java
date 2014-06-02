@@ -21,9 +21,9 @@ package org.spoutcraft.launcher.updater;
 import net.technicpack.launchercore.restful.RestObject;
 
 public class LauncherURL extends RestObject {
-	private String URL;
+    private String URL;
 
-	public String getURL() {
-		return URL;
-	}
+    public String getURL() {
+        return URL;
+    }
 }

@@ -21,16 +21,16 @@ package org.spoutcraft.launcher.util.yml;
 import org.yaml.snakeyaml.DumperOptions.FlowStyle;
 
 public enum YAMLFormat {
-	EXTENDED(FlowStyle.BLOCK),
-	COMPACT(FlowStyle.AUTO);
+    EXTENDED(FlowStyle.BLOCK),
+    COMPACT(FlowStyle.AUTO);
 
-	private final FlowStyle style;
+    private final FlowStyle style;
 
-	YAMLFormat(FlowStyle style) {
-		this.style = style;
-	}
+    YAMLFormat(FlowStyle style) {
+        this.style = style;
+    }
 
-	public FlowStyle getStyle() {
-		return style;
-	}
+    public FlowStyle getStyle() {
+        return style;
+    }
 }

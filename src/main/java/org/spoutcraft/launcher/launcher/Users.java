@@ -16,85 +16,85 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 public class Users implements IUserStore {
-	private String clientToken = UUID.randomUUID().toString();
-	private Map<String, User> savedUsers = new HashMap<String, User>();
-	private String lastUser;
-	private transient File usersFile;
+    private String clientToken = UUID.randomUUID().toString();
+    private Map<String, User> savedUsers = new HashMap<String, User>();
+    private String lastUser;
+    private transient File usersFile;
 
-	public Users() {
-	}
+    public Users() {
+    }
 
-	public Users(File userFile) {
-		this.usersFile = userFile;
-	}
+    public Users(File userFile) {
+        this.usersFile = userFile;
+    }
 
-	public static Users load() {
-		File userFile = new File(Utils.getSettingsDirectory(), "users.json");
-		if (!userFile.exists()) {
-			Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile + " because it does not exist.");
-			return new Users(userFile);
-		}
+    public static Users load() {
+        File userFile = new File(Utils.getSettingsDirectory(), "users.json");
+        if (!userFile.exists()) {
+            Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile + " because it does not exist.");
+            return new Users(userFile);
+        }
 
-		try {
-			String json = FileUtils.readFileToString(userFile, Charset.forName("UTF-8"));
-			Users newModel = Utils.getGson().fromJson(json, Users.class);
-			newModel.setUserFile(userFile);
-			return newModel;
-		} catch (JsonSyntaxException e) {
-			Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile);
-		} catch (IOException e) {
-			Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile);
-		}
+        try {
+            String json = FileUtils.readFileToString(userFile, Charset.forName("UTF-8"));
+            Users newModel = Utils.getGson().fromJson(json, Users.class);
+            newModel.setUserFile(userFile);
+            return newModel;
+        } catch (JsonSyntaxException e) {
+            Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile);
+        } catch (IOException e) {
+            Utils.getLogger().log(Level.WARNING, "Unable to load users from " + userFile);
+        }
 
-		return new Users(userFile);
-	}
+        return new Users(userFile);
+    }
 
-	public void setUserFile(File userFile) {
-		this.usersFile = userFile;
-	}
+    public void setUserFile(File userFile) {
+        this.usersFile = userFile;
+    }
 
-	public void save() {
-		String json = Utils.getGson().toJson(this);
+    public void save() {
+        String json = Utils.getGson().toJson(this);
 
-		try {
-			FileUtils.writeStringToFile(usersFile, json, Charset.forName("UTF-8"));
-		} catch (IOException e) {
-			Utils.getLogger().log(Level.WARNING, "Unable to save users " + usersFile);
-		}
-	}
+        try {
+            FileUtils.writeStringToFile(usersFile, json, Charset.forName("UTF-8"));
+        } catch (IOException e) {
+            Utils.getLogger().log(Level.WARNING, "Unable to save users " + usersFile);
+        }
+    }
 
-	public void addUser(User user) {
-		savedUsers.put(user.getUsername(), user);
-		save();
-	}
+    public void addUser(User user) {
+        savedUsers.put(user.getUsername(), user);
+        save();
+    }
 
-	public void removeUser(String username) {
-		savedUsers.remove(username);
-		save();
-	}
+    public void removeUser(String username) {
+        savedUsers.remove(username);
+        save();
+    }
 
-	public User getUser(String accountName) {
-		return savedUsers.get(accountName);
-	}
+    public User getUser(String accountName) {
+        return savedUsers.get(accountName);
+    }
 
-	public String getClientToken() {
-		return clientToken;
-	}
+    public String getClientToken() {
+        return clientToken;
+    }
 
-	public Collection<String> getUsers() {
-		return savedUsers.keySet();
-	}
+    public Collection<String> getUsers() {
+        return savedUsers.keySet();
+    }
 
-	public Collection<User> getSavedUsers() {
-		return savedUsers.values();
-	}
+    public Collection<User> getSavedUsers() {
+        return savedUsers.values();
+    }
 
-	public void setLastUser(String lastUser) {
-		this.lastUser = lastUser;
-		save();
-	}
+    public void setLastUser(String lastUser) {
+        this.lastUser = lastUser;
+        save();
+    }
 
-	public String getLastUser() {
-		return lastUser;
-	}
+    public String getLastUser() {
+        return lastUser;
+    }
 }
