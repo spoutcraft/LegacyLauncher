@@ -23,6 +23,7 @@ import net.technicpack.launchercore.mirror.download.Download;
 import net.technicpack.launchercore.util.*;
 import org.spoutcraft.launcher.settings.LauncherDirectories;
 import org.spoutcraft.launcher.skin.ProgressSplashScreen;
+import org.spoutcraft.launcher.updater.LauncherBuild;
 import org.spoutcraft.launcher.updater.LauncherInfo;
 
 import javax.swing.*;
@@ -70,17 +71,15 @@ public class Start {
 
         int version = Integer.parseInt(SpoutcraftLauncher.getLauncherBuild());
         String buildStream = Settings.getBuildStream();
-        int latest = version;
+        LauncherBuild latest;
 
         try {
             latest = LauncherInfo.getLatestBuild(buildStream);
-            if (buildStream.equals("beta") && version < latest) {
-                update = true;
-            } else if (buildStream.equals("stable") && version != latest) {
-                update = true;
-            }
+            update = true;
         } catch (RestfulAPIException e) {
             e.printStackTrace();
+            SpoutcraftLauncher.main(args);
+            return;
         }
 
         if (update) {
@@ -114,12 +113,13 @@ public class Start {
                 commands.add("-Xmx256m");
                 commands.add("-cp");
                 commands.add(temp.getAbsolutePath());
-                commands.add(Mover.class.getName());
+                commands.add("net.technicpack.launcher.LauncherMain");
             } else {
                 commands.add(temp.getAbsolutePath());
-                commands.add("-Mover");
             }
+            commands.add("-movetarget");
             commands.add(codeSource.getAbsolutePath());
+            commands.add("-mover");
             commands.addAll(Arrays.asList(args));
             processBuilder.command(commands);
 

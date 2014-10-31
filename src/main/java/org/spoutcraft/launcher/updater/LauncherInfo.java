@@ -24,16 +24,12 @@ import net.technicpack.launchercore.restful.RestObject;
 
 public class LauncherInfo {
 
-    public static int getLatestBuild(String stream) throws RestfulAPIException {
-        LauncherBuild result = RestObject.getRestObject(LauncherBuild.class, PlatformConstants.API + "launcher/version/" + stream);
-        return result.getLatestBuild();
+    public static LauncherBuild getLatestBuild(String stream) throws RestfulAPIException {
+        LauncherBuild result = RestObject.getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/" + "launcher/version/" + stream + "4");
+        return result;
     }
 
-    public static String getDownloadURL(int version, boolean isJar) throws RestfulAPIException {
-        String ext = isJar ? "jar" : "exe";
-
-        String url = PlatformConstants.API + "launcher/url/" + version + "/" + ext;
-        LauncherURL result = RestObject.getRestObject(LauncherURL.class, url);
-        return result.getURL();
+    public static String getDownloadURL(LauncherBuild version, boolean isJar) throws RestfulAPIException {
+        return isJar ? version.getJar() : version.getExe();
     }
 }

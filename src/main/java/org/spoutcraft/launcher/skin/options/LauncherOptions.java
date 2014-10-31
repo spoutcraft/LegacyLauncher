@@ -370,7 +370,7 @@ public class LauncherOptions extends JDialog implements ActionListener, MouseLis
         }
 
         try {
-            build = LauncherInfo.getLatestBuild(buildStream);
+            build = LauncherInfo.getLatestBuild(buildStream).getLatestBuild();
             return build;
         } catch (RestfulAPIException e) {
             e.printStackTrace();
