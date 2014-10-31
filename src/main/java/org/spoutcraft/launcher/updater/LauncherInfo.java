@@ -25,7 +25,7 @@ import net.technicpack.launchercore.restful.RestObject;
 public class LauncherInfo {
 
     public static LauncherBuild getLatestBuild(String stream) throws RestfulAPIException {
-        LauncherBuild result = RestObject.getRestObject(LauncherBuild.class, "http://beta.technicpack.net/api/" + "launcher/version/" + stream + "4");
+        LauncherBuild result = RestObject.getRestObject(LauncherBuild.class, PlatformConstants.API + "launcher/version/" + stream + "4");
         return result;
     }
 
