@@ -57,40 +57,9 @@ public class SpoutcraftLauncher {
         LauncherDirectories directories = new LauncherDirectories();
         Directories.instance = directories;
 
-        // Prefer IPv4
-        System.setProperty("java.net.preferIPv4Stack", "true");
-
-        params = setupParameters(args);
-
-        cleanup();
-
-        SplashScreen splash = new SplashScreen(Toolkit.getDefaultToolkit().getImage(SplashScreen.class.getResource("/org/spoutcraft/launcher/resources/splash.png")));
-        splash.setVisible(true);
-        directories.setSplashScreen(splash);
-
-        MetalLookAndFeel.setCurrentTheme(new OceanTheme());
-        setLookAndFeel();
-
-        console = new Console(params.isConsole());
-        SpoutcraftLauncher.logger = setupLogger();
-        console.setRotatingFileHandler(SpoutcraftLauncher.handler);
-
-        int launcherBuild = parseInt(getLauncherBuild(), -1);
-        logger.info("------------------------------------------");
-        logger.info("Technic Launcher is starting....");
-        logger.info("Launcher Build: " + launcherBuild);
-
-        params.logParameters(logger);
-
-        Runtime.getRuntime().addShutdownHook(new ShutdownThread(console));
-
-        // Set up the launcher and load login frame
-        Launcher launcher = new Launcher();
-
-        splash.dispose();
-        launcher.startup();
-
-        logger.info("Launcher took: " + (System.currentTimeMillis() - start) + "ms to start");
+        JOptionPane.showMessageDialog(null, "Restart the launcher to complete your update.", "Platform 2 Update", JOptionPane.INFORMATION_MESSAGE);
+        System.exit(0);
+        return;
     }
 
     public static String getLauncherBuild() {

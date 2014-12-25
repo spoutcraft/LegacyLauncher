@@ -85,6 +85,7 @@ public class Mover {
             commands.add(SpoutcraftLauncher.class.getName());
         } else {
             commands.add(temp.getAbsolutePath());
+            commands.add("-Launcher");
         }
         commands.addAll(Arrays.asList(args));
         processBuilder.command(commands);
