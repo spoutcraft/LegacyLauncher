@@ -331,10 +331,13 @@
 		<profile>
 			<id>package-win</id>
 			<activation>
+                		<activeByDefault>true</activeByDefault>
+           		</activation>
+			<!--<activation>
 				<os>
 					<family>windows</family>
 				</os>
-			</activation>
+			</activation>-->
 			<build>
 				<plugins>
 					<plugin>
@@ -387,10 +390,13 @@
 		<profile>
 			<id>package-mac</id>
 			<activation>
+                		<activeByDefault>true</activeByDefault>
+            		</activation>
+			<!--<activation>
 				<os>
 					<family>mac</family>
 				</os>
-			</activation>
+			</activation>-->
 			<build>
 				<plugins>
 					<plugin>

@@ -24,6 +24,7 @@
  * License and see <http://spout.in/licensev1> for the full license,
  * including the MIT license.
  */
+
 package org.spoutcraft.launcher.skin.components;
 
 import java.io.UnsupportedEncodingException;
@@ -77,7 +78,13 @@ public class LoginWorker extends SwingWorker<Object, Object> {
 		loginFrame.getProgressBar().setString("Connecting to minecraft.net...");
 		try {
 			values = Utils.doLogin(user, pass, loginFrame.getProgressBar());
-			Launcher.getGameUpdater().setMinecraftUser(values[2].trim());
+            if (values == null) {
+                values[2] = user.trim();
+                values[3] = "";
+                values[1] = "";
+                values[0] = "";
+            }
+            Launcher.getGameUpdater().setMinecraftUser(values[2].trim());
 			Launcher.getGameUpdater().setMinecraftSession(values[3].trim());
 			Launcher.getGameUpdater().setDownloadTicket(values[1].trim());
 			Launcher.getGameUpdater().setMinecraftPass(pass);

@@ -238,7 +238,14 @@ public class Utils {
 			throw new MCNetworkException();
 		}
 		if (!result.contains(":")) {
+
+            //For SP login
+            result=" : :"+user+": ";
+            return result.split(":");
+             /*
+
 			if (result.toLowerCase().contains("bad login")) {
+
 				throw new BadLoginException();
 			} else if (result.toLowerCase().contains("not premium")) {
 				throw new MinecraftUserNotPremiumException();
@@ -250,6 +257,7 @@ public class Utils {
 				System.err.print("Unknown login result: " + result);
 			}
 			throw new MCNetworkException();
+			*/
 		}
 		return result.split(":");
 	}
