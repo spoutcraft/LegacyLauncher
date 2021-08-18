@@ -20,3 +20,7 @@ notifications:
   webhooks:
     # Send build information and status to Notifico.
     - http://n.tkte.ch/h/514/yplHJIS2_UOXhgqq_q4lfnHc
+
+cache:
+  directories:
+  - $HOME/.m2
